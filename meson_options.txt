@@ -1,0 +1,92 @@
+#  This file is part of DirectFB.
+#
+#  This library is free software; you can redistribute it and/or
+#  modify it under the terms of the GNU Lesser General Public
+#  License as published by the Free Software Foundation; either
+#  version 2.1 of the License, or (at your option) any later version.
+#
+#  This library is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#  Lesser General Public License for more details.
+#
+#  You should have received a copy of the GNU Lesser General Public
+#  License along with this library; if not, write to the Free Software
+#  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
+
+option('args-size',
+       type: 'integer',
+       value: '1024',
+       description: 'Maximum static args size (bytes) for Flux')
+
+option('debug-support',
+       type: 'boolean',
+       description: 'Debug support')
+
+option('drmkms',
+       type: 'boolean',
+       description: 'Linux DRM/KMS support')
+
+option('fbdev',
+       type: 'boolean',
+       description: 'Linux FBDev support')
+
+option('linuxinput',
+       type: 'boolean',
+       description: 'Linux Input support')
+
+option('memcpy-probing',
+       type: 'boolean',
+       value: false,
+       description: 'Use memcpy() probing')
+
+option('message-size',
+       type: 'integer',
+       value: '16384',
+       description: 'Maximum message size (bytes) for Fusion')
+
+option('mmx',
+       type: 'boolean',
+       description: 'MMX assembly support')
+
+option('moduledirname',
+       type: 'string',
+       description: 'DirectFB module directory name')
+
+option('multi',
+       type: 'boolean',
+       value: false,
+       description: 'Multi application support')
+
+option('multi-kernel',
+       type: 'boolean',
+       value: false,
+       description: 'Use the Linux Fusion device for multi application')
+
+option('os',
+       type: 'string',
+       value: 'linux',
+       description: 'OS name')
+
+option('sentinels',
+       type: 'boolean',
+       value: false,
+       description: 'Sentinels')
+
+option('smooth-scaling',
+       type: 'boolean',
+       description: 'Smooth scaling')
+
+option('text',
+       type: 'boolean',
+       description: 'Text output')
+
+option('trace',
+       type: 'boolean',
+       value: false,
+       description: 'Call tracing')
+
+option('vendor-version',
+       type: 'string',
+       value: '',
+       description: 'Vendor version')
