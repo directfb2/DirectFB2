@@ -1,0 +1,11 @@
+commit 84f00f65d763389c0fba5a28d150c418c8ce9990
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Dec 6 15:42:23 2021 +0100
+
+    Revival of DirectFB
+
+commit 39e204404329144622d26586587657f6a4b6fb2c
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Dec 6 15:37:21 2021 +0100
+
+    Initial revision

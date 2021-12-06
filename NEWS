@@ -1,0 +1,23 @@
+2.0.0
+-----
+
+Meson build system
+
+Pure C implementation
+
+No external dependency (except fluxcomp for converting .flux interface description files to .c files)
+
+Modularization of the source code, which now only contains:
+  - libdirect / libfusion / libdirectfb core libraries
+  - a generic system module and a generic input driver for supported operating systems (only Linux for now)
+    (on Linux OS, legacy FBDev or modern DRM/KMS system module and Linux input driver)
+  - the default WM module
+  - the DGIFF (DirectFB Glyph Image File Format) font provider
+  - the DFIFF (DirectFB Fast Image File Format) image provider
+  - the DFVFF (DirectFB Fast Video File Format) video provider
+
+Separate packages for:
+  - additional system modules and input drivers
+  - additional WM modules
+  - additional font/image/video providers
+  - GFX drivers (hardware acceleration)
