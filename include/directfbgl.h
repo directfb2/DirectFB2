@@ -30,6 +30,11 @@ extern "C" {
  ***************/
 
 /*
+ * The DirectFBGL interface version.
+ */
+#define DIRECTFBGL_INTERFACE_VERSION 1
+
+/*
  * Attributes of an OpenGL context.
  */
 typedef struct {
