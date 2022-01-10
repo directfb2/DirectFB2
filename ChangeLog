@@ -1,3 +1,24 @@
+commit b6c80b871c6fc4a76824d86b2b58ab52d27fb451
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jan 10 09:38:34 2022 +0100
+
+    Restore DirectFBGL interface version
+
+commit ac69e79742b633ef553da667a6d68308d7dedd89
+Merge: 39e204404 99a41095b
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Dec 6 15:45:17 2021 +0100
+
+    Merge pull request #1 from caramelli/master
+    
+    Revival of DirectFB
+
+commit 99a41095baa5d84c39b035057b26ec1b51d080c5
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Dec 6 15:42:37 2021 +0100
+
+    Add ChangeLog
+
 commit 84f00f65d763389c0fba5a28d150c418c8ce9990
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Mon Dec 6 15:42:23 2021 +0100
