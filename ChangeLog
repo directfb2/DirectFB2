@@ -1,3 +1,24 @@
+commit decbeb69a473d30244958f29b1d45e6131ad3beb
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Jan 11 06:23:41 2022 +0100
+
+    DFVFF: no interlaced support
+
+commit 33e96c5c8030c1b37448bd43ea115f082cf056a8
+Merge: ac69e7974 5a49ce419
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Jan 10 09:51:26 2022 +0100
+
+    Merge pull request #2 from caramelli/master
+    
+    Restore DirectFBGL interface version
+
+commit 5a49ce419408b0c5e96b9c0c4a630f85e3155763
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jan 10 09:43:33 2022 +0100
+
+    Update ChangeLog
+
 commit b6c80b871c6fc4a76824d86b2b58ab52d27fb451
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Mon Jan 10 09:38:34 2022 +0100
