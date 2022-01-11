@@ -56,18 +56,19 @@ typedef struct {
 
      DFBSurfaceDescription          desc;
      double                         rate;
-     int                            frame_size;
-     long                           nb_frames;
 
      DFBVideoProviderStatus         status;
      double                         speed;
      DFBVideoProviderPlaybackFlags  flags;
+     int                            frame_size;
+     long                           nb_frames;
      long                           frame;
-     int                            seeked;
 
      DirectThread                  *thread;
      DirectMutex                    lock;
      DirectWaitQueue                cond;
+
+     int                            seeked;
 
      IDirectFBSurface              *dest;
      DFBRectangle                   rect;
@@ -243,7 +244,7 @@ IDirectFBVideoProvider_DFVFF_Destruct( IDirectFBVideoProvider *thiz )
      direct_mutex_deinit( &data->lock );
 
      direct_list_foreach_safe (link, tmp, data->events) {
-          direct_list_remove( (DirectLink**)&data->events, &link->link );
+          direct_list_remove( &data->events, &link->link );
           link->buffer->Release( link->buffer );
           D_FREE( link );
      }
@@ -291,7 +292,7 @@ IDirectFBVideoProvider_DFVFF_GetCapabilities( IDirectFBVideoProvider       *thiz
      if (!ret_caps)
           return DFB_INVARG;
 
-     *ret_caps = DVCAPS_BASIC | DVCAPS_SEEK | DVCAPS_SCALE | DVCAPS_INTERLACED | DVCAPS_SPEED;
+     *ret_caps = DVCAPS_BASIC | DVCAPS_SEEK | DVCAPS_SCALE | DVCAPS_SPEED;
 
      return DFB_OK;
 }
@@ -516,10 +517,10 @@ IDirectFBVideoProvider_DFVFF_SetSpeed( IDirectFBVideoProvider *thiz,
 
      direct_mutex_lock( &data->lock );
 
-     data->speed = multiplier;
-
      if (multiplier && data->status != DVSTATE_FINISHED)
         direct_waitqueue_signal( &data->cond );
+
+     data->speed = multiplier;
 
      dispatch_event( data, DVPET_SPEEDCHANGE );
 
@@ -726,21 +727,21 @@ Construct( IDirectFBVideoProvider *thiz,
      /* Open the file. */
      ret = direct_file_open( &fd, buffer_data->filename, O_RDONLY, 0 );
      if (ret) {
-          D_DERROR( ret, "ImageProvider/DFIFF: Failed to open '%s'!\n", buffer_data->filename );
+          D_DERROR( ret, "VideoProvider/DFVFF: Failed to open '%s'!\n", buffer_data->filename );
           return ret;
      }
 
      /* Query file size. */
      ret = direct_file_get_info( &fd, &info );
      if (ret) {
-          D_DERROR( ret, "ImageProvider/DFIFF: Failed during get_info() of '%s'!\n", buffer_data->filename );
+          D_DERROR( ret, "VideoProvider/DFVFF: Failed during get_info() of '%s'!\n", buffer_data->filename );
           goto error;
      }
 
      /* Memory-mapped file. */
      ret = direct_file_map( &fd, NULL, 0, info.size, DFP_READ, &ptr );
      if (ret) {
-          D_DERROR( ret, "ImageProvider/DFIFF: Failed during mmap() of '%s'!\n", buffer_data->filename );
+          D_DERROR( ret, "VideoProvider/DFVFF: Failed during mmap() of '%s'!\n", buffer_data->filename );
           goto error;
      }
 
@@ -758,11 +759,11 @@ Construct( IDirectFBVideoProvider *thiz,
      data->desc.pixelformat = header->format;
      data->desc.colorspace  = header->colorspace;
      data->rate             = (double) header->framerate_num / header->framerate_den;
+     data->status           = DVSTATE_STOP;
+     data->speed            = 1.0;
      data->frame_size       = DFB_BYTES_PER_LINE( data->desc.pixelformat, data->desc.width ) *
                               DFB_PLANE_MULTIPLY( data->desc.pixelformat, data->desc.height );
      data->nb_frames        = (data->len - sizeof(DFVFFHeader)) / data->frame_size;
-     data->status           = DVSTATE_STOP;
-     data->speed            = 1.0;
      data->events_mask      = DVPET_ALL;
 
      direct_mutex_init( &data->events_lock );
