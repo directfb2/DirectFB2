@@ -1,3 +1,24 @@
+commit ed3efb3ada2e6bb6ef7d00e72c08f29a64e47808
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Jan 18 21:44:42 2022 +0100
+
+    DFVFF: Restart from the beginning after stopping
+
+commit e8e8bfcc7bdbffbbcc74e5ca55e50cf2fa8933b9
+Merge: 33e96c5c8 84697e114
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Tue Jan 11 06:28:27 2022 +0100
+
+    Merge pull request #3 from caramelli/master
+    
+    DFVFF: no interlaced support
+
+commit 84697e114951385b0d262811b59b9055b5c796c4
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Jan 11 06:24:40 2022 +0100
+
+    Update ChangeLog
+
 commit decbeb69a473d30244958f29b1d45e6131ad3beb
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Tue Jan 11 06:23:41 2022 +0100
