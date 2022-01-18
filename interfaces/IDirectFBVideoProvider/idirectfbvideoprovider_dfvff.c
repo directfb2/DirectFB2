@@ -164,7 +164,7 @@ DFVFFVideo( DirectThread *thread,
                data->dest->StretchBlit( data->dest, source, NULL, &data->rect );
 
                if (data->frame_callback)
-                    data->frame_callback (data->frame_callback_context);
+                    data->frame_callback( data->frame_callback_context );
           }
 
           if (!data->speed) {
@@ -402,6 +402,8 @@ IDirectFBVideoProvider_DFVFF_Stop( IDirectFBVideoProvider *thiz )
           direct_thread_destroy( data->thread );
           data->thread = NULL;
      }
+
+     data->frame = 0;
 
      dispatch_event( data, DVPET_STOPPED );
 
