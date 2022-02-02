@@ -1,3 +1,24 @@
+commit d404af89d1f55a98c091417531be6f1e8f5d451e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Feb 2 09:59:07 2022 +0100
+
+    Add pixel format conversion functions
+
+commit 5ec744bbfaad38838051d41bad95d8159ebee93e
+Merge: dcfa6e8bd 47be2bd01
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Feb 2 09:37:26 2022 +0100
+
+    Merge pull request #7 from caramelli/master
+    
+    Add BT.2020 color space definition
+
+commit 47be2bd015301a57ad77d2f29a6e0af58442bfd6
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Feb 2 09:34:50 2022 +0100
+
+    Update ChangeLog
+
 commit d75e3b98b64622ffb6cab2d48c75900feac2a1e6
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Wed Feb 2 09:33:49 2022 +0100

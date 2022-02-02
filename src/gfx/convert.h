@@ -296,10 +296,6 @@
                                       (((pixel) & 0x3f00) <<  4) |            \
                                       (((pixel) & 0x00fc) <<  2) )
 
-#define RGB32_TO_RGB332(pixel)      ( (((pixel) & 0xe00000) >> 16) |          \
-                                      (((pixel) & 0x00e000) >> 11) |          \
-                                      (((pixel) & 0x0000c0) >>  6) )
-
 #define RGB32_TO_ARGB1555(pixel)    ( 0x8000 |                                \
                                       (((pixel) & 0xf80000) >> 9) |           \
                                       (((pixel) & 0x00f800) >> 6) |           \
@@ -320,12 +316,10 @@
                                       (((pixel) & 0x00f000) >> 4) |           \
                                        ((pixel) & 0x0000f0) )
 
-#define RGB32_TO_RGB16(pixel)       ( (((pixel) & 0xf80000) >> 8) |           \
+#define RGB32_TO_ARGB8565(pixel)    ( 0xff0000 | \
+                                      (((pixel) & 0xf80000) >> 8) |           \
                                       (((pixel) & 0x00fc00) >> 5) |           \
                                       (((pixel) & 0x0000f8) >> 3) )
-
-#define RGB32_TO_ARGB8565(pixel)    ( 0xff0000 | \
-                                      RGB32_TO_RGB16( pixel ) )
 
 #define RGB32_TO_ARGB1555(pixel)    ( 0x8000 | \
                                       (((pixel) & 0xf80000) >> 9) |           \
@@ -334,22 +328,9 @@
 
 #define RGB32_TO_ARGB(pixel)        ( 0xff000000 | (pixel) )
 
-#define ARGB_TO_ARGB8565(pixel)     ( (((pixel) & 0xff000000) >> 8) |         \
-                                      (((pixel) & 0x00f80000) >> 8) |         \
-                                      (((pixel) & 0x0000fc00) >> 5) |         \
-                                      (((pixel) & 0x000000f8) >> 3) )
-
-#define RGB32_TO_RGB555(pixel)      ( (((pixel) & 0xf80000) >> 9) |           \
-                                      (((pixel) & 0x00f800) >> 6) |           \
-                                      (((pixel) & 0x0000f8) >> 3) )
-
-#define RGB32_TO_BGR555(pixel)      ( (((pixel) & 0xf80000) >> 19) |          \
-                                      (((pixel) & 0x00f800) >>  6) |          \
-                                      (((pixel) & 0x0000f8) <<  7) )
-
-#define RGB32_TO_RGB444(pixel)      ( (((pixel) & 0xf00000) >> 12) |          \
-                                      (((pixel) & 0x00f000) >>  8) |          \
-                                      (((pixel) & 0x0000f0) >>  4) )
+#define ARGB_TO_RGB332(pixel)       ( (((pixel) & 0x00e00000) >> 16) |        \
+                                      (((pixel) & 0x0000e000) >> 11) |        \
+                                      (((pixel) & 0x000000c0) >>  6) )
 
 #define ARGB_TO_ARGB1555(pixel)     ( (((pixel) & 0x80000000) >> 16) |        \
                                       (((pixel) & 0x00f80000) >>  9) |        \
@@ -375,6 +356,29 @@
                                       (((pixel) & 0x00f00000) >>  8) |        \
                                       (((pixel) & 0x0000f000) >>  4) |        \
                                       (((pixel) & 0x000000f0)      ) )
+
+#define ARGB_TO_ARGB1666(pixel)     ( (((pixel) & 0x80000000) >>  8) |        \
+                                      (((pixel) & 0x00fc0000) >>  6) |        \
+                                      (((pixel) & 0x0000fc00) >>  4) |        \
+                                      (((pixel) & 0x000000fc) >>  2) )
+
+#define ARGB_TO_ARGB6666(pixel)     ( (((pixel) & 0xfc000000) >>  8) |        \
+                                      (((pixel) & 0x00fc0000) >>  6) |        \
+                                      (((pixel) & 0x0000fc00) >>  4) |        \
+                                      (((pixel) & 0x000000fc) >>  2) )
+
+#define ARGB_TO_ARGB8565(pixel)     ( (((pixel) & 0xff000000) >> 8) |         \
+                                      (((pixel) & 0x00f80000) >> 8) |         \
+                                      (((pixel) & 0x0000fc00) >> 5) |         \
+                                      (((pixel) & 0x000000f8) >> 3) )
+
+#define ARGB_TO_RGB18(pixel)        ( (((pixel) & 0x00fc0000) >> 6) |         \
+                                      (((pixel) & 0x0000fc00) >> 4) |         \
+                                      (((pixel) & 0x000000fc) >> 2) )
+
+#define ARGB_TO_RGB16(pixel)        ( (((pixel) & 0x00f80000) >> 8) |         \
+                                      (((pixel) & 0x0000fc00) >> 5) |         \
+                                      (((pixel) & 0x000000f8) >> 3) )
 
 #define ARGB_TO_RGB444(pixel)       ( (((pixel) & 0x00f00000) >> 12) |        \
                                       (((pixel) & 0x0000f000) >>  8) |        \
@@ -595,7 +599,7 @@ dfb_argb_to_rgb332( const u32 *src,
      for (i = 0; i < len; i++) {
           u32 argb = src[i];
 
-          dst[i] = RGB32_TO_RGB332( argb );
+          dst[i] = ARGB_TO_RGB332( argb );
      }
 }
 
@@ -670,6 +674,78 @@ dfb_argb_to_rgba4444( const u32 *src,
 }
 
 static __inline__ void
+dfb_argb_to_argb1666be( const u32 *src,
+                        u8        *dst,
+                        int        len )
+{
+     int i = -1, j = -1;
+
+     while (++i < len) {
+        u32 argb = src[i];
+
+        u32 d = ARGB_TO_ARGB1666( argb );
+
+        dst[++j] = (d >> 16) & 0xff;
+        dst[++j] = (d >>  8) & 0xff;
+        dst[++j] =  d        & 0xff;
+     }
+}
+
+static __inline__ void
+dfb_argb_to_argb1666le( const u32 *src,
+                        u8        *dst,
+                        int        len )
+{
+     int i = -1, j = -1;
+
+     while (++i < len) {
+        u32 argb = src[i];
+
+        u32 d = ARGB_TO_ARGB1666( argb );
+
+        dst[++j] =  d        & 0xff;
+        dst[++j] = (d >>  8) & 0xff;
+        dst[++j] = (d >> 16) & 0xff;
+     }
+}
+
+static __inline__ void
+dfb_argb_to_argb6666be( const u32 *src,
+                        u8        *dst,
+                        int        len )
+{
+     int i = -1, j = -1;
+
+     while (++i < len) {
+        u32 argb = src[i];
+
+        u32 d = ARGB_TO_ARGB6666( argb );
+
+        dst[++j] = (d >> 16) & 0xff;
+        dst[++j] = (d >>  8) & 0xff;
+        dst[++j] =  d        & 0xff;
+     }
+}
+
+static __inline__ void
+dfb_argb_to_argb6666le( const u32 *src,
+                        u8        *dst,
+                        int        len )
+{
+     int i = -1, j = -1;
+
+     while (++i < len) {
+        u32 argb = src[i];
+
+        u32 d = ARGB_TO_ARGB6666( argb );
+
+        dst[++j] =  d        & 0xff;
+        dst[++j] = (d >>  8) & 0xff;
+        dst[++j] = (d >> 16) & 0xff;
+     }
+}
+
+static __inline__ void
 dfb_argb_to_argb8565be( const u32 *src,
                         u8        *dst,
                         int        len )
@@ -706,6 +782,42 @@ dfb_argb_to_argb8565le( const u32 *src,
 }
 
 static __inline__ void
+dfb_argb_to_rgb18be( const u32 *src,
+                     u8        *dst,
+                     int        len )
+{
+     int i = -1, j = -1;
+
+     while (++i < len) {
+        u32 argb = src[i];
+
+        u32 d = ARGB_TO_RGB18( argb );
+
+        dst[++j] = (d >> 16) & 0xff;
+        dst[++j] = (d >>  8) & 0xff;
+        dst[++j] =  d        & 0xff;
+     }
+}
+
+static __inline__ void
+dfb_argb_to_rgb18le( const u32 *src,
+                     u8        *dst,
+                     int        len )
+{
+     int i = -1, j = -1;
+
+     while (++i < len) {
+        u32 argb = src[i];
+
+        u32 d = ARGB_TO_RGB18( argb );
+
+        dst[++j] =  d        & 0xff;
+        dst[++j] = (d >>  8) & 0xff;
+        dst[++j] = (d >> 16) & 0xff;
+     }
+}
+
+static __inline__ void
 dfb_argb_to_rgb16( const u32 *src,
                    u16       *dst,
                    int        len )
@@ -715,7 +827,77 @@ dfb_argb_to_rgb16( const u32 *src,
      for (i = 0; i < len; i++) {
           u32 argb = src[i];
 
-          dst[i] = RGB32_TO_RGB16( argb );
+          dst[i] = ARGB_TO_RGB16( argb );
+     }
+}
+
+static __inline__ void
+dfb_argb_to_rgb444( const u32 *src,
+                    u16       *dst,
+                    int        len )
+{
+     int i;
+
+     for (i = 0; i < len; i++) {
+          u32 argb = src[i];
+
+          dst[i] = ARGB_TO_RGB444( argb );
+     }
+}
+
+static __inline__ void
+dfb_argb_to_rgb555( const u32 *src,
+                    u16       *dst,
+                    int        len )
+{
+     int i;
+
+     for (i = 0; i < len; i++) {
+          u32 argb = src[i];
+
+          dst[i] = ARGB_TO_RGB555( argb );
+     }
+}
+
+static __inline__ void
+dfb_argb_to_bgr555( const u32 *src,
+                    u16       *dst,
+                    int        len )
+{
+     int i;
+
+     for (i = 0; i < len; i++) {
+          u32 argb = src[i];
+
+          dst[i] = ARGB_TO_BGR555( argb );
+     }
+}
+
+static __inline__ void
+dfb_argb_to_abgr( const u32 *src,
+                  u32       *dst,
+                  int        len )
+{
+     int i;
+
+     for (i = 0; i < len; i++) {
+          u32 argb = src[i];
+
+          dst[i] = ARGB_TO_ABGR( argb );
+     }
+}
+
+static __inline__ void
+dfb_argb_to_rgbaf88871( const u32 *src,
+                        u32       *dst,
+                        int        len )
+{
+     int i;
+
+     for (i = 0; i < len; i++) {
+          u32 argb = src[i];
+
+          dst[i] = ARGB_TO_RGBAF88871( argb );
      }
 }
 

@@ -5888,7 +5888,7 @@ Bop_argb_blend_alphachannel_src_invsrc_Aop_rgb16( GenefxState *gfxs )
           case 0:                                                                                                     \
                break;                                                                                                 \
           case 0x3f:                                                                                                  \
-               d = RGB32_TO_RGB16( s );                                                                               \
+               d = ARGB_TO_RGB16( s );                                                                               \
                break;                                                                                                 \
           default:                                                                                                    \
                d = (((((((s >> 8) & 0xf800) | ((s >> 3) & 0x001f)) - (d & 0xf81f)) * ((s >> 26) + 1) +                \
@@ -8751,7 +8751,7 @@ Bop_rgb32_to_Aop_rgb16_LE( GenefxState *gfxs )
      if ((unsigned long) D & 2) {
           u16 *d = (u16*) D;
 
-          d[0] = RGB32_TO_RGB16( S[0] );
+          d[0] = ARGB_TO_RGB16( S[0] );
           D = (u32*) (d + 1);
 
           ++S;
@@ -8759,7 +8759,7 @@ Bop_rgb32_to_Aop_rgb16_LE( GenefxState *gfxs )
      }
 
      while (w > 1) {
-          D[0] = RGB32_TO_RGB16( S[0] ) | (RGB32_TO_RGB16( S[1] ) << 16);
+          D[0] = ARGB_TO_RGB16( S[0] ) | (ARGB_TO_RGB16( S[1] ) << 16);
 
           S += 2;
           ++D;
@@ -8769,7 +8769,7 @@ Bop_rgb32_to_Aop_rgb16_LE( GenefxState *gfxs )
      if (w > 0) {
           u16 *d = (u16*) D;
 
-          d[0] = RGB32_TO_RGB16( S[0] );
+          d[0] = ARGB_TO_RGB16( S[0] );
      }
 }
 
