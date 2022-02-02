@@ -713,10 +713,10 @@ typedef enum {
      /* 16 bit   YUV (4 byte/ 2 pixel, macropixel contains YCbYCr [31:0]) */
      DSPF_UYVY      = DFB_SURFACE_PIXELFORMAT(  8, 16, 0, 0, 0, 2, 0, 0, 0, 0, 0 ),
 
-     /* 12 bit   YUV (8 bit Y plane followed by 8 bit quarter size U/V planes) */
+     /* 12 bit   YUV (8 bit Y plane followed by quarter-size 8 bit U/V planes) */
      DSPF_I420      = DFB_SURFACE_PIXELFORMAT(  9, 12, 0, 0, 0, 1, 0, 2, 0, 0, 0 ),
 
-     /* 12 bit   YUV (8 bit Y plane followed by 8 bit quarter size V/U planes) */
+     /* 12 bit   YUV (8 bit Y plane followed by quarter-size 8 bit V/U planes) */
      DSPF_YV12      = DFB_SURFACE_PIXELFORMAT( 10, 12, 0, 0, 0, 1, 0, 2, 0, 0, 0 ),
 
      /*  8 bit   LUT (8 bit color and alpha lookup from palette) */
@@ -731,10 +731,10 @@ typedef enum {
      /*  1 bit alpha (1 byte/ 8 pixel, most significant bit used first) */
      DSPF_A1        = DFB_SURFACE_PIXELFORMAT( 14,  0, 1, 1, 1, 0, 7, 0, 0, 0, 0 ),
 
-     /* 12 bit   YUV (8 bit Y plane followed by one 16 bit quarter size Cb|Cr [7:0|7:0] plane) */
+     /* 12 bit   YUV (8 bit Y plane followed by quarter-size 16 bit Cb|Cr [7:0|7:0] plane) */
      DSPF_NV12      = DFB_SURFACE_PIXELFORMAT( 15, 12, 0, 0, 0, 1, 0, 2, 0, 0, 0 ),
 
-     /* 16 bit   YUV (8 bit Y plane followed by one 16 bit half width Cb|Cr [7:0|7:0] plane) */
+     /* 16 bit   YUV (8 bit Y plane followed by half-size 16 bit Cb|Cr [7:0|7:0] plane) */
      DSPF_NV16      = DFB_SURFACE_PIXELFORMAT( 16, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 ),
 
      /* 16 bit  ARGB (2 byte, alpha 2@14, red 5@9, green 5@4, blue 4@0) */
@@ -746,7 +746,7 @@ typedef enum {
      /* 16 bit  RGBA (2 byte, red 4@12, green 4@8, blue 4@4, alpha 4@0) */
      DSPF_RGBA4444  = DFB_SURFACE_PIXELFORMAT( 19, 12, 4, 1, 0, 2, 0, 0, 0, 0, 0 ),
 
-     /* 12 bit   YUV (8 bit Y plane followed by one 16 bit quarter size Cr|Cb [7:0|7:0] plane) */
+     /* 12 bit   YUV (8 bit Y plane followed by quarter-size 16 bit Cr|Cb [7:0|7:0] plane) */
      DSPF_NV21      = DFB_SURFACE_PIXELFORMAT( 20, 12, 0, 0, 0, 1, 0, 2, 0, 0, 0 ),
 
      /* 32 bit  AYUV (4 byte, alpha 8@24, Y 8@16, Cb 8@8, Cr 8@0) */
@@ -779,23 +779,22 @@ typedef enum {
      /* 16 bit  RGBA (2 byte, red 5@11, green 5@6, blue 5@1, alpha 1@0) */
      DSPF_RGBA5551  = DFB_SURFACE_PIXELFORMAT( 30, 15, 1, 1, 0, 2, 0, 0, 0, 0, 0 ),
 
-     /* 24 bit full YUV planar (8 bit Y plane followed by an 8 bit Cb and an
-        8 bit Cr plane) */
+     /* 24 bit   YUV (8 bit Y plane followed by 8 bit U/V planes) */
      DSPF_YUV444P   = DFB_SURFACE_PIXELFORMAT( 31, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 ),
 
      /* 24 bit  ARGB (3 byte, alpha 8@16, red 5@11, green 6@5, blue 5@0) */
      DSPF_ARGB8565  = DFB_SURFACE_PIXELFORMAT( 32, 16, 8, 1, 0, 3, 0, 0, 0, 0, 0 ),
 
-     /* 32 bit  AVYU 4:4:4 (4 byte, alpha 8@24, Cr 8@16, Y 8@8, Cb 8@0) */
+     /* 32 bit  AVYU (4 byte, alpha 8@24, Cr 8@16, Y 8@8, Cb 8@0) */
      DSPF_AVYU      = DFB_SURFACE_PIXELFORMAT( 33, 24, 8, 1, 0, 4, 0, 0, 0, 0, 0 ),
 
-     /* 24 bit   VYU 4:4:4 (3 byte, Cr 8@16, Y 8@8, Cb 8@0) */
+     /* 24 bit   VYU (3 byte, Cr 8@16, Y 8@8, Cb 8@0) */
      DSPF_VYU       = DFB_SURFACE_PIXELFORMAT( 34, 24, 0, 0, 0, 3, 0, 0, 0, 0, 0 ),
 
      /*  1 bit alpha (1 byte/ 8 pixel, LEAST significant bit used first) */
      DSPF_A1_LSB    = DFB_SURFACE_PIXELFORMAT( 35,  0, 1, 1, 1, 0, 7, 0, 0, 0, 0 ),
 
-     /* 16 bit   YUV (8 bit Y plane followed by 8 bit 2x1 subsampled V/U planes) */
+     /* 16 bit   YUV (8 bit Y plane followed by half-size 8 bit V/U planes) */
      DSPF_YV16      = DFB_SURFACE_PIXELFORMAT( 36, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 ),
 
      /* 32 bit  ABGR (4 byte, alpha 8@24, blue 8@16, green 8@8, red 8@0) */
@@ -807,10 +806,10 @@ typedef enum {
      /*  4 bit   LUT (1 byte/ 2 pixel, 4 bit color and alpha lookup from palette) */
      DSPF_LUT4      = DFB_SURFACE_PIXELFORMAT( 39,  4, 0, 1, 4, 0, 1, 0, 0, 1, 0 ),
 
-     /*  16 bit   LUT (1 byte alpha and 8 bit color lookup from palette) */
+     /* 16 bit   LUT (1 byte alpha and 8 bit color lookup from palette) */
      DSPF_ALUT8     = DFB_SURFACE_PIXELFORMAT( 40,  8, 8, 1, 0, 2, 0, 0, 0, 1, 0 ),
 
-     /*  1 bit    LUT (1 byte/ 8 pixel, 1 bit color and alpha lookup from palette) */
+     /*  1 bit   LUT (1 byte/ 8 pixel, 1 bit color and alpha lookup from palette) */
      DSPF_LUT1      = DFB_SURFACE_PIXELFORMAT( 41,  1, 0, 1, 1, 0, 7, 0, 0, 1, 0 )
 } DFBSurfacePixelFormat;
 
@@ -899,15 +898,16 @@ typedef enum {
 
      DSCS_RGB                              = 0x00000001,         /* standard RGB */
      DSCS_BT601                            = 0x00000002,         /* ITU BT.601 */
-     DSCS_BT601_FULLRANGE                  = 0x00000003,         /* ITU BT.601 Full Range */
-     DSCS_BT709                            = 0x00000004          /* ITU BT.709 */
+
+     DSCS_BT709                            = 0x00000004,         /* ITU BT.709 */
+     DSCS_BT2020                           = 0x00000005          /* ITU BT.2020 */
 } DFBSurfaceColorSpace;
 
-#define DFB_COLORSPACE_IS_COMPATIBLE(cs,fmt)                         \
-     ((DFB_COLOR_IS_RGB((fmt)) &&  ((cs) == DSCS_RGB))            || \
-      (DFB_COLOR_IS_YUV((fmt)) && (((cs) == DSCS_BT601)           || \
-                                   ((cs) == DSCS_BT601_FULLRANGE) || \
-                                   ((cs) == DSCS_BT709))))
+#define DFB_COLORSPACE_IS_COMPATIBLE(cs,fmt)               \
+     ((DFB_COLOR_IS_RGB((fmt)) &&  ((cs) == DSCS_RGB))  || \
+      (DFB_COLOR_IS_YUV((fmt)) && (((cs) == DSCS_BT601) || \
+                                   ((cs) == DSCS_BT709) || \
+                                   ((cs) == DSCS_BT2020))))
 
 #define DFB_COLORSPACE_DEFAULT(fmt) \
      (DFB_COLOR_IS_RGB((fmt)) ? DSCS_RGB : DFB_COLOR_IS_YUV((fmt)) ? DSCS_BT601 : DSCS_UNKNOWN)
@@ -1244,9 +1244,6 @@ typedef struct {
      int                                     outline_opacity;    /* outline opacity as 16.16 fixed point integer */
      int                                     rotation;           /* font rotation */
 } DFBFontDescription;
-
-#define DFB_DEGREES(deg)                     ((int) ((deg) / 360.0 * (1 << 24)))
-#define DFB_RADIANS(rad)                     ((int) ((rad) / (2.0 * M_PI) * (1 << 24)))
 
 /*
  * Flags defining which fields of a DFBDataBufferDescription are

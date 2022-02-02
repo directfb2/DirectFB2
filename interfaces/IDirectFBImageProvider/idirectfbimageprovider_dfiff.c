@@ -235,9 +235,9 @@ IDirectFBImageProvider_DFIFF_RenderTo( IDirectFBImageProvider *thiz,
      }
 
      if (data->render_callback) {
-          DFBRectangle rect = { 0, 0, clipped.w, clipped.h };
+          DFBRectangle r = { 0, 0, clipped.w, clipped.h };
 
-          data->render_callback( &rect, data->render_callback_context );
+          data->render_callback( &r, data->render_callback_context );
      }
 
      return DFB_OK;
