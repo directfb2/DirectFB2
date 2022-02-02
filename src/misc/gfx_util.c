@@ -102,7 +102,7 @@ write_argb_span( u32         *src,
 
           case DSPF_RGB332:
                for (i = 0; i < len; i++)
-                    d[i] = RGB32_TO_RGB332( src[i] );
+                    d[i] = ARGB_TO_RGB332( src[i] );
                break;
 
           case DSPF_ARGB1555:
@@ -142,7 +142,7 @@ write_argb_span( u32         *src,
 
           case DSPF_RGB16:
                for (i = 0; i < len; i++)
-                    ((u16*) d)[i] = RGB32_TO_RGB16( src[i] );
+                    ((u16*) d)[i] = ARGB_TO_RGB16( src[i] );
                break;
 
           case DSPF_ARGB1666:
