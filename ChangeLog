@@ -1,3 +1,30 @@
+commit d75e3b98b64622ffb6cab2d48c75900feac2a1e6
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Feb 2 09:33:49 2022 +0100
+
+    Add BT.2020 color space definition
+
+commit dcfa6e8bdfce590bb4e2a95beb17fa30c9f23a22
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Jan 18 21:56:00 2022 +0100
+
+    DirectFB2 at FOSDEM 2022
+
+commit cefad0b1bbda67ae2414e99c140c8234e96c366f
+Merge: e8e8bfcc7 1de2c28a2
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Tue Jan 18 21:53:06 2022 +0100
+
+    Merge pull request #4 from caramelli/master
+    
+    DFVFF: Restart from the beginning after stopping
+
+commit 1de2c28a29b473832202d90b0d7f137bef7e4831
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Jan 18 21:50:39 2022 +0100
+
+    Update ChangeLog
+
 commit ed3efb3ada2e6bb6ef7d00e72c08f29a64e47808
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Tue Jan 18 21:44:42 2022 +0100
