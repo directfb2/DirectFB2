@@ -1,3 +1,24 @@
+commit 33de3256220022401644ffa264ccfdd6d7d50e00
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Feb 8 14:51:50 2022 +0100
+
+    Declare CorePart variables with extern
+
+commit c1df2aa105be7f24b99b205c92f31147c7ea9681
+Merge: 5ec744bbf 4f95de7d7
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Feb 2 10:00:21 2022 +0100
+
+    Merge pull request #8 from caramelli/master
+    
+    Add pixel format conversion functions
+
+commit 4f95de7d778bbcd5c3910945f1903b92e748989c
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Feb 2 09:59:21 2022 +0100
+
+    Update ChangeLog
+
 commit d404af89d1f55a98c091417531be6f1e8f5d451e
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Wed Feb 2 09:59:07 2022 +0100
