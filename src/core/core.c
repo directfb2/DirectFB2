@@ -67,15 +67,15 @@ CoreDFB            *core_dfb      = NULL;
 static DirectMutex  core_dfb_lock = DIRECT_MUTEX_INITIALIZER();
 static DirectTLS    core_tls_key;
 
-CorePart dfb_clipboard_core;
-CorePart dfb_colorhash_core;
-CorePart dfb_graphics_core;
-CorePart dfb_input_core;
-CorePart dfb_layer_core;
-CorePart dfb_screen_core;
-CorePart dfb_surface_core;
-CorePart dfb_system_core;
-CorePart dfb_wm_core;
+extern CorePart dfb_clipboard_core;
+extern CorePart dfb_colorhash_core;
+extern CorePart dfb_graphics_core;
+extern CorePart dfb_input_core;
+extern CorePart dfb_layer_core;
+extern CorePart dfb_screen_core;
+extern CorePart dfb_surface_core;
+extern CorePart dfb_system_core;
+extern CorePart dfb_wm_core;
 
 static CorePart *core_parts[] = {
      &dfb_clipboard_core,
