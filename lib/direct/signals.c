@@ -49,7 +49,7 @@ typedef struct {
 
 static int sigs_to_handle[] = {
      SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT, SIGBUS, SIGFPE, SIGSEGV, SIGPIPE, SIGTERM, SIGXCPU, SIGXFSZ,
-     SIGUNUSED
+     SIGSYS
 };
 
 #define NUM_SIGS_TO_HANDLE (D_ARRAY_SIZE(sigs_to_handle))
@@ -103,7 +103,7 @@ direct_signals_shutdown()
 
      if (direct_config->sighandler_thread) {
           if (sighandler_thread) {
-               direct_thread_kill( sighandler_thread, SIGUNUSED );
+               direct_thread_kill( sighandler_thread, SIGSYS );
                direct_thread_join( sighandler_thread );
                direct_thread_destroy( sighandler_thread );
                sighandler_thread = NULL;
@@ -437,7 +437,7 @@ handle_signals( DirectThread *thread,
                sigaddset( &mask, sigs_to_handle[i] );
      }
 
-     sigaddset( &mask, SIGUNUSED );
+     sigaddset( &mask, SIGSYS );
      sigaddset( &mask, SIGPIPE );
 
      direct_sigprocmask( SIG_BLOCK, &mask, NULL );
@@ -451,8 +451,8 @@ handle_signals( DirectThread *thread,
                D_DEBUG_AT( Direct_Signals, "%s() -> got error %s\n", __FUNCTION__, direct_strerror( errno ) );
           }
           else {
-               if (SIGUNUSED == info.si_signo) {
-                    D_DEBUG_AT( Direct_Signals, "  -> got close signal %d (me %d, from %d)\n", SIGUNUSED,
+               if (SIGSYS == info.si_signo) {
+                    D_DEBUG_AT( Direct_Signals, "  -> got close signal %d (me %d, from %d)\n", SIGSYS,
                                 direct_getpid(), info.si_pid );
 
                     if (direct_getpid() == info.si_pid)
