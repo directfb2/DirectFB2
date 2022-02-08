@@ -1,3 +1,15 @@
+commit 521eebe4042d988c04930e0e148cf41ac3db085c
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Feb 8 14:57:43 2022 +0100
+
+    Replace SIGUNUSED with the standard SIGSYS signal
+
+commit ad206f371b4ad5f14e25ac6ab3906f226061eefc
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Feb 8 14:54:06 2022 +0100
+
+    Update ChangeLog
+
 commit 33de3256220022401644ffa264ccfdd6d7d50e00
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Tue Feb 8 14:51:50 2022 +0100
