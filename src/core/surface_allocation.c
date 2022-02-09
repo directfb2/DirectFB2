@@ -255,6 +255,7 @@ transfer_buffer( const CoreSurfaceConfig *config,
                break;
 
           case DSPF_NV16:
+          case DSPF_NV61:
                for (i = 0; i < config->size.h; i++) {
                     direct_memcpy( dst, src, DFB_BYTES_PER_LINE( config->format, config->size.w ) );
                     src += srcpitch;

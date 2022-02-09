@@ -78,6 +78,7 @@ Genefx_Aop_xy( GenefxState *gfxs,
                     dst_field_offset /= 2;
                     y /= 2;
                case DSPF_NV16:
+               case DSPF_NV61:
                     x &= ~1;
                     break;
                case DSPF_YUV444P:
@@ -179,7 +180,7 @@ Genefx_Aop_next( GenefxState *gfxs )
                     gfxs->Aop[2] += pitch;
                }
           }
-          else { /* DSPF_NV16 */
+          else { /* DSPF_NV16 || DSPF_NV61 */
                if (gfxs->dst_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Aop_field & 1)
                          gfxs->Aop[1] += gfxs->dst_field_offset;
@@ -275,7 +276,7 @@ Genefx_Aop_prev( GenefxState *gfxs )
                     gfxs->Aop[2] -= pitch;
                }
           }
-          else { /* DSPF_NV16 */
+          else { /* DSPF_NV16 || DSPF_NV61 */
                if (gfxs->dst_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Aop_field & 1)
                          gfxs->Aop[1] += gfxs->dst_field_offset - pitch;
@@ -334,6 +335,7 @@ Genefx_Bop_xy( GenefxState *gfxs,
                     src_field_offset /= 2;
                     y /= 2;
                case DSPF_NV16:
+               case DSPF_NV61:
                     x &= ~1;
                     break;
                case DSPF_YUV444P:
@@ -435,7 +437,7 @@ Genefx_Bop_next( GenefxState *gfxs )
                     gfxs->Bop[2] += pitch;
                }
           }
-          else { /* DSPF_NV16 */
+          else { /* DSPF_NV16 || DSPF_NV61 */
                if (gfxs->src_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Bop_field & 1)
                          gfxs->Bop[1] += gfxs->src_field_offset;
@@ -531,7 +533,7 @@ Genefx_Bop_prev( GenefxState *gfxs )
                     gfxs->Bop[2] -= pitch;
                }
           }
-          else { /* DSPF_NV16 */
+          else { /* DSPF_NV16 || DSPF_NV61 */
                if (gfxs->src_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Bop_field & 1)
                          gfxs->Bop[1] += gfxs->src_field_offset - pitch;
@@ -590,6 +592,7 @@ Genefx_Mop_xy( GenefxState *gfxs,
                     mask_field_offset /= 2;
                     y /= 2;
                case DSPF_NV16:
+               case DSPF_NV61:
                     x &= ~1;
                     break;
                case DSPF_YUV444P:
@@ -691,7 +694,7 @@ Genefx_Mop_next( GenefxState *gfxs )
                     gfxs->Mop[2] += pitch;
                }
           }
-          else { /* DSPF_NV16 */
+          else { /* DSPF_NV16 || DSPF_NV61 */
                if (gfxs->mask_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Mop_field & 1)
                          gfxs->Mop[1] += gfxs->mask_field_offset;
@@ -787,7 +790,7 @@ Genefx_Mop_prev( GenefxState *gfxs )
                     gfxs->Mop[2] -= pitch;
                }
           }
-          else { /* DSPF_NV16 */
+          else { /* DSPF_NV16 || DSPF_NV61 */
                if (gfxs->mask_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Mop_field & 1)
                          gfxs->Mop[1] += gfxs->mask_field_offset - pitch;

@@ -289,6 +289,7 @@ drmkmsTestConfig( CoreSurfacePool         *pool,
           case DSPF_NV12:
           case DSPF_NV21:
           case DSPF_NV16:
+          case DSPF_NV61:
                break;
           default:
                D_DEBUG_AT( DRMKMS_Surfaces, "  -> unsupported pixelformat!\n" );
@@ -383,6 +384,10 @@ drmkmsAllocateBuffer( CoreSurfacePool       *pool,
                break;
           case DSPF_NV16:
                drm_format = DRM_FORMAT_NV16;
+               drm_height = surface->config.size.h << 2;
+               break;
+          case DSPF_NV61:
+               drm_format = DRM_FORMAT_NV61;
                drm_height = surface->config.size.h << 2;
                break;
 
