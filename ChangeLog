@@ -1,3 +1,15 @@
+commit f6358663a118e8f3bf04c4a87442fd22e58efd5a
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Feb 9 07:57:14 2022 +0100
+
+    Add support for NV61
+
+commit ef3583fd6d9484019dece42dc18f528b053f6beb
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Feb 8 14:58:04 2022 +0100
+
+    Update ChangeLog
+
 commit 521eebe4042d988c04930e0e148cf41ac3db085c
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Tue Feb 8 14:57:43 2022 +0100
