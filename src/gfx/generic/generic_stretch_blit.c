@@ -229,6 +229,7 @@ static const StretchFunctionTable *stretch_tables[DFB_NUM_PIXELFORMATS] = {
      [DFB_PIXELFORMAT_INDEX(DSPF_VYU)]        = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_A1_LSB)]     = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_YV16)]       = NULL,
+     [DFB_PIXELFORMAT_INDEX(DSPF_NV61)]       = NULL,
 };
 
 /**********************************************************************************************************************/

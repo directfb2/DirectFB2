@@ -379,6 +379,7 @@ write_argb_span( u32         *src,
                break;
 
           case DSPF_NV21:
+          case DSPF_NV61:
                d1 = dst[1];
                for (i = 0; i < (len - 1); i += 2) {
                     u32 y0, u0, v0;
@@ -387,7 +388,7 @@ write_argb_span( u32         *src,
                     RGB_TO_YCBCR( (src[i+1] >> 16) & 0xff, (src[i+1] >> 8) & 0xff, src[i+1] & 0xff, y1, u1, v1 );
                     d[i+0] = y0;
                     d[i+1] = y1;
-                    if (dy & 1) {
+                    if (dst_surface->config.format == DSPF_NV61 || dy & 1) {
 #ifdef WORDS_BIGENDIAN
                          ((u16*) d1)[i>>1] = ((u0 + u1) >> 1) | (((v0 + v1) >> 1) << 8);
 #else
@@ -400,7 +401,7 @@ write_argb_span( u32         *src,
                     i = len - 1;
                     RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y, u, v );
                     d[i] = y;
-                    if (dy & 1)
+                    if (dst_surface->config.format == DSPF_NV61 || dy & 1)
 #ifdef WORDS_BIGENDIAN
                          ((u16*) d1)[i>>1] = u | (v << 8);
 #else
@@ -554,6 +555,7 @@ dfb_copy_buffer_32( u32             *src,
                break;
 
           case DSPF_NV16:
+          case DSPF_NV61:
                dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
 
                for (y = drect->y; y < drect->y + drect->h; y++) {
@@ -863,6 +865,7 @@ dfb_scale_linear_32( u32             *src,
           case DSPF_NV12:
           case DSPF_NV21:
           case DSPF_NV16:
+          case DSPF_NV61:
                dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
                break;
           case DSPF_YUV444P:
@@ -956,6 +959,7 @@ dfb_scale_linear_32( u32             *src,
                            (drect->x & ~1);
                     break;
                case DSPF_NV16:
+               case DSPF_NV61:
                     d[1] = LINE_PTR( dst1, dst_surface->config.caps, i, dst_surface->config.size.h, dpitch ) +
                            (drect->x & ~1);
                     break;

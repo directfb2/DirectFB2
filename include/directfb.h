@@ -810,11 +810,14 @@ typedef enum {
      DSPF_ALUT8     = DFB_SURFACE_PIXELFORMAT( 40,  8, 8, 1, 0, 2, 0, 0, 0, 1, 0 ),
 
      /*  1 bit   LUT (1 byte/ 8 pixel, 1 bit color and alpha lookup from palette) */
-     DSPF_LUT1      = DFB_SURFACE_PIXELFORMAT( 41,  1, 0, 1, 1, 0, 7, 0, 0, 1, 0 )
+     DSPF_LUT1      = DFB_SURFACE_PIXELFORMAT( 41,  1, 0, 1, 1, 0, 7, 0, 0, 1, 0 ),
+
+     /* 16 bit   YUV (8 bit Y plane followed by half-size 16 bit Cr|Cb [7:0|7:0] plane) */
+     DSPF_NV61      = DFB_SURFACE_PIXELFORMAT( 42, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 )
 } DFBSurfacePixelFormat;
 
 /* Number of pixelformats defined. */
-#define DFB_NUM_PIXELFORMATS                 42
+#define DFB_NUM_PIXELFORMATS                 43
 
 /* These macros extract information about the pixel format. */
 #define DFB_PIXELFORMAT_INDEX(fmt)           (((fmt) & 0x0000007F)      )
@@ -874,7 +877,8 @@ typedef enum {
       ((fmt) == DSPF_YUV444P)     || \
       ((fmt) == DSPF_AVYU)        || \
       ((fmt) == DSPF_VYU)         || \
-      ((fmt) == DSPF_YV16))
+      ((fmt) == DSPF_YV16)        || \
+      ((fmt) == DSPF_NV61))
 
 /*
  * Hint flags for optimized allocation, format selection etc.
