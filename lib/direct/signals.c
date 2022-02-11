@@ -170,16 +170,8 @@ direct_signal_handler_remove( DirectSignalHandler *handler )
      D_DEBUG_AT( Direct_Signals, "Removing handler %p for signal %d with context %p...\n",
                  handler->func, handler->num, handler->ctx );
 
-     if (direct_mutex_trylock( &handlers_lock ))
-          handler->removed = true;
-     else {
-          direct_list_remove( &handlers, &handler->link );
-          direct_mutex_unlock( &handlers_lock );
-
-          D_MAGIC_CLEAR( handler );
-
-          D_FREE( handler );
-     }
+     /* Mark the handler for removal, actually freeing it will happen later */
+     handler->removed = true;
 
      return DR_OK;
 }
@@ -308,7 +300,8 @@ static void
 call_handlers( int   num,
                void *addr )
 {
-     DirectSignalHandler *handler, *temp;
+     DirectSignalHandler *handler, *temp, *dead = NULL;
+     DirectLink *garbage = NULL;
 
      if (num == SIGPIPE)
           num = DIRECT_SIGNAL_DUMP_STACK;
@@ -319,8 +312,7 @@ call_handlers( int   num,
      direct_list_foreach_safe (handler, temp, handlers) {
           if (handler->removed) {
                direct_list_remove( &handlers, &handler->link );
-               D_MAGIC_CLEAR( handler );
-               D_FREE( handler );
+               direct_list_append( &garbage, &handler->link );
                continue;
           }
 
@@ -338,8 +330,7 @@ call_handlers( int   num,
 
                case DSHR_REMOVE:
                     direct_list_remove( &handlers, &handler->link );
-                    D_MAGIC_CLEAR( handler );
-                    D_FREE( handler );
+                    direct_list_append( &garbage, &handler->link );
                     break;
 
                case DSHR_RESUME:
@@ -351,6 +342,26 @@ call_handlers( int   num,
                     D_BUG( "unknown result" );
                     break;
           }
+     }
+
+     /*
+      * looping through the garbage accesses the current element
+      * after executing the loop body so it isn't safe to free the
+      * memory of the current element in the body.
+      * Instead set dead to the current element and free it's memory
+      * in the next loop.
+      */
+     direct_list_foreach (handler, garbage) {
+             if (dead) {
+                 D_MAGIC_CLEAR( dead );
+                 D_FREE( dead );
+             }
+             dead = handler;
+     }
+     /* Free the last dead handler */
+     if (dead) {
+         D_MAGIC_CLEAR( dead );
+         D_FREE( dead );
      }
 
      direct_mutex_unlock( &handlers_lock );
