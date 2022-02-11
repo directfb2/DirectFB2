@@ -228,6 +228,7 @@ const char *
 direct_thread_self_name()
 {
      DirectThread *thread = direct_thread_self();
+     char name[16];
 
      /* This function is called by debugging functions, e.g. debug messages, assertions etc.
         Therefore no assertions are made here, because they would loop forever if they fail. */
@@ -236,7 +237,8 @@ direct_thread_self_name()
           return NULL;
 
      if (!thread->name) {
-          prctl( PR_GET_NAME, thread->name, 0, 0, 0 );
+          prctl( PR_GET_NAME, name, 0, 0, 0 );
+          thread->name = strdup(name);
      }
 
      return thread->name;
