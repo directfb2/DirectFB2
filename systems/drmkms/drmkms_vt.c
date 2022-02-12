@@ -213,7 +213,12 @@ vt_init_switching()
      }
 
      if (vt->switching) {
-          struct vt_mode   vtm;
+          struct vt_mode   vtm = {
+               .mode   = VT_PROCESS,
+               .waitv  = 0,
+               .relsig = SIG_SWITCH_FROM,
+               .acqsig = SIG_SWITCH_TO,
+          };
           struct sigaction sig_tty;
 
           memset( &sig_tty, 0, sizeof(sig_tty) );
@@ -238,11 +243,6 @@ vt_init_switching()
                close( vt->fd );
                return DFB_INIT;
           }
-
-          vtm.mode   = VT_PROCESS;
-          vtm.waitv  = 0;
-          vtm.relsig = SIG_SWITCH_FROM;
-          vtm.acqsig = SIG_SWITCH_TO;
 
           if (ioctl( vt->fd, VT_SETMODE, &vtm ) < 0) {
                D_PERROR( "DRMKMS/VT: VT_SETMODE failed!\n" );
