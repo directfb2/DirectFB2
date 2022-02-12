@@ -810,14 +810,14 @@ set_led( const LinuxInputData *data,
          int                   led,
          int                   state )
 {
-     struct input_event levt;
+     struct input_event levt = {
+          .type  = EV_LED,
+          .code  = led,
+          .value = state,
+     };
      int                res;
 
      D_UNUSED_P( res );
-
-     levt.type  = EV_LED;
-     levt.code  = led;
-     levt.value = state;
 
      res = write( data->fd, &levt, sizeof(levt) );
 }
