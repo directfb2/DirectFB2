@@ -1854,14 +1854,16 @@ static int
 dfb_core_arena_shutdown( void *ctx,
                          bool  emergency )
 {
-     DFBResult      ret;
-     CoreDFB       *core = ctx;
-     CoreDFBShared *shared;
+     DFBResult            ret;
+     CoreDFB             *core = ctx;
+     CoreDFBShared       *shared;
+     FusionSHMPoolShared *shmpool;
 
      D_MAGIC_ASSERT( core, CoreDFB );
      D_MAGIC_ASSERT( core->shared, CoreDFBShared );
 
      shared = core->shared;
+     shmpool = shared->shmpool;
 
      D_DEBUG_AT( Core_Main, "%s() shutting down...\n", __FUNCTION__ );
 
@@ -1881,9 +1883,9 @@ dfb_core_arena_shutdown( void *ctx,
 
      D_MAGIC_CLEAR( shared );
 
-     SHFREE( shared->shmpool, shared );
+     SHFREE( shmpool, shared );
 
-     fusion_shm_pool_destroy( core->world, shared->shmpool );
+     fusion_shm_pool_destroy( core->world, shmpool );
 
      return ret;
 }
