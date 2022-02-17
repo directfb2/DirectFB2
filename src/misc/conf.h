@@ -97,6 +97,7 @@ typedef struct
      DFBSurfaceRenderOptions     render_options;
      int                         keep_accumulators;
      bool                        mmx;
+     bool                        neon;
      struct {
           DFBConfigWarnFlags     flags;
           struct {

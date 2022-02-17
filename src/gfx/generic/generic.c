@@ -8835,6 +8835,44 @@ gInit_MMX()
 
 #endif
 
+static int use_neon = 0;
+
+#ifdef USE_NEON
+
+#include "generic_neon.h"
+
+/*
+ * patches function pointers to NEON functions
+ */
+static void
+gInit_NEON()
+{
+     use_neon = 1;
+/********************************* Sop_PFI_to_Dacc ****************************/
+     Sop_PFI_to_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_RGB16)] = Sop_rgb16_to_Dacc_NEON;
+     Sop_PFI_to_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_ARGB )] = Sop_argb_to_Dacc_NEON;
+/********************************* Sacc_to_Aop_PFI ****************************/
+     Sacc_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_RGB16)] = Sacc_to_Aop_rgb16_NEON;
+/********************************* misc accumulator operations ****************/
+     SCacc_add_to_Dacc = SCacc_add_to_Dacc_NEON;
+     Sacc_add_to_Dacc = Sacc_add_to_Dacc_NEON;
+/********************************* Xacc_blend *********************************/
+     Xacc_blend[DSBF_INVSRCALPHA-1] = Xacc_blend_invsrcalpha_NEON;
+     Xacc_blend[DSBF_SRCALPHA-1] = Xacc_blend_srcalpha_NEON;
+/********************************* Dacc_modulation ****************************/
+     Dacc_modulation[DSBLIT_BLEND_ALPHACHANNEL |
+                     DSBLIT_BLEND_COLORALPHA |
+                     DSBLIT_COLORIZE] = Dacc_modulate_argb_NEON;
+     Dacc_modulation[DSBLIT_COLORIZE] = Dacc_modulate_rgb_NEON;
+     Dacc_modulation[DSBLIT_COLORIZE |
+                     DSBLIT_BLEND_ALPHACHANNEL] = Dacc_modulate_rgb_NEON;
+/********************************* Bopp blend alphachannel ********************/
+     Bop_argb_blend_alphachannel_src_invsrc_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_RGB16)] \
+                     = Bop_argb_blend_alphachannel_src_invsrc_Aop_rgb16_NEON;
+}
+
+#endif
+
 #if SIZEOF_LONG == 8
 
 #include "generic_64.h"
@@ -8929,6 +8967,19 @@ gGetDriverInfo( GraphicsDriverInfo *info )
           snprintf( info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH, "MMX Software Driver" );
 
           D_INFO( "DirectFB/Genefx: MMX enabled\n" );
+     }
+#endif
+
+#ifdef USE_NEON
+     if (!dfb_config->neon) {
+          D_INFO( "DirectFB/Genefx: NEON disabled by option 'no-neon'\n" );
+     }
+     else {
+          gInit_NEON();
+
+          snprintf( info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH, "NEON Software Driver" );
+
+          D_INFO( "DirectFB/Genefx: NEON enabled\n" );
      }
 #endif
 

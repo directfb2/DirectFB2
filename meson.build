@@ -52,6 +52,12 @@ if host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
   endif
 endif
 
+if host_machine.cpu_family() == 'arm' or host_machine.cpu_family() == 'aarch64'
+  if get_option('neon')
+    config_h.set('USE_NEON', 1, description: 'Define to 1 if you are compiling NEON assembly support.')
+  endif
+endif
+
 configure_file(configuration: config_h, output: 'config.h')
 
 config_inc = include_directories('.')
