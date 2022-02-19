@@ -922,6 +922,7 @@ dfb_config_set( const char *name,
                }
 
                conf->rotate = rotate;
+               conf->rotate_set = true;
           }
           else {
                D_ERROR( "DirectFB/Config: '%s': No value specified!\n", name );
