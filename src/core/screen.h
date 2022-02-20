@@ -122,4 +122,7 @@ DFBResult dfb_screen_get_layer_dimension( CoreScreen                   *screen,
 DFBResult dfb_screen_get_frame_interval ( CoreScreen                   *screen,
                                           long long                    *ret_micros );
 
+DFBResult dfb_screen_get_rotation       ( CoreScreen *screen,
+                                          int        *rotation );
+
 #endif

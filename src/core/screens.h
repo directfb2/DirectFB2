@@ -177,6 +177,13 @@ typedef struct {
                                      int                          *ret_height );
 
      /*
+      * Return the physical screen rotation
+      */
+     DFBResult (*GetScreenRotation) ( CoreScreen                  *screen,
+                                      void                        *driver_data,
+                                      int                         *rotation );
+
+     /*
       * Return the mixer state.
       */
      DFBResult (*GetMixerState)    ( CoreScreen                   *screen,

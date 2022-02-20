@@ -647,3 +647,23 @@ dfb_screen_get_frame_interval( CoreScreen *screen,
 
      return DFB_OK;
 }
+
+DFBResult
+dfb_screen_get_rotation( CoreScreen *screen,
+                         int        *rotation )
+{
+    const ScreenFuncs *funcs;
+
+    D_ASSERT( screen != NULL );
+    D_ASSERT( screen->funcs != NULL );
+    D_ASSERT( rotation != NULL );
+
+    funcs = screen->funcs;
+
+    if (!funcs->GetScreenRotation) {
+         *rotation = 0;
+         return DFB_OK;
+    }
+
+    return funcs->GetScreenRotation( screen, screen->driver_data, rotation );
+}
