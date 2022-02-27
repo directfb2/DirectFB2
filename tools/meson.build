@@ -21,5 +21,6 @@ executable('dfbg',
 
 executable('dfbinfo',
            'dfbinfo.c',
+           directfb_strings,
            dependencies: directfb_dep,
            install: true)

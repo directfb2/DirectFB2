@@ -174,7 +174,7 @@ configure_file(configuration: build_h,
                install_dir: join_paths(get_option('includedir'), 'directfb-internal'))
 
 libdirectfb = library('directfb-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
-                      directfb_sources, flux_sources, surface_pool_sources,
+                      directfb_sources, flux_sources, surface_pool_sources, directfb_strings,
                       include_directories: [config_inc, directfb_inc],
                       c_args: ['-DBUILDTIME="' + run_command('date', '-u', '+%Y-%m-%d %H:%M').stdout().strip() + '"',
                                '-DSYSCONFDIR="/dfb/etc"'],
