@@ -177,7 +177,7 @@ libdirectfb = library('directfb-@0@.@1@'.format(directfb_major_version, directfb
                       directfb_sources, flux_sources, surface_pool_sources,
                       include_directories: [config_inc, directfb_inc],
                       c_args: ['-DBUILDTIME="' + run_command('date', '-u', '+%Y-%m-%d %H:%M').stdout().strip() + '"',
-                               '-DSYSCONFDIR="/dfb/etc"'],
+                               '-DSYSCONFDIR="' + join_paths(get_option('prefix'), get_option('sysconfdir')) + '"'],
                       dependencies: [direct_dep, fusion_dep],
                       version: '0.@0@.0'.format(directfb_micro_version),
                       install: true)
