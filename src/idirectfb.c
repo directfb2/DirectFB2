@@ -1903,7 +1903,7 @@ InitLayers( IDirectFB *thiz )
                if (conf->palette_set)
                     InitLayerPalette( data, conf, data->layers[i].surface, &data->layers[i].palette );
 
-               if (conf->src_key_index >= 0 && conf->src_key_index < D_ARRAY_SIZE(conf->palette)) {
+               if (conf->src_key_index >= 0 && conf->src_key_index < 256) {
                     conf->src_key.r = conf->palette[conf->src_key_index].r;
                     conf->src_key.g = conf->palette[conf->src_key_index].g;
                     conf->src_key.b = conf->palette[conf->src_key_index].b;
