@@ -134,11 +134,18 @@ configure_file(configuration: build_h,
                install: true,
                install_dir: join_paths(get_option('includedir'), 'directfb/direct'))
 
+libdl_dep = cc.find_library('dl')
+librt_dep = []
+if not cc.has_function('clock_gettime')
+  librt_dep = cc.find_library('rt')
+endif
+threads_dep = dependency('threads')
+
 libdirect = library('direct-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
                     direct_sources, os_linux_sources,
                     include_directories: [config_inc, lib_inc],
                     c_args: ['-DMODULEDIR="@0@"'.format(moduledir)],
-                    link_args: ['-ldl', '-lpthread'],
+                    dependencies: [libdl_dep, librt_dep, threads_dep],
                     version: '0.@0@.0'.format(directfb_micro_version),
                     install: true)
 
