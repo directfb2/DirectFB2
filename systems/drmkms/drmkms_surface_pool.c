@@ -41,7 +41,7 @@ struct kms_bo {
 };
 
 typedef struct {
-     int             magic;
+     int magic;
 } DRMKMSPoolData;
 
 typedef struct {
@@ -56,7 +56,7 @@ typedef struct {
 } DRMKMSPoolLocalData;
 
 typedef struct {
-     int   magic;
+     int            magic;
 
      struct kms_bo *bo;
 
@@ -74,17 +74,17 @@ typedef struct {
 } DRMKMSAllocationData;
 
 typedef struct {
-     int                   magic;
+     int                  magic;
 
-     DRMKMSPoolLocalData  *pool_local;
+     DRMKMSPoolLocalData *pool_local;
 
-     FusionObjectID        alloc_id;
+     FusionObjectID       alloc_id;
 
-     struct kms_bo         bo;
+     struct kms_bo        bo;
 
-     void                 *addr;
+     void                *addr;
 
-     Reaction              reaction;
+     Reaction             reaction;
 } DRMKMSAllocationLocalData;
 
 /**********************************************************************************************************************/

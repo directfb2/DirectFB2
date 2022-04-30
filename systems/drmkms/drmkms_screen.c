@@ -39,7 +39,7 @@ drmkmsInitScreen( CoreScreen           *screen,
      drmModeConnector *connector = NULL;
      drmModeEncoder   *encoder   = NULL;
      drmModeModeInfo  *mode;
-     int               i, m;
+     int               busy, i, j, k;
 
      D_DEBUG_AT( DRMKMS_Screen, "%s()\n", __FUNCTION__ );
 
@@ -63,28 +63,86 @@ drmkmsInitScreen( CoreScreen           *screen,
                continue;
 
           if (connector->count_modes > 0) {
+               D_DEBUG_AT( DRMKMS_Screen, "  -> found connector %u\n", connector->connector_id );
+
                if (connector->encoder_id) {
-                    D_DEBUG_AT( DRMKMS_Screen, "  -> connector %u is bound to encoder %u\n",
-                                connector->connector_id, connector->encoder_id );
+                    D_DEBUG_AT( DRMKMS_Screen, "  -> connector is bound to encoder %u\n", connector->encoder_id );
 
                     encoder = drmModeGetEncoder( drmkms->fd, connector->encoder_id );
                     if (!encoder)
                          continue;
                }
+               else {
+                    D_DEBUG_AT( DRMKMS_Screen, "  -> searching for appropriate encoder\n" );
 
-               if (encoder->crtc_id) {
-                    D_DEBUG_AT( DRMKMS_Screen, "  -> encoder %u is bound to ctrc %u\n",
-                                connector->encoder_id, encoder->crtc_id );
+                    for (j = 0; j < resources->count_encoders; j++) {
+                         encoder = drmModeGetEncoder( drmkms->fd, resources->encoders[j] );
+                         if (!encoder)
+                              continue;
+
+                         busy = 0;
+
+                         for (k = 0; k < shared->enabled_crtcs; k++) {
+                              if (drmkms->encoder[k]->encoder_id == encoder->encoder_id) {
+                                   D_DEBUG_AT( DRMKMS_Screen, "  -> encoder %u is already in use by connector %u\n",
+                                               encoder->encoder_id, drmkms->connector[k]->connector_id );
+                                   busy = 1;
+                              }
+                         }
+
+                         if (busy)
+                              continue;
+
+                         D_DEBUG_AT( DRMKMS_Screen, "  -> found encoder %u\n", encoder->encoder_id );
+                         break;
+                    }
+               }
+
+               if (encoder) {
+                    if (encoder->crtc_id) {
+                         D_DEBUG_AT( DRMKMS_Screen, "  -> encoder is bound to crtc %u\n", encoder->crtc_id );
+                    }
+                    else {
+                         D_DEBUG_AT( DRMKMS_Screen, "  -> searching for appropriate crtc\n" );
+
+                         for (j = 0; j < resources->count_crtcs; j++) {
+                              if (!(encoder->possible_crtcs & (1 << j)))
+                                   continue;
+
+                              busy = 0;
+
+                              for (k = 0; k < shared->enabled_crtcs; k++) {
+                                   if (drmkms->encoder[k]->crtc_id == resources->crtcs[j]) {
+                                        D_DEBUG_AT( DRMKMS_Screen, "  -> crtc %u is already in use by encoder %u\n",
+                                                    resources->crtcs[j], drmkms->encoder[k]->encoder_id );
+                                        busy = 1;
+                                   }
+                              }
+
+                              if (busy)
+                                   continue;
+
+                              encoder->crtc_id = resources->crtcs[j];
+
+                              D_DEBUG_AT( DRMKMS_Screen, "  -> found crtc %u\n", encoder->crtc_id );
+                              break;
+                         }
+
+                         if (!encoder->crtc_id) {
+                              D_DEBUG_AT( DRMKMS_Screen, "  -> cannot find crtc for encoder %u\n", encoder->encoder_id );
+                              break;
+                         }
+                    }
 
                     drmkms->connector[shared->enabled_crtcs] = connector;
                     drmkms->encoder[shared->enabled_crtcs]   = encoder;
 
                     shared->mode[shared->enabled_crtcs] = connector->modes[0];
 
-                    for (m = 0; m < connector->count_modes; m++)
-                         D_DEBUG_AT( DRMKMS_Screen, "    => mode[%2d] is %ux%u@%uHz\n", m,
-                                     connector->modes[m].hdisplay, connector->modes[m].vdisplay,
-                                     connector->modes[m].vrefresh );
+                    for (j = 0; j < connector->count_modes; j++)
+                         D_DEBUG_AT( DRMKMS_Screen, "    => modes[%2d] is %ux%u@%uHz\n", j,
+                                     connector->modes[j].hdisplay, connector->modes[m].vdisplay,
+                                     connector->modes[j].vrefresh );
 
                     shared->enabled_crtcs++;
 
