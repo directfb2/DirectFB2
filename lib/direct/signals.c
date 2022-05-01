@@ -170,7 +170,7 @@ direct_signal_handler_remove( DirectSignalHandler *handler )
      D_DEBUG_AT( Direct_Signals, "Removing handler %p for signal %d with context %p...\n",
                  handler->func, handler->num, handler->ctx );
 
-     /* Mark the handler for removal, actually freeing it will happen later */
+     /* Mark the handler for removal, freeing will actually come later. */
      handler->removed = true;
 
      return DR_OK;
@@ -300,8 +300,8 @@ static void
 call_handlers( int   num,
                void *addr )
 {
-     DirectSignalHandler *handler, *temp, *dead = NULL;
-     DirectLink *garbage = NULL;
+     DirectSignalHandler *handler, *temp;
+     DirectLink          *garbage = NULL;
 
      if (num == SIGPIPE)
           num = DIRECT_SIGNAL_DUMP_STACK;
@@ -344,24 +344,9 @@ call_handlers( int   num,
           }
      }
 
-     /*
-      * looping through the garbage accesses the current element
-      * after executing the loop body so it isn't safe to free the
-      * memory of the current element in the body.
-      * Instead set dead to the current element and free it's memory
-      * in the next loop.
-      */
-     direct_list_foreach (handler, garbage) {
-             if (dead) {
-                 D_MAGIC_CLEAR( dead );
-                 D_FREE( dead );
-             }
-             dead = handler;
-     }
-     /* Free the last dead handler */
-     if (dead) {
-         D_MAGIC_CLEAR( dead );
-         D_FREE( dead );
+     direct_list_foreach_safe (handler, temp, handlers) {
+          D_MAGIC_CLEAR( handler );
+          D_FREE( handler );
      }
 
      direct_mutex_unlock( &handlers_lock );
