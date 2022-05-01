@@ -386,7 +386,7 @@ dfb_graphics_core_shutdown( DFBGraphicsCore *data,
                             bool             emergency )
 {
      DFBGraphicsCoreShared *shared;
-     FusionSHMPoolShared   *pool = dfb_core_shmpool( data->core );
+     FusionSHMPoolShared   *pool;
 
      D_DEBUG_AT( Core_Graphics, "%s( %p, %semergency )\n", __FUNCTION__, data, emergency ? "" : "no " );
 
@@ -394,6 +394,8 @@ dfb_graphics_core_shutdown( DFBGraphicsCore *data,
      D_MAGIC_ASSERT( data->shared, DFBGraphicsCoreShared );
 
      shared = data->shared;
+
+     pool = dfb_core_shmpool( data->core );
 
      dfb_gfxcard_lock( GDLF_SYNC );
 

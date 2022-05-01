@@ -1857,13 +1857,14 @@ dfb_core_arena_shutdown( void *ctx,
      DFBResult            ret;
      CoreDFB             *core = ctx;
      CoreDFBShared       *shared;
-     FusionSHMPoolShared *shmpool;
+     FusionSHMPoolShared *pool;
 
      D_MAGIC_ASSERT( core, CoreDFB );
      D_MAGIC_ASSERT( core->shared, CoreDFBShared );
 
      shared = core->shared;
-     shmpool = shared->shmpool;
+
+     pool = shared->shmpool;
 
      D_DEBUG_AT( Core_Main, "%s() shutting down...\n", __FUNCTION__ );
 
@@ -1883,9 +1884,9 @@ dfb_core_arena_shutdown( void *ctx,
 
      D_MAGIC_CLEAR( shared );
 
-     SHFREE( shmpool, shared );
+     SHFREE( pool, shared );
 
-     fusion_shm_pool_destroy( core->world, shmpool );
+     fusion_shm_pool_destroy( core->world, pool );
 
      return ret;
 }

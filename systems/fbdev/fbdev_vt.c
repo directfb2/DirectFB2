@@ -288,8 +288,8 @@ vt_init_switching()
                return DFB_INIT;
           }
 
+          memset( &vtm, 0, sizeof(vtm) );
           vtm.mode   = VT_PROCESS;
-          vtm.waitv  = 0;
           vtm.relsig = SIG_SWITCH_FROM;
           vtm.acqsig = SIG_SWITCH_TO;
 

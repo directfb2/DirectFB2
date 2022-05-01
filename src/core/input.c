@@ -350,7 +350,7 @@ dfb_input_core_shutdown( DFBInputCore *data,
      CoreInputDriver        *driver;
      DirectLink             *next;
      const InputDriverFuncs *funcs;
-     FusionSHMPoolShared    *pool = dfb_core_shmpool( data->core );
+     FusionSHMPoolShared    *pool;
 
      D_DEBUG_AT( Core_Input, "%s( %p, %semergency )\n", __FUNCTION__, data, emergency ? "" : "no " );
 
@@ -358,6 +358,8 @@ dfb_input_core_shutdown( DFBInputCore *data,
      D_MAGIC_ASSERT( data->shared, DFBInputCoreShared );
 
      shared = data->shared;
+
+     pool = dfb_core_shmpool( data->core );
 
      /* Stop each input provider's hot-plug thread that supports device hot-plugging. */
      direct_list_foreach_safe (driver, next, data->drivers) {

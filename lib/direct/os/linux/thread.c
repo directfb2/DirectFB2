@@ -238,7 +238,7 @@ direct_thread_self_name()
 
      if (!thread->name) {
           prctl( PR_GET_NAME, name, 0, 0, 0 );
-          thread->name = strdup(name);
+          thread->name = strdup( name );
      }
 
      return thread->name;
