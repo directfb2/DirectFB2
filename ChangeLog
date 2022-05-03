@@ -1,3 +1,99 @@
+commit 92f23cc01a45183d7022c97fbc2c66baea0b748a
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue May 3 17:30:02 2022 +0200
+
+    DFVFF: Add missing DIRECT_DEALLOCATE_INTERFACE( thiz )
+
+commit 98d4278476ccaa7a787721cec30e503c23f84bf2
+Merge: 35a7c6ba5 291ace5a7
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun May 1 09:31:40 2022 +0200
+
+    Merge pull request #28 from caramelli/master
+    
+    Fix uninitialised byte(s)
+
+commit 291ace5a7fa6f0dc67ed37683513044331702be1
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun May 1 09:30:52 2022 +0200
+
+    Fix uninitialised byte(s)
+
+commit 35a7c6ba5300582218d323eca562ffc7d5537335
+Merge: 19049c5d2 5d32b0b88
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Apr 30 14:25:32 2022 +0200
+
+    Merge pull request #27 from caramelli/master
+    
+    drmkms: Management of connectors not bound to an encoder
+
+commit 5d32b0b88a0bd0be7d29d851ebffb48db31dccb1
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Apr 30 14:23:36 2022 +0200
+
+    drmkms: Management of connectors not bound to an encoder
+
+commit 19049c5d29210551d8626d30c307ce140573db30
+Merge: 1f2a61320 34b8225b7
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Apr 29 18:41:00 2022 +0200
+
+    Merge pull request #26 from caramelli/master
+    
+    Add -lrt for compatibility with old glibc
+
+commit 34b8225b7c75074a87c50adef1ceb4a29a384fee
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Apr 29 18:37:46 2022 +0200
+
+    Add -lrt for compatibility with old glibc
+
+commit 1f2a613206dc1ddd7ed301f79468d5b3397ea11f
+Merge: d90c8770e 724b2f259
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Apr 28 18:14:17 2022 +0200
+
+    Merge pull request #25 from caramelli/master
+    
+    Fix palette index check in InitLayers()
+
+commit 724b2f259d5871485ec12aee5a5977303317c560
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Apr 28 18:12:00 2022 +0200
+
+    Fix palette index check in InitLayers()
+
+commit d90c8770e1b844fcd4698592a2281b5a749ddce7
+Merge: 6b74bc443 3a428e985
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Apr 28 14:18:15 2022 +0200
+
+    Merge pull request #24 from caramelli/master
+    
+    readdir_r() is deprecated
+
+commit 3a428e985c2320b989921b1d5b0aaa846d8fe04f
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Apr 28 14:18:22 2022 +0200
+
+    readdir_r() is deprecated
+
+commit 6b74bc443cdcc1c1127581bbc1b02ed1fec16bf7
+Merge: 9d0781a02 0505492ba
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Mar 30 19:13:40 2022 +0200
+
+    Merge pull request #22 from caramelli/master
+    
+    Fix SYSCONFDIR
+
+commit 0505492baf1b3abb4b2e08c07118a3c1d5161ec5
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Mar 30 19:09:28 2022 +0200
+
+    Update ChangeLog
+
 commit 7ac237d1be6517acbc97b03dc85aa775e12dd484
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Wed Mar 30 19:08:00 2022 +0200
