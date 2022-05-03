@@ -68,7 +68,7 @@ typedef struct {
      DirectMutex                    lock;
      DirectWaitQueue                cond;
 
-     int                            seeked;
+     bool                           seeked;
 
      IDirectFBSurface              *dest;
      DFBRectangle                   rect;
@@ -110,7 +110,6 @@ DFVFFVideo( DirectThread *thread,
             void         *arg )
 {
      DFBResult                          ret;
-     IDirectFBVideoProvider_DFVFF_data *data = arg;
      IDirectFBSurface                  *source;
      void                              *source_ptr;
      int                                source_pitch;
@@ -118,6 +117,7 @@ DFVFFVideo( DirectThread *thread,
      long                               start_frame;
      long long                          start;
      int                                drop = 0;
+     IDirectFBVideoProvider_DFVFF_data *data = arg;
 
      ret = data->idirectfb->CreateSurface( data->idirectfb, &data->desc, &source );
      if (ret)
@@ -146,13 +146,13 @@ DFVFFVideo( DirectThread *thread,
           }
           else {
                if (data->seeked) {
-                    if (data->status == DVSTATE_FINISHED)
-                         data->status = DVSTATE_PLAY;
-
                     frame_ptr = data->ptr + sizeof(DFVFFHeader) + data->frame * data->frame_size;
 
                     start_frame = data->frame;
                     start = direct_clock_get_abs_millis();
+
+                    if (data->status == DVSTATE_FINISHED)
+                         data->status = DVSTATE_PLAY;
 
                     data->seeked = false;
                }
@@ -201,7 +201,7 @@ DFVFFVideo( DirectThread *thread,
 
           data->frame++;
 
-          if (data->frame == data->nb_frames ) {
+          if (data->frame == data->nb_frames) {
                if (data->flags & DVPLAY_LOOPING) {
                     data->frame = 0;
 
@@ -232,8 +232,7 @@ DFVFFVideo( DirectThread *thread,
 static void
 IDirectFBVideoProvider_DFVFF_Destruct( IDirectFBVideoProvider *thiz )
 {
-     EventLink *link, *tmp;
-
+     EventLink                         *link, *tmp;
      IDirectFBVideoProvider_DFVFF_data *data = thiz->priv;
 
      D_DEBUG_AT( VideoProvider_DFVFF, "%s( %p )\n", __FUNCTION__, thiz );
@@ -723,13 +722,16 @@ Construct( IDirectFBVideoProvider *thiz,
      D_DEBUG_AT( VideoProvider_DFVFF, "%s( %p )\n", __FUNCTION__, thiz );
 
      /* Check for valid filename. */
-     if (!buffer_data->filename)
+     if (!buffer_data->filename) {
+          DIRECT_DEALLOCATE_INTERFACE( thiz );
           return DFB_UNSUPPORTED;
+     }
 
      /* Open the file. */
      ret = direct_file_open( &fd, buffer_data->filename, O_RDONLY, 0 );
      if (ret) {
           D_DERROR( ret, "VideoProvider/DFVFF: Failed to open '%s'!\n", buffer_data->filename );
+          DIRECT_DEALLOCATE_INTERFACE( thiz );
           return ret;
      }
 
