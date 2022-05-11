@@ -755,13 +755,13 @@ typedef enum {
      /*  4 bit alpha (1 byte/ 2 pixel, more significant nibble used first) */
      DSPF_A4        = DFB_SURFACE_PIXELFORMAT( 22,  0, 4, 1, 4, 0, 1, 0, 0, 0, 0 ),
 
-     /*  1 bit alpha (3 byte/  alpha 1@18, red 6@12, green 6@6, blue 6@0) */
+     /*  1 bit alpha (3 byte, alpha 1@18, red 6@12, green 6@6, blue 6@0) */
      DSPF_ARGB1666  = DFB_SURFACE_PIXELFORMAT( 23, 18, 1, 1, 0, 3, 0, 0, 0, 0, 0 ),
 
-     /*  6 bit alpha (3 byte/  alpha 6@18, red 6@12, green 6@6, blue 6@0) */
+     /*  6 bit alpha (3 byte, alpha 6@18, red 6@12, green 6@6, blue 6@0) */
      DSPF_ARGB6666  = DFB_SURFACE_PIXELFORMAT( 24, 18, 6, 1, 0, 3, 0, 0, 0, 0, 0 ),
 
-     /*  6 bit   RGB (3 byte/   red 6@12, green 6@6, blue 6@0) */
+     /* 24 bit   RGB (3 byte, nothing @18, red 6@12, green 6@6, blue 6@0) */
      DSPF_RGB18     = DFB_SURFACE_PIXELFORMAT( 25, 18, 0, 0, 0, 3, 0, 0, 0, 0, 0 ),
 
      /*  2 bit   LUT (1 byte/ 4 pixel, 2 bit color and alpha lookup from palette) */
@@ -791,7 +791,7 @@ typedef enum {
      /* 24 bit   VYU (3 byte, Cr 8@16, Y 8@8, Cb 8@0) */
      DSPF_VYU       = DFB_SURFACE_PIXELFORMAT( 34, 24, 0, 0, 0, 3, 0, 0, 0, 0, 0 ),
 
-     /*  1 bit alpha (1 byte/ 8 pixel, LEAST significant bit used first) */
+     /*  1 bit alpha (1 byte/ 8 pixel, least significant bit used first) */
      DSPF_A1_LSB    = DFB_SURFACE_PIXELFORMAT( 35,  0, 1, 1, 1, 0, 7, 0, 0, 0, 0 ),
 
      /* 16 bit   YUV (8 bit Y plane followed by half-size 8 bit V/U planes) */

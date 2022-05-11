@@ -63,7 +63,7 @@ main( int   argc, char *argv[] )
      /* Get the primary display layer. */
      ret = dfb->GetDisplayLayer( dfb, DLID_PRIMARY, &layer );
      if (ret) {
-          DirectFBError( "IDirectFB::GetDisplayLayer() failed", ret );
+          DirectFBError( "GetDisplayLayer() failed", ret );
           dfb->Release( dfb );
           return -4;
      }
@@ -71,7 +71,7 @@ main( int   argc, char *argv[] )
      /* Acquire administrative cooperative level. */
      ret = layer->SetCooperativeLevel( layer, DLSCL_ADMINISTRATIVE );
      if (ret) {
-          DirectFBError( "IDirectFBDisplayLayer::SetCooperativeLevel() failed", ret );
+          DirectFBError( "SetCooperativeLevel() failed", ret );
           layer->Release( layer );
           dfb->Release( dfb );
           return -5;
@@ -176,13 +176,13 @@ set_background_color()
                                       (argb & 0xff)       >> 0,
                                       (argb & 0xff000000) >> 24 );
      if (ret) {
-          DirectFBError( "IDirectFBDisplayLayer::SetBackgroundColor() failed", ret );
+          DirectFBError( "SetBackgroundColor() failed", ret );
           return;
      }
 
      ret = layer->SetBackgroundMode( layer, DLBM_COLOR );
      if (ret)
-          DirectFBError( "IDirectFBDisplayLayer::SetBackgroundMode() failed", ret );
+          DirectFBError( "SetBackgroundMode() failed", ret );
 }
 
 static void
@@ -195,13 +195,13 @@ set_background_image()
 
      ret = dfb->CreateImageProvider( dfb, filename, &provider );
      if (ret) {
-          DirectFBError( "IDirectFB::CreateImageProvider() failed", ret );
+          DirectFBError( "CreateImageProvider() failed", ret );
           return;
      }
 
      ret = provider->GetSurfaceDescription( provider, &desc );
      if (ret) {
-          DirectFBError( "IDirectFBImageProvider::GetSurfaceDescription() failed", ret );
+          DirectFBError( "GetSurfaceDescription() failed", ret );
           provider->Release( provider );
           return;
      }
@@ -214,14 +214,14 @@ set_background_image()
 
      ret = dfb->CreateSurface( dfb, &desc, &surface );
      if (ret) {
-          DirectFBError( "IDirectFB::CreateSurface() failed", ret );
+          DirectFBError( "CreateSurface() failed", ret );
           provider->Release( provider );
           return;
      }
 
      ret = provider->RenderTo( provider, surface, NULL );
      if (ret) {
-          DirectFBError( "IDirectFBImageProvider::RenderTo() failed", ret );
+          DirectFBError( "RenderTo() failed", ret );
           surface->Release( surface );
           provider->Release( provider );
           return;
@@ -229,7 +229,7 @@ set_background_image()
 
      ret = layer->SetBackgroundImage( layer, surface );
      if (ret) {
-          DirectFBError( "IDirectFBDisplayLayer::SetBackgroundImage() failed", ret );
+          DirectFBError( "SetBackgroundImage() failed", ret );
           surface->Release( surface );
           provider->Release( provider );
           return;
@@ -237,7 +237,7 @@ set_background_image()
 
      ret = layer->SetBackgroundMode( layer, tiled ? DLBM_TILE : DLBM_IMAGE );
      if (ret)
-          DirectFBError( "IDirectFBDisplayLayer::SetBackgroundMode() failed", ret );
+          DirectFBError( "SetBackgroundMode() failed", ret );
 
      surface->Release( surface );
      provider->Release( provider );

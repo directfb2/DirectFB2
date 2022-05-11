@@ -157,7 +157,7 @@ static void enum_input_devices()
 
      ret = dfb->EnumInputDevices( dfb, input_device_callback, NULL );
      if (ret)
-          DirectFBError( "IDirectFB::EnumInputDevices", ret );
+          DirectFBError( "EnumInputDevices() failed", ret );
 }
 
 /**********************************************************************************************************************/
@@ -206,7 +206,7 @@ static DFBEnumerationResult display_layer_callback( DFBDisplayLayerID id, DFBDis
 
           ret = dfb->GetDisplayLayer( dfb, id, &layer );
           if (ret) {
-               DirectFBError( "DirectFB::GetDisplayLayer() failed", ret );
+               DirectFBError( "GetDisplayLayer() failed", ret );
           }
           else {
                DFBDisplayLayerSourceDescription *descs;
@@ -215,7 +215,7 @@ static DFBEnumerationResult display_layer_callback( DFBDisplayLayerID id, DFBDis
                if (descs) {
                     ret = layer->GetSourceDescriptions( layer, descs );
                     if (ret) {
-                         DirectFBError( "DirectFBDisplayLayer::GetSourceDescriptions() failed", ret );
+                         DirectFBError( "GetSourceDescriptions() failed", ret );
                     }
                     else {
                          printf( "        Sources: " );
@@ -250,7 +250,7 @@ static void enum_display_layers( IDirectFBScreen *screen )
 
      ret = screen->EnumDisplayLayers( screen, display_layer_callback, NULL );
      if (ret)
-          DirectFBError( "IDirectFBScreen::EnumDisplayLayers", ret );
+          DirectFBError( "EnumDisplayLayers() failed", ret );
 }
 
 /**********************************************************************************************************************/
@@ -269,7 +269,7 @@ static void dump_mixers( IDirectFBScreen *screen, int num )
 
      ret = screen->GetMixerDescriptions( screen, descs );
      if (ret) {
-          DirectFBError( "IDirectFBScreen::GetMixerDescriptions", ret );
+          DirectFBError( "GetMixerDescriptions() failed", ret );
           D_FREE( descs );
           return;
      }
@@ -334,7 +334,7 @@ static void dump_encoders( IDirectFBScreen *screen, int num )
 
      ret = screen->GetEncoderDescriptions( screen, descs );
      if (ret) {
-          DirectFBError( "IDirectFBScreen::GetEncoderDescriptions", ret );
+          DirectFBError( "GetEncoderDescriptions() failed", ret );
           D_FREE( descs );
           return;
      }
@@ -424,7 +424,7 @@ static void dump_encoders( IDirectFBScreen *screen, int num )
 
           ret = screen->GetEncoderConfiguration( screen, i, &conf );
           if (ret) {
-               DirectFBError( "IDirectFBScreen::GetEncoderConfiguration", ret );
+               DirectFBError( "GetEncoderConfiguration() failed", ret );
                D_FREE( descs );
                return;
           }
@@ -455,7 +455,7 @@ static void dump_outputs( IDirectFBScreen *screen, int num )
 
      ret = screen->GetOutputDescriptions( screen, descs );
      if (ret) {
-          DirectFBError( "IDirectFBScreen::GetOutputDescriptions", ret );
+          DirectFBError( "GetOutputDescriptions() failed", ret );
           D_FREE( descs );
           return;
      }
@@ -509,7 +509,7 @@ static void dump_outputs( IDirectFBScreen *screen, int num )
 
           ret = screen->GetOutputConfiguration( screen, i, &conf );
           if (ret) {
-               DirectFBError( "IDirectFBScreen::GetOutputConfiguration", ret );
+               DirectFBError( "GetOutputConfiguration() failed", ret );
                D_FREE( descs );
                return;
           }
@@ -533,7 +533,7 @@ static DFBEnumerationResult screen_callback( DFBScreenID id, DFBScreenDescriptio
 
      ret = dfb->GetScreen( dfb, id, &screen );
      if (ret)
-          DirectFBErrorFatal( "IDirectFB::GetScreen", ret );
+          DirectFBErrorFatal( "GetScreen() failed", ret );
 
      /* Name */
      printf( "Screen (%02x) %-30s", id, desc.name );
@@ -584,7 +584,7 @@ static void enum_screens()
 
      ret = dfb->EnumScreens( dfb, screen_callback, NULL );
      if (ret)
-          DirectFBError( "IDirectFB::EnumScreens", ret );
+          DirectFBError( "EnumScreens() failed", ret );
 }
 
 /**********************************************************************************************************************/
@@ -604,5 +604,5 @@ static void enum_video_modes()
 
      ret = dfb->EnumVideoModes( dfb, video_modes_callback, NULL );
      if (ret)
-          DirectFBError( "IDirectFB::EnumVideoModes", ret );
+          DirectFBError( "EnumVideoModes() failed", ret );
 }
