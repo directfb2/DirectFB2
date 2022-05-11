@@ -24,8 +24,8 @@ D_DEBUG_DOMAIN( DirectFB_Updates, "DirectFB/Updates", "DirectFB Updates" );
 
 /**********************************************************************************************************************/
 
-const DirectFBPixelFormatNames(dfb_pixelformat_names)
-const DirectFBColorSpaceNames (dfb_colorspace_names)
+static const DirectFBPixelFormatNames(dfb_pixelformat_names)
+static const DirectFBColorSpaceNames (dfb_colorspace_names)
 
 /**********************************************************************************************************************/
 

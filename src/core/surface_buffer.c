@@ -252,8 +252,7 @@ dfb_surface_buffer_find_allocation( CoreSurfaceBuffer      *buffer,
                          continue;
                }
           }
-
-          if (Core_GetIdentity() != FUSION_ID_MASTER && !(allocation->access[accessor] & CSAF_SHARED)) {
+          else if (Core_GetIdentity() != FUSION_ID_MASTER && !(allocation->access[accessor] & CSAF_SHARED)) {
                D_DEBUG_AT( Core_SurfBuffer, "    -> refusing allocation for slave from non-shared pool!\n" );
                continue;
           }
