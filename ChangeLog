@@ -1,3 +1,24 @@
+commit 6e0a7e205fafe9f8b409e57b28f8390d05ed2945
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed May 11 09:55:01 2022 +0200
+
+    Fix issue with preallocated surfaces when application is slave
+
+commit 00aeac631fca9a206270740ad166349b321feb90
+Merge: 98d427847 c75e20207
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Tue May 3 17:31:49 2022 +0200
+
+    Merge pull request #29 from caramelli/master
+    
+    DFVFF: Add missing DIRECT_DEALLOCATE_INTERFACE( thiz )
+
+commit c75e20207b9044f671c45829ce1ebd76b9fee790
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue May 3 17:30:29 2022 +0200
+
+    Update ChangeLog
+
 commit 92f23cc01a45183d7022c97fbc2c66baea0b748a
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Tue May 3 17:30:02 2022 +0200
