@@ -22,7 +22,7 @@
 #define MAX_INPUT_GLOBALS              8
 #define MAX_INPUTDEVICES              16
 
-#define MAX_LAYERS                    16
+#define MAX_LAYERS                    18
 
 #define MAX_SCREENS                    4
 
