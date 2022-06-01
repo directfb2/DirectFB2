@@ -1,3 +1,24 @@
+commit 6d8293dc6d4684e77c9aef4bae2898354b85dd23
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Jun 1 11:40:36 2022 +0200
+
+    Add support for multi-touch input device
+
+commit e019fbd1be6683f608d861472e7f43caaede6a3b
+Merge: 2537495e4 bbf1c7b4a
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat May 14 12:28:55 2022 +0200
+
+    Merge pull request #31 from caramelli/master
+    
+    Core/Layers: Increase the maximum number of layers
+
+commit bbf1c7b4adb4b87f31675efbb6676e9bdd1ceb26
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat May 14 12:27:36 2022 +0200
+
+    Update ChangeLog
+
 commit 7b7443a96e050fcf62bf0f8c2ebedd0aba81c4b3
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Sat May 14 12:27:23 2022 +0200
