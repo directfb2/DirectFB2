@@ -4698,28 +4698,30 @@ typedef enum {
  * Specifies whether a button is currently pressed.
  */
 typedef enum {
-     DIBS_UP             = 0x00000000,                           /* button is not pressed */
-     DIBS_DOWN           = 0x00000001                            /* button is pressed */
+     DIBS_UP                               = 0x00000000,         /* button is not pressed */
+     DIBS_DOWN                             = 0x00000001          /* button is pressed */
 } DFBInputDeviceButtonState;
 
 /*
  * Input device configuration flags.
  */
 typedef enum {
-     DIDCONF_NONE        = 0x00000000,                           /* None of these. */
+     DIDCONF_NONE                          = 0x00000000,         /* None of these. */
 
-     DIDCONF_SENSITIVITY = 0x00000001,                           /* Set sensitivity. */
+     DIDCONF_SENSITIVITY                   = 0x00000001,         /* Set sensitivity. */
+     DIDCONF_MAX_SLOTS                     = 0x00000002,         /* Set the number of possible touch contacts. */
 
-     DIDCONF_ALL         = 0x00000001                            /* All of these. */
+     DIDCONF_ALL                           = 0x00000003          /* All of these. */
 } DFBInputDeviceConfigFlags;
 
 /*
  * Input device configuration.
  */
 typedef struct {
-     DFBInputDeviceConfigFlags     flags;                        /* Validation of fields. */
+     DFBInputDeviceConfigFlags               flags;              /* Validation of fields. */
 
-     int                           sensitivity;                  /* Sensitivity value for X/Y axes */
+     int                                     sensitivity;        /* Sensitivity value for X/Y axes. */
+     int                                     max_slots;          /* Maximum mumber of possible touch contacts. */
 } DFBInputDeviceConfig;
 
 /*
@@ -4981,6 +4983,7 @@ typedef struct {
      int                                     axisrel;            /* relative mouse/joystick movement */
      int                                     min;                /* minimum possible value */
      int                                     max;                /* maximum possible value */
+     int                                     slot_id;            /* touch contact */
 } DFBInputEvent;
 
 /*
