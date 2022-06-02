@@ -1,3 +1,24 @@
+commit 9439817cec072630c900eaf4dfbebfea82634c10
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Jun 2 15:08:23 2022 +0200
+
+    Add DSI to DFBScreenEncoderDescription
+
+commit 45da19c04a67004f0228ad59b68b7975ca821dc9
+Merge: e019fbd1b f91877ed9
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Jun 1 12:41:38 2022 +0200
+
+    Merge pull request #32 from caramelli/master
+    
+    Add support for multi-touch input device
+
+commit f91877ed968907248c64e06aa9e9640bc0c3a4e2
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Jun 1 11:41:15 2022 +0200
+
+    Update ChangeLog
+
 commit 6d8293dc6d4684e77c9aef4bae2898354b85dd23
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Wed Jun 1 11:40:36 2022 +0200

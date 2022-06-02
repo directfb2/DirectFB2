@@ -310,6 +310,10 @@ drmkmsInitOutput( CoreScreen                 *screen,
                     description->all_connectors = DSOC_HDMI;
                     description->all_signals    = DSOS_HDMI;
                     break;
+               case DRM_MODE_CONNECTOR_DSI:
+                    description->all_connectors = DSOC_DSI;
+                    description->all_signals    = DSOS_DSI;
+                    break;
                default:
                     description->all_connectors = DSOC_UNKNOWN;
                     description->all_signals    = DSOC_UNKNOWN;

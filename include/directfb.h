@@ -1861,7 +1861,8 @@ typedef enum {
      DSOS_RGB                              = 0x00000008,         /* R/G/B signal */
      DSOS_YCBCR                            = 0x00000010,         /* Y/Cb/Cr signal */
      DSOS_HDMI                             = 0x00000020,         /* HDMI signal */
-     DSOS_656                              = 0x00000040          /* 656 Digital output signal */
+     DSOS_656                              = 0x00000040,         /* 656 Digital output signal */
+     DSOS_DSI                              = 0x00000080          /* DSI signal */
 } DFBScreenOutputSignals;
 
 /*
@@ -1877,7 +1878,8 @@ typedef enum {
      DSOC_SCART2                           = 0x00000010,         /* 2nd SCART connector */
      DSOC_COMPONENT                        = 0x00000020,         /* Component video connector */
      DSOC_HDMI                             = 0x00000040,         /* HDMI connector */
-     DSOC_656                              = 0x00000080          /* DVO connector */
+     DSOC_656                              = 0x00000080,         /* DVO connector */
+     DSOC_DSI                              = 0x00000100          /* DSI connector */
 } DFBScreenOutputConnectors;
 
 /*
@@ -1941,7 +1943,7 @@ typedef enum {
                                                                     width single frame, left on left half of frame.
                                                                     The packed frame is output on each vsync.
                                                                     Requires HDMI v1.4a. */
-     DSEPF_ALL                             = 0x0000001f
+     DSEPF_ALL                             = 0x0000001F
 } DFBScreenEncoderPictureFraming;
 
 /*
