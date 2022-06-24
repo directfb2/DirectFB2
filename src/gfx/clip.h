@@ -23,6 +23,19 @@
 
 /**********************************************************************************************************************/
 
+typedef enum {
+     DFEF_NONE   = 0x00000000,
+
+     DFEF_LEFT   = 0x00000001,
+     DFEF_RIGHT  = 0x00000002,
+     DFEF_TOP    = 0x00000004,
+     DFEF_BOTTOM = 0x00000008,
+
+     DFEF_ALL    = 0x0000000F
+} DFBEdgeFlags;
+
+/**********************************************************************************************************************/
+
 /*
  * Clip the line to the clipping region.
  * Return true if at least one pixel of the line resides in the region.
@@ -46,6 +59,14 @@ DFBBoolean   dfb_clip_triangle                   ( const DFBRegion         *clip
                                                    const DFBTriangle       *tri,
                                                    DFBPoint                 buf[6],
                                                    int                     *num );
+
+/*
+ * Clip the rectangle to the clipping region.
+ * Return a flag for each edge that wasn't cut off.
+ */
+DFBEdgeFlags dfb_clip_edges                      ( const DFBRegion         *clip,
+                                                   DFBRectangle            *rect );
+
 /*
  * Get the outlines of a clipped rectangle.
  */
