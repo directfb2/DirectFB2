@@ -259,22 +259,7 @@ dfb_clip_triangle( const DFBRegion   *clip,
      return (n >= 3);
 }
 
-typedef enum {
-     DFEF_NONE      = 0x00000000,
-
-     DFEF_LEFT      = 0x00000001,
-     DFEF_RIGHT     = 0x00000002,
-     DFEF_TOP       = 0x00000004,
-     DFEF_BOTTOM    = 0x00000008,
-
-     DFEF_ALL       = 0x0000000F
-} DFBEdgeFlags;
-
-/*
- * Clip the rectangle to the clipping region.
- * Return a flag for each edge that wasn't cut off.
- */
-static DFBEdgeFlags
+DFBEdgeFlags
 dfb_clip_edges( const DFBRegion *clip,
                 DFBRectangle    *rect )
 {
