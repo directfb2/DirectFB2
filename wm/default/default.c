@@ -662,6 +662,9 @@ switch_focus( WMData          *wmdata,
                }
           }
 
+          if (to->cursor.surface)
+               dfb_windowstack_cursor_set_shape( stack, to->cursor.surface, to->cursor.hot_x, to->cursor.hot_y );
+
           we.type = DWET_GOTFOCUS;
 
           post_event( to, data, &we );
