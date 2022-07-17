@@ -721,7 +721,7 @@ system_get_accelerator()
      D_ASSERT( fbdev != NULL );
 
      /* Accelerator ID selecting the graphics driver. */
-     accel = direct_config_get_int_value("accelerator");
+     accel = direct_config_get_int_value( "accelerator" );
      if (accel)
           return accel;
 

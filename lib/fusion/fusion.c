@@ -2014,7 +2014,8 @@ fusion_fork_handler_child()
                     if (!world->dispatch_loop)
                          raise( SIGTRAP );
 
-               }    break;
+                    break;
+               }
           }
      }
 }

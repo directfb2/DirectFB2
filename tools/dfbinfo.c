@@ -430,7 +430,7 @@ static void dump_encoders( IDirectFBScreen *screen, int num )
           }
 
           if (conf.flags & DSECONF_MIXER)
-               printf( "     Mixer:          %d (current)\n", conf.mixer );
+               printf( "     Mixer:          %d\n", conf.mixer );
 
           printf( "\n" );
      }
@@ -515,7 +515,7 @@ static void dump_outputs( IDirectFBScreen *screen, int num )
           }
 
           if (conf.flags & DSOCONF_ENCODER)
-               printf( "     Encoder:    %d (current)\n", conf.encoder );
+               printf( "     Encoder:    %d\n", conf.encoder );
 
           printf( "\n" );
      }

@@ -862,7 +862,7 @@ flush_xy( LinuxInputData *data,
 
 /**********************************************************************************************************************/
 
-static void*
+static void *
 devinput_event_thread( DirectThread *thread,
                        void         *arg )
 {
@@ -962,9 +962,6 @@ devinput_event_thread( DirectThread *thread,
           if (status > 0 && FD_ISSET( data->quitpipe[0], &set ))
                break;
 
-          /* Check cancel thread. */
-          direct_thread_testcancel( thread );
-
           if (status < 0)
                continue;
 
@@ -979,9 +976,6 @@ devinput_event_thread( DirectThread *thread,
           len = read( data->fd, levt, sizeof(levt) );
           if (len < 0 && errno != EINTR)
                break;
-
-          /* Check cancel thread. */
-          direct_thread_testcancel( thread );
 
           if (len <= 0)
                continue;
@@ -1088,6 +1082,8 @@ get_device_info( int              fd,
 
      D_DEBUG_AT( Linux_Input, "%s()\n", __FUNCTION__ );
 
+     info->desc.caps = 0;
+
      /* Get device name. */
      ioctl( fd, EVIOCGNAME( DFB_INPUT_DEVICE_DESC_NAME_LENGTH - 1 ), info->desc.name );
 
@@ -1108,7 +1104,7 @@ get_device_info( int              fd,
                if (test_bit( i, keybit ))
                     num_keys++;
 
-          /* This might be a keyboard with just cursor keys (typically on front panels), handle as remote control */
+          /* This might be a keyboard with just cursor keys (typically on front panels), handle as remote control. */
           if (!num_keys)
                for (i = KEY_HOME; i <= KEY_PAGEDOWN; i++)
                     if (test_bit( i, keybit ))
@@ -1156,6 +1152,8 @@ get_device_info( int              fd,
      else
           *touchpad = false;
 
+     info->desc.type = DIDTF_NONE;
+
      /* Mouse, Touchscreen or Joystick */
      if ((test_bit( EV_KEY, evbit ) && (test_bit( BTN_TOUCH, keybit ) || test_bit( BTN_TOOL_FINGER, keybit ))) ||
          ((num_rels >= 2 && num_buttons) || (num_abs == 2 && num_buttons == 1)))
@@ -1170,6 +1168,8 @@ get_device_info( int              fd,
           info->desc.min_keycode = 0;
           info->desc.max_keycode = 127;
      }
+     else
+          info->desc.min_keycode = info->desc.max_keycode = 0;
 
      /* Remote Control */
      if (num_ext_keys) {
@@ -1181,14 +1181,18 @@ get_device_info( int              fd,
           info->desc.caps       |= DICAPS_BUTTONS;
           info->desc.max_button  = DIBI_FIRST + num_buttons - 1;
      }
+     else
+          info->desc.max_button = 0;
 
      /* Axes */
      if (num_rels || num_abs) {
           info->desc.caps     |= DICAPS_AXES;
           info->desc.max_axis  = DIAI_FIRST + MAX( num_rels, num_abs ) - 1;
      }
+     else
+          info->desc.max_axis = 0;
 
-     /* Primary input device. */
+     /* Primary input device */
      if (info->desc.type & DIDTF_KEYBOARD)
           info->prefered_id = DIDID_KEYBOARD;
      else if (info->desc.type & DIDTF_REMOTE)
@@ -1213,6 +1217,10 @@ static bool
 check_device( const char *device )
 {
      int err, fd;
+     InputDeviceInfo info;
+     bool            touchpad;
+     bool            linux_input_grab;
+     bool            linux_input_ir_only;
 
      D_DEBUG_AT( Linux_Input, "%s( '%s' )\n", __FUNCTION__, device );
 
@@ -1222,52 +1230,43 @@ check_device( const char *device )
           D_DEBUG_AT( Linux_Input, "  -> open failed!\n" );
           return false;
      }
-     else {
-          InputDeviceInfo info;
-          bool            touchpad;
-          bool            linux_input_grab;
-          bool            linux_input_ir_only;
 
-          /* Grab device. */
-          if (direct_config_has_name( "linux-input-grab" ) && !direct_config_has_name( "no-linux-input-grab" ))
-               linux_input_grab = true;
-          else
-               linux_input_grab = false;
+     /* Grab device. */
+     if (direct_config_has_name( "linux-input-grab" ) && !direct_config_has_name( "no-linux-input-grab" ))
+          linux_input_grab = true;
+     else
+          linux_input_grab = false;
 
-          /* Ignore non-IR device. */
-          if (direct_config_has_name( "linux-input-ir-only" ) && !direct_config_has_name( "no-linux-input-ir-only" ))
-               linux_input_ir_only = true;
-          else
-               linux_input_ir_only = false;
+     /* Ignore non-IR device. */
+     if (direct_config_has_name( "linux-input-ir-only" ) && !direct_config_has_name( "no-linux-input-ir-only" ))
+          linux_input_ir_only = true;
+     else
+          linux_input_ir_only = false;
 
-          if (linux_input_grab) {
-               err = ioctl( fd, EVIOCGRAB, 1 );
-               if (err) {
-                    D_PERROR( "Input/Linux: Could not grab device!\n" );
-                    close( fd );
-                    return false;
-               }
+     if (linux_input_grab) {
+          err = ioctl( fd, EVIOCGRAB, 1 );
+          if (err) {
+               D_PERROR( "Input/Linux: Could not grab device!\n" );
+               close( fd );
+               return false;
           }
-
-          memset( &info, 0, sizeof(InputDeviceInfo) );
-
-          get_device_info( fd, &info, &touchpad );
-
-          if (linux_input_grab)
-               ioctl( fd, EVIOCGRAB, 0 );
-
-          close( fd );
-
-          if (!info.desc.caps) {
-              D_DEBUG_AT( Linux_Input, "  -> no caps!\n" );
-              return false;
-          }
-
-          if (!linux_input_ir_only || (info.desc.type & DIDTF_REMOTE))
-               return true;
      }
 
-     D_DEBUG_AT( Linux_Input, "  -> returning false!\n" );
+     /* Get device information. */
+     get_device_info( fd, &info, &touchpad );
+
+     if (linux_input_grab)
+          ioctl( fd, EVIOCGRAB, 0 );
+
+     close( fd );
+
+     if (!info.desc.caps) {
+         D_DEBUG_AT( Linux_Input, "  -> no caps!\n" );
+         return false;
+     }
+
+     if (!linux_input_ir_only || (info.desc.type & DIDTF_REMOTE))
+          return true;
 
      return false;
 }
@@ -1430,7 +1429,7 @@ driver_open_device( CoreInputDevice  *device,
 
      data->sensitivity = 0x100;
 
-     if (info->desc.min_keycode >= 0 && info->desc.max_keycode >= info->desc.min_keycode) {
+     if (info->desc.min_keycode >= 0 && info->desc.max_keycode > info->desc.min_keycode) {
           data->vt_fd = open( "/dev/tty0", O_RDWR | O_NOCTTY );
 
           if (data->vt_fd < 0)
@@ -1440,7 +1439,7 @@ driver_open_device( CoreInputDevice  *device,
      /* Open a pipe to awake the devinput event thread when we want to quit. */
      err = pipe( data->quitpipe );
      if (err < 0) {
-          D_PERROR( "DirectFB/linux_input: Could not open quit pipe!" );
+          D_PERROR( "Input/Linux: Could not open quit pipe!" );
           goto error;
      }
 
@@ -1575,7 +1574,7 @@ driver_close_device( void *driver_data )
 }
 
 /**********************************************************************************************************************
- ********************************* Input Driver functions *************************************************************
+ ********************************* Hot-plug functions *****************************************************************
  **********************************************************************************************************************/
 
 typedef struct {
@@ -1713,18 +1712,12 @@ devinput_hotplug_thread( DirectThread *thread,
           if (FD_ISSET( hotplug_quitpipe[0], &set ))
                break;
 
-          /* Check cancel thread. */
-          direct_thread_testcancel( thread );
-
           if (FD_ISSET( socket_fd, &set )) {
                len = recv( socket_fd, udev_event, sizeof(udev_event), 0 );
                if (len <= 0) {
                     D_DEBUG_AT( Linux_Input, "Error receiving uevent message\n" );
                     continue;
                }
-
-               /* Check cancel thread. */
-               direct_thread_testcancel( thread );
           }
 
           /* Analyze udev event. */
@@ -1799,11 +1792,6 @@ error:
 
      return NULL;
 }
-
-/**********************************************************************************************************************
- ********************************* Set configuration function *********************************************************
- **********************************************************************************************************************/
-
 
 static DFBResult
 driver_suspend()
