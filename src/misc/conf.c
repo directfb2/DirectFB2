@@ -243,9 +243,9 @@ config_allocate()
 
      dfb_config = D_CALLOC( 1, sizeof(DFBConfig) );
 
-     if (direct_access( "/dev/dri/card0", O_RDWR ) == DR_OK)
+     if (direct_access( "/dev/dri/card0", W_OK ) == DR_OK)
           dfb_config->system                           = D_STRDUP( "drmkms" );
-     else if (direct_access( "/dev/fb0", O_RDWR ) == DR_OK)
+     else if (direct_access( "/dev/fb0", W_OK ) == DR_OK)
           dfb_config->system                           = D_STRDUP( "fbdev" );
 
      dfb_config->banner                                = true;
@@ -291,8 +291,8 @@ config_read( const char *filename )
      DFBResult   ret = DFB_OK;
      DirectFile  f;
      char        line[400];
-     char       *slash = 0;
-     char       *cwd   = 0;
+     char       *slash = NULL;
+     char       *cwd   = NULL;
 
      config_allocate();
 
@@ -302,7 +302,8 @@ config_read( const char *filename )
      if (ret) {
           D_DEBUG_AT( DirectFB_Config, "Unable to open config file '%s'!\n", filename );
           return DFB_IO;
-     } else {
+     }
+     else {
           D_DEBUG_AT( DirectFB_Config, "Parsing config file '%s'\n", filename );
      }
 

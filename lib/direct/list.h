@@ -35,7 +35,7 @@ struct __D_DirectLink {
 
 static __inline__ void
 direct_list_prepend( DirectLink **list,
-                     DirectLink *link )
+                     DirectLink  *link )
 {
      DirectLink *first;
 
@@ -63,7 +63,7 @@ direct_list_prepend( DirectLink **list,
 
 static __inline__ void
 direct_list_append( DirectLink **list,
-                    DirectLink *link )
+                    DirectLink  *link )
 {
      DirectLink *first;
 
@@ -92,8 +92,8 @@ direct_list_append( DirectLink **list,
 
 static __inline__ void
 direct_list_insert( DirectLink **list,
-                    DirectLink *link,
-                    DirectLink *before )
+                    DirectLink  *link,
+                    DirectLink  *before )
 {
      DirectLink *first;
 
@@ -161,7 +161,7 @@ direct_list_count_elements_EXPENSIVE( DirectLink *list )
 
 static __inline__ bool
 direct_list_remove( DirectLink **list,
-                    DirectLink *link )
+                    DirectLink  *link )
 {
      DirectLink *next;
      DirectLink *prev;
@@ -201,7 +201,7 @@ direct_list_remove( DirectLink **list,
 
 static __inline__ void
 direct_list_move_to_front( DirectLink **list,
-                           DirectLink *link )
+                           DirectLink  *link )
 {
      DirectLink *next;
      DirectLink *prev;

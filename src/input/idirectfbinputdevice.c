@@ -34,9 +34,6 @@ typedef struct {
 
      int                         axis[DIAI_LAST+1];              /* position of all axes */
      DFBInputDeviceKeyState      keystates[DIKI_NUMBER_OF_KEYS]; /* state of all keys */
-     DFBInputDeviceModifierMask  modifiers;                      /* bitmask reflecting the state of the modifier keys */
-     DFBInputDeviceLockState     locks;                          /* bitmask reflecting the state of the key locks */
-     DFBInputDeviceButtonMask    buttonmask;                     /* bitmask reflecting the state of the buttons */
 
      DFBInputDeviceDescription   desc;                           /* device description */
 
@@ -381,13 +378,6 @@ IDirectFBInputDevice_React( const void *msg_data,
      unsigned int               index;
 
      D_DEBUG_AT( InputDevice, "%s( %p, %p ) <- type %06x\n", __FUNCTION__, evt, data, evt->type );
-
-     if (evt->flags & DIEF_MODIFIERS)
-          data->modifiers = evt->modifiers;
-     if (evt->flags & DIEF_LOCKS)
-          data->locks = evt->locks;
-     if (evt->flags & DIEF_BUTTONS)
-          data->buttonmask = evt->buttons;
 
      switch (evt->type) {
           case DIET_KEYPRESS:

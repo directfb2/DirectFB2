@@ -226,13 +226,13 @@ system_leave( bool emergency )
 }
 
 static DFBResult
-system_suspend( void )
+system_suspend()
 {
      return DFB_OK;
 }
 
 static DFBResult
-system_resume( void )
+system_resume()
 {
      return DFB_OK;
 }
@@ -276,9 +276,9 @@ system_unmap_mmio( volatile void  *addr,
 }
 
 static int
-system_get_accelerator( void )
+system_get_accelerator()
 {
-     return direct_config_get_int_value("accelerator");
+     return direct_config_get_int_value( "accelerator" );
 }
 
 static unsigned long
@@ -294,7 +294,7 @@ system_video_memory_virtual( unsigned int offset )
 }
 
 static unsigned int
-system_videoram_length( void )
+system_videoram_length()
 {
      return 0;
 }

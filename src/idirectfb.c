@@ -1556,10 +1556,10 @@ IDirectFB_GetClipboardData( IDirectFB     *thiz,
                             unsigned int  *ret_size )
 {
      DFBResult ret;
-     char      tmp_mime_type[MAX_CLIPBOARD_MIME_TYPE_SIZE];
-     u32       tmp_mime_type_size;
-     char      tmp_data[MAX_CLIPBOARD_DATA_SIZE];
-     u32       tmp_data_size;
+     char      mime_type[MAX_CLIPBOARD_MIME_TYPE_SIZE];
+     u32       mime_type_size;
+     char      clip_data[MAX_CLIPBOARD_DATA_SIZE];
+     u32       size;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1568,23 +1568,23 @@ IDirectFB_GetClipboardData( IDirectFB     *thiz,
      if (!ret_mime_type && !data && !ret_size)
           return DFB_INVARG;
 
-     ret = CoreDFB_ClipboardGet( data->core, tmp_mime_type, &tmp_mime_type_size, tmp_data, &tmp_data_size );
+     ret = CoreDFB_ClipboardGet( data->core, mime_type, &mime_type_size, clip_data, &size );
      if (ret)
           return ret;
 
-     *ret_mime_type = strdup( tmp_mime_type );
+     *ret_mime_type = D_STRDUP( mime_type );
      if (!*ret_mime_type)
           return D_OOM();
 
-     *ret_clip_data = malloc( tmp_data_size );
+     *ret_clip_data = D_MALLOC( size );
      if (!*ret_clip_data) {
           free( *ret_mime_type );
           return D_OOM();
      }
 
-     direct_memcpy( *ret_clip_data, tmp_data, tmp_data_size );
+     direct_memcpy( *ret_clip_data, clip_data, size );
 
-     *ret_size = tmp_data_size;
+     *ret_size = size;
 
      return DFB_OK;
 }
