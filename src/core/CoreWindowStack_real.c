@@ -17,7 +17,6 @@
 */
 
 #include <core/CoreWindowStack.h>
-#include <core/core.h>
 #include <core/windowstack.h>
 
 D_DEBUG_DOMAIN( DirectFB_CoreWindowStack, "DirectFB/CoreWindowStack", "DirectFB CoreWindowStack" );
@@ -74,7 +73,7 @@ IWindowStack_Real__CursorEnable( CoreWindowStack *obj,
 {
      D_DEBUG_AT( DirectFB_CoreWindowStack, "%s( %p )\n", __FUNCTION__, obj );
 
-     return dfb_windowstack_cursor_enable( core_dfb, obj, enable );
+     return dfb_windowstack_cursor_enable( obj, enable );
 }
 
 DFBResult
