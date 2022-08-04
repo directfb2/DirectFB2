@@ -1,3 +1,69 @@
+commit 2c23979f3e978567fbc210af941d943fd91d3d6c
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Aug 4 16:10:24 2022 +0200
+
+    Core/WindowStack: unused CoreDFB object in dfb_windowstack_cursor_enable()
+
+commit 0377501c0eb71f6d96342b57a63bfe41b6d8e663
+Merge: 39c7500 1d5a410
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Jul 17 11:45:10 2022 +0200
+
+    Merge pull request #37 from caramelli/master
+    
+    IDirectFBInputDevice: unused buttonmask, locks, modifiers...
+
+commit 1d5a4109ce66101ca6d3e55c1fde2b23ec69dde8
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Jul 17 11:43:12 2022 +0200
+
+    IDirectFBInputDevice: unused buttonmask, locks, modifiers...
+
+commit 39c75006b18de38e845ffbec66856ddc18c23136
+Merge: 7c956f6 e2c1690
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Jun 26 07:49:54 2022 +0200
+
+    Merge pull request #36 from caramelli/master
+    
+    WM/Default: Set the shape of the cursor bound to a window
+
+commit e2c16907872af39a4ce53c4bce1318d563772caa
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Jun 26 07:42:30 2022 +0200
+
+    WM/Default: Set the shape of the cursor bound to a window
+
+commit 7c956f69fc624616e3f3a4b0e95dc82bf865cb79
+Merge: 23cf9e4 508fc28
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Jun 24 18:45:11 2022 +0200
+
+    Merge pull request #35 from caramelli/master
+    
+    Restore dfb_clip_edges() as a public function
+
+commit 508fc2822a14b43ae660beb4a209e9a24f6ecc64
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Jun 24 18:43:14 2022 +0200
+
+    Restore dfb_clip_edges() as a public function
+
+commit 23cf9e4e0016c6ff0cb2c3edf0b8a77857a827d0
+Merge: 45da19c fafb9ad
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Jun 2 15:12:22 2022 +0200
+
+    Merge pull request #33 from caramelli/master
+    
+    Add DSI to DFBScreenEncoderDescription
+
+commit fafb9adbc80b5dae6ca0e92f29002d1ff46e643d
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Jun 2 15:08:30 2022 +0200
+
+    Update ChangeLog
+
 commit 9439817cec072630c900eaf4dfbebfea82634c10
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Thu Jun 2 15:08:23 2022 +0200
@@ -5,7 +71,7 @@ Date:   Thu Jun 2 15:08:23 2022 +0200
     Add DSI to DFBScreenEncoderDescription
 
 commit 45da19c04a67004f0228ad59b68b7975ca821dc9
-Merge: e019fbd1b f91877ed9
+Merge: e019fbd f91877e
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Wed Jun 1 12:41:38 2022 +0200
 
@@ -26,7 +92,7 @@ Date:   Wed Jun 1 11:40:36 2022 +0200
     Add support for multi-touch input device
 
 commit e019fbd1be6683f608d861472e7f43caaede6a3b
-Merge: 2537495e4 bbf1c7b4a
+Merge: 2537495 bbf1c7b
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Sat May 14 12:28:55 2022 +0200
 
@@ -47,7 +113,7 @@ Date:   Sat May 14 12:27:23 2022 +0200
     Core/Layers: Increase the maximum number of layers
 
 commit 2537495e4fc014168b9249dd367e6d954327aea3
-Merge: 00aeac631 b7e82e1ae
+Merge: 00aeac6 b7e82e1
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Wed May 11 09:56:46 2022 +0200
 
@@ -68,7 +134,7 @@ Date:   Wed May 11 09:55:01 2022 +0200
     Fix issue with preallocated surfaces when application is slave
 
 commit 00aeac631fca9a206270740ad166349b321feb90
-Merge: 98d427847 c75e20207
+Merge: 98d4278 c75e202
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Tue May 3 17:31:49 2022 +0200
 
@@ -89,7 +155,7 @@ Date:   Tue May 3 17:30:02 2022 +0200
     DFVFF: Add missing DIRECT_DEALLOCATE_INTERFACE( thiz )
 
 commit 98d4278476ccaa7a787721cec30e503c23f84bf2
-Merge: 35a7c6ba5 291ace5a7
+Merge: 35a7c6b 291ace5
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Sun May 1 09:31:40 2022 +0200
 
@@ -104,7 +170,7 @@ Date:   Sun May 1 09:30:52 2022 +0200
     Fix uninitialised byte(s)
 
 commit 35a7c6ba5300582218d323eca562ffc7d5537335
-Merge: 19049c5d2 5d32b0b88
+Merge: 19049c5 5d32b0b
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Sat Apr 30 14:25:32 2022 +0200
 
@@ -119,7 +185,7 @@ Date:   Sat Apr 30 14:23:36 2022 +0200
     drmkms: Management of connectors not bound to an encoder
 
 commit 19049c5d29210551d8626d30c307ce140573db30
-Merge: 1f2a61320 34b8225b7
+Merge: 1f2a613 34b8225
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Fri Apr 29 18:41:00 2022 +0200
 
@@ -134,7 +200,7 @@ Date:   Fri Apr 29 18:37:46 2022 +0200
     Add -lrt for compatibility with old glibc
 
 commit 1f2a613206dc1ddd7ed301f79468d5b3397ea11f
-Merge: d90c8770e 724b2f259
+Merge: d90c877 724b2f2
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Thu Apr 28 18:14:17 2022 +0200
 
@@ -149,7 +215,7 @@ Date:   Thu Apr 28 18:12:00 2022 +0200
     Fix palette index check in InitLayers()
 
 commit d90c8770e1b844fcd4698592a2281b5a749ddce7
-Merge: 6b74bc443 3a428e985
+Merge: 6b74bc4 3a428e9
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Thu Apr 28 14:18:15 2022 +0200
 
@@ -164,7 +230,7 @@ Date:   Thu Apr 28 14:18:22 2022 +0200
     readdir_r() is deprecated
 
 commit 6b74bc443cdcc1c1127581bbc1b02ed1fec16bf7
-Merge: 9d0781a02 0505492ba
+Merge: 9d0781a 0505492
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Wed Mar 30 19:13:40 2022 +0200
 
@@ -204,7 +270,7 @@ Date:   Sun Feb 27 12:56:12 2022 +0900
     it always happens before it's needed.
 
 commit 30e3ebe19e9b94a9fedba565fa2b55de30f98cbc
-Merge: c3aa9c056 9f6b8f45d
+Merge: c3aa9c0 9f6b8f4
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Mon Feb 14 11:13:38 2022 +0100
 
@@ -225,7 +291,7 @@ Date:   Mon Feb 14 18:06:15 2022 +0900
     Pull shared->shmpool out into a local variable and use that instead.
 
 commit c3aa9c056209349dee935d69f2ca9b593687bcea
-Merge: 1209d657c c51e9255f
+Merge: 1209d65 c51e925
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Sun Feb 13 22:50:06 2022 +0100
 
@@ -252,7 +318,7 @@ Date:   Sat Feb 12 21:08:47 2022 +0900
     be passing uninitilised data unless we ask for it to be zero initialised.
 
 commit 1209d657c2534c6175477177cf3ef5fdb0c33634
-Merge: b3e66e4b8 75d2237fc
+Merge: b3e66e4 75d2237
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Fri Feb 11 14:14:32 2022 +0100
 
@@ -286,7 +352,7 @@ Date:   Fri Feb 11 10:38:44 2022 +0900
     is null, then copy the result into thread->name.
 
 commit b3e66e4b8b78d443d9920f12b385e5c580f56570
-Merge: ef3583fd6 ff02c1f70
+Merge: ef3583f ff02c1f
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Wed Feb 9 08:00:35 2022 +0100
 
@@ -331,7 +397,7 @@ Date:   Tue Feb 8 14:51:50 2022 +0100
     Declare CorePart variables with extern
 
 commit c1df2aa105be7f24b99b205c92f31147c7ea9681
-Merge: 5ec744bbf 4f95de7d7
+Merge: 5ec744b 4f95de7
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Wed Feb 2 10:00:21 2022 +0100
 
@@ -352,7 +418,7 @@ Date:   Wed Feb 2 09:59:07 2022 +0100
     Add pixel format conversion functions
 
 commit 5ec744bbfaad38838051d41bad95d8159ebee93e
-Merge: dcfa6e8bd 47be2bd01
+Merge: dcfa6e8 47be2bd
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Wed Feb 2 09:37:26 2022 +0100
 
@@ -379,7 +445,7 @@ Date:   Tue Jan 18 21:56:00 2022 +0100
     DirectFB2 at FOSDEM 2022
 
 commit cefad0b1bbda67ae2414e99c140c8234e96c366f
-Merge: e8e8bfcc7 1de2c28a2
+Merge: e8e8bfc 1de2c28
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Tue Jan 18 21:53:06 2022 +0100
 
@@ -400,7 +466,7 @@ Date:   Tue Jan 18 21:44:42 2022 +0100
     DFVFF: Restart from the beginning after stopping
 
 commit e8e8bfcc7bdbffbbcc74e5ca55e50cf2fa8933b9
-Merge: 33e96c5c8 84697e114
+Merge: 33e96c5 84697e1
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Tue Jan 11 06:28:27 2022 +0100
 
@@ -421,7 +487,7 @@ Date:   Tue Jan 11 06:23:41 2022 +0100
     DFVFF: no interlaced support
 
 commit 33e96c5c8030c1b37448bd43ea115f082cf056a8
-Merge: ac69e7974 5a49ce419
+Merge: ac69e79 5a49ce4
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Mon Jan 10 09:51:26 2022 +0100
 
@@ -442,7 +508,7 @@ Date:   Mon Jan 10 09:38:34 2022 +0100
     Restore DirectFBGL interface version
 
 commit ac69e79742b633ef553da667a6d68308d7dedd89
-Merge: 39e204404 99a41095b
+Merge: 39e2044 99a4109
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Mon Dec 6 15:45:17 2021 +0100
 
