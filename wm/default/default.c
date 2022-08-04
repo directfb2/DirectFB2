@@ -2470,7 +2470,7 @@ handle_wm_key( CoreWindowStack     *stack,
           case DIKS_SMALL_P:
                if (stack->cursor.set) {
                     dfb_windowstack_cursor_set_opacity( stack, 0xff );
-                    dfb_windowstack_cursor_enable( wmdata->core, stack, true );
+                    dfb_windowstack_cursor_enable( stack, true );
                }
 
                /* Ungrab pointer. */

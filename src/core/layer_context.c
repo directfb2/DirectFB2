@@ -1686,7 +1686,7 @@ dfb_layer_context_create_window( CoreDFB                     *core,
      stack = context->stack;
 
      if (!stack->cursor.set) {
-          ret = dfb_windowstack_cursor_enable( core, stack, true );
+          ret = dfb_windowstack_cursor_enable( stack, true );
           if (ret) {
                D_DEBUG_AT( Core_LayerContext, "  -> dfb_windowstack_cursor_enable() failed!\n" );
                dfb_layer_context_unlock( context );

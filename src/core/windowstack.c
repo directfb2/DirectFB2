@@ -23,6 +23,7 @@
 #include <core/input.h>
 #include <core/layers.h>
 #include <core/layer_context.h>
+#include <core/windows.h>
 #include <core/windowstack.h>
 #include <core/wm.h>
 #include <direct/memcpy.h>
@@ -615,8 +616,7 @@ create_cursor_surface( CoreWindowStack *stack,
 }
 
 static DFBResult
-load_default_cursor( CoreDFB         *core,
-                     CoreWindowStack *stack )
+load_default_cursor( CoreWindowStack *stack )
 {
      DFBResult              ret;
      int                    i, j;
@@ -687,8 +687,7 @@ load_default_cursor( CoreDFB         *core,
 }
 
 DFBResult
-dfb_windowstack_cursor_enable( CoreDFB         *core,
-                               CoreWindowStack *stack,
+dfb_windowstack_cursor_enable( CoreWindowStack *stack,
                                bool             enable )
 {
      DFBResult ret;
@@ -709,7 +708,7 @@ dfb_windowstack_cursor_enable( CoreDFB         *core,
      }
 
      if (enable && !stack->cursor.surface) {
-          ret = load_default_cursor( core, stack );
+          ret = load_default_cursor( stack );
           if (ret) {
                dfb_windowstack_unlock( stack );
                return ret;
