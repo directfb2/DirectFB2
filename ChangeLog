@@ -1,3 +1,24 @@
+commit b603d612311b99c55ef94d732b5048e74dc1dde8
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Aug 5 09:27:37 2022 +0200
+
+    IDirectFBDisplayLayer: SetCursorShape() accept NULL for shape to restore default cursor
+
+commit 4a08b6867fb69a5850bda36f3362591dbe632f8a
+Merge: 0377501 04f63f2
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Aug 4 16:43:22 2022 +0200
+
+    Merge pull request #38 from caramelli/master
+    
+    Core/WindowStack: unused CoreDFB object in dfb_windowstack_cursor_enable()
+
+commit 04f63f29661b63385fff8f4b5dad010b7f74a674
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Aug 4 16:11:48 2022 +0200
+
+    Update ChangeLog
+
 commit 2c23979f3e978567fbc210af941d943fd91d3d6c
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Thu Aug 4 16:10:24 2022 +0200
