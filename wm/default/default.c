@@ -643,6 +643,8 @@ switch_focus( WMData          *wmdata,
           return;
 
      if (from) {
+          dfb_windowstack_cursor_set_shape( stack, NULL, 0, 0 );
+
           we.type = DWET_LOSTFOCUS;
 
           post_event( from, data, &we );

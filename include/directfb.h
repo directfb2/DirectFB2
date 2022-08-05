@@ -3057,6 +3057,8 @@ D_DEFINE_INTERFACE( IDirectFBDisplayLayer,
 
      /*
       * Set the cursor shape and the hotspot.
+      *
+      * Passing NULL will restore the default cursor shape.
       */
      DFBResult (*SetCursorShape) (
           IDirectFBDisplayLayer             *thiz,
