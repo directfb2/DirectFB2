@@ -539,7 +539,7 @@ IDirectFBWindow_SetCursorShape( IDirectFBWindow  *thiz,
                                 int               hot_x,
                                 int               hot_y )
 {
-     DFBPoint         hot;
+     DFBPoint         hotspot;
      CoreWindowConfig config;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFBWindow )
@@ -556,25 +556,24 @@ IDirectFBWindow_SetCursorShape( IDirectFBWindow  *thiz,
      }
 
      if (shape) {
-          IDirectFBSurface_data *shape_data;
+          IDirectFBSurface_data *shape_data = shape->priv;
 
-          shape_data = shape->priv;
           if (!shape_data)
                return DFB_DEAD;
 
           if (!shape_data->surface)
                return DFB_DESTROYED;
 
-          hot.x = hot_x;
-          hot.y = hot_y;
+          hotspot.x = hot_x;
+          hotspot.y = hot_y;
 
-          CoreWindow_SetCursorShape( data->window, shape_data->surface, &hot );
+          CoreWindow_SetCursorShape( data->window, shape_data->surface, &hotspot );
      }
      else {
-          hot.x = 0;
-          hot.y = 0;
+          hotspot.x = 0;
+          hotspot.y = 0;
 
-          CoreWindow_SetCursorShape( data->window, NULL, &hot );
+          CoreWindow_SetCursorShape( data->window, NULL, &hotspot );
      }
 
      if (shape && !(data->cursor_flags & DWCF_INVISIBLE) && (data->window->config.cursor_flags & DWCF_INVISIBLE)) {

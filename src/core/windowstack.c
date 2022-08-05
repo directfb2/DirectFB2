@@ -629,6 +629,7 @@ load_default_cursor( CoreWindowStack *stack )
      D_MAGIC_ASSERT( stack, CoreWindowStack );
 
      if (!stack->cursor.surface) {
+          /* Create the cursor surface for the default shape. */
           ret = create_cursor_surface( stack, 40, 40 );
           if (ret)
                return ret;
@@ -649,7 +650,7 @@ load_default_cursor( CoreWindowStack *stack )
 
      data = lock.addr;
 
-     /* Fill the cursor window surface. */
+     /* Fill the cursor surface. */
      direct_memcpy( data, cursor_data, 40 * lock.pitch );
 
      for (i = 0; i < 40; i++) {
@@ -760,15 +761,12 @@ dfb_windowstack_cursor_set_shape( CoreWindowStack *stack,
                                   int              hot_x,
                                   int              hot_y )
 {
-     DFBResult              ret;
-     CoreSurface           *cursor;
-     CoreCursorUpdateFlags  flags = CCUF_SHAPE;
+     DFBResult             ret;
+     CoreCursorUpdateFlags flags = CCUF_SHAPE;
 
-     D_DEBUG_AT( Core_WindowStack, "%s( %p, %p, hot %d, %d ) <- size %dx%d\n", __FUNCTION__,
-                 stack, shape, hot_x, hot_y, shape->config.size.w, shape->config.size.h );
+     D_DEBUG_AT( Core_WindowStack, "%s( %p, %p, %d, %d )\n", __FUNCTION__, stack, shape, hot_x, hot_y );
 
      D_MAGIC_ASSERT( stack, CoreWindowStack );
-     D_ASSERT( shape != NULL );
 
      if (dfb_config->no_cursor)
           return DFB_OK;
@@ -777,21 +775,32 @@ dfb_windowstack_cursor_set_shape( CoreWindowStack *stack,
      if (dfb_windowstack_lock( stack ))
           return DFB_FUSION;
 
-     cursor = stack->cursor.surface;
-     if (!cursor) {
+     if (!shape) {
+          if (stack->cursor.surface && (stack->cursor.size.w != 40 || stack->cursor.size.h != 40)) {
+               /* Resize the cursor surface to the size of the default shape. */
+               dfb_surface_reformat( stack->cursor.surface, 40, 40, DSPF_ARGB );
+
+               /* Notify about new size. */
+               flags |= CCUF_SIZE;
+          }
+     }
+     else if (!stack->cursor.surface) {
+          D_DEBUG_AT( Core_WindowStack, "  -> size %dx%d\n", shape->config.size.w, shape->config.size.h );
+
           D_ASSUME( !stack->cursor.enabled );
 
-          /* Create the surface for the shape. */
+          /* Create the cursor surface for the shape. */
           ret = create_cursor_surface( stack, shape->config.size.w, shape->config.size.h );
           if (ret) {
                dfb_windowstack_unlock( stack );
                return ret;
           }
-
-          cursor = stack->cursor.surface;
      }
      else if (stack->cursor.size.w != shape->config.size.w || stack->cursor.size.h != shape->config.size.h) {
-          dfb_surface_reformat( cursor, shape->config.size.w, shape->config.size.h, DSPF_ARGB );
+          D_DEBUG_AT( Core_WindowStack, "  -> new size %dx%d\n", shape->config.size.w, shape->config.size.h );
+
+          /* Resize the cursor surface to the size of shape. */
+          dfb_surface_reformat( stack->cursor.surface, shape->config.size.w, shape->config.size.h, DSPF_ARGB );
 
           stack->cursor.size.w = shape->config.size.w;
           stack->cursor.size.h = shape->config.size.h;
@@ -808,10 +817,17 @@ dfb_windowstack_cursor_set_shape( CoreWindowStack *stack,
           flags |= CCUF_POSITION;
      }
 
-     /* Copy the content of the new shape. */
-     dfb_gfx_copy_stereo( shape, DSSE_LEFT, cursor, DSSE_LEFT, NULL, 0, 0, false );
+     if (!shape) {
+          /* Create the cursor surface if necessary and fill it with the default shape. */
+          load_default_cursor( stack );
+     }
+     else {
+          /* Copy the content of the new shape. */
+          dfb_gfx_copy_stereo( shape, DSSE_LEFT, stack->cursor.surface, DSSE_LEFT, NULL, 0, 0, false );
 
-     cursor->config.caps = ((cursor->config.caps & ~DSCAPS_PREMULTIPLIED) | (shape->config.caps & DSCAPS_PREMULTIPLIED));
+          stack->cursor.surface->config.caps = (stack->cursor.surface->config.caps & ~DSCAPS_PREMULTIPLIED) |
+                                               (shape->config.caps & DSCAPS_PREMULTIPLIED);
+     }
 
      /* Notify WM. */
      if (stack->cursor.enabled)
