@@ -1,3 +1,24 @@
+commit db66ecd667499014531a3a553c1c5d93acc9b414
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Aug 9 03:09:24 2022 +0200
+
+    IDirectFBWindow: by default the cursor surface is not set => cursor_flags = DWCF_INVISIBLE
+
+commit 61ceb79564a81905c5521018892c5816e9d9a4af
+Merge: 4a08b68 5dab035
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Aug 5 09:28:21 2022 +0200
+
+    Merge pull request #39 from caramelli/master
+    
+    IDirectFBDisplayLayer: SetCursorShape() accept NULL for shape to restore default cursor
+
+commit 5dab03540a293328363f6484a0170d37468cffcd
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Aug 5 09:27:45 2022 +0200
+
+    Update ChangeLog
+
 commit b603d612311b99c55ef94d732b5048e74dc1dde8
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Fri Aug 5 09:27:37 2022 +0200
