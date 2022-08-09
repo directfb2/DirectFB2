@@ -643,7 +643,10 @@ switch_focus( WMData          *wmdata,
           return;
 
      if (from) {
-          dfb_windowstack_cursor_set_shape( stack, NULL, 0, 0 );
+          if (from->cursor.surface && !(from->config.cursor_flags & DWCF_INVISIBLE)) {
+               if (!to || !to->cursor.surface || (to->cursor.surface && (to->config.cursor_flags & DWCF_INVISIBLE)))
+                    dfb_windowstack_cursor_set_shape( stack, NULL, 0, 0 );
+          }
 
           we.type = DWET_LOSTFOCUS;
 
@@ -664,7 +667,7 @@ switch_focus( WMData          *wmdata,
                }
           }
 
-          if (to->cursor.surface)
+          if (to->cursor.surface && !(to->config.cursor_flags & DWCF_INVISIBLE))
                dfb_windowstack_cursor_set_shape( stack, to->cursor.surface, to->cursor.hot_x, to->cursor.hot_y );
 
           we.type = DWET_GOTFOCUS;
@@ -3704,6 +3707,9 @@ wm_remove_window( CoreWindowStack *stack,
 
      remove_window( wmdata, stack, data, window, win );
 
+     if (window->cursor.surface && !(window->config.cursor_flags & DWCF_INVISIBLE))
+          dfb_windowstack_cursor_set_shape( stack, NULL, 0, 0 );
+
      /* Free keys list. */
      if (window->config.keys) {
           SHFREE( stack->shmpool, window->config.keys );
@@ -3842,6 +3848,17 @@ wm_set_window_config( CoreWindow             *window,
           }
 
           window->config.key_selection = config->key_selection;
+     }
+
+     if (flags & DWCONF_CURSOR_FLAGS) {
+          if ((config->cursor_flags & DWCF_INVISIBLE) && !(window->config.cursor_flags & DWCF_INVISIBLE))
+               dfb_windowstack_cursor_set_shape( window->stack, NULL, 0, 0 );
+
+          if (!(config->cursor_flags & DWCF_INVISIBLE) && (window->config.cursor_flags & DWCF_INVISIBLE))
+               dfb_windowstack_cursor_set_shape( window->stack,
+                                                 window->cursor.surface, window->cursor.hot_x, window->cursor.hot_y );
+
+          window->config.cursor_flags = config->cursor_flags;
      }
 
      /* Send notification to windows watchers. */

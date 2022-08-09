@@ -1317,7 +1317,6 @@ IDirectFBWindow_SetCursorFlags( IDirectFBWindow      *thiz,
      if (!data->window->cursor.surface)
           config.cursor_flags |= DWCF_INVISIBLE;
 
-
      return CoreWindow_SetConfig( data->window, &config, NULL, 0, DWCONF_CURSOR_FLAGS );
 }
 

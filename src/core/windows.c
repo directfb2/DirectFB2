@@ -491,7 +491,7 @@ dfb_window_create( CoreWindowStack             *stack,
      window->stack               = stack;
      window->config              = config;
      window->config.association  = (desc->flags & DWDESC_PARENT) ? desc->parent_id : 0;
-     window->config.cursor_flags = DWCF_NONE;
+     window->config.cursor_flags = DWCF_INVISIBLE;
      window->toplevel_id         = toplevel_id;
      window->policy              = policy;
 
