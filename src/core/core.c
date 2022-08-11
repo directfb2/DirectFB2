@@ -2266,9 +2266,10 @@ Core_Resource_AddIdentity( FusionID fusion_id,
                identity->client->Release( identity->client );
 
           D_FREE( identity );
+          return ret;
      }
 
-     return ret;
+     return DFB_OK;
 }
 
 void

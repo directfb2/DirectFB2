@@ -80,9 +80,9 @@ DirectResult
 direct_clock_set_time( DirectClockType type,
                        long long       micros )
 {
-     DirectResult    ret = DR_OK;
-     struct timespec spec;
+     DirectResult    ret;
      clockid_t       clock_id;
+     struct timespec spec;
 
      switch (type) {
           case DIRECT_CLOCK_SESSION:
@@ -116,9 +116,10 @@ direct_clock_set_time( DirectClockType type,
      if (clock_settime( clock_id, &spec ) < 0) {
           ret = errno2result( errno );
           D_PERROR( "Direct/Clock: Could not set clock with id %d!\n", clock_id );
+          return ret;
      }
 
-     return ret;
+     return DR_OK;
 }
 
 __attribute__((no_instrument_function))

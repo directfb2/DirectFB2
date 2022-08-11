@@ -1276,7 +1276,7 @@ region_buffer_lock( CoreLayerRegion       *region,
                     CoreSurfaceBufferLock *left_buffer_lock,
                     CoreSurfaceBufferLock *right_buffer_lock )
 {
-     DFBResult          ret = DFB_OK;
+     DFBResult          ret;
      CoreSurfaceBuffer *buffer;
      bool               stereo;
 
@@ -1335,7 +1335,7 @@ region_buffer_lock( CoreLayerRegion       *region,
 
      Core_PopIdentity();
 
-     return ret;
+     return DFB_OK;
 }
 
 DFBResult

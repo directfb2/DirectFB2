@@ -75,7 +75,7 @@ IDirectFBSurface_Window_Flip( IDirectFBSurface    *thiz,
                               const DFBRegion     *region,
                               DFBSurfaceFlipFlags  flags )
 {
-     DFBResult ret = DFB_OK;
+     DFBResult ret;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFBSurface_Window )
 
@@ -88,10 +88,10 @@ IDirectFBSurface_Window_Flip( IDirectFBSurface    *thiz,
      if (!data->window->config.opacity && data->base.caps & DSCAPS_PRIMARY) {
           CoreWindowConfig config = { .opacity = 0xff };
 
-          ret = CoreWindow_SetConfig( data->window, &config, NULL, 0, DWCONF_OPACITY );
+          return CoreWindow_SetConfig( data->window, &config, NULL, 0, DWCONF_OPACITY );
      }
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult
@@ -113,10 +113,10 @@ IDirectFBSurface_Window_FlipStereo( IDirectFBSurface    *thiz,
      if (!data->window->config.opacity && data->base.caps & DSCAPS_PRIMARY) {
           CoreWindowConfig config = { .opacity = 0xff };
 
-          ret = CoreWindow_SetConfig( data->window, &config, NULL, 0, DWCONF_OPACITY );
+          return CoreWindow_SetConfig( data->window, &config, NULL, 0, DWCONF_OPACITY );
      }
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult

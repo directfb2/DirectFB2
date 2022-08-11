@@ -67,7 +67,7 @@ IDirectFBSurface_Layer_Flip( IDirectFBSurface    *thiz,
                              const DFBRegion     *region,
                              DFBSurfaceFlipFlags  flags )
 {
-     DFBResult ret = DFB_OK;
+     DFBResult ret;
      DFBRegion reg;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFBSurface_Layer )
@@ -133,12 +133,13 @@ IDirectFBSurface_Layer_Flip( IDirectFBSurface    *thiz,
      if (ret) {
           ret = CoreLayerRegion_FlipUpdate2( data->region, &reg, &reg, data->region->surface->flips, flags,
                                              data->base.current_frame_time );
-          if (ret) return ret;
+          if (ret)
+               return ret;
      }
 
      IDirectFBSurface_WaitForBackBuffer( &data->base );
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult
@@ -147,7 +148,7 @@ IDirectFBSurface_Layer_FlipStereo( IDirectFBSurface    *thiz,
                                    const DFBRegion     *right_region,
                                    DFBSurfaceFlipFlags  flags )
 {
-     DFBResult ret = DFB_OK;
+     DFBResult ret;
      DFBRegion l_reg, r_reg;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFBSurface_Layer )
@@ -223,12 +224,13 @@ IDirectFBSurface_Layer_FlipStereo( IDirectFBSurface    *thiz,
      if (ret) {
           ret = CoreLayerRegion_FlipUpdate2( data->region, &l_reg, &r_reg, data->region->surface->flips, flags,
                                              data->base.current_frame_time );
-          if (ret) return ret;
+          if (ret)
+               return ret;
      }
 
      IDirectFBSurface_WaitForBackBuffer( &data->base );
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult

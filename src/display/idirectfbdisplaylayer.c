@@ -919,7 +919,7 @@ IDirectFBDisplayLayer_GetCursorPosition( IDirectFBDisplayLayer *thiz,
      if (ret_y)
           *ret_y = point.y;
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult

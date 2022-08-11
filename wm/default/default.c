@@ -643,9 +643,14 @@ switch_focus( WMData          *wmdata,
           return;
 
      if (from) {
-          if (from->cursor.surface && !(from->config.cursor_flags & DWCF_INVISIBLE)) {
-               if (!to || !to->cursor.surface || (to->cursor.surface && (to->config.cursor_flags & DWCF_INVISIBLE)))
-                    dfb_windowstack_cursor_set_shape( stack, NULL, 0, 0 );
+          if (from->cursor.surface && !(from->config.cursor_flags & DWCF_INVISIBLE) &&
+              (!to || !to->cursor.surface || (to->cursor.surface && (to->config.cursor_flags & DWCF_INVISIBLE)))) {
+               CoreSurface *shape;
+               int          hot_x, hot_y;
+
+               dfb_layer_context_get_cursor_shape( stack->context, &shape, &hot_x, &hot_y );
+
+               dfb_windowstack_cursor_set_shape( stack, shape, hot_x, hot_y );
           }
 
           we.type = DWET_LOSTFOCUS;
@@ -3034,7 +3039,7 @@ wm_initialize( CoreDFB *core,
      if (ret)
           return ret;
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult
@@ -3048,7 +3053,7 @@ wm_join( CoreDFB *core,
      if (ret)
           return ret;
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult
@@ -3707,8 +3712,14 @@ wm_remove_window( CoreWindowStack *stack,
 
      remove_window( wmdata, stack, data, window, win );
 
-     if (window->cursor.surface && !(window->config.cursor_flags & DWCF_INVISIBLE))
-          dfb_windowstack_cursor_set_shape( stack, NULL, 0, 0 );
+     if (window->cursor.surface && !(window->config.cursor_flags & DWCF_INVISIBLE)) {
+          CoreSurface *shape;
+          int          hot_x, hot_y;
+
+          dfb_layer_context_get_cursor_shape( stack->context, &shape, &hot_x, &hot_y );
+
+          dfb_windowstack_cursor_set_shape( stack, shape, hot_x, hot_y );
+     }
 
      /* Free keys list. */
      if (window->config.keys) {
@@ -3851,8 +3862,14 @@ wm_set_window_config( CoreWindow             *window,
      }
 
      if (flags & DWCONF_CURSOR_FLAGS) {
-          if ((config->cursor_flags & DWCF_INVISIBLE) && !(window->config.cursor_flags & DWCF_INVISIBLE))
-               dfb_windowstack_cursor_set_shape( window->stack, NULL, 0, 0 );
+          if ((config->cursor_flags & DWCF_INVISIBLE) && !(window->config.cursor_flags & DWCF_INVISIBLE)) {
+               CoreSurface *shape;
+               int          hot_x, hot_y;
+
+               dfb_layer_context_get_cursor_shape( window->stack->context, &shape, &hot_x, &hot_y );
+
+               dfb_windowstack_cursor_set_shape( window->stack, shape, hot_x, hot_y );
+          }
 
           if (!(config->cursor_flags & DWCF_INVISIBLE) && (window->config.cursor_flags & DWCF_INVISIBLE))
                dfb_windowstack_cursor_set_shape( window->stack,

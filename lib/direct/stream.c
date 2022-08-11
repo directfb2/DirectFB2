@@ -510,7 +510,7 @@ net_open( DirectStream *stream,
           const char   *filename,
           int           proto )
 {
-     DirectResult    ret  = DR_OK;
+     DirectResult    ret;
      int             sock = (proto == IPPROTO_TCP) ? SOCK_STREAM : SOCK_DGRAM;
      struct addrinfo hints;
      char            port[16];
@@ -546,7 +546,7 @@ net_open( DirectStream *stream,
      stream->peek   = net_peek;
      stream->read   = net_read;
 
-     return ret;
+     return DR_OK;
 }
 
 /**********************************************************************************************************************/
@@ -993,7 +993,7 @@ file_peek( DirectStream *stream,
            void         *buf,
            unsigned int *read_out )
 {
-     DirectResult ret = DR_OK;
+     DirectResult ret;
      size_t      size;
 
      ret = direct_file_seek( &stream->file, offset );
@@ -1011,7 +1011,7 @@ file_peek( DirectStream *stream,
      if (read_out)
           *read_out = size;
 
-     return ret;
+     return DR_OK;
 }
 
 static DirectResult

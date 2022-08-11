@@ -408,8 +408,9 @@ dfb_surface_pool_bridges_transfer( CoreSurfaceBuffer     *buffer,
      D_DEBUG_AT( Core_SurfPoolBridge, "  -> start...\n" );
 
      ret = funcs->StartTransfer( bridge, bridge->data, get_local(bridge), transfer, transfer->data );
-     if (ret)
+     if (ret) {
           D_DERROR( ret, "Core/SurfacePoolBridge: Starting transfer via '%s' failed!\n", bridge->desc.name );
+     }
      else if (funcs->FinishTransfer) {
           D_DEBUG_AT( Core_SurfPoolBridge, "  -> finish...\n" );
 
