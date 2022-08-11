@@ -1132,7 +1132,9 @@ IDirectFBWindow_SetProperty( IDirectFBWindow  *thiz,
           return DFB_INVARG;
 
      dfb_windowstack_lock( data->window->stack );
+
      ret = dfb_wm_set_window_property( data->window->stack, data->window, key, value, ret_old_value );
+
      dfb_windowstack_unlock( data->window->stack );
 
      return ret;
@@ -1159,7 +1161,9 @@ IDirectFBWindow_GetProperty( IDirectFBWindow  *thiz,
           return DFB_INVARG;
 
      dfb_windowstack_lock( data->window->stack );
+
      ret = dfb_wm_get_window_property( data->window->stack, data->window, key, ret_value );
+
      dfb_windowstack_unlock( data->window->stack );
 
      return ret;
@@ -1183,7 +1187,9 @@ IDirectFBWindow_RemoveProperty( IDirectFBWindow  *thiz,
           return DFB_INVARG;
 
      dfb_windowstack_lock( data->window->stack );
+
      ret = dfb_wm_remove_window_property( data->window->stack, data->window, key, ret_value );
+
      dfb_windowstack_unlock( data->window->stack );
 
      return ret;

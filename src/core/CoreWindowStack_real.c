@@ -17,6 +17,7 @@
 */
 
 #include <core/CoreWindowStack.h>
+#include <core/layer_context.h>
 #include <core/windowstack.h>
 
 D_DEBUG_DOMAIN( DirectFB_CoreWindowStack, "DirectFB/CoreWindowStack", "DirectFB CoreWindowStack" );
@@ -110,6 +111,8 @@ IWindowStack_Real__CursorSetShape( CoreWindowStack *obj,
                                    const DFBPoint  *hotspot )
 {
      D_DEBUG_AT( DirectFB_CoreWindowStack, "%s( %p )\n", __FUNCTION__, obj );
+
+     dfb_layer_context_set_cursor_shape( obj->context, shape, hotspot->x, hotspot->y );
 
      return dfb_windowstack_cursor_set_shape( obj, shape, hotspot->x, hotspot->y );
 }

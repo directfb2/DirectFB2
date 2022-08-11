@@ -1610,7 +1610,7 @@ IDirectFB_GetClipboardTimeStamp( IDirectFB      *thiz,
      ret_timestamp->tv_sec  = ts / 1000000;
      ret_timestamp->tv_usec = ts % 1000000;
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult

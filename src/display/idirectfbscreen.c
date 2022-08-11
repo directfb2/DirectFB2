@@ -133,6 +133,8 @@ IDirectFBScreen_GetSize( IDirectFBScreen *thiz,
           return DFB_INVARG;
 
      ret = CoreScreen_GetScreenSize( data->screen, &size );
+     if (ret)
+          return ret;
 
      if (ret_width)
           *ret_width = size.w;
@@ -140,7 +142,7 @@ IDirectFBScreen_GetSize( IDirectFBScreen *thiz,
      if (ret_height)
           *ret_height = size.h;
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult

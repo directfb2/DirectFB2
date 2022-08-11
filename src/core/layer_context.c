@@ -68,6 +68,9 @@ context_destructor( FusionObject *object,
 
      dfb_layer_context_lock( context );
 
+     if (context->cursor.surface)
+          dfb_surface_unlink( &context->cursor.surface );
+
      /* Destroy the window stack. */
      if (context->stack) {
           dfb_windowstack_destroy( context->stack );
@@ -1523,14 +1526,14 @@ dfb_layer_context_set_stereo_depth( CoreLayerContext *context,
      if (!funcs->SetStereoDepth)
           return DFB_UNSUPPORTED;
 
-     /* Set new adjustment. */
+     /* Set new depth. */
      ret = funcs->SetStereoDepth( layer, layer->driver_data, layer->layer_data, follow_video, z );
      if (ret)
           return ret;
 
-     /* Keep new offset info. */
+     /* Keep new depth. */
      context->follow_video = follow_video;
-     context->z = z;
+     context->z            = z;
 
      return DFB_OK;
 }
@@ -1543,11 +1546,11 @@ dfb_layer_context_get_stereo_depth( CoreLayerContext *context,
      D_DEBUG_AT( Core_LayerContext, "%s( %p, %p, %p )\n", __FUNCTION__, context, ret_follow_video, ret_z );
 
      D_MAGIC_ASSERT( context, CoreLayerContext );
-     D_ASSERT( ret_z != NULL );
      D_ASSERT( ret_follow_video != NULL );
+     D_ASSERT( ret_z != NULL );
 
      *ret_follow_video = context->follow_video;
-     *ret_z = context->z;
+     *ret_z            = context->z;
 
      return DFB_OK;
 }
@@ -1639,6 +1642,53 @@ dfb_layer_context_set_clip_regions( CoreLayerContext *context,
           SHFREE( context->shmpool, old_clips );
 
      return ret;
+}
+
+DFBResult
+dfb_layer_context_set_cursor_shape( CoreLayerContext *context,
+                                    CoreSurface      *shape,
+                                    int               hot_x,
+                                    int               hot_y )
+{
+     DFBResult ret;
+
+     D_DEBUG_AT( Core_LayerContext, "%s( %p, %p, %d, %d )\n", __FUNCTION__, context, shape, hot_x, hot_y );
+
+     D_MAGIC_ASSERT( context, CoreLayerContext );
+
+     context->cursor.hot_x = hot_x;
+     context->cursor.hot_y = hot_y;
+
+     if (context->cursor.surface)
+          dfb_surface_unlink( &context->cursor.surface );
+
+     if (shape) {
+          ret = dfb_surface_link( &context->cursor.surface, shape );
+          if (ret)
+               return ret;
+     }
+
+     return DFB_OK;
+}
+
+DFBResult
+dfb_layer_context_get_cursor_shape( CoreLayerContext  *context,
+                                    CoreSurface      **ret_shape,
+                                    int               *ret_hot_x,
+                                    int               *ret_hot_y )
+{
+     D_DEBUG_AT( Core_LayerContext, "%s( %p, %p, %p, %p )\n", __FUNCTION__, context, ret_shape, ret_hot_x, ret_hot_y );
+
+     D_MAGIC_ASSERT( context, CoreLayerContext );
+     D_ASSERT( ret_shape != NULL );
+     D_ASSERT( ret_hot_x != NULL );
+     D_ASSERT( ret_hot_y != NULL );
+
+     *ret_shape = context->cursor.surface;
+     *ret_hot_x   = context->cursor.hot_x;
+     *ret_hot_y   = context->cursor.hot_y;
+
+     return DFB_OK;
 }
 
 /**********************************************************************************************************************/

@@ -226,9 +226,9 @@ DFBResult         dfb_window_set_config        ( CoreWindow                     
  * Change window cursor.
  */
 DFBResult         dfb_window_set_cursor_shape  ( CoreWindow                     *window,
-                                                 CoreSurface                    *surface,
-                                                 unsigned int                    hot_x,
-                                                 unsigned int                    hot_y );
+                                                 CoreSurface                    *shape,
+                                                 int                             hot_x,
+                                                 int                             hot_y );
 
 /*
  * Move a window relative to its current position.

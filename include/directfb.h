@@ -5432,7 +5432,7 @@ typedef enum {
      DWCF_TRAPPED                          = 0x00000008,         /* Pointer is clipped against the window boundaries. */
      DWCF_FIXED                            = 0x00000010,         /* Pointer does not move at all, but still may send
                                                                     relative motion. */
-     DWCF_INVISIBLE                        = 0x00000020,         /* Cursor opacity is zero. */
+     DWCF_INVISIBLE                        = 0x00000020,         /* Window cursor is not visible. */
 
      DWCF_ALL                              = 0x0000003F          /* All of these. */
 } DFBWindowCursorFlags;
