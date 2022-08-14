@@ -2246,7 +2246,7 @@ Core_Resource_AddIdentity( FusionID fusion_id,
      if (call_owner != fusion_id) {
           D_ERROR( "Core/Resource: Slave call owner (%lu) does not match new identity (%lu)!\n", call_owner, fusion_id );
           D_FREE( identity );
-          return ret;
+          return DFB_FAILURE;
      }
 
      if (core_dfb->resource.manager) {
