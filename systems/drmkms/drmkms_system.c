@@ -85,6 +85,7 @@ local_init( const char *device_name,
             DRMKMSData *drmkms )
 {
      CoreScreen *screen;
+     uint64_t    has_dumb = 0;
      int         i;
 
      /* Open DRM/KMS device. */
@@ -107,9 +108,9 @@ local_init( const char *device_name,
              drmkms->resources->count_connectors, drmkms->resources->count_encoders,
              drmkms->plane_resources->count_planes );
 
-     /* Create the mode-setting memory management object. */
-     if (kms_create( drmkms->fd, &drmkms->kms ) < 0 ) {
-          D_PERROR( "DRMKMS/System: Could not create the mode-setting mm object!\n" );
+     /* Check for the dumb buffer capability. */
+     if (drmGetCap( drmkms->fd, DRM_CAP_DUMB_BUFFER, &has_dumb ) < 0 || !has_dumb) {
+          D_PERROR( "DRMKMS/System: Could not create dumb buffers!\n" );
           return DFB_INIT;
      }
 
@@ -138,9 +139,6 @@ local_deinit( DRMKMSData *drmkms )
 
      if (drmkms->resources)
           drmModeFreeResources( drmkms->resources );
-
-     if (drmkms->kms)
-          kms_destroy( &drmkms->kms );
 
      if (drmkms->fd != -1) {
           drmDropMaster( drmkms->fd );

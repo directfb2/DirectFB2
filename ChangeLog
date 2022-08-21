@@ -1,3 +1,39 @@
+commit 958aab760292281eff4ca41d3de11a8581fa45ef
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Aug 21 10:08:11 2022 +0200
+
+    drmkms: Remove libkms dependency
+
+commit c750bb98c76191e8149e501db3d408175983d30a
+Merge: 33c7613 2690e4b
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Aug 14 09:11:37 2022 +0200
+
+    Merge pull request #43 from caramelli/master
+    
+    Core_Resource_AddIdentity(): if (call_owner != fusion_id), return DFB_FAILURE
+
+commit 2690e4bfcca798b6f183a07cbe038b4b4f105c34
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Aug 14 09:10:10 2022 +0200
+
+    Core_Resource_AddIdentity(): if (call_owner != fusion_id), return DFB_FAILURE
+
+commit 33c7613704c0055019d6085dbddcd5b972fb1c9f
+Merge: e629f8b 402acc7
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Aug 11 07:16:42 2022 +0200
+
+    Merge pull request #41 from caramelli/master
+    
+    Core/LayerContext: Add dfb_layer_context_set_cursor_shape() and dfb_layer_context_get_cursor_shape()
+
+commit 402acc7c68497321ad732d4c8594df63bb7f30e2
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Aug 11 07:10:26 2022 +0200
+
+    Update ChangeLog
+
 commit 5c309b21c5094d540f3835d37ee17f3dff8cfe68
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Thu Aug 11 07:10:17 2022 +0200
