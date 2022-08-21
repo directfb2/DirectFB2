@@ -505,13 +505,13 @@ drmkmsPlaneSetRegion( CoreLayer                  *layer,
      }
 
      if ((updated & (CLRCF_SRCKEY | CLRCF_OPTIONS)) && data->colorkey_propid) {
-          uint32_t drm_colorkey = config->src_key.r << 16 | config->src_key.g << 8 | config->src_key.b;
+          uint32_t colorkey = config->src_key.r << 16 | config->src_key.g << 8 | config->src_key.b;
 
           if (config->options & DLOP_SRC_COLORKEY)
-               drm_colorkey |= 0x01000000;
+               colorkey |= 0x01000000;
 
           err = drmModeObjectSetProperty( drmkms->fd, data->plane->plane_id, DRM_MODE_OBJECT_PLANE,
-                                          data->colorkey_propid, drm_colorkey );
+                                          data->colorkey_propid, colorkey );
           if (err) {
                ret = errno2result( errno );
                D_PERROR( "DRMKMS/Layer: drmModeObjectSetProperty() failed setting colorkey\n" );

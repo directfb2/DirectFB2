@@ -20,7 +20,6 @@
 #define __DRMKMS_SYSTEM_H__
 
 #include <core/layer_region.h>
-#include <libkms/libkms.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
@@ -82,8 +81,6 @@ typedef struct {
 
      drmModeRes         *resources;       /* display configuration information */
      drmModePlaneRes    *plane_resources; /* planes information */
-
-     struct kms_driver  *kms;             /* DRM/KMS memory management */
 
      drmModeConnector   *connector[8];
      drmModeEncoder     *encoder[8];
