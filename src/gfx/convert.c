@@ -158,9 +158,6 @@ dfb_pixel_from_color( DFBSurfacePixelFormat  format,
           case DSPF_RGB332:
                return PIXEL_RGB332( color->r, color->g, color->b );
 
-          case DSPF_A8:
-               return color->a;
-
           case DSPF_ARGB1555:
                return PIXEL_ARGB1555( color->a, color->r, color->g, color->b );
 
@@ -197,20 +194,23 @@ dfb_pixel_from_color( DFBSurfacePixelFormat  format,
           case DSPF_ARGB6666:
                return PIXEL_ARGB6666( color->a, color->r, color->g, color->b );
 
+          case DSPF_ARGB:
+               return PIXEL_ARGB( color->a, color->r, color->g, color->b );
+
           case DSPF_RGB24:
                return PIXEL_RGB32( color->r, color->g, color->b ) & 0xffffff;
 
           case DSPF_RGB32:
                return PIXEL_RGB32( color->r, color->g, color->b ) & 0xffffff;
 
-          case DSPF_ARGB:
-               return PIXEL_ARGB( color->a, color->r, color->g, color->b );
-
           case DSPF_ABGR:
                return PIXEL_ABGR( color->a, color->r, color->g, color->b );
 
           case DSPF_AiRGB:
                return PIXEL_AiRGB( color->a, color->r, color->g, color->b );
+
+          case DSPF_RGBA5551:
+               return PIXEL_RGBA5551( color->a, color->r, color->g, color->b );
 
           case DSPF_RGBAF88871:
                return PIXEL_RGBAF88871( color->a, color->r, color->g, color->b );
@@ -243,18 +243,12 @@ dfb_pixel_from_color( DFBSurfacePixelFormat  format,
                return PIXEL_UYVY_LE( y, cb, cr );
 #endif
 
-          case DSPF_I420:
-          case DSPF_YV12:
-          case DSPF_YV16:
-               RGB_TO_YCBCR( color->r, color->g, color->b, y, cb, cr );
-               return y | (cb << 8) | (cr << 16);
-
-          case DSPF_RGBA5551:
-               return PIXEL_RGBA5551( color->a, color->r, color->g, color->b );
-
           case DSPF_YUV444P:
                RGB_TO_YCBCR( color->r, color->g, color->b, y, cb, cr );
                return y << 16 | (cb << 8) | cr;
+
+          case DSPF_A8:
+               return color->a;
 
           default:
                if (DFB_PIXELFORMAT_IS_INDEXED( format ))
@@ -351,42 +345,42 @@ dfb_pixel_to_components( DFBSurfacePixelFormat  format,
                break;
 
           case DSPF_AYUV:
-              *a  =  pixel >> 24;
-              *c2 = (pixel & 0xff0000) >> 16;
-              *c1 = (pixel & 0x00ff00) >>  8;
-              *c0 =  pixel & 0x0000ff;
-              break;
+               *a  =  pixel >> 24;
+               *c2 = (pixel & 0xff0000) >> 16;
+               *c1 = (pixel & 0x00ff00) >>  8;
+               *c0 =  pixel & 0x0000ff;
+               break;
 
           case DSPF_YUY2:
 #ifdef WORDS_BIGENDIAN
-              *c2 =  pixel & 0xff;
-              *c1 =  pixel >> 24;
-              *c0 = (pixel & 0xff00) >> 8;
+               *c2 =  pixel & 0xff;
+               *c1 =  pixel >> 24;
+               *c0 = (pixel & 0xff00) >> 8;
 #else
-              *c2 =  pixel & 0xff;
-              *c1 = (pixel & 0xff00) >> 8;
-              *c0 =  pixel >> 24;
+               *c2 =  pixel & 0xff;
+               *c1 = (pixel & 0xff00) >> 8;
+               *c0 =  pixel >> 24;
 #endif
-              break;
+               break;
 
           case DSPF_UYVY:
 #ifdef WORDS_BIGENDIAN
-              *c2 = (pixel & 0xff00) >> 8;
-              *c1 = (pixel & 0xff0000) >> 16;
-              *c0 =  pixel & 0xff;
+               *c2 = (pixel & 0xff00) >> 8;
+               *c1 = (pixel & 0xff0000) >> 16;
+               *c0 =  pixel & 0xff;
 #else
-              *c2 = (pixel & 0xff00) >> 8;
-              *c1 =  pixel & 0xff;
-              *c0 = (pixel & 0xff0000) >> 16;
+               *c2 = (pixel & 0xff00) >> 8;
+               *c1 =  pixel & 0xff;
+               *c0 = (pixel & 0xff0000) >> 16;
 #endif
-              break;
+               break;
 
           case DSPF_I420:
           case DSPF_YV12:
-              *c2 =  pixel & 0xff;
-              *c1 = (pixel & 0xff00) >> 8;
-              *c0 = (pixel & 0xff0000) >> 16;
-              break;
+               *c2 =  pixel & 0xff;
+               *c1 = (pixel & 0xff00) >> 8;
+               *c0 = (pixel & 0xff0000) >> 16;
+               break;
 
           default:
                *c2 = 0;
@@ -703,6 +697,7 @@ dfb_convert_to_rgb16( DFBSurfacePixelFormat  format,
                }
                break;
 
+          case DSPF_Y42B:
           case DSPF_YV16:
                ++height;
                while (--height) {
@@ -849,7 +844,7 @@ dfb_convert_to_rgb555( DFBSurfacePixelFormat  format,
                }
                break;
 
-    case DSPF_BGR555:
+          case DSPF_BGR555:
                while (height--) {
                     const u16 *src16 = src;
 
@@ -1008,6 +1003,7 @@ dfb_convert_to_rgb555( DFBSurfacePixelFormat  format,
                }
                break;
 
+          case DSPF_Y42B:
           case DSPF_YV16:
                ++height;
                while (--height) {
@@ -1337,6 +1333,7 @@ dfb_convert_to_rgb32( DFBSurfacePixelFormat  format,
                }
                break;
 
+          case DSPF_Y42B:
           case DSPF_YV16:
                ++height;
                while (--height) {
@@ -1709,6 +1706,7 @@ dfb_convert_to_argb( DFBSurfacePixelFormat  format,
                }
                break;
 
+          case DSPF_Y42B:
           case DSPF_YV16:
                ++height;
                while (--height) {
@@ -2198,6 +2196,7 @@ dfb_convert_to_rgb24( DFBSurfacePixelFormat  format,
                }
                break;
 
+          case DSPF_Y42B:
           case DSPF_YV16:
                ++height;
                while (--height) {
@@ -2397,12 +2396,13 @@ dfb_convert_to_a8( DFBSurfacePixelFormat  format,
           case DSPF_RGB16:
           case DSPF_RGB24:
           case DSPF_RGB32:
-          case DSPF_VYU:
           case DSPF_YUY2:
           case DSPF_UYVY:
+          case DSPF_VYU:
+          case DSPF_Y42B:
+          case DSPF_YV16:
           case DSPF_NV16:
           case DSPF_NV61:
-          case DSPF_YV16:
           case DSPF_YUV444P:
                while (height--) {
                     memset( dst, 0xff, width );

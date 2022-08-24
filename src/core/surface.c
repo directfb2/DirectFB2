@@ -1558,19 +1558,24 @@ dfb_surface_dump_buffer2( CoreSurface          *surface,
                /* fall through */
 
           case DSPF_RGB332:
+          case DSPF_RGB444:
+          case DSPF_RGB555:
+          case DSPF_BGR555:
           case DSPF_RGB16:
           case DSPF_RGB24:
           case DSPF_RGB32:
           case DSPF_YUY2:
           case DSPF_UYVY:
+          case DSPF_VYU:
+          case DSPF_I420:
+          case DSPF_YV12:
+          case DSPF_NV12:
+          case DSPF_NV21:
+          case DSPF_Y42B:
+          case DSPF_YV16:
           case DSPF_NV16:
           case DSPF_NV61:
-          case DSPF_YV16:
-          case DSPF_RGB444:
-          case DSPF_RGB555:
-          case DSPF_BGR555:
           case DSPF_YUV444P:
-          case DSPF_VYU:
                rgb = true;
                break;
 
