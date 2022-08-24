@@ -61,13 +61,14 @@ Genefx_Aop_xy( GenefxState *gfxs,
           int dst_field_offset = gfxs->dst_field_offset;
 
           switch (gfxs->dst_format) {
-               case DSPF_YV12:
                case DSPF_I420:
+               case DSPF_YV12:
                     dst_field_offset /= 4;
                     pitch /= 2;
                     y /= 2;
                     x /= 2;
                     break;
+               case DSPF_Y42B:
                case DSPF_YV16:
                     dst_field_offset /= 2;
                     pitch /= 2;
@@ -117,7 +118,7 @@ Genefx_Aop_next( GenefxState *gfxs )
           gfxs->Aop[0] += pitch;
 
      if (DFB_PLANAR_PIXELFORMAT(gfxs->dst_format)) {
-          if (gfxs->dst_format == DSPF_YV12 || gfxs->dst_format == DSPF_I420) {
+          if (gfxs->dst_format == DSPF_I420 || gfxs->dst_format == DSPF_YV12) {
                if (gfxs->AopY & 1) {
                     if (gfxs->dst_caps & DSCAPS_SEPARATED) {
                          if (gfxs->Aop_field & 2) {
@@ -135,7 +136,7 @@ Genefx_Aop_next( GenefxState *gfxs )
                     }
                }
           }
-          else if (gfxs->dst_format == DSPF_YV16) {
+          else if (gfxs->dst_format == DSPF_Y42B || gfxs->dst_format == DSPF_YV16) {
                if (gfxs->dst_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Aop_field & 2) {
                          gfxs->Aop[1] += gfxs->dst_field_offset / 2;
@@ -213,7 +214,7 @@ Genefx_Aop_prev( GenefxState *gfxs )
           gfxs->Aop[0] -= pitch;
 
      if (DFB_PLANAR_PIXELFORMAT(gfxs->dst_format)) {
-          if (gfxs->dst_format == DSPF_YV12 || gfxs->dst_format == DSPF_I420) {
+          if (gfxs->dst_format == DSPF_I420 || gfxs->dst_format == DSPF_YV12) {
                if (gfxs->AopY & 1) {
                     if (gfxs->dst_caps & DSCAPS_SEPARATED) {
                          if (gfxs->Aop_field & 2) {
@@ -231,7 +232,7 @@ Genefx_Aop_prev( GenefxState *gfxs )
                     }
                }
           }
-          else if (gfxs->dst_format == DSPF_YV16) {
+          else if (gfxs->dst_format == DSPF_Y42B || gfxs->dst_format == DSPF_YV16) {
                if (gfxs->dst_caps & DSCAPS_SEPARATED) {
                    if (gfxs->Aop_field & 2) {
                         gfxs->Aop[1] += gfxs->dst_field_offset / 2 - pitch / 2;
@@ -318,13 +319,14 @@ Genefx_Bop_xy( GenefxState *gfxs,
           int src_field_offset = gfxs->src_field_offset;
 
           switch (gfxs->src_format) {
-               case DSPF_YV12:
                case DSPF_I420:
+               case DSPF_YV12:
                     src_field_offset /= 4;
                     pitch /= 2;
                     y /= 2;
                     x /= 2;
                     break;
+               case DSPF_Y42B:
                case DSPF_YV16:
                     src_field_offset /= 2;
                     pitch /= 2;
@@ -374,7 +376,7 @@ Genefx_Bop_next( GenefxState *gfxs )
           gfxs->Bop[0] += pitch;
 
      if (DFB_PLANAR_PIXELFORMAT(gfxs->src_format)) {
-          if (gfxs->src_format == DSPF_YV12 || gfxs->src_format == DSPF_I420) {
+          if (gfxs->src_format == DSPF_I420 || gfxs->src_format == DSPF_YV12) {
                if (gfxs->BopY & 1) {
                     if (gfxs->src_caps & DSCAPS_SEPARATED) {
                          if (gfxs->Bop_field & 2) {
@@ -392,7 +394,7 @@ Genefx_Bop_next( GenefxState *gfxs )
                     }
                }
           }
-          else if (gfxs->src_format == DSPF_YV16) {
+          else if (gfxs->src_format == DSPF_Y42B || gfxs->src_format == DSPF_YV16) {
                if (gfxs->src_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Bop_field & 2) {
                          gfxs->Bop[1] += gfxs->src_field_offset / 2;
@@ -470,7 +472,7 @@ Genefx_Bop_prev( GenefxState *gfxs )
           gfxs->Bop[0] -= pitch;
 
      if (DFB_PLANAR_PIXELFORMAT(gfxs->src_format)) {
-          if (gfxs->src_format == DSPF_YV12 || gfxs->src_format == DSPF_I420) {
+          if (gfxs->src_format == DSPF_I420 || gfxs->src_format == DSPF_YV12) {
                if (gfxs->BopY & 1) {
                     if (gfxs->src_caps & DSCAPS_SEPARATED) {
                          if (gfxs->Bop_field & 2) {
@@ -488,7 +490,7 @@ Genefx_Bop_prev( GenefxState *gfxs )
                     }
                }
           }
-          else if (gfxs->src_format == DSPF_YV16) {
+          else if (gfxs->src_format == DSPF_Y42B || gfxs->src_format == DSPF_YV16) {
                if (gfxs->src_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Bop_field & 2) {
                          gfxs->Bop[1] += gfxs->src_field_offset / 2 - pitch / 2;
@@ -575,13 +577,14 @@ Genefx_Mop_xy( GenefxState *gfxs,
           int mask_field_offset = gfxs->mask_field_offset;
 
           switch (gfxs->mask_format) {
-               case DSPF_YV12:
                case DSPF_I420:
+               case DSPF_YV12:
                     mask_field_offset /= 4;
                     pitch /= 2;
                     y /= 2;
                     x /= 2;
                     break;
+               case DSPF_Y42B:
                case DSPF_YV16:
                     mask_field_offset /= 2;
                     pitch /= 2;
@@ -631,7 +634,7 @@ Genefx_Mop_next( GenefxState *gfxs )
           gfxs->Mop[0] += pitch;
 
      if (DFB_PLANAR_PIXELFORMAT(gfxs->mask_format)) {
-          if (gfxs->mask_format == DSPF_YV12 || gfxs->mask_format == DSPF_I420) {
+          if (gfxs->mask_format == DSPF_I420 || gfxs->mask_format == DSPF_YV12) {
                if (gfxs->MopY & 1) {
                     if (gfxs->mask_caps & DSCAPS_SEPARATED) {
                          if (gfxs->Mop_field & 2) {
@@ -649,7 +652,7 @@ Genefx_Mop_next( GenefxState *gfxs )
                     }
                }
           }
-          else if (gfxs->mask_format == DSPF_YV16) {
+          else if (gfxs->mask_format == DSPF_Y42B || gfxs->mask_format == DSPF_YV16) {
                if (gfxs->mask_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Mop_field & 2) {
                          gfxs->Mop[1] += gfxs->mask_field_offset / 2;
@@ -727,7 +730,7 @@ Genefx_Mop_prev( GenefxState *gfxs )
           gfxs->Mop[0] -= pitch;
 
      if (DFB_PLANAR_PIXELFORMAT(gfxs->mask_format)) {
-          if (gfxs->mask_format == DSPF_YV12 || gfxs->mask_format == DSPF_I420) {
+          if (gfxs->mask_format == DSPF_I420 || gfxs->mask_format == DSPF_YV12) {
                if (gfxs->MopY & 1) {
                     if (gfxs->mask_caps & DSCAPS_SEPARATED) {
                          if (gfxs->Mop_field & 2) {
@@ -745,7 +748,7 @@ Genefx_Mop_prev( GenefxState *gfxs )
                     }
                }
           }
-          else if (gfxs->mask_format == DSPF_YV16) {
+          else if (gfxs->mask_format == DSPF_Y42B || gfxs->mask_format == DSPF_YV16) {
                if (gfxs->mask_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Mop_field & 2) {
                          gfxs->Mop[1] += gfxs->mask_field_offset / 2 - pitch / 2;

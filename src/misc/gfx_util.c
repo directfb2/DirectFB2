@@ -317,9 +317,10 @@ write_argb_span( u32         *src,
                }
                break;
 
-          case DSPF_YV12:
-          case DSPF_YV16:
           case DSPF_I420:
+          case DSPF_YV12:
+          case DSPF_Y42B:
+          case DSPF_YV16:
                d1 = dst[1];
                d2 = dst[2];
                for (i = 0; i < (len - 1); i += 2) {
@@ -494,8 +495,8 @@ dfb_copy_buffer_32( u32             *src,
      x = drect->x;
 
      switch (dst_surface->config.format) {
-          case DSPF_YV12:
           case DSPF_I420:
+          case DSPF_YV12:
                if (dst_surface->config.format == DSPF_I420) {
                     dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
                     dst2 = dst1 + dpitch / 2 * dst_surface->config.size.h / 2;
@@ -520,6 +521,7 @@ dfb_copy_buffer_32( u32             *src,
                }
                break;
 
+          case DSPF_Y42B:
           case DSPF_YV16:
                dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
                dst1 = dst2 + dpitch / 2 * dst_surface->config.size.h;
@@ -858,6 +860,10 @@ dfb_scale_linear_32( u32             *src,
                dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
                dst1 = dst2 + dpitch / 2 * dst_surface->config.size.h / 2;
                break;
+          case DSPF_Y42B:
+               dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
+               dst2 = dst1 + dpitch / 2 * dst_surface->config.size.h;
+               break;
           case DSPF_YV16:
                dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
                dst1 = dst2 + dpitch / 2 * dst_surface->config.size.h;
@@ -947,6 +953,7 @@ dfb_scale_linear_32( u32             *src,
                     d[2] = LINE_PTR( dst2, dst_surface->config.caps, i/2, dst_surface->config.size.h / 2, dpitch / 2 ) +
                            drect->x / 2;
                     break;
+               case DSPF_Y42B:
                case DSPF_YV16:
                     d[1] = LINE_PTR( dst1, dst_surface->config.caps, i, dst_surface->config.size.h, dpitch / 2 ) +
                            drect->x / 2;

@@ -228,8 +228,8 @@ transfer_buffer( const CoreSurfaceConfig *config,
      }
 
      switch (config->format) {
-          case DSPF_YV12:
           case DSPF_I420:
+          case DSPF_YV12:
                for (i = 0; i < config->size.h; i++) {
                     direct_memcpy( dst, src, DFB_BYTES_PER_LINE( config->format, config->size.w / 2 ) );
                     src += srcpitch / 2;
@@ -237,6 +237,7 @@ transfer_buffer( const CoreSurfaceConfig *config,
                }
                break;
 
+          case DSPF_Y42B:
           case DSPF_YV16:
                for (i = 0; i < config->size.h * 2; i++) {
                     direct_memcpy( dst, src, DFB_BYTES_PER_LINE( config->format, config->size.w / 2 ) );
