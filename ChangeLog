@@ -1,3 +1,24 @@
+commit a7bcf7475493700e166f44ed5307105eabc0676e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Aug 24 13:04:37 2022 +0200
+
+    Add support for YUV 4:2:2 planar format
+
+commit eb7ab25c193f90743553e6e09724756723348038
+Merge: c750bb9 1d99b8a
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Aug 21 11:09:20 2022 +0200
+
+    Merge pull request #44 from caramelli/master
+    
+    drmkms: Remove libkms dependency
+
+commit 1d99b8a946dfbb4ed6011380448738a78fb49272
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Aug 21 10:56:22 2022 +0200
+
+    Update ChangeLog
+
 commit 958aab760292281eff4ca41d3de11a8581fa45ef
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Sun Aug 21 10:08:11 2022 +0200
