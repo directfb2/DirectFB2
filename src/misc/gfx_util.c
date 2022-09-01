@@ -347,6 +347,16 @@ write_argb_span( u32         *src,
                }
                break;
 
+          case DSPF_Y444:
+          case DSPF_YV24: {
+               u8 *dy = dst[0];
+               u8 *du = dst[1];
+               u8 *dv = dst[2];
+               for (i = 0; i < len; i++)
+                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, dy[i], du[i], dv[i] );
+               break;
+          }
+
           case DSPF_NV12:
           case DSPF_NV16:
                d1 = dst[1];
@@ -436,15 +446,6 @@ write_argb_span( u32         *src,
                     ((u32*) d)[i] = ARGB_TO_RGBAF88871( src[i] );
                break;
 
-          case DSPF_YUV444P: {
-               u8 *dy = dst[0];
-               u8 *du = dst[1];
-               u8 *dv = dst[2];
-               for (i = 0; i < len; i++)
-                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, dy[i], du[i], dv[i] );
-               break;
-          }
-
           default:
                D_ONCE( "unimplemented destination format (0x%08x)", (unsigned int) dst_surface->config.format );
                break;
@@ -523,8 +524,14 @@ dfb_copy_buffer_32( u32             *src,
 
           case DSPF_Y42B:
           case DSPF_YV16:
-               dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
-               dst1 = dst2 + dpitch / 2 * dst_surface->config.size.h;
+               if (dst_surface->config.format == DSPF_Y42B) {
+                    dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
+                    dst2 = dst1 + dpitch / 2 * dst_surface->config.size.h;
+               }
+               else {
+                    dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
+                    dst1 = dst2 + dpitch / 2 * dst_surface->config.size.h;
+               }
 
                for (y = drect->y; y < drect->y + drect->h; y++) {
                     u8 *d[3];
@@ -538,6 +545,30 @@ dfb_copy_buffer_32( u32             *src,
                     src += sw;
                }
                break;
+
+          case DSPF_Y444:
+          case DSPF_YV24:
+               if (dst_surface->config.format == DSPF_Y444) {
+                    dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
+                    dst2 = dst1 + dpitch * dst_surface->config.size.h;
+               }
+               else {
+                    dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
+                    dst1 = dst2 + dpitch * dst_surface->config.size.h;
+               }
+
+               for (y = drect->y; y < drect->y + drect->h; y++) {
+                    u8 *d[3];
+
+                    d[0] = LINE_PTR( dst,  dst_surface->config.caps, y, dst_surface->config.size.h, dpitch ) + x;
+                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, y, dst_surface->config.size.h, dpitch ) + x;
+                    d[2] = LINE_PTR( dst2, dst_surface->config.caps, y, dst_surface->config.size.h, dpitch ) + x;
+
+                    write_argb_span( src, d, drect->w, x, y, dst_surface, true );
+
+                    src += sw;
+            }
+            break;
 
           case DSPF_NV12:
           case DSPF_NV21:
@@ -571,23 +602,6 @@ dfb_copy_buffer_32( u32             *src,
                     src += sw;
                }
                break;
-
-          case DSPF_YUV444P:
-               dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
-               dst2 = dst1 + dpitch * dst_surface->config.size.h;
-
-               for (y = drect->y; y < drect->y + drect->h; y++) {
-                    u8 *d[3];
-
-                    d[0] = LINE_PTR( dst,  dst_surface->config.caps, y, dst_surface->config.size.h, dpitch ) + x;
-                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, y, dst_surface->config.size.h, dpitch ) + x;
-                    d[2] = LINE_PTR( dst2, dst_surface->config.caps, y, dst_surface->config.size.h, dpitch ) + x;
-
-                    write_argb_span( src, d, drect->w, x, y, dst_surface, true );
-
-                    src += sw;
-            }
-            break;
 
           default:
                for (y = drect->y; y < drect->y + drect->h; y++) {
@@ -868,15 +882,19 @@ dfb_scale_linear_32( u32             *src,
                dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
                dst1 = dst2 + dpitch / 2 * dst_surface->config.size.h;
                break;
+          case DSPF_Y444:
+               dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
+               dst2 = dst1 + dpitch * dst_surface->config.size.h;
+               break;
+          case DSPF_YV24:
+               dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
+               dst1 = dst2 + dpitch * dst_surface->config.size.h;
+               break;
           case DSPF_NV12:
           case DSPF_NV21:
           case DSPF_NV16:
           case DSPF_NV61:
                dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
-               break;
-          case DSPF_YUV444P:
-               dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
-               dst2 = dst1 + dpitch * dst_surface->config.size.h;
                break;
           default:
                break;
@@ -960,6 +978,11 @@ dfb_scale_linear_32( u32             *src,
                     d[2] = LINE_PTR( dst2, dst_surface->config.caps, i, dst_surface->config.size.h, dpitch / 2 ) +
                            drect->x / 2;
                     break;
+               case DSPF_Y444:
+               case DSPF_YV24:
+                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, i, dst_surface->config.size.h, dpitch ) + drect->x;
+                    d[2] = LINE_PTR( dst2, dst_surface->config.caps, i, dst_surface->config.size.h, dpitch ) + drect->x;
+                    break;
                case DSPF_NV12:
                case DSPF_NV21:
                     d[1] = LINE_PTR( dst1, dst_surface->config.caps, i/2, dst_surface->config.size.h / 2, dpitch ) +
@@ -969,10 +992,6 @@ dfb_scale_linear_32( u32             *src,
                case DSPF_NV61:
                     d[1] = LINE_PTR( dst1, dst_surface->config.caps, i, dst_surface->config.size.h, dpitch ) +
                            (drect->x & ~1);
-                    break;
-               case DSPF_YUV444P:
-                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, i, dst_surface->config.size.h, dpitch ) + drect->x;
-                    d[2] = LINE_PTR( dst2, dst_surface->config.caps, i, dst_surface->config.size.h, dpitch ) + drect->x;
                     break;
                default:
                     break;

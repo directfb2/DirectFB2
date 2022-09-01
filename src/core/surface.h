@@ -413,7 +413,8 @@ dfb_surface_get_data_offsets( const CoreSurfaceConfig  *config,
           case DSPF_YV12:
           case DSPF_Y42B:
           case DSPF_YV16:
-          case DSPF_YUV444P:
+          case DSPF_Y444:
+          case DSPF_YV24:
                if (num < 3)
                     return;
                break;
@@ -502,7 +503,7 @@ dfb_surface_get_data_offsets( const CoreSurfaceConfig  *config,
                              + DFB_BYTES_PER_LINE( config->format, x / 2 );
                break;
 
-          case DSPF_YUV444P:
+          case DSPF_Y444:
                pitches[1]  = pitches[2] = pitch;
                pointers[1] = (u8*) data
                              + pitch * config->size.h
@@ -512,6 +513,19 @@ dfb_surface_get_data_offsets( const CoreSurfaceConfig  *config,
                              + pitch * config->size.h
                              + pitches[1] * config->size.h
                              + pitches[2] * y
+                             + DFB_BYTES_PER_LINE( config->format, x );
+               break;
+
+          case DSPF_YV24:
+               pitches[1]  = pitches[2] = pitch;
+               pointers[2] = (u8*) data
+                             + pitch * config->size.h
+                             + pitches[2] * y
+                             + DFB_BYTES_PER_LINE( config->format, x );
+               pointers[1] = (u8*) data
+                             + pitch * config->size.h
+                             + pitches[2] * config->size.h
+                             + pitches[1] * y
                              + DFB_BYTES_PER_LINE( config->format, x );
                break;
 

@@ -1,3 +1,24 @@
+commit badf1d0b52ea7e6d39070dcd68c968dd0ed9f5fa
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Sep 1 08:58:29 2022 +0200
+
+    Add support for YVU 4:4:4 planar format
+
+commit 0b9984b5d680d48422badff6f36f3439c806d3f4
+Merge: eb7ab25 dea029a
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Aug 24 13:38:14 2022 +0200
+
+    Merge pull request #45 from caramelli/master
+    
+    Add support for YUV 4:2:2 planar format
+
+commit dea029adcb4daf103956aa73ebd32c57db400596
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Aug 24 13:08:55 2022 +0200
+
+    Update ChangeLog
+
 commit a7bcf7475493700e166f44ed5307105eabc0676e
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Wed Aug 24 13:04:37 2022 +0200

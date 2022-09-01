@@ -117,7 +117,7 @@ if get_option('os') == 'linux'
     'os/linux/waitqueue.h'
   ]
 
-  build_h.set('DIRECT_BUILD_OS_LINUX',  1)
+  build_h.set('DIRECT_BUILD_OS_LINUX', 1)
 else
   error('Unsupported OS')
 endif

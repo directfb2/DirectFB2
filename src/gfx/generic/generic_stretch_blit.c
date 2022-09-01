@@ -222,7 +222,7 @@ static const StretchFunctionTable *stretch_tables[DFB_NUM_PIXELFORMATS] = {
      [DFB_PIXELFORMAT_INDEX(DSPF_RGB555)]     = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_BGR555)]     = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_RGBA5551)]   = NULL,
-     [DFB_PIXELFORMAT_INDEX(DSPF_YUV444P)]    = NULL,
+     [DFB_PIXELFORMAT_INDEX(DSPF_Y444)]       = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_ARGB8565)]   = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_RGBAF88871)] = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_AVYU)]       = NULL,
@@ -231,6 +231,7 @@ static const StretchFunctionTable *stretch_tables[DFB_NUM_PIXELFORMATS] = {
      [DFB_PIXELFORMAT_INDEX(DSPF_YV16)]       = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_NV61)]       = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_Y42B)]       = NULL,
+     [DFB_PIXELFORMAT_INDEX(DSPF_YV24)]       = NULL,
 };
 
 /**********************************************************************************************************************/

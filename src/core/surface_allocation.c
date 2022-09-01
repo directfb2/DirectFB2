@@ -237,21 +237,21 @@ transfer_buffer( const CoreSurfaceConfig *config,
                }
                break;
 
-          case DSPF_Y42B:
-          case DSPF_YV16:
-               for (i = 0; i < config->size.h * 2; i++) {
-                    direct_memcpy( dst, src, DFB_BYTES_PER_LINE( config->format, config->size.w / 2 ) );
-                    src += srcpitch / 2;
-                    dst += dstpitch / 2;
-               }
-               break;
-
           case DSPF_NV12:
           case DSPF_NV21:
                for (i = 0; i < config->size.h / 2; i++) {
                     direct_memcpy( dst, src, DFB_BYTES_PER_LINE( config->format, config->size.w ) );
                     src += srcpitch;
                     dst += dstpitch;
+               }
+               break;
+
+          case DSPF_Y42B:
+          case DSPF_YV16:
+               for (i = 0; i < config->size.h * 2; i++) {
+                    direct_memcpy( dst, src, DFB_BYTES_PER_LINE( config->format, config->size.w / 2 ) );
+                    src += srcpitch / 2;
+                    dst += dstpitch / 2;
                }
                break;
 
@@ -264,7 +264,8 @@ transfer_buffer( const CoreSurfaceConfig *config,
                }
                break;
 
-          case DSPF_YUV444P:
+          case DSPF_Y444:
+          case DSPF_YV24:
                for (i = 0; i < config->size.h * 2; i++) {
                     direct_memcpy( dst, src, DFB_BYTES_PER_LINE( config->format, config->size.w ) );
                     src += srcpitch;
