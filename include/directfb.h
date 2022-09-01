@@ -816,7 +816,10 @@ typedef enum {
      DSPF_NV61       = DFB_SURFACE_PIXELFORMAT( 42, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 ),
 
      /* 16 bit   YUV (8 bit Y plane followed by half-size 8 bit U/V planes) */
-     DSPF_Y42B       = DFB_SURFACE_PIXELFORMAT( 43, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 )
+     DSPF_Y42B       = DFB_SURFACE_PIXELFORMAT( 43, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 ),
+
+     /* 24 bit   YUV (8 bit Y plane followed by 8 bit V/U planes) */
+     DSPF_YV24       = DFB_SURFACE_PIXELFORMAT( 44, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 )
 } DFBSurfacePixelFormat;
 
 #define DSPF_YUV420P                         DSPF_I420
@@ -824,7 +827,7 @@ typedef enum {
 #define DSPF_YUV444P                         DSPF_Y444
 
 /* Number of pixelformats defined. */
-#define DFB_NUM_PIXELFORMATS                 44
+#define DFB_NUM_PIXELFORMATS                 45
 
 /* These macros extract information about the pixel format. */
 #define DFB_PIXELFORMAT_INDEX(fmt)           (((fmt) & 0x0000007F)      )
@@ -881,12 +884,13 @@ typedef enum {
       ((fmt) == DSPF_NV16)        || \
       ((fmt) == DSPF_NV21)        || \
       ((fmt) == DSPF_AYUV)        || \
-      ((fmt) == DSPF_YUV444P)     || \
+      ((fmt) == DSPF_Y444)        || \
       ((fmt) == DSPF_AVYU)        || \
       ((fmt) == DSPF_VYU)         || \
       ((fmt) == DSPF_YV16)        || \
       ((fmt) == DSPF_NV61)        || \
-      ((fmt) == DSPF_Y42B))
+      ((fmt) == DSPF_Y42B)        || \
+      ((fmt) == DSPF_YV24))
 
 /*
  * Hint flags for optimized allocation, format selection etc.

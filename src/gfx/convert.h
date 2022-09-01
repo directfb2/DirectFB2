@@ -524,32 +524,6 @@ void          dfb_convert_to_a4      ( DFBSurfacePixelFormat  format,
                                        int                    width,
                                        int                    height );
 
-void          dfb_convert_to_yuy2    ( DFBSurfacePixelFormat  format,
-                                       const void            *src,
-                                       int                    spitch,
-                                       const void            *src_cb,
-                                       int                    scbpitch,
-                                       const void            *src_cr,
-                                       int                    scrpitch,
-                                       int                    surface_height,
-                                       u32                   *dst,
-                                       int                    dpitch,
-                                       int                    width,
-                                       int                    height );
-
-void          dfb_convert_to_uyvy    ( DFBSurfacePixelFormat  format,
-                                       const void            *src,
-                                       int                    spitch,
-                                       const void            *src_cb,
-                                       int                    scbpitch,
-                                       const void            *src_cr,
-                                       int                    scrpitch,
-                                       int                    surface_height,
-                                       u32                   *dst,
-                                       int                    dpitch,
-                                       int                    width,
-                                       int                    height );
-
 /**********************************************************************************************************************/
 
 static __inline__ u32
@@ -567,26 +541,6 @@ static __inline__ u32
 dfb_color_to_argb( const DFBColor *color )
 {
      return (color->a << 24) | (color->r << 16) | (color->g << 8) | color->b;
-}
-
-static __inline__ u32
-dfb_color_to_aycbcr( const DFBColor *color )
-{
-     u32 y, cb, cr;
-
-     RGB_TO_YCBCR( color->r, color->g, color->b, y, cb, cr );
-
-     return (color->a << 24) | (y << 16) | (cb << 8) | cr;
-}
-
-static __inline__ u32
-dfb_color_to_acrycb( const DFBColor *color )
-{
-     u32 y, cb, cr;
-
-     RGB_TO_YCBCR( color->r, color->g, color->b, y, cb, cr );
-
-     return (color->a << 24) | (cr << 16) | (y << 8) | cb;
 }
 
 static __inline__ void

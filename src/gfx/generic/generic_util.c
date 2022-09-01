@@ -82,7 +82,8 @@ Genefx_Aop_xy( GenefxState *gfxs,
                case DSPF_NV61:
                     x &= ~1;
                     break;
-               case DSPF_YUV444P:
+               case DSPF_Y444:
+               case DSPF_YV24:
                     /* nothing to adjust */
                default:
                     break;
@@ -165,7 +166,7 @@ Genefx_Aop_next( GenefxState *gfxs )
                     }
                }
           }
-          else if (gfxs->dst_format == DSPF_YUV444P) {
+          else if (gfxs->dst_format == DSPF_Y444 || gfxs->dst_format == DSPF_YV24) {
                if (gfxs->dst_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Aop_field & 1) {
                          gfxs->Aop[1] += gfxs->dst_field_offset;
@@ -261,7 +262,7 @@ Genefx_Aop_prev( GenefxState *gfxs )
                     }
                }
           }
-          else if (gfxs->dst_format == DSPF_YUV444P) {
+          else if (gfxs->dst_format == DSPF_Y444 || gfxs->dst_format == DSPF_YV24) {
                if (gfxs->dst_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Aop_field & 1) {
                          gfxs->Aop[1] += gfxs->dst_field_offset - pitch;
@@ -340,7 +341,8 @@ Genefx_Bop_xy( GenefxState *gfxs,
                case DSPF_NV61:
                     x &= ~1;
                     break;
-               case DSPF_YUV444P:
+               case DSPF_Y444:
+               case DSPF_YV24:
                     /* nothing to adjust */
                default:
                     break;
@@ -423,7 +425,7 @@ Genefx_Bop_next( GenefxState *gfxs )
                     }
                }
           }
-          else if (gfxs->src_format == DSPF_YUV444P) {
+          else if (gfxs->src_format == DSPF_Y444 || gfxs->src_format == DSPF_YV24) {
                if (gfxs->src_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Bop_field & 1) {
                          gfxs->Bop[1] += gfxs->src_field_offset;
@@ -519,7 +521,7 @@ Genefx_Bop_prev( GenefxState *gfxs )
                     }
                }
           }
-          else if (gfxs->src_format == DSPF_YUV444P) {
+          else if (gfxs->src_format == DSPF_Y444 || gfxs->src_format == DSPF_YV24) {
                if (gfxs->src_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Bop_field & 1) {
                          gfxs->Bop[1] += gfxs->src_field_offset - pitch;
@@ -598,7 +600,8 @@ Genefx_Mop_xy( GenefxState *gfxs,
                case DSPF_NV61:
                     x &= ~1;
                     break;
-               case DSPF_YUV444P:
+               case DSPF_Y444:
+               case DSPF_YV24:
                     /* nothing to adjust */
                default:
                     break;
@@ -681,7 +684,7 @@ Genefx_Mop_next( GenefxState *gfxs )
                     }
                }
           }
-          else if (gfxs->mask_format == DSPF_YUV444P) {
+          else if (gfxs->mask_format == DSPF_Y444 || gfxs->mask_format == DSPF_YV24) {
                if (gfxs->mask_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Mop_field & 1) {
                          gfxs->Mop[1] += gfxs->mask_field_offset;
@@ -777,7 +780,7 @@ Genefx_Mop_prev( GenefxState *gfxs )
                     }
                }
           }
-          else if (gfxs->mask_format == DSPF_YUV444P) {
+          else if (gfxs->mask_format == DSPF_Y444 || gfxs->mask_format == DSPF_YV24) {
                if (gfxs->mask_caps & DSCAPS_SEPARATED) {
                     if (gfxs->Mop_field & 1) {
                          gfxs->Mop[1] += gfxs->mask_field_offset - pitch;

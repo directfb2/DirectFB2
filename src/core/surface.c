@@ -1575,7 +1575,8 @@ dfb_surface_dump_buffer2( CoreSurface          *surface,
           case DSPF_YV16:
           case DSPF_NV16:
           case DSPF_NV61:
-          case DSPF_YUV444P:
+          case DSPF_Y444:
+          case DSPF_YV24:
                rgb = true;
                break;
 

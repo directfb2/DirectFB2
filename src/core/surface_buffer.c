@@ -541,7 +541,8 @@ dfb_surface_buffer_dump_type_locked2( CoreSurfaceBuffer *buffer,
           case DSPF_YV16:
           case DSPF_NV16:
           case DSPF_NV61:
-          case DSPF_YUV444P:
+          case DSPF_Y444:
+          case DSPF_YV24:
                rgb = true;
                break;
 
