@@ -52,25 +52,24 @@ typedef struct {
 static void
 IDirectFBFont_DGIFF_Destruct( IDirectFBFont *thiz )
 {
-     IDirectFBFont_data *data      = thiz->priv;
-     DGIFFImplData      *impl_data = data->font->impl_data;
+     DGIFFImplData *data = ((IDirectFBFont_data *) thiz->priv)->font->impl_data;
 
      D_DEBUG_AT( Font_DGIFF, "%s( %p )\n", __FUNCTION__, thiz );
 
-     if (impl_data->rows) {
+     if (data->rows) {
           int i;
 
-          for (i = 0; i < impl_data->num_rows; i++) {
-               if (impl_data->rows[i])
-                    dfb_surface_unref( impl_data->rows[i] );
+          for (i = 0; i < data->num_rows; i++) {
+               if (data->rows[i])
+                    dfb_surface_unref( data->rows[i] );
           }
 
-          D_FREE( impl_data->rows );
+          D_FREE( data->rows );
      }
 
-     direct_file_unmap( impl_data->map, impl_data->size );
+     direct_file_unmap( data->map, data->size );
 
-     D_FREE( impl_data );
+     D_FREE( data );
 
      IDirectFBFont_Destruct( thiz );
 }
@@ -93,36 +92,14 @@ IDirectFBFont_DGIFF_Release( IDirectFBFont *thiz )
 static DFBResult
 Probe( IDirectFBFont_ProbeContext *ctx )
 {
-     DFBResult   ret = DFB_OK;
-     DirectFile  fd;
-     DGIFFHeader header;
-     size_t      bytes;
-
-     if (!ctx->filename)
+     if (!ctx->content)
           return DFB_UNSUPPORTED;
 
-     /* Open the file. */
-     ret = direct_file_open( &fd, ctx->filename, O_RDONLY, 0 );
-     if (ret) {
-          D_DERROR( ret, "Font/DGIFF: Failed to open '%s'!\n", ctx->filename );
-          return ret;
-     }
-
-     /* Read the header. */
-     ret = direct_file_read( &fd, &header, sizeof(header), &bytes );
-     if (bytes != sizeof(header)) {
-          D_DERROR( ret, "Font/DGIFF: Failure reading "_ZU" bytes from '%s'!\n", sizeof(header), ctx->filename );
-          goto out;
-     }
-
      /* Check the magic. */
-     if (strncmp( (const char*) header.magic, "DGIFF", 5 ))
-          ret = DFB_UNSUPPORTED;
+     if (!strncmp( (const char*) ctx->content, "DGIFF", 5 ))
+          return DFB_OK;
 
-out:
-     direct_file_close( &fd );
-
-     return ret;
+     return DFB_UNSUPPORTED;
 }
 
 static DFBResult
@@ -131,30 +108,33 @@ Construct( IDirectFBFont              *thiz,
            IDirectFBFont_ProbeContext *ctx,
            DFBFontDescription         *desc )
 {
-     DFBResult        ret;
-     int              i;
-     DirectFile       fd;
-     DirectFileInfo   info;
-     DGIFFFaceHeader *face;
-     DGIFFGlyphInfo  *glyphs;
-     DGIFFGlyphRow   *row;
-     void            *ptr  = NULL;
-     CoreFont        *font = NULL;
-     DGIFFImplData   *data = NULL;
-     DGIFFHeader     *header;
+     DFBResult              ret;
+     int                    i;
+     DirectFile             fd;
+     DirectFileInfo         info;
+     const DGIFFHeader     *header;
+     const DGIFFFaceHeader *faceheader;
+     DGIFFGlyphInfo        *glyphs;
+     DGIFFGlyphRow         *row;
+     void                  *ptr  = NULL;
+     CoreFont              *font = NULL;
+     DGIFFImplData         *data = NULL;
 
      D_DEBUG_AT( Font_DGIFF, "%s( %p )\n", __FUNCTION__, thiz );
 
-     if (desc->flags & DFDESC_ROTATION) {
-          DIRECT_DEALLOCATE_INTERFACE( thiz );
+     /* Check for valid description. */
+     if (!(desc->flags & DFDESC_HEIGHT))
+          return DFB_INVARG;
+
+     if (desc->flags & DFDESC_ROTATION)
           return DFB_UNSUPPORTED;
-     }
+
+     D_DEBUG_AT( Font_DGIFF, "  -> file '%s' at pixel height %d\n", ctx->filename, desc->height );
 
      /* Open the file. */
      ret = direct_file_open( &fd, ctx->filename, O_RDONLY, 0 );
      if (ret) {
           D_DERROR( ret, "Font/DGIFF: Failed to open '%s'!\n", ctx->filename );
-          DIRECT_DEALLOCATE_INTERFACE( thiz );
           return ret;
      }
 
@@ -175,26 +155,24 @@ Construct( IDirectFBFont              *thiz,
      direct_file_close( &fd );
 
      header = ptr;
-     face   = ptr + sizeof(DGIFFHeader);
+     faceheader = ptr + sizeof(DGIFFHeader);
 
-     /* Lookup requested face, otherwise use first if nothing requested. */
-     if (desc->flags & DFDESC_HEIGHT) {
-          for (i = 0; i < header->num_faces; i++) {
-               if (face->size == desc->height)
-                    break;
+     /* Lookup requested face. */
+     for (i = 0; i < header->num_faces; i++) {
+          if (faceheader->size == desc->height)
+               break;
 
-               face = (void*) face + face->next_face;
-          }
-
-          if (i == header->num_faces) {
-               ret = DFB_UNSUPPORTED;
-               D_ERROR( "Font/DGIFF: Requested size %d not found in '%s'!\n", desc->height, ctx->filename );
-               goto error;
-          }
+          faceheader = (void*) faceheader + faceheader->next_face;
      }
 
-     glyphs = (void*) (face + 1);
-     row    = (void*) (glyphs + face->num_glyphs);
+     if (i == header->num_faces) {
+          D_ERROR( "Font/DGIFF: Requested size %d not found in '%s'!\n", desc->height, ctx->filename );
+          ret = DFB_UNSUPPORTED;
+          goto error;
+     }
+
+     glyphs = (void*) (faceheader + 1);
+     row    = (void*) (glyphs + faceheader->num_glyphs);
 
      /* Create the font object. */
      ret = dfb_font_create( core, desc, ctx->filename, &font );
@@ -202,15 +180,15 @@ Construct( IDirectFBFont              *thiz,
           goto error;
 
      /* Fill font information. */
-     if (face->blittingflags)
-          font->blittingflags = face->blittingflags;
+     if (faceheader->blittingflags)
+          font->blittingflags = faceheader->blittingflags;
 
-     font->pixel_format = face->pixelformat;
+     font->pixel_format = faceheader->pixelformat;
      font->surface_caps = DSCAPS_NONE;
-     font->ascender     = face->ascender;
-     font->descender    = face->descender;
-     font->height       = face->height;
-     font->maxadvance   = face->max_advance;
+     font->ascender     = faceheader->ascender;
+     font->descender    = faceheader->descender;
+     font->height       = faceheader->height;
+     font->maxadvance   = faceheader->max_advance;
      font->up_unit_x    =  0.0;
      font->up_unit_y    = -1.0;
      font->flags        = CFF_SUBPIXEL_ADVANCE;
@@ -227,7 +205,7 @@ Construct( IDirectFBFont              *thiz,
      data->map  = ptr;
      data->size = info.size;
 
-     data->num_rows = face->num_rows;
+     data->num_rows = faceheader->num_rows;
 
      /* Allocate array for glyph cache rows. */
      data->rows = D_CALLOC( data->num_rows, sizeof(void*) );
@@ -238,12 +216,12 @@ Construct( IDirectFBFont              *thiz,
 
      /* Build glyph cache rows. */
      for (i = 0; i < data->num_rows; i++) {
-          ret = dfb_surface_create_simple( core, row->width, row->height, face->pixelformat,
-                                           DFB_COLORSPACE_DEFAULT( face->pixelformat ), DSCAPS_NONE, CSTF_NONE, 0, NULL,
-                                           &data->rows[i] );
+          ret = dfb_surface_create_simple( core, row->width, row->height, faceheader->pixelformat,
+                                           DFB_COLORSPACE_DEFAULT( faceheader->pixelformat ), DSCAPS_NONE, CSTF_NONE, 0,
+                                           NULL, &data->rows[i] );
           if (ret) {
                D_DERROR( ret, "DGIFF/Font: Could not create %s %dx%d glyph row surface!\n",
-                         dfb_pixelformat_name( face->pixelformat ), row->width, row->height );
+                         dfb_pixelformat_name( faceheader->pixelformat ), row->width, row->height );
                goto error;
           }
 
@@ -254,7 +232,7 @@ Construct( IDirectFBFont              *thiz,
      }
 
      /* Build glyph info. */
-     for (i = 0; i < face->num_glyphs; i++) {
+     for (i = 0; i < faceheader->num_glyphs; i++) {
           CoreGlyphData  *glyph_data;
           DGIFFGlyphInfo *glyph = &glyphs[i];
 
@@ -311,8 +289,6 @@ error:
           direct_file_unmap( ptr, info.size );
 
      direct_file_close( &fd );
-
-     DIRECT_DEALLOCATE_INTERFACE( thiz );
 
      return ret;
 }

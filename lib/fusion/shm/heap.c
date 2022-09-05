@@ -555,8 +555,8 @@ __shmalloc_init_heap( FusionSHM  *shm,
      }
 
      if (heap != addr_base) {
-          ret = DR_FUSION;
           D_ERROR( "Fusion/SHMHeap: The mmap returned address (%p) differs from requested (%p)!\n", heap, addr_base );
+          ret = DR_FUSION;
           goto error;
      }
 
@@ -633,8 +633,8 @@ __shmalloc_join_heap( FusionSHM  *shm,
      }
 
      if (heap != addr_base) {
-          ret = DR_FUSION;
           D_ERROR( "Fusion/SHMHeap: The mmap returned address (%p) differs from requested (%p)!\n", heap, addr_base );
+          ret = DR_FUSION;
           goto error;
      }
 

@@ -1431,32 +1431,23 @@ IDirectFB_CreateFont( IDirectFB                 *thiz,
      D_DEBUG_AT( DirectFB, "%s( %p, '%s' )\n", __FUNCTION__, thiz, filename );
 
      /* Check arguments. */
-     if (!ret_interface)
+     if (!ret_interface || !filename || !desc)
           return DFB_INVARG;
 
-     if (desc) {
-          if ((desc->flags & DFDESC_HEIGHT) && desc->height < 1) {
-               D_DEBUG_AT( DirectFB, "  -> invalid height %d\n", desc->height );
-               return DFB_INVARG;
-          }
-
-          if ((desc->flags & DFDESC_WIDTH) && desc->width < 1) {
-               D_DEBUG_AT( DirectFB, "  -> invalid width %d\n", desc->width );
-               return DFB_INVARG;
-          }
+     ret = direct_access( filename, R_OK );
+     if (ret) {
+          D_DEBUG_AT( DirectFB, "  -> cannot access '%s'\n", filename );
+          return ret;
      }
 
-     if (filename) {
-          if (!desc) {
-               D_DEBUG_AT( DirectFB, "  -> missing description\n" );
-               return DFB_INVARG;
-          }
+     if ((desc->flags & DFDESC_HEIGHT) && desc->height < 1) {
+          D_DEBUG_AT( DirectFB, "  -> invalid height %d\n", desc->height );
+          return DFB_INVARG;
+     }
 
-          ret = direct_access( filename, R_OK );
-          if (ret) {
-               D_DEBUG_AT( DirectFB, "  -> cannot access '%s'\n", filename );
-               return ret;
-          }
+     if ((desc->flags & DFDESC_WIDTH) && desc->width < 1) {
+          D_DEBUG_AT( DirectFB, "  -> invalid width %d\n", desc->width );
+          return DFB_INVARG;
      }
 
      /* Create a data buffer. */
