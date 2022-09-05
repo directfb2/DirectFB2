@@ -263,6 +263,7 @@ IDirectFBImageProvider_DFIFF_SetRenderCallback( IDirectFBImageProvider *thiz,
 static DFBResult
 Probe( IDirectFBImageProvider_ProbeContext *ctx )
 {
+     /* Check the magic. */
      if (!strncmp( (const char*) ctx->header, "DFIFF", 5 ))
           return DFB_OK;
 
@@ -278,8 +279,8 @@ Construct( IDirectFBImageProvider *thiz,
      DFBResult                 ret;
      DirectFile                fd;
      DirectFileInfo            info;
-     void                     *ptr;
      const DFIFFHeader        *header;
+     void                     *ptr;
      IDirectFBDataBuffer_data *buffer_data = buffer->priv;
 
      DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBImageProvider_DFIFF )

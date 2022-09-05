@@ -90,11 +90,19 @@ struct __DFB_CoreFont {
 
      void                         *impl_data;       /* a pointer used by the implementation */
 
-     DFBResult (*GetGlyphData)( CoreFont *thiz, unsigned int index, CoreGlyphData *data );
+     DFBResult                   (*GetGlyphData)( CoreFont      *thiz,
+                                                  unsigned int   index,
+                                                  CoreGlyphData *data );
 
-     DFBResult (*RenderGlyph) ( CoreFont *thiz, unsigned int index, CoreGlyphData *data );
+     DFBResult                   (*RenderGlyph) ( CoreFont      *thiz,
+                                                  unsigned int   index,
+                                                  CoreGlyphData *data );
 
-     DFBResult (*GetKerning)  ( CoreFont *thiz, unsigned int prev, unsigned int current, int *ret_x, int *ret_y );
+     DFBResult                   (*GetKerning)  ( CoreFont      *thiz,
+                                                  unsigned int   prev,
+                                                  unsigned int   current,
+                                                  int           *ret_x,
+                                                  int           *ret_y );
 
      int                           magic;
 

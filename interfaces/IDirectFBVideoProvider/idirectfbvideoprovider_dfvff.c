@@ -698,6 +698,7 @@ IDirectFBVideoProvider_DFVFF_SetDestination( IDirectFBVideoProvider *thiz,
 static DFBResult
 Probe( IDirectFBVideoProvider_ProbeContext *ctx )
 {
+     /* Check the magic. */
      if (!strncmp( (const char*) ctx->header, "DFVFF", 5 ))
           return DFB_OK;
 
@@ -713,8 +714,8 @@ Construct( IDirectFBVideoProvider *thiz,
      DFBResult                 ret;
      DirectFile                fd;
      DirectFileInfo            info;
-     void                     *ptr;
      const DFVFFHeader        *header;
+     void                     *ptr;
      IDirectFBDataBuffer_data *buffer_data = buffer->priv;
 
      DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBVideoProvider_DFVFF )

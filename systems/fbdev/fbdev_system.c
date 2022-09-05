@@ -377,8 +377,8 @@ system_initialize( CoreDFB  *core,
      }
 
      if (ioctl( fbdev->fd, FBIOGET_VSCREENINFO, &shared->orig_var ) < 0) {
-          ret = DFB_INIT;
           D_PERROR( "FBDev/System: Could not get variable screen information!\n" );
+          ret = DFB_INIT;
           goto error;
      }
 
@@ -386,8 +386,8 @@ system_initialize( CoreDFB  *core,
      shared->current_var.accel_flags = 0;
 
      if (ioctl( fbdev->fd, FBIOPUT_VSCREENINFO, &shared->current_var ) < 0) {
-          ret = DFB_INIT;
           D_PERROR( "FBDev/System: Could not disable console acceleration!\n" );
+          ret = DFB_INIT;
           goto error;
      }
 

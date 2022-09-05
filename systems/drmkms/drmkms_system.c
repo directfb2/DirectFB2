@@ -227,8 +227,12 @@ system_initialize( CoreDFB  *core,
           else if (strcmp( value, "single" ) == 0) {
                D_INFO( "DRMKMS/System: Single display\n" );
           }
-          else
+          else {
                D_ERROR( "DRMKMS/System: 'connected-outputs': Unknown connected outputs setting '%s'!\n", value );
+               SHFREE( pool, shared );
+               D_FREE( drmkms );
+               return DFB_INIT;
+          }
      }
 
      ret = local_init( shared->device_name, drmkms );

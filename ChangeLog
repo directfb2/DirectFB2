@@ -1,3 +1,24 @@
+commit 80f94b0867308ce373a1c4ffd2dbc33d300adf34
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Sep 5 11:16:03 2022 +0200
+
+    Font/DGIFF: return DFB_INVARG if height not set in font description
+
+commit 0c0a38cd0dc67a8fb254b1ca7ff4913222d038b8
+Merge: 0b9984b 396d28e
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Sep 1 09:00:50 2022 +0200
+
+    Merge pull request #46 from caramelli/master
+    
+    Add support for YVU 4:4:4 planar format
+
+commit 396d28e145e0f205718861e4d4ee5376319d80dc
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Sep 1 08:58:36 2022 +0200
+
+    Update ChangeLog
+
 commit badf1d0b52ea7e6d39070dcd68c968dd0ed9f5fa
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Thu Sep 1 08:58:29 2022 +0200
