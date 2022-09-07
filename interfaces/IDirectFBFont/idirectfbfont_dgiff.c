@@ -92,7 +92,7 @@ IDirectFBFont_DGIFF_Release( IDirectFBFont *thiz )
 static DFBResult
 Probe( IDirectFBFont_ProbeContext *ctx )
 {
-     if (!ctx->content)
+     if (!ctx->filename)
           return DFB_UNSUPPORTED;
 
      /* Check the magic. */

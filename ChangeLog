@@ -1,3 +1,24 @@
+commit ccd58c3e9c96f964a01f9c4937381c6ce6cad54c
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Sep 7 12:45:35 2022 +0200
+
+    Add support for NV24 and NV42 video format
+
+commit 4bfa300a8f25334d29815cca44d594382b7b2c2e
+Merge: 0c0a38c 16623ff
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Sep 5 11:21:07 2022 +0200
+
+    Merge pull request #47 from caramelli/master
+    
+    Font/DGIFF: return DFB_INVARG if height not set in font description
+
+commit 16623ff93089d404505d9279d3247c27a0611a0c
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Sep 5 11:16:18 2022 +0200
+
+    Update ChangeLog
+
 commit 80f94b0867308ce373a1c4ffd2dbc33d300adf34
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Mon Sep 5 11:16:03 2022 +0200

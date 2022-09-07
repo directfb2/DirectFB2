@@ -819,7 +819,13 @@ typedef enum {
      DSPF_Y42B       = DFB_SURFACE_PIXELFORMAT( 43, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 ),
 
      /* 24 bit   YUV (8 bit Y plane followed by 8 bit V/U planes) */
-     DSPF_YV24       = DFB_SURFACE_PIXELFORMAT( 44, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 )
+     DSPF_YV24       = DFB_SURFACE_PIXELFORMAT( 44, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 ),
+
+     /* 24 bit   YUV (8 bit Y plane followed by 16 bit Cb|Cr [7:0|7:0] plane) */
+     DSPF_NV24       = DFB_SURFACE_PIXELFORMAT( 45, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 ),
+
+     /* 24 bit   YUV (8 bit Y plane followed by 16 bit Cr|Cb [7:0|7:0] plane) */
+     DSPF_NV42       = DFB_SURFACE_PIXELFORMAT( 46, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 )
 } DFBSurfacePixelFormat;
 
 #define DSPF_YUV420P                         DSPF_I420
@@ -827,16 +833,16 @@ typedef enum {
 #define DSPF_YUV444P                         DSPF_Y444
 
 /* Number of pixelformats defined. */
-#define DFB_NUM_PIXELFORMATS                 45
+#define DFB_NUM_PIXELFORMATS                 47
 
 /* These macros extract information about the pixel format. */
-#define DFB_PIXELFORMAT_INDEX(fmt)           (((fmt) & 0x0000007F)      )
+#define DFB_PIXELFORMAT_INDEX(fmt)            ((fmt) & 0x0000007F) 
 
-#define DFB_COLOR_BITS_PER_PIXEL(fmt)        (((fmt) & 0x00000F80) >>  7)
+#define DFB_COLOR_BITS_PER_PIXEL(fmt)        (((fmt) & 0x00000F80) >> 7)
 
 #define DFB_ALPHA_BITS_PER_PIXEL(fmt)        (((fmt) & 0x0000F000) >> 12)
 
-#define DFB_PIXELFORMAT_HAS_ALPHA(fmt)       (((fmt) & 0x00010000) !=  0)
+#define DFB_PIXELFORMAT_HAS_ALPHA(fmt)       (((fmt) & 0x00010000) != 0)
 
 #define DFB_BITS_PER_PIXEL(fmt)              (((fmt) & 0x007E0000) >> 17)
 
@@ -848,11 +854,11 @@ typedef enum {
 
 #define DFB_PLANE_MULTIPLY(fmt,height)       ((((((fmt) & 0x3C000000) >> 26) + 4) * (height)) >> 2)
 
-#define DFB_PIXELFORMAT_IS_INDEXED(fmt)      (((fmt) & 0x40000000) !=  0)
+#define DFB_PIXELFORMAT_IS_INDEXED(fmt)      (((fmt) & 0x40000000) != 0)
 
-#define DFB_PLANAR_PIXELFORMAT(fmt)          (((fmt) & 0x3C000000) !=  0)
+#define DFB_PLANAR_PIXELFORMAT(fmt)          (((fmt) & 0x3C000000) != 0)
 
-#define DFB_PIXELFORMAT_INV_ALPHA(fmt)       (((fmt) & 0x80000000) !=  0)
+#define DFB_PIXELFORMAT_INV_ALPHA(fmt)       (((fmt) & 0x80000000) != 0)
 
 #define DFB_COLOR_IS_RGB(fmt)        \
      (((fmt) == DSPF_ARGB1555)    || \
@@ -890,7 +896,9 @@ typedef enum {
       ((fmt) == DSPF_YV16)        || \
       ((fmt) == DSPF_NV61)        || \
       ((fmt) == DSPF_Y42B)        || \
-      ((fmt) == DSPF_YV24))
+      ((fmt) == DSPF_YV24)        || \
+      ((fmt) == DSPF_NV24)        || \
+      ((fmt) == DSPF_NV42))
 
 /*
  * Hint flags for optimized allocation, format selection etc.
