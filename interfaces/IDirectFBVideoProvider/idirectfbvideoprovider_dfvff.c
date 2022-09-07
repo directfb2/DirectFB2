@@ -55,8 +55,8 @@ typedef struct {
      int                            len;                    /* data length, i.e. file size */
 
      DFBSurfaceDescription          desc;
-     double                         rate;
 
+     double                         rate;
      DFBVideoProviderStatus         status;
      double                         speed;
      DFBVideoProviderPlaybackFlags  flags;

@@ -273,6 +273,15 @@ transfer_buffer( const CoreSurfaceConfig *config,
                }
                break;
 
+          case DSPF_NV24:
+          case DSPF_NV42:
+               for (i = 0; i < config->size.h; i++) {
+                    direct_memcpy( dst, src, DFB_BYTES_PER_LINE( config->format, config->size.w * 2 ) );
+                    src += srcpitch;
+                    dst += dstpitch;
+               }
+               break;
+
           default:
                break;
      }

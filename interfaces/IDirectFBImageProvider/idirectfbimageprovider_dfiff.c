@@ -47,6 +47,9 @@ typedef struct {
 
      DFBSurfaceDescription  desc;
 
+     int                    pitch;
+     bool                   premultiplied;
+
      DIRenderCallback       render_callback;
      void                  *render_callback_context;
 } IDirectFBImageProvider_DFIFF_data;
@@ -112,8 +115,6 @@ static DFBResult
 IDirectFBImageProvider_DFIFF_GetImageDescription( IDirectFBImageProvider *thiz,
                                                   DFBImageDescription    *ret_desc )
 {
-     const DFIFFHeader *header;
-
      DIRECT_INTERFACE_GET_DATA( IDirectFBImageProvider_DFIFF )
 
      D_DEBUG_AT( ImageProvider_DFIFF, "%s( %p )\n", __FUNCTION__, thiz );
@@ -121,11 +122,9 @@ IDirectFBImageProvider_DFIFF_GetImageDescription( IDirectFBImageProvider *thiz,
      if (!ret_desc)
           return DFB_INVARG;
 
-     header = data->ptr;
-
      ret_desc->caps = DICAPS_NONE;
 
-     if (DFB_PIXELFORMAT_HAS_ALPHA( header->format ))
+     if (DFB_PIXELFORMAT_HAS_ALPHA( data->desc.pixelformat ))
           ret_desc->caps |= DICAPS_ALPHACHANNEL;
 
      return DFB_OK;
@@ -138,13 +137,11 @@ IDirectFBImageProvider_DFIFF_RenderTo( IDirectFBImageProvider *thiz,
 {
      DFBResult              ret;
      IDirectFBSurface_data *dst_data;
-     const DFIFFHeader     *header;
      DFBRectangle           rect;
      DFBRectangle           clipped;
      DFBSurfaceCapabilities caps;
      DFBSurfacePixelFormat  format;
-     bool                   dfiff_premultiplied = false;
-     bool                   dest_premultiplied  = false;
+     bool                   dest_premultiplied = false;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFBImageProvider_DFIFF )
 
@@ -170,13 +167,12 @@ IDirectFBImageProvider_DFIFF_RenderTo( IDirectFBImageProvider *thiz,
 
      clipped = rect;
 
+     D_DEBUG_AT( ImageProvider_DFIFF, "  -> clip    "DFB_RECT_FORMAT"\n", DFB_RECTANGLE_VALS( &dst_data->area.current ) );
+
      if (!dfb_rectangle_intersect( &clipped, &dst_data->area.current ))
           return DFB_INVAREA;
 
-     header = data->ptr;
-
-     if (header->flags & DFIFF_FLAG_PREMULTIPLIED)
-          dfiff_premultiplied = true;
+     D_DEBUG_AT( ImageProvider_DFIFF, "  -> clipped "DFB_RECT_FORMAT"\n", DFB_RECTANGLE_VALS( &clipped ) );
 
      ret = destination->GetCapabilities( destination, &caps );
      if (ret)
@@ -189,10 +185,10 @@ IDirectFBImageProvider_DFIFF_RenderTo( IDirectFBImageProvider *thiz,
      if (ret)
           return ret;
 
-     if (DFB_RECTANGLE_EQUAL( rect, clipped )                                             &&
-         rect.w == header->width  && rect.h == header->height && format == header->format &&
-         dfiff_premultiplied == dest_premultiplied) {
-          ret = destination->Write( destination, &rect, data->ptr + sizeof(DFIFFHeader), header->pitch );
+     if (DFB_RECTANGLE_EQUAL( rect, clipped )                                                          &&
+         rect.w == data->desc.width && rect.h == data->desc.height && format == data->desc.pixelformat &&
+         data->premultiplied == dest_premultiplied) {
+          ret = destination->Write( destination, &rect, data->ptr + sizeof(DFIFFHeader), data->pitch );
           if (ret)
                return ret;
      }
@@ -206,16 +202,16 @@ IDirectFBImageProvider_DFIFF_RenderTo( IDirectFBImageProvider *thiz,
 
           desc.flags                 |= DSDESC_PREALLOCATED;
           desc.preallocated[0].data   = data->ptr + sizeof(DFIFFHeader);
-          desc.preallocated[0].pitch  = header->pitch;
+          desc.preallocated[0].pitch  = data->pitch;
 
           ret = data->idirectfb->CreateSurface( data->idirectfb, &desc, &source );
           if (ret)
                return ret;
 
           if (DFB_PIXELFORMAT_HAS_ALPHA( desc.pixelformat )) {
-               if (dest_premultiplied && !dfiff_premultiplied)
+               if (dest_premultiplied && !data->premultiplied)
                     destination->SetBlittingFlags( destination, DSBLIT_SRC_PREMULTIPLY );
-               else if (!dest_premultiplied && dfiff_premultiplied)
+               else if (!dest_premultiplied && data->premultiplied)
                     destination->SetBlittingFlags( destination, DSBLIT_DEMULTIPLY );
           }
 
@@ -235,7 +231,7 @@ IDirectFBImageProvider_DFIFF_RenderTo( IDirectFBImageProvider *thiz,
      }
 
      if (data->render_callback) {
-          DFBRectangle r = { 0, 0, clipped.w, clipped.h };
+          DFBRectangle r = { 0, 0, data->desc.width, data->desc.height };
 
           data->render_callback( &r, data->render_callback_context );
      }
@@ -327,6 +323,8 @@ Construct( IDirectFBImageProvider *thiz,
      data->desc.width       = header->width;
      data->desc.height      = header->height;
      data->desc.pixelformat = header->format;
+     data->pitch            = header->pitch;
+     data->premultiplied    = header->flags & DFIFF_FLAG_PREMULTIPLIED ? true : false;
 
      thiz->AddRef                = IDirectFBImageProvider_DFIFF_AddRef;
      thiz->Release               = IDirectFBImageProvider_DFIFF_Release;

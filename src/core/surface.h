@@ -405,6 +405,8 @@ dfb_surface_get_data_offsets( const CoreSurfaceConfig  *config,
           case DSPF_NV21:
           case DSPF_NV16:
           case DSPF_NV61:
+          case DSPF_NV24:
+          case DSPF_NV42:
                if (num < 2)
                     return;
                break;
@@ -449,6 +451,15 @@ dfb_surface_get_data_offsets( const CoreSurfaceConfig  *config,
                              + pitch * config->size.h
                              + pitches[1] * y
                              + DFB_BYTES_PER_LINE( config->format, x / 2 );
+               break;
+
+          case DSPF_NV24:
+          case DSPF_NV42:
+               pitches[1]  = pitch;
+               pointers[1] = (u8*) data
+                             + pitch * config->size.h
+                             + pitches[1] * y
+                             + DFB_BYTES_PER_LINE( config->format, x );
                break;
 
           case DSPF_I420:
