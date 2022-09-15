@@ -283,6 +283,9 @@ Construct( IDirectFBImageProvider *thiz,
 
      D_DEBUG_AT( ImageProvider_DFIFF, "%s( %p )\n", __FUNCTION__, thiz );
 
+     data->ref       = 1;
+     data->idirectfb = idirectfb;
+
      /* Check for valid filename. */
      if (!buffer_data->filename) {
           DIRECT_DEALLOCATE_INTERFACE( thiz );
@@ -315,8 +318,6 @@ Construct( IDirectFBImageProvider *thiz,
 
      header = ptr;
 
-     data->ref              = 1;
-     data->idirectfb        = idirectfb;
      data->ptr              = ptr;
      data->len              = info.size;
      data->desc.flags       = DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT;

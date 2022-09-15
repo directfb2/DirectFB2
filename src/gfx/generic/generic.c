@@ -9310,15 +9310,32 @@ static GenefxFunc Sacc_add_to_Dacc = Sacc_add_to_Dacc_C;
      SET_PIXEL_DUFFS_DEVICE_N( D, S, w, 3 )
 
 static void
-Dacc_RGB_to_YCbCr_C( GenefxState *gfxs )
+Dacc_RGB_to_YCbCr_BT601_C( GenefxState *gfxs )
 {
      int                w = gfxs->length;
      GenefxAccumulator *S = gfxs->Dacc;
      GenefxAccumulator *D = gfxs->Dacc;
 
-#define SET_PIXEL(d,s)                                                          \
-     if (!(s.RGB.a & 0xf000)) {                                                 \
-          RGB_TO_YCBCR( s.RGB.r, s.RGB.g, s.RGB.b, d.YUV.y, d.YUV.u, d.YUV.v ); \
+#define SET_PIXEL(d,s)                                                                \
+     if (!(s.RGB.a & 0xf000)) {                                                       \
+          RGB_TO_YCBCR_BT601( s.RGB.r, s.RGB.g, s.RGB.b, d.YUV.y, d.YUV.u, d.YUV.v ); \
+     }
+
+     SET_PIXEL_DUFFS_DEVICE( D, S, w );
+
+#undef SET_PIXEL
+}
+
+static void
+Dacc_RGB_to_YCbCr_BT709_C( GenefxState *gfxs )
+{
+     int                w = gfxs->length;
+     GenefxAccumulator *S = gfxs->Dacc;
+     GenefxAccumulator *D = gfxs->Dacc;
+
+#define SET_PIXEL(d,s)                                                                \
+     if (!(s.RGB.a & 0xf000)) {                                                       \
+          RGB_TO_YCBCR_BT709( s.RGB.r, s.RGB.g, s.RGB.b, d.YUV.y, d.YUV.u, d.YUV.v ); \
      }
 
      SET_PIXEL_DUFFS_DEVICE( D, S, w );
@@ -9328,7 +9345,8 @@ Dacc_RGB_to_YCbCr_C( GenefxState *gfxs )
 
 #undef SET_PIXEL_DUFFS_DEVICE
 
-static GenefxFunc Dacc_RGB_to_YCbCr = Dacc_RGB_to_YCbCr_C;
+static GenefxFunc Dacc_RGB_to_YCbCr_BT601 = Dacc_RGB_to_YCbCr_BT601_C;
+static GenefxFunc Dacc_RGB_to_YCbCr_BT709 = Dacc_RGB_to_YCbCr_BT709_C;
 
 /**********************************************************************************************************************/
 
@@ -9337,15 +9355,32 @@ static GenefxFunc Dacc_RGB_to_YCbCr = Dacc_RGB_to_YCbCr_C;
      SET_PIXEL_DUFFS_DEVICE_N( D, S, w, 2 )
 
 static void
-Dacc_YCbCr_to_RGB_C( GenefxState *gfxs )
+Dacc_YCbCr_to_RGB_BT601_C( GenefxState *gfxs )
 {
      int                w = gfxs->length;
      GenefxAccumulator *S = gfxs->Dacc;
      GenefxAccumulator *D = gfxs->Dacc;
 
-#define SET_PIXEL(d,s)                                                          \
-     if (!(s.YUV.a & 0xf000)) {                                                 \
-          YCBCR_TO_RGB( s.YUV.y, s.YUV.u, s.YUV.v, d.RGB.r, d.RGB.g, d.RGB.b ); \
+#define SET_PIXEL(d,s)                                                                \
+     if (!(s.YUV.a & 0xf000)) {                                                       \
+          YCBCR_TO_RGB_BT601( s.YUV.y, s.YUV.u, s.YUV.v, d.RGB.r, d.RGB.g, d.RGB.b ); \
+     }
+
+     SET_PIXEL_DUFFS_DEVICE( D, S, w );
+
+#undef SET_PIXEL
+}
+
+static void
+Dacc_YCbCr_to_RGB_BT709_C( GenefxState *gfxs )
+{
+     int                w = gfxs->length;
+     GenefxAccumulator *S = gfxs->Dacc;
+     GenefxAccumulator *D = gfxs->Dacc;
+
+#define SET_PIXEL(d,s)                                                                \
+     if (!(s.YUV.a & 0xf000)) {                                                       \
+          YCBCR_TO_RGB_BT709( s.YUV.y, s.YUV.u, s.YUV.v, d.RGB.r, d.RGB.g, d.RGB.b ); \
      }
 
      SET_PIXEL_DUFFS_DEVICE( D, S, w );
@@ -9355,7 +9390,8 @@ Dacc_YCbCr_to_RGB_C( GenefxState *gfxs )
 
 #undef SET_PIXEL_DUFFS_DEVICE
 
-static GenefxFunc Dacc_YCbCr_to_RGB = Dacc_YCbCr_to_RGB_C;
+static GenefxFunc Dacc_YCbCr_to_RGB_BT601 = Dacc_YCbCr_to_RGB_BT601_C;
+static GenefxFunc Dacc_YCbCr_to_RGB_BT709 = Dacc_YCbCr_to_RGB_BT709_C;
 
 /**********************************************************************************************************************/
 
@@ -9865,7 +9901,8 @@ gAcquireSetup( CardState           *state,
      gfxs->dst_org[0]       = state->dst.addr;
      gfxs->dst_pitch        = state->dst.pitch;
      gfxs->dst_field_offset = gfxs->dst_height / 2 * gfxs->dst_pitch;
-     dst_pfi                = DFB_PIXELFORMAT_INDEX( gfxs->dst_format );
+
+     dst_pfi = DFB_PIXELFORMAT_INDEX( gfxs->dst_format );
 
      switch (gfxs->dst_format) {
           case DSPF_I420:
@@ -9918,7 +9955,8 @@ gAcquireSetup( CardState           *state,
           gfxs->src_org[0]       = state->src.addr;
           gfxs->src_pitch        = state->src.pitch;
           gfxs->src_field_offset = gfxs->src_height / 2 * gfxs->src_pitch;
-          src_pfi                = DFB_PIXELFORMAT_INDEX( gfxs->src_format );
+
+          src_pfi = DFB_PIXELFORMAT_INDEX( gfxs->src_format );
 
           switch (gfxs->src_format) {
                case DSPF_I420:
@@ -9969,7 +10007,8 @@ gAcquireSetup( CardState           *state,
                gfxs->mask_org[0]       = state->src_mask.addr;
                gfxs->mask_pitch        = state->src_mask.pitch;
                gfxs->mask_field_offset = gfxs->mask_height / 2 * gfxs->mask_pitch;
-               mask_pfi                = DFB_PIXELFORMAT_INDEX( gfxs->mask_format );
+
+               mask_pfi = DFB_PIXELFORMAT_INDEX( gfxs->mask_format );
 
                switch (gfxs->mask_format) {
                     case DSPF_I420:
@@ -10019,6 +10058,16 @@ gAcquireSetup( CardState           *state,
      }
 
      gfxs->color = color;
+
+#define RGB_TO_YCBCR(r,g,b,y,cb,cr)                         \
+     if (destination->config.colorspace == DSCS_BT601)      \
+          RGB_TO_YCBCR_BT601(r,g,b,y,cb,cr);                \
+     else if (destination->config.colorspace == DSCS_BT709) \
+          RGB_TO_YCBCR_BT709(r,g,b,y,cb,cr);                \
+     else {                                                 \
+          y = 16;                                           \
+          cb = cr = 128;                                    \
+     }
 
      switch (gfxs->dst_format) {
           case DSPF_ARGB1555:
@@ -10151,6 +10200,8 @@ gAcquireSetup( CardState           *state,
                return false;
      }
 
+#undef RGB_TO_YCBCR
+
      dst_ycbcr = is_ycbcr[DFB_PIXELFORMAT_INDEX(gfxs->dst_format)];
 
      if (DFB_BLITTING_FUNCTION( accel )) {
@@ -10267,8 +10318,12 @@ gAcquireSetup( CardState           *state,
                     *funcs++ = Dacc_is_Aacc;
                     *funcs++ = Sop_PFI_to_Dacc[dst_pfi];
 
-                    if (dst_ycbcr)
-                         *funcs++ = Dacc_YCbCr_to_RGB;
+                    if (dst_ycbcr) {
+                         if (destination->config.colorspace == DSCS_BT601)
+                              *funcs++ = Dacc_YCbCr_to_RGB_BT601;
+                         else if (destination->config.colorspace == DSCS_BT709)
+                              *funcs++ = Dacc_YCbCr_to_RGB_BT709;
+                    }
 
                     /* Premultiply destination. */
                     if (state->drawingflags & DSDRAW_DST_PREMULTIPLY)
@@ -10404,8 +10459,12 @@ gAcquireSetup( CardState           *state,
                               *funcs++ = Dacc_is_Aacc;
                     }
 
-                    if (dst_ycbcr)
-                         *funcs++ = Dacc_RGB_to_YCbCr;
+                    if (dst_ycbcr) {
+                         if (destination->config.colorspace == DSCS_BT601)
+                              *funcs++ = Dacc_RGB_to_YCbCr_BT601;
+                         else if (destination->config.colorspace == DSCS_BT709)
+                              *funcs++ = Dacc_RGB_to_YCbCr_BT709;
+                    }
 
                     /* Write to destination. */
                     if (state->drawingflags & DSDRAW_DST_COLORKEY) {
@@ -10533,8 +10592,12 @@ gAcquireSetup( CardState           *state,
                          *funcs++ = Dacc_is_Aacc;
                          *funcs++ = Sop_PFI_to_Dacc[dst_pfi];
 
-                         if (dst_ycbcr)
-                              *funcs++ = Dacc_YCbCr_to_RGB;
+                         if (dst_ycbcr) {
+                              if (destination->config.colorspace == DSCS_BT601)
+                                   *funcs++ = Dacc_YCbCr_to_RGB_BT601;
+                              else if (destination->config.colorspace == DSCS_BT709)
+                                   *funcs++ = Dacc_YCbCr_to_RGB_BT709;
+                         }
 
                          if (simpld_blittingflags & DSBLIT_DST_PREMULTIPLY)
                               *funcs++ = Dacc_premultiply;
@@ -10574,8 +10637,12 @@ gAcquireSetup( CardState           *state,
                          }
                     }
 
-                    if (src_ycbcr)
-                         *funcs++ = Dacc_YCbCr_to_RGB;
+                    if (src_ycbcr) {
+                         if (source->config.colorspace == DSCS_BT601)
+                              *funcs++ = Dacc_YCbCr_to_RGB_BT601;
+                         else if (source->config.colorspace == DSCS_BT709)
+                              *funcs++ = Dacc_YCbCr_to_RGB_BT709;
+                    }
 
                     /* Premultiply color alpha. */
                     if (simpld_blittingflags & DSBLIT_SRC_PREMULTCOLOR) {
@@ -10672,7 +10739,10 @@ gAcquireSetup( CardState           *state,
 
                     if (dst_ycbcr) {
                          *funcs++ = Dacc_is_Bacc;
-                         *funcs++ = Dacc_RGB_to_YCbCr;
+                         if (destination->config.colorspace == DSCS_BT601)
+                              *funcs++ = Dacc_RGB_to_YCbCr_BT601;
+                         else if (destination->config.colorspace == DSCS_BT709)
+                              *funcs++ = Dacc_RGB_to_YCbCr_BT709;
                     }
 
                     /* Write source to destination. */
@@ -10811,14 +10881,22 @@ gAcquireSetup( CardState           *state,
                     }
 
                     if (!src_ycbcr && dst_ycbcr) {
-                         if (DFB_COLOR_BITS_PER_PIXEL( gfxs->src_format ))
-                              *funcs++ = Dacc_RGB_to_YCbCr;
+                         if (DFB_COLOR_BITS_PER_PIXEL( gfxs->src_format )) {
+                              if (destination->config.colorspace == DSCS_BT601)
+                                   *funcs++ = Dacc_RGB_to_YCbCr_BT601;
+                              else if (destination->config.colorspace == DSCS_BT709)
+                                   *funcs++ = Dacc_RGB_to_YCbCr_BT709;
+                         }
                          else
                               *funcs++ = Dacc_Alpha_to_YCbCr;
                     }
                     else if (src_ycbcr && !dst_ycbcr) {
-                         if (DFB_COLOR_BITS_PER_PIXEL( gfxs->dst_format ))
-                              *funcs++ = Dacc_YCbCr_to_RGB;
+                         if (DFB_COLOR_BITS_PER_PIXEL( gfxs->dst_format )) {
+                              if (source->config.colorspace == DSCS_BT601)
+                                   *funcs++ = Dacc_YCbCr_to_RGB_BT601;
+                              else if (source->config.colorspace == DSCS_BT709)
+                                   *funcs++ = Dacc_YCbCr_to_RGB_BT709;
+                         }
                     }
 
                     if (scale_from_accumulator) {

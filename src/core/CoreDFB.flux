@@ -85,6 +85,13 @@ interface {
                 }
 
                 arg {
+                        name        colorspace
+                        direction   input
+                        type        enum
+                        typename    DFBSurfaceColorSpace
+                }
+
+                arg {
                         name        palette
                         direction   output
                         type        object

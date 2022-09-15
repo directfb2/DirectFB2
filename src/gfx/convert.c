@@ -36,14 +36,39 @@ static const u8 lookup2to8[] = { 0x00, 0x55, 0xaa, 0xff };
 #define EXPAND_6to8(v) (((v) << 2) | ((v) >> 4))
 #define EXPAND_7to8(v) (((v) << 1) | ((v) >> 6))
 
+#define YCBCR_TO_RGB(y,cb,cr,r,g,b)          \
+     if (colorspace == DSCS_BT601)           \
+          YCBCR_TO_RGB_BT601(y,cb,cr,r,g,b); \
+     else if (colorspace == DSCS_BT709)      \
+          YCBCR_TO_RGB_BT709(y,cb,cr,r,g,b); \
+     else {                                  \
+          r = g = b = 0;                     \
+     }
+
+#define RGB_TO_YCBCR(r,g,b,y,cb,cr)          \
+     if (colorspace == DSCS_BT601)           \
+          RGB_TO_YCBCR_BT601(r,g,b,y,cb,cr); \
+     else if (colorspace == DSCS_BT709)      \
+          RGB_TO_YCBCR_BT709(r,g,b,y,cb,cr); \
+     else {                                  \
+          y = 16;                            \
+          cb = cr = 128;                     \
+     }
+
 /**********************************************************************************************************************/
 
 void
 dfb_pixel_to_color( DFBSurfacePixelFormat  format,
+                    DFBSurfaceColorSpace   colorspace,
                     unsigned long          pixel,
                     DFBColor              *ret_color )
 {
      D_DEBUG_AT( GFX_Converter, "%s()\n", __FUNCTION__ );
+
+     if (!DFB_COLORSPACE_IS_COMPATIBLE( colorspace, format )) {
+          D_ONCE( "incompatible colorspace" );
+          return;
+     }
 
      ret_color->a = 0xff;
 
@@ -98,6 +123,17 @@ dfb_pixel_to_color( DFBSurfacePixelFormat  format,
                ret_color->b = EXPAND_5to8(  pixel & 0x001f        );
                break;
 
+          case DSPF_ARGB1666:
+          case DSPF_ARGB6666:
+               ret_color->a = (format = DSPF_ARGB1666) ?
+                              EXPAND_1to8( (pixel & 0x040000) >> 18 ) :
+                              EXPAND_6to8( (pixel & 0xfc0000) >> 18 );
+          case DSPF_RGB18:
+               ret_color->r = EXPAND_6to8( (pixel & 0x03f000) >> 12 );
+               ret_color->g = EXPAND_6to8( (pixel & 0x000fc0) >>  6 );
+               ret_color->b = EXPAND_6to8(  pixel & 0x00003f        );
+               break;
+
           case DSPF_ARGB:
                ret_color->a =  pixel >> 24;
           case DSPF_RGB24:
@@ -135,6 +171,53 @@ dfb_pixel_to_color( DFBSurfacePixelFormat  format,
                ret_color->b =              (pixel & 0x0000ff00) >>  8;
                break;
 
+          case DSPF_AYUV:
+               ret_color->a = pixel >> 24;
+               YCBCR_TO_RGB( (pixel & 0xff0000) >> 16, (pixel & 0x00ff00) >> 8, pixel & 0x0000ff,
+                             ret_color->r, ret_color->g, ret_color->b );
+               break;
+
+          case DSPF_AVYU:
+               ret_color->a = pixel >> 24;
+          case DSPF_VYU:
+               YCBCR_TO_RGB( (pixel & 0x00ff00) >> 8, pixel & 0x0000ff, (pixel & 0xff0000) >> 16,
+                             ret_color->r, ret_color->g, ret_color->b );
+               break;
+
+          case DSPF_YUY2:
+#ifdef WORDS_BIGENDIAN
+               YCBCR_TO_RGB( (pixel & 0x00ff0000) >> 16, (pixel & 0xff000000) >> 24, (pixel & 0x0000ff00) >> 8,
+                             ret_color->r, ret_color->g, ret_color->b );
+#else
+               YCBCR_TO_RGB( (pixel & 0x00ff0000) >> 16, (pixel & 0x0000ff00) >> 8, (pixel & 0xff000000) >> 24,
+                             ret_color->r, ret_color->g, ret_color->b );
+#endif
+               break;
+
+          case DSPF_UYVY:
+#ifdef WORDS_BIGENDIAN
+               YCBCR_TO_RGB( (pixel & 0xff000000) >> 24, (pixel & 0x00ff0000) >> 16, pixel & 0x000000ff,
+                             ret_color->r, ret_color->g, ret_color->b );
+#else
+               YCBCR_TO_RGB( (pixel & 0xff000000) >> 24, pixel & 0x000000ff, (pixel & 0x00ff0000) >> 16,
+                             ret_color->r, ret_color->g, ret_color->b );
+#endif
+               break;
+
+          case DSPF_I420:
+          case DSPF_Y42B:
+          case DSPF_Y444:
+               YCBCR_TO_RGB( (pixel & 0xff0000) >> 16, (pixel & 0x00ff00) >> 8, pixel & 0x0000ff,
+                             ret_color->r, ret_color->g, ret_color->b );
+               break;
+
+          case DSPF_YV12:
+          case DSPF_YV16:
+          case DSPF_YV24:
+               YCBCR_TO_RGB( (pixel & 0xff0000) >> 16, (pixel & 0x0000ff) >> 8, pixel & 0x00ff00,
+                             ret_color->r, ret_color->g, ret_color->b );
+               break;
+
           case DSPF_A8:
                ret_color->a = pixel;
                /* fall through */
@@ -148,11 +231,17 @@ dfb_pixel_to_color( DFBSurfacePixelFormat  format,
 
 unsigned long
 dfb_pixel_from_color( DFBSurfacePixelFormat  format,
+                      DFBSurfaceColorSpace   colorspace,
                       const DFBColor        *color )
 {
      u32 y, cb, cr;
 
      D_DEBUG_AT( GFX_Converter, "%s()\n", __FUNCTION__ );
+
+     if (!DFB_COLORSPACE_IS_COMPATIBLE( colorspace, format )) {
+          D_ONCE( "incompatible colorspace" );
+          return;
+     }
 
      switch (format) {
           case DSPF_RGB332:
@@ -173,11 +262,11 @@ dfb_pixel_from_color( DFBSurfacePixelFormat  format,
           case DSPF_ARGB4444:
                return PIXEL_ARGB4444( color->a, color->r, color->g, color->b );
 
-          case DSPF_RGBA4444:
-               return PIXEL_RGBA4444( color->a, color->r, color->g, color->b );
-
           case DSPF_RGB444:
                return PIXEL_RGB444( color->r, color->g, color->b );
+
+          case DSPF_RGBA4444:
+               return PIXEL_RGBA4444( color->a, color->r, color->g, color->b );
 
           case DSPF_ARGB8565:
                return PIXEL_ARGB8565( color->a, color->r, color->g, color->b );
@@ -185,14 +274,14 @@ dfb_pixel_from_color( DFBSurfacePixelFormat  format,
           case DSPF_RGB16:
                return PIXEL_RGB16( color->r, color->g, color->b );
 
-          case DSPF_RGB18:
-               return PIXEL_RGB18( color->r, color->g, color->b );
-
           case DSPF_ARGB1666:
                return PIXEL_ARGB1666( color->a, color->r, color->g, color->b );
 
           case DSPF_ARGB6666:
                return PIXEL_ARGB6666( color->a, color->r, color->g, color->b );
+
+          case DSPF_RGB18:
+               return PIXEL_RGB18( color->r, color->g, color->b );
 
           case DSPF_ARGB:
                return PIXEL_ARGB( color->a, color->r, color->g, color->b );
@@ -403,6 +492,7 @@ dfb_pixel_to_components( DFBSurfacePixelFormat  format,
 
 void
 dfb_convert_to_rgb16( DFBSurfacePixelFormat  format,
+                      DFBSurfaceColorSpace   colorspace,
                       const void            *src,
                       int                    spitch,
                       const void            *src_cb,
@@ -419,6 +509,11 @@ dfb_convert_to_rgb16( DFBSurfacePixelFormat  format,
      int       x;
 
      D_DEBUG_AT( GFX_Converter, "%s()\n", __FUNCTION__ );
+
+     if (!DFB_COLORSPACE_IS_COMPATIBLE( colorspace, format )) {
+          D_ONCE( "incompatible colorspace" );
+          return;
+     }
 
      switch (format) {
           case DSPF_RGB16:
@@ -834,6 +929,7 @@ dfb_convert_to_rgb16( DFBSurfacePixelFormat  format,
 
 void
 dfb_convert_to_rgb555( DFBSurfacePixelFormat  format,
+                       DFBSurfaceColorSpace   colorspace,
                        const void            *src,
                        int                    spitch,
                        const void            *src_cb,
@@ -850,6 +946,11 @@ dfb_convert_to_rgb555( DFBSurfacePixelFormat  format,
      int       x;
 
      D_DEBUG_AT( GFX_Converter, "%s()\n", __FUNCTION__ );
+
+     if (!DFB_COLORSPACE_IS_COMPATIBLE( colorspace, format )) {
+          D_ONCE( "incompatible colorspace" );
+          return;
+     }
 
      switch (format) {
           case DSPF_RGB555:
@@ -1231,6 +1332,7 @@ dfb_convert_to_rgb555( DFBSurfacePixelFormat  format,
 
 void
 dfb_convert_to_rgb32( DFBSurfacePixelFormat  format,
+                      DFBSurfaceColorSpace   colorspace,
                       const void            *src,
                       int                    spitch,
                       const void            *src_cb,
@@ -1247,6 +1349,11 @@ dfb_convert_to_rgb32( DFBSurfacePixelFormat  format,
      int       x;
 
      D_DEBUG_AT( GFX_Converter, "%s()\n", __FUNCTION__ );
+
+     if (!DFB_COLORSPACE_IS_COMPATIBLE( colorspace, format )) {
+          D_ONCE( "incompatible colorspace" );
+          return;
+     }
 
      switch (format) {
           case DSPF_RGB32:
@@ -1652,6 +1759,7 @@ dfb_convert_to_rgb32( DFBSurfacePixelFormat  format,
 
 void
 dfb_convert_to_argb( DFBSurfacePixelFormat  format,
+                     DFBSurfaceColorSpace   colorspace,
                      const void            *src,
                      int                    spitch,
                      const void            *src_cb,
@@ -1668,6 +1776,11 @@ dfb_convert_to_argb( DFBSurfacePixelFormat  format,
      int       x;
 
      D_DEBUG_AT( GFX_Converter, "%s()\n", __FUNCTION__ );
+
+     if (!DFB_COLORSPACE_IS_COMPATIBLE( colorspace, format )) {
+          D_ONCE( "incompatible colorspace" );
+          return;
+     }
 
      switch (format) {
           case DSPF_ARGB:
@@ -2116,6 +2229,7 @@ dfb_convert_to_argb( DFBSurfacePixelFormat  format,
 
 void
 dfb_convert_to_rgb24( DFBSurfacePixelFormat  format,
+                      DFBSurfaceColorSpace   colorspace,
                       const void            *src,
                       int                    spitch,
                       const void            *src_cb,
@@ -2131,6 +2245,11 @@ dfb_convert_to_rgb24( DFBSurfacePixelFormat  format,
      int n, n3;
 
      D_DEBUG_AT( GFX_Converter, "%s()\n", __FUNCTION__ );
+
+     if (!DFB_COLORSPACE_IS_COMPATIBLE( colorspace, format )) {
+          D_ONCE( "incompatible colorspace" );
+          return;
+     }
 
      switch (format) {
           case DSPF_A8:

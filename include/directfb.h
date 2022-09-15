@@ -968,8 +968,9 @@ typedef struct {
 typedef enum {
      DPDESC_CAPS                           = 0x00000001,         /* Specify palette capabilities. */
      DPDESC_SIZE                           = 0x00000002,         /* Specify number of entries. */
-     DPDESC_ENTRIES                        = 0x00000004          /* Initialize the palette with the
+     DPDESC_ENTRIES                        = 0x00000004,         /* Initialize the palette with the
                                                                     entries specified in the description. */
+     DPDESC_COLORSPACE                     = 0x00000008          /* Specify palette color space. */
 } DFBPaletteDescriptionFlags;
 
 /*
@@ -988,6 +989,7 @@ typedef struct {
      DFBPaletteCapabilities                  caps;               /* Palette capabilities. */
      unsigned int                            size;               /* Number of entries. */
      const DFBColor                         *entries;            /* Preset palette entries. */
+     DFBSurfaceColorSpace                    colorspace;         /* Palette color space. */
 } DFBPaletteDescription;
 
 /*

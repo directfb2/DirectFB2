@@ -85,16 +85,17 @@ ICore_Real__CreateSurface( CoreDFB                  *obj,
 }
 
 DFBResult
-ICore_Real__CreatePalette( CoreDFB      *obj,
-                           u32           size,
-                           CorePalette **ret_palette )
+ICore_Real__CreatePalette( CoreDFB               *obj,
+                           u32                    size,
+                           DFBSurfaceColorSpace   colorspace,
+                           CorePalette          **ret_palette )
 {
      D_DEBUG_AT( DirectFB_CoreDFB, "%s( %p )\n", __FUNCTION__, obj );
 
      D_MAGIC_ASSERT( obj, CoreDFB );
      D_ASSERT( ret_palette != NULL );
 
-     return dfb_palette_create( obj, size, ret_palette );
+     return dfb_palette_create( obj, size, colorspace, ret_palette );
 }
 
 DFBResult

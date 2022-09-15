@@ -25,14 +25,15 @@
 /**********************************************************************************************************************/
 
 struct __DFB_CorePalette {
-     FusionObject         object;
-     int                  magic;
+     FusionObject          object;
+     int                   magic;
 
-     unsigned int         num_entries;
-     DFBColor            *entries;
-     DFBColorYUV         *entries_yuv;
+     unsigned int          num_entries;
+     DFBColor             *entries;
+     DFBColorYUV          *entries_yuv;
+     DFBSurfaceColorSpace  colorspace;
 
-     FusionSHMPoolShared *shmpool;
+     FusionSHMPoolShared  *shmpool;
 
      FusionCall           call;
 };
@@ -69,9 +70,10 @@ typedef enum {
 
 /**********************************************************************************************************************/
 
-DFBResult         dfb_palette_create             ( CoreDFB           *core,
-                                                   unsigned int       size,
-                                                   CorePalette      **ret_palette );
+DFBResult         dfb_palette_create             ( CoreDFB               *core,
+                                                   unsigned int           size,
+                                                   DFBSurfaceColorSpace   colorspace,
+                                                   CorePalette          **ret_palette );
 
 void              dfb_palette_generate_rgb332_map( CorePalette       *palette );
 

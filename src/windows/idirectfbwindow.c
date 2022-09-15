@@ -451,8 +451,12 @@ IDirectFBWindow_SetColorKey( IDirectFBWindow *thiz,
 
      if (DFB_PIXELFORMAT_IS_INDEXED( data->window->surface->config.format ))
           key = dfb_palette_search( data->window->surface->palette, r, g, b, 0x80 );
-     else
-          key = dfb_color_to_pixel( data->window->surface->config.format, r, g, b );
+     else {
+          DFBColor color = { 0, r, g, b };
+
+          key = dfb_pixel_from_color( data->window->surface->config.format, data->window->surface->config.colorspace,
+                                      &color );
+     }
 
      return CoreWindow_SetColorKey( data->window, key );
 }

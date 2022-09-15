@@ -1024,10 +1024,11 @@ IDirectFB_CreatePalette( IDirectFB                    *thiz,
                          const DFBPaletteDescription  *desc,
                          IDirectFBPalette            **ret_interface )
 {
-     DFBResult         ret;
-     IDirectFBPalette *iface;
-     unsigned int      size    = 256;
-     CorePalette      *palette = NULL;
+     DFBResult             ret;
+     IDirectFBPalette     *iface;
+     unsigned int          size       = 256;
+     DFBSurfaceColorSpace  colorspace = DSCS_RGB;
+     CorePalette          *palette    = NULL;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1043,7 +1044,11 @@ IDirectFB_CreatePalette( IDirectFB                    *thiz,
           size = desc->size;
      }
 
-     ret = CoreDFB_CreatePalette( data->core, size, &palette );
+     if (desc && desc->flags & DPDESC_COLORSPACE) {
+          colorspace = desc->colorspace;
+     }
+
+     ret = CoreDFB_CreatePalette( data->core, size, colorspace, &palette );
      if (ret)
           return ret;
 
@@ -1778,7 +1783,7 @@ InitLayerPalette( IDirectFB_data  *data,
      DFBResult    ret;
      CorePalette *palette;
 
-     ret = dfb_palette_create( data->core, 256, &palette );
+     ret = dfb_palette_create( data->core, 256, surface->config.colorspace, &palette );
      if (ret) {
           D_DERROR( ret, "IDirectFB: Could not create palette!\n" );
           return ret;

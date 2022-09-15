@@ -80,9 +80,10 @@ dfb_palette_pool_create( const FusionWorld *world )
 /**********************************************************************************************************************/
 
 DFBResult
-dfb_palette_create( CoreDFB       *core,
-                    unsigned int   size,
-                    CorePalette  **ret_palette )
+dfb_palette_create( CoreDFB               *core,
+                    unsigned int           size,
+                    DFBSurfaceColorSpace   colorspace,
+                    CorePalette          **ret_palette )
 {
      CorePalette *palette;
 
@@ -112,6 +113,7 @@ dfb_palette_create( CoreDFB       *core,
      }
 
      palette->num_entries = size;
+     palette->colorspace  = colorspace;
 
      CorePalette_Init_Dispatch( core, palette, &palette->call );
 
