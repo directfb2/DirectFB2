@@ -401,7 +401,7 @@
 
 /* RGB <-> YCbCr conversion */
 
-#define YCBCR_TO_RGB(y,cb,cr,r,g,b)                                     \
+#define YCBCR_TO_RGB_BT601(y,cb,cr,r,g,b)                               \
 do {                                                                    \
      int _y  = (y)  -  16;                                              \
      int _cb = (cb) - 128;                                              \
@@ -416,7 +416,7 @@ do {                                                                    \
      (b) = CLAMP( _b, 0, 255 );                                         \
 } while (0)
 
-#define RGB_TO_YCBCR(r,g,b,y,cb,cr)                                     \
+#define RGB_TO_YCBCR_BT601(r,g,b,y,cb,cr)                               \
 do {                                                                    \
      int _r = (r), _g = (g), _b = (b);                                  \
                                                                         \
@@ -425,13 +425,39 @@ do {                                                                    \
      (cr) = (  112 * _r -  94 * _g -  18 * _b  + 128 * 256 + 128) >> 8; \
 } while (0)
 
+#define YCBCR_TO_RGB_BT709(y,cb,cr,r,g,b)                               \
+do {                                                                    \
+     int _y  = (y)  -  16;                                              \
+     int _cb = (cb) - 128;                                              \
+     int _cr = (cr) - 128;                                              \
+                                                                        \
+     int _r = (298 * _y             + 459 * _cr + 128) >> 8;            \
+     int _g = (298 * _y -  55 * _cb - 136 * _cr + 128) >> 8;            \
+     int _b = (298 * _y + 541 * _cb             + 128) >> 8;            \
+                                                                        \
+     (r) = CLAMP( _r, 0, 255 );                                         \
+     (g) = CLAMP( _g, 0, 255 );                                         \
+     (b) = CLAMP( _b, 0, 255 );                                         \
+} while (0)
+
+#define RGB_TO_YCBCR_BT709(r,g,b,y,cb,cr)                               \
+do {                                                                    \
+     int _r = (r), _g = (g), _b = (b);                                  \
+                                                                        \
+     (y)  = (   47 * _r + 157 * _g +  16 * _b  +  16 * 256 + 128) >> 8; \
+     (cb) = ( - 26 * _r -  87 * _g + 112 * _b  + 128 * 256 + 128) >> 8; \
+     (cr) = (  112 * _r - 102 * _g -  10 * _b  + 128 * 256 + 128) >> 8; \
+} while (0)
+
 /**********************************************************************************************************************/
 
 void          dfb_pixel_to_color     ( DFBSurfacePixelFormat  format,
+                                       DFBSurfaceColorSpace   colorspace,
                                        unsigned long          pixel,
                                        DFBColor              *ret_color );
 
 unsigned long dfb_pixel_from_color   ( DFBSurfacePixelFormat  format,
+                                       DFBSurfaceColorSpace   colorspace,
                                        const DFBColor        *color );
 
 void          dfb_pixel_to_components( DFBSurfacePixelFormat  format,
@@ -442,6 +468,7 @@ void          dfb_pixel_to_components( DFBSurfacePixelFormat  format,
                                        u8                     *c0 );
 
 void          dfb_convert_to_rgb16   ( DFBSurfacePixelFormat  format,
+                                       DFBSurfaceColorSpace   colorspace,
                                        const void            *src,
                                        int                    spitch,
                                        const void            *src_cb,
@@ -455,6 +482,7 @@ void          dfb_convert_to_rgb16   ( DFBSurfacePixelFormat  format,
                                        int                    height );
 
 void          dfb_convert_to_rgb555  ( DFBSurfacePixelFormat  format,
+                                       DFBSurfaceColorSpace   colorspace,
                                        const void            *src,
                                        int                    spitch,
                                        const void            *src_cb,
@@ -468,6 +496,7 @@ void          dfb_convert_to_rgb555  ( DFBSurfacePixelFormat  format,
                                        int                    height );
 
 void          dfb_convert_to_rgb32   ( DFBSurfacePixelFormat  format,
+                                       DFBSurfaceColorSpace   colorspace,
                                        const void            *src,
                                        int                    spitch,
                                        const void            *src_cb,
@@ -481,6 +510,7 @@ void          dfb_convert_to_rgb32   ( DFBSurfacePixelFormat  format,
                                        int                    height );
 
 void          dfb_convert_to_argb    ( DFBSurfacePixelFormat  format,
+                                       DFBSurfaceColorSpace   colorspace,
                                        const void            *src,
                                        int                    spitch,
                                        const void            *src_cb,
@@ -494,6 +524,7 @@ void          dfb_convert_to_argb    ( DFBSurfacePixelFormat  format,
                                        int                    height );
 
 void          dfb_convert_to_rgb24   ( DFBSurfacePixelFormat  format,
+                                       DFBSurfaceColorSpace   colorspace,
                                        const void            *src,
                                        int                    spitch,
                                        const void            *src_cb,
@@ -525,17 +556,6 @@ void          dfb_convert_to_a4      ( DFBSurfacePixelFormat  format,
                                        int                    height );
 
 /**********************************************************************************************************************/
-
-static __inline__ u32
-dfb_color_to_pixel( DFBSurfacePixelFormat format,
-                    u8                    r,
-                    u8                    g,
-                    u8                    b )
-{
-     DFBColor color = { 0, r, g, b };
-
-     return dfb_pixel_from_color( format, &color );
-}
 
 static __inline__ u32
 dfb_color_to_argb( const DFBColor *color )

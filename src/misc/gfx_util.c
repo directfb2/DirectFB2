@@ -71,6 +71,16 @@ write_argb_span( u32         *src,
           }
      }
 
+#define RGB_TO_YCBCR(r,g,b,y,cb,cr)                         \
+     if (dst_surface->config.colorspace == DSCS_BT601)      \
+          RGB_TO_YCBCR_BT601(r,g,b,y,cb,cr);                \
+     else if (dst_surface->config.colorspace == DSCS_BT709) \
+          RGB_TO_YCBCR_BT709(r,g,b,y,cb,cr);                \
+     else {                                                 \
+          y = 16;                                           \
+          cb = cr = 128;                                    \
+     }
+
      switch (dst_surface->config.format) {
           case DSPF_A1:
                for (i = 0; i < len; i++) {
@@ -471,6 +481,8 @@ write_argb_span( u32         *src,
                D_ONCE( "unimplemented destination format (0x%08x)", (unsigned int) dst_surface->config.format );
                break;
      }
+
+#undef RGB_TO_YCBCR
 }
 
 void

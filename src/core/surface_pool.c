@@ -779,7 +779,7 @@ dfb_surface_pool_allocate( CoreSurfacePool        *pool,
          dfb_config->warn.allocate_buffer.min_size.w <= surface->config.size.w &&
          dfb_config->warn.allocate_buffer.min_size.h <= surface->config.size.h)
           D_WARN( "allocate-buffer %4dx%4d %6s, surface-caps 0x%08x, key '%s'",
-                  surface->config.size.w, surface->config.size.h, dfb_pixelformat_name( buffer->format ),
+                  surface->config.size.w, surface->config.size.h, dfb_pixelformat_name( buffer->config.format ),
                   surface->config.caps, key ?: "(none)" );
 
      if (key) {

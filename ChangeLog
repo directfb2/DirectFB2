@@ -1,3 +1,24 @@
+commit 0d188b62f3519fcdd1ee100bc992414d60dfaff6
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Sep 15 10:11:04 2022 +0200
+
+    Add support for BT.709 conversion
+
+commit ad438fce3601e86658e72e4f795bec187014ef4f
+Merge: 4bfa300 46ee720
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Sep 7 12:55:18 2022 +0200
+
+    Merge pull request #48 from caramelli/master
+    
+    Add support for NV24 and NV42 video format
+
+commit 46ee7207cf3678fea84f2ea96dbc58842069b5fc
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Sep 7 12:45:53 2022 +0200
+
+    Update ChangeLog
+
 commit ccd58c3e9c96f964a01f9c4937381c6ce6cad54c
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Wed Sep 7 12:45:35 2022 +0200

@@ -3985,7 +3985,7 @@ dfb_gfxcard_calc_buffer_size( CoreSurfaceBuffer *buffer,
                pitch -= pitch % card->limits.surface_pixelpitch_alignment;
           }
 
-          pitch = DFB_BYTES_PER_LINE( buffer->format, pitch );
+          pitch = DFB_BYTES_PER_LINE( surface->config.format, pitch );
 
           if (pitch < card->limits.surface_max_power_of_two_bytepitch &&
               surface->config.size.h < card->limits.surface_max_power_of_two_height)
@@ -3996,7 +3996,7 @@ dfb_gfxcard_calc_buffer_size( CoreSurfaceBuffer *buffer,
                pitch -= pitch % card->limits.surface_bytepitch_alignment;
           }
 
-          length = DFB_PLANE_MULTIPLY( buffer->format,
+          length = DFB_PLANE_MULTIPLY( surface->config.format,
                                        MAX( surface->config.size.h, surface->config.min_size.h ) * pitch );
 
           if (card->limits.surface_byteoffset_alignment > 1) {

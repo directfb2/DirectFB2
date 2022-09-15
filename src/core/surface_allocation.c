@@ -87,7 +87,6 @@ dfb_surface_allocation_create( CoreDFB                *core,
                                CoreSurfacePool        *pool,
                                CoreSurfaceAllocation **ret_allocation )
 {
-     CoreSurface           *surface;
      CoreSurfaceAllocation *allocation;
 
      D_MAGIC_ASSERT( buffer, CoreSurfaceBuffer );
@@ -98,14 +97,12 @@ dfb_surface_allocation_create( CoreDFB                *core,
      D_DEBUG_AT( Core_SurfAllocation, "%s( %dx%d %s )\n", __FUNCTION__,
                  buffer->config.size.w, buffer->config.size.h, dfb_pixelformat_name( buffer->config.format ) );
 
-     surface = buffer->surface;
-
      allocation = dfb_core_create_surface_allocation( core );
      if (!allocation)
           return DFB_FUSION;
 
      allocation->buffer      = buffer;
-     allocation->surface     = surface;
+     allocation->surface     = buffer->surface;
      allocation->pool        = pool;
      allocation->flags       = CSALF_INITIALIZING;
      allocation->access      = pool->desc.access;

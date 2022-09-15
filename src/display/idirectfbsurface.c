@@ -1226,8 +1226,12 @@ IDirectFBSurface_SetSrcColorKey( IDirectFBSurface *thiz,
 
      if (DFB_PIXELFORMAT_IS_INDEXED( data->surface->config.format ))
           data->src_key.value = dfb_palette_search( data->surface->palette, r, g, b, 0x80 );
-     else
-          data->src_key.value = dfb_color_to_pixel( data->surface->config.format, r, g, b );
+     else {
+          DFBColor color = { 0, r, g, b };
+
+          data->src_key.value = dfb_pixel_from_color( data->surface->config.format, data->surface->config.colorspace,
+                                                      &color );
+     }
 
      return DFB_OK;
 }
@@ -1279,8 +1283,12 @@ IDirectFBSurface_SetDstColorKey( IDirectFBSurface *thiz,
 
      if (DFB_PIXELFORMAT_IS_INDEXED( data->surface->config.format ))
           data->dst_key.value = dfb_palette_search( data->surface->palette, r, g, b, 0x80 );
-     else
-          data->dst_key.value = dfb_color_to_pixel( data->surface->config.format, r, g, b );
+     else {
+          DFBColor color = { 0, r, g, b };
+
+          data->dst_key.value = dfb_pixel_from_color( data->surface->config.format, data->surface->config.colorspace,
+                                                      &color );
+     }
 
      dfb_state_set_dst_colorkey( &data->state, data->dst_key.value );
 

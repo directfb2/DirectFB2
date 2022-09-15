@@ -722,6 +722,9 @@ Construct( IDirectFBVideoProvider *thiz,
 
      D_DEBUG_AT( VideoProvider_DFVFF, "%s( %p )\n", __FUNCTION__, thiz );
 
+     data->ref       = 1;
+     data->idirectfb = idirectfb;
+
      /* Check for valid filename. */
      if (!buffer_data->filename) {
           DIRECT_DEALLOCATE_INTERFACE( thiz );
@@ -754,8 +757,6 @@ Construct( IDirectFBVideoProvider *thiz,
 
      header = ptr;
 
-     data->ref              = 1;
-     data->idirectfb        = idirectfb;
      data->ptr              = ptr;
      data->len              = info.size;
      data->desc.flags       = DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT | DSDESC_COLORSPACE;

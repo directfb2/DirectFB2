@@ -44,8 +44,16 @@ IPalette_Real__SetEntries( CorePalette    *obj,
           for (u32 i = offset; i < offset + num; i++) {
                obj->entries_yuv[i].a = obj->entries[i].a;
 
-               RGB_TO_YCBCR( obj->entries[i].r, obj->entries[i].g, obj->entries[i].b,
-                             obj->entries_yuv[i].y, obj->entries_yuv[i].u, obj->entries_yuv[i].v );
+               if (obj->colorspace == DSCS_BT601)
+                    RGB_TO_YCBCR_BT601( obj->entries[i].r, obj->entries[i].g, obj->entries[i].b,
+                                        obj->entries_yuv[i].y, obj->entries_yuv[i].u, obj->entries_yuv[i].v );
+               else if (obj->colorspace == DSCS_RGB || obj->colorspace == DSCS_BT709)
+                    RGB_TO_YCBCR_BT709( obj->entries[i].r, obj->entries[i].g, obj->entries[i].b,
+                                        obj->entries_yuv[i].y, obj->entries_yuv[i].u, obj->entries_yuv[i].v );
+               else {
+                    obj->entries_yuv[i].y = 16;
+                    obj->entries_yuv[i].u = obj->entries_yuv[i].v = 128;
+               }
           }
 
           dfb_palette_update( obj, offset, offset + num - 1 );
@@ -73,8 +81,15 @@ IPalette_Real__SetEntriesYUV( CorePalette       *obj,
           for (u32 i = offset; i < offset + num; i++) {
                obj->entries[i].a = obj->entries_yuv[i].a;
 
-               YCBCR_TO_RGB( obj->entries_yuv[i].y, obj->entries_yuv[i].u, obj->entries_yuv[i].v,
-                             obj->entries[i].r, obj->entries[i].g, obj->entries[i].b );
+               if (obj->colorspace == DSCS_BT601)
+                    YCBCR_TO_RGB_BT601( obj->entries_yuv[i].y, obj->entries_yuv[i].u, obj->entries_yuv[i].v,
+                                        obj->entries[i].r, obj->entries[i].g, obj->entries[i].b );
+               else if (obj->colorspace == DSCS_RGB || obj->colorspace == DSCS_BT709)
+                    YCBCR_TO_RGB_BT709( obj->entries_yuv[i].y, obj->entries_yuv[i].u, obj->entries_yuv[i].v,
+                                        obj->entries[i].r, obj->entries[i].g, obj->entries[i].b );
+               else {
+                    obj->entries[i].r = obj->entries[i].g = obj->entries[i].b = 0;
+               }
           }
 
           dfb_palette_update( obj, offset, offset + num - 1 );
