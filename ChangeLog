@@ -1,3 +1,24 @@
+commit 1694795f34e698b7544f86d688fcec6613666ab4
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Sep 16 08:24:03 2022 +0200
+
+    Direct/Stream: Add file_wait()
+
+commit 002b6f331a2b202359d601fc4c3425b7e9307449
+Merge: ad438fc fc9ce01
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Sep 15 10:11:30 2022 +0200
+
+    Merge pull request #49 from caramelli/master
+    
+    Add support for BT.709 conversion
+
+commit fc9ce013b85b514843a6962140ab668a55d4af70
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Sep 15 10:11:17 2022 +0200
+
+    Update ChangeLog
+
 commit 0d188b62f3519fcdd1ee100bc992414d60dfaff6
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Thu Sep 15 10:11:04 2022 +0200
