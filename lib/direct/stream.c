@@ -987,6 +987,17 @@ pipe_read( DirectStream *stream,
 }
 
 static DirectResult
+file_wait( DirectStream   *stream,
+           unsigned int    length,
+           struct timeval *timeout )
+{
+     if (stream->offset >= stream->length)
+          return DR_EOF;
+
+     return DR_OK;
+}
+
+static DirectResult
 file_peek( DirectStream *stream,
            unsigned int  length,
            int           offset,
@@ -1078,6 +1089,7 @@ file_open( DirectStream *stream,
           }
 
           stream->length = info.size;
+          stream->wait   = file_wait;
           stream->peek   = file_peek;
           stream->read   = file_read;
           stream->seek   = file_seek;
