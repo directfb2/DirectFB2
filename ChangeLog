@@ -1,3 +1,24 @@
+commit 58b530ab60abe2fe5b7ba32a7f9fa9fc80d5efdb
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Sep 24 11:24:08 2022 +0200
+
+    Add dfb_colorspace_parse()
+
+commit 4260493757d59f0fe750fa6ade2397247bcf1dce
+Merge: 002b6f3 9de9d06
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Sep 16 08:57:22 2022 +0200
+
+    Merge pull request #50 from caramelli/master
+    
+    Direct/Stream: Add file_wait()
+
+commit 9de9d06d1a7f58ab5eb468373cb10a3dba566f93
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Sep 16 08:24:15 2022 +0200
+
+    Update ChangeLog
+
 commit 1694795f34e698b7544f86d688fcec6613666ab4
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Fri Sep 16 08:24:03 2022 +0200

@@ -52,7 +52,7 @@ typedef struct {
 static void
 IDirectFBFont_DGIFF_Destruct( IDirectFBFont *thiz )
 {
-     DGIFFImplData *data = ((IDirectFBFont_data *) thiz->priv)->font->impl_data;
+     DGIFFImplData *data = ((IDirectFBFont_data*) thiz->priv)->font->impl_data;
 
      D_DEBUG_AT( Font_DGIFF, "%s( %p )\n", __FUNCTION__, thiz );
 

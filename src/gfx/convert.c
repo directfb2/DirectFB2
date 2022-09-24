@@ -214,7 +214,7 @@ dfb_pixel_to_color( DFBSurfacePixelFormat  format,
           case DSPF_YV12:
           case DSPF_YV16:
           case DSPF_YV24:
-               YCBCR_TO_RGB( (pixel & 0xff0000) >> 16, (pixel & 0x0000ff) >> 8, pixel & 0x00ff00,
+               YCBCR_TO_RGB( (pixel & 0xff0000) >> 16, pixel & 0x0000ff, (pixel & 0x00ff00) >> 8,
                              ret_color->r, ret_color->g, ret_color->b );
                break;
 
@@ -240,7 +240,7 @@ dfb_pixel_from_color( DFBSurfacePixelFormat  format,
 
      if (!DFB_COLORSPACE_IS_COMPATIBLE( colorspace, format )) {
           D_ONCE( "incompatible colorspace" );
-          return;
+          return 0;
      }
 
      switch (format) {

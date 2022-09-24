@@ -550,7 +550,7 @@ dfb_layer_context_get_primary_region( CoreLayerContext  *context,
                                       bool               create,
                                       CoreLayerRegion  **ret_region )
 {
-     DFBResult ret = DFB_OK;
+     DFBResult ret;
 
      D_DEBUG_AT( Core_LayerContext, "%s( %p, %screate )\n", __FUNCTION__, context, create ? "" : "don't " );
 
@@ -1083,7 +1083,7 @@ update_primary_region_config( CoreLayerContext           *context,
                               CoreLayerRegionConfig      *config,
                               CoreLayerRegionConfigFlags  flags )
 {
-     DFBResult ret = DFB_OK;
+     DFBResult ret;
 
      D_DEBUG_AT( Core_LayerContext, "%s( %p, %p, 0x%08x )\n", __FUNCTION__, context, config, flags );
 

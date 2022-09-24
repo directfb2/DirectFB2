@@ -1055,7 +1055,8 @@ fusion_skirmish_add_permissions( FusionSkirmish            *skirmish,
 #endif /* FUSION_BUILD_MULTI */
 
 static int
-ptr_compare( const void *p1, const void *p2 )
+ptr_compare( const void *p1,
+             const void *p2 )
 {
      return *(u32*) p1 - *(u32*) p2;
 }
