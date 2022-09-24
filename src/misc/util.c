@@ -25,7 +25,7 @@ D_DEBUG_DOMAIN( DirectFB_Updates, "DirectFB/Updates", "DirectFB Updates" );
 /**********************************************************************************************************************/
 
 static const DirectFBPixelFormatNames(dfb_pixelformat_names)
-static const DirectFBColorSpaceNames (dfb_colorspace_names)
+static const DirectFBColorSpaceNames(dfb_colorspace_names)
 
 /**********************************************************************************************************************/
 
@@ -608,4 +608,17 @@ dfb_pixelformat_parse( const char *format )
      }
 
      return DSPF_UNKNOWN;
+}
+
+DFBSurfaceColorSpace
+dfb_colorspace_parse( const char *colorspace )
+{
+     int i;
+
+     for (i = 0; dfb_colorspace_names[i].colorspace != DSCS_UNKNOWN; i++) {
+          if (!strcasecmp( colorspace, dfb_colorspace_names[i].name ))
+               return dfb_colorspace_names[i].colorspace;
+     }
+
+     return DSCS_UNKNOWN;
 }

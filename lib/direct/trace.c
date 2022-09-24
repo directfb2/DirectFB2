@@ -154,7 +154,7 @@ load_symbols( const char *filename )
 {
      DirectResult  ret;
      SymbolTable  *table;
-     DirectFile    fp;
+     DirectFile    f;
      bool          is_pipe = false;
      char          file[1024];
      char          line[1024];
@@ -215,7 +215,7 @@ load_symbols( const char *filename )
 
      ret = direct_access( command, R_OK );
      if (ret == DR_OK) {
-          ret = direct_file_open( &fp, command, O_RDONLY, 0 );
+          ret = direct_file_open( &f, command, O_RDONLY, 0 );
           if (ret)
                D_DERROR( ret, "Direct/Trace: direct_file_open( '%s' ) failed!\n", command );
      }
@@ -224,7 +224,7 @@ load_symbols( const char *filename )
 
           ret = direct_access( command, R_OK );
           if (ret == DR_OK) {
-               ret = direct_file_open( &fp, command, O_RDONLY, 0 );
+               ret = direct_file_open( &f, command, O_RDONLY, 0 );
                if (ret)
                     D_DERROR( ret, "Direct/Trace: direct_file_open( '%s' ) failed!\n", command );
           }
@@ -241,7 +241,7 @@ load_symbols( const char *filename )
 
           D_DEBUG_AT( Direct_Trace, "  -> running '%s'...\n", command );
 
-          ret = direct_popen( &fp, command, O_RDONLY );
+          ret = direct_popen( &f, command, O_RDONLY );
           if (ret) {
                D_DERROR( ret, "Direct/Trace: direct_popen( '%s' ) failed!\n", command );
                return NULL;
@@ -259,7 +259,7 @@ load_symbols( const char *filename )
      if (filename)
           table->filename = direct_strdup( filename );
 
-     while (direct_file_get_string( &fp, line, sizeof(line) ) == DR_OK) {
+     while (direct_file_get_string( &f, line, sizeof(line) ) == DR_OK) {
           int  n;
           int  digits = sizeof(long) * 2;
           long offset = 0;
@@ -292,9 +292,9 @@ load_symbols( const char *filename )
 
 out:
      if (is_pipe)
-          direct_pclose( &fp );
+          direct_pclose( &f );
      else
-          direct_file_close( &fp );
+          direct_file_close( &f );
 
      return table;
 }

@@ -317,8 +317,9 @@ send_update_event( CoreWindow      *window,
      post_event( window, data, &we );
 }
 
-static int keys_compare( const void *key1,
-                         const void *key2 )
+static int
+keys_compare( const void *key1,
+              const void *key2 )
 {
      return *(const DFBInputDeviceKeySymbol*) key1 - *(const DFBInputDeviceKeySymbol*) key2;
 }

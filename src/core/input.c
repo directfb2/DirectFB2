@@ -239,7 +239,7 @@ dfb_input_core_initialize( CoreDFB            *core,
                            DFBInputCoreShared *shared )
 {
 #if FUSION_BUILD_MULTI
-     DFBResult ret = DFB_OK;
+     DFBResult ret;
 #endif /* FUSION_BUILD_MULTI */
 
      D_DEBUG_AT( Core_Input, "%s( %p, %p, %p )\n", __FUNCTION__, core, data, shared );

@@ -275,6 +275,7 @@ IDirectFBEventBuffer_WaitForEvent( IDirectFBEventBuffer *thiz )
 
      if (!data->events)
           direct_waitqueue_wait( &data->wait_condition, &data->events_mutex );
+
      if (!data->events)
           ret = DFB_INTERRUPTED;
 

@@ -288,7 +288,7 @@ config_allocate()
 static DFBResult
 config_read( const char *filename )
 {
-     DFBResult   ret = DFB_OK;
+     DFBResult   ret;
      DirectFile  f;
      char        line[400];
      char       *slash = NULL;
