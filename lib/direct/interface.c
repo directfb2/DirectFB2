@@ -316,7 +316,7 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
      interface_dir = alloca( len );
      snprintf( interface_dir, len, "%s%sinterfaces/%s", path, path[strlen( path ) - 1] == '/' ? "" : "/", type );
 
-     ret = direct_dir_open ( &dir, interface_dir );
+     ret = direct_dir_open( &dir, interface_dir );
      if (ret) {
           D_DERROR( ret, "Direct/Interface: Could not open interface directory '%s'!\n", interface_dir );
           direct_mutex_unlock( &implementations_mutex );
@@ -348,8 +348,8 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
                     DirectInterfaceImplementation *test_impl;
 
                     if (strlen( entry.name ) < 4                    ||
-                        entry.name[strlen( entry.name ) - 1] != 'o' ||
-                        entry.name[strlen( entry.name ) - 2] != 's')
+                        entry.name[strlen( entry.name ) - 2] != 's' ||
+                        entry.name[strlen( entry.name ) - 1] != 'o')
                          continue;
 
                     snprintf( buf, sizeof(buf), "%s/%s", interface_dir, entry.name );
@@ -386,11 +386,9 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
 
                     if (handle) {
                          /* Check whether the dlopen'ed interface supports the required implementation. */
-                         if (!strcmp( impl->implementation,
-                                      direct_config->default_interface_implementation_names[idx] )) {
-                              if (probe_interface( impl, funcs, type,
-                                                   direct_config->default_interface_implementation_names[idx],
-                                                   probe, probe_ctx )) {
+                         if (!strcasecmp( impl->implementation,
+                                          direct_config->default_interface_implementation_names[idx] )) {
+                              if (probe_interface( impl, funcs, type, impl->implementation, probe, probe_ctx )) {
                                    if (impl->references == 1)
                                         D_INFO( "Direct/Interface: Loaded '%s' implementation of '%s'\n",
                                                 impl->implementation, impl->type );
