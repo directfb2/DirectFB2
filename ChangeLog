@@ -1,3 +1,24 @@
+commit a31867801de215e6f92c0fbaf1f192d454784846
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Sep 28 21:08:37 2022 +0200
+
+    Direct/Interface: Ignore character case for 'default-interface-implementation' option
+
+commit 4b49dda3e337774f04ff77773afadcb409610f94
+Merge: 4260493 e613839
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Sep 24 11:36:15 2022 +0200
+
+    Merge pull request #51 from caramelli/master
+    
+    Add dfb_colorspace_parse()
+
+commit e613839786d0e9e48828f50bd1a3e06e887f4ac1
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Sep 24 11:24:38 2022 +0200
+
+    Update ChangeLog
+
 commit 58b530ab60abe2fe5b7ba32a7f9fa9fc80d5efdb
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Sat Sep 24 11:24:08 2022 +0200
