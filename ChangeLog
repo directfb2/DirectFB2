@@ -1,3 +1,24 @@
+commit 9328df9ddd34e097606b47776a94b73c947fb417
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Sep 29 17:49:25 2022 +0200
+
+    Add support for BT.2020 conversion
+
+commit 1989eb1c12b329cb618c3c7669d6bfc29f9480d9
+Merge: 4b49dda 0bd4a4f
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Sep 28 21:38:41 2022 +0200
+
+    Merge pull request #52 from caramelli/master
+    
+    Direct/Interface: Ignore character case for 'default-interface-implementation' option
+
+commit 0bd4a4f14ba57a27cfbd2767eaa1329405aaa574
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Sep 28 21:08:59 2022 +0200
+
+    Update ChangeLog
+
 commit a31867801de215e6f92c0fbaf1f192d454784846
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Wed Sep 28 21:08:37 2022 +0200

@@ -9343,10 +9343,28 @@ Dacc_RGB_to_YCbCr_BT709_C( GenefxState *gfxs )
 #undef SET_PIXEL
 }
 
+static void
+Dacc_RGB_to_YCbCr_BT2020_C( GenefxState *gfxs )
+{
+     int                w = gfxs->length;
+     GenefxAccumulator *S = gfxs->Dacc;
+     GenefxAccumulator *D = gfxs->Dacc;
+
+#define SET_PIXEL(d,s)                                                                 \
+     if (!(s.RGB.a & 0xf000)) {                                                        \
+          RGB_TO_YCBCR_BT2020( s.RGB.r, s.RGB.g, s.RGB.b, d.YUV.y, d.YUV.u, d.YUV.v ); \
+     }
+
+     SET_PIXEL_DUFFS_DEVICE( D, S, w );
+
+#undef SET_PIXEL
+}
+
 #undef SET_PIXEL_DUFFS_DEVICE
 
-static GenefxFunc Dacc_RGB_to_YCbCr_BT601 = Dacc_RGB_to_YCbCr_BT601_C;
-static GenefxFunc Dacc_RGB_to_YCbCr_BT709 = Dacc_RGB_to_YCbCr_BT709_C;
+static GenefxFunc Dacc_RGB_to_YCbCr_BT601  = Dacc_RGB_to_YCbCr_BT601_C;
+static GenefxFunc Dacc_RGB_to_YCbCr_BT709  = Dacc_RGB_to_YCbCr_BT709_C;
+static GenefxFunc Dacc_RGB_to_YCbCr_BT2020 = Dacc_RGB_to_YCbCr_BT2020_C;
 
 /**********************************************************************************************************************/
 
@@ -9388,10 +9406,28 @@ Dacc_YCbCr_to_RGB_BT709_C( GenefxState *gfxs )
 #undef SET_PIXEL
 }
 
+static void
+Dacc_YCbCr_to_RGB_BT2020_C( GenefxState *gfxs )
+{
+     int                w = gfxs->length;
+     GenefxAccumulator *S = gfxs->Dacc;
+     GenefxAccumulator *D = gfxs->Dacc;
+
+#define SET_PIXEL(d,s)                                                                 \
+     if (!(s.YUV.a & 0xf000)) {                                                        \
+          YCBCR_TO_RGB_BT2020( s.YUV.y, s.YUV.u, s.YUV.v, d.RGB.r, d.RGB.g, d.RGB.b ); \
+     }
+
+     SET_PIXEL_DUFFS_DEVICE( D, S, w );
+
+#undef SET_PIXEL
+}
+
 #undef SET_PIXEL_DUFFS_DEVICE
 
-static GenefxFunc Dacc_YCbCr_to_RGB_BT601 = Dacc_YCbCr_to_RGB_BT601_C;
-static GenefxFunc Dacc_YCbCr_to_RGB_BT709 = Dacc_YCbCr_to_RGB_BT709_C;
+static GenefxFunc Dacc_YCbCr_to_RGB_BT601  = Dacc_YCbCr_to_RGB_BT601_C;
+static GenefxFunc Dacc_YCbCr_to_RGB_BT709  = Dacc_YCbCr_to_RGB_BT709_C;
+static GenefxFunc Dacc_YCbCr_to_RGB_BT2020 = Dacc_YCbCr_to_RGB_BT2020_C;
 
 /**********************************************************************************************************************/
 
@@ -10059,14 +10095,16 @@ gAcquireSetup( CardState           *state,
 
      gfxs->color = color;
 
-#define RGB_TO_YCBCR(r,g,b,y,cb,cr)                         \
-     if (destination->config.colorspace == DSCS_BT601)      \
-          RGB_TO_YCBCR_BT601(r,g,b,y,cb,cr);                \
-     else if (destination->config.colorspace == DSCS_BT709) \
-          RGB_TO_YCBCR_BT709(r,g,b,y,cb,cr);                \
-     else {                                                 \
-          y = 16;                                           \
-          cb = cr = 128;                                    \
+#define RGB_TO_YCBCR(r,g,b,y,cb,cr)                          \
+     if (destination->config.colorspace == DSCS_BT601)       \
+          RGB_TO_YCBCR_BT601(r,g,b,y,cb,cr);                 \
+     else if (destination->config.colorspace == DSCS_BT709)  \
+          RGB_TO_YCBCR_BT709(r,g,b,y,cb,cr);                 \
+     else if (destination->config.colorspace == DSCS_BT2020) \
+          RGB_TO_YCBCR_BT2020(r,g,b,y,cb,cr);                \
+     else {                                                  \
+          y = 16;                                            \
+          cb = cr = 128;                                     \
      }
 
      switch (gfxs->dst_format) {
@@ -10323,6 +10361,8 @@ gAcquireSetup( CardState           *state,
                               *funcs++ = Dacc_YCbCr_to_RGB_BT601;
                          else if (destination->config.colorspace == DSCS_BT709)
                               *funcs++ = Dacc_YCbCr_to_RGB_BT709;
+                         else if (destination->config.colorspace == DSCS_BT2020)
+                              *funcs++ = Dacc_YCbCr_to_RGB_BT2020;
                     }
 
                     /* Premultiply destination. */
@@ -10464,6 +10504,8 @@ gAcquireSetup( CardState           *state,
                               *funcs++ = Dacc_RGB_to_YCbCr_BT601;
                          else if (destination->config.colorspace == DSCS_BT709)
                               *funcs++ = Dacc_RGB_to_YCbCr_BT709;
+                         else if (destination->config.colorspace == DSCS_BT2020)
+                              *funcs++ = Dacc_RGB_to_YCbCr_BT2020;
                     }
 
                     /* Write to destination. */
@@ -10597,6 +10639,8 @@ gAcquireSetup( CardState           *state,
                                    *funcs++ = Dacc_YCbCr_to_RGB_BT601;
                               else if (destination->config.colorspace == DSCS_BT709)
                                    *funcs++ = Dacc_YCbCr_to_RGB_BT709;
+                              else if (destination->config.colorspace == DSCS_BT2020)
+                                   *funcs++ = Dacc_YCbCr_to_RGB_BT2020;
                          }
 
                          if (simpld_blittingflags & DSBLIT_DST_PREMULTIPLY)
@@ -10642,6 +10686,8 @@ gAcquireSetup( CardState           *state,
                               *funcs++ = Dacc_YCbCr_to_RGB_BT601;
                          else if (source->config.colorspace == DSCS_BT709)
                               *funcs++ = Dacc_YCbCr_to_RGB_BT709;
+                         else if (source->config.colorspace == DSCS_BT2020)
+                              *funcs++ = Dacc_YCbCr_to_RGB_BT2020;
                     }
 
                     /* Premultiply color alpha. */
@@ -10743,6 +10789,8 @@ gAcquireSetup( CardState           *state,
                               *funcs++ = Dacc_RGB_to_YCbCr_BT601;
                          else if (destination->config.colorspace == DSCS_BT709)
                               *funcs++ = Dacc_RGB_to_YCbCr_BT709;
+                         else if (destination->config.colorspace == DSCS_BT2020)
+                              *funcs++ = Dacc_RGB_to_YCbCr_BT2020;
                     }
 
                     /* Write source to destination. */
@@ -10886,6 +10934,8 @@ gAcquireSetup( CardState           *state,
                                    *funcs++ = Dacc_RGB_to_YCbCr_BT601;
                               else if (destination->config.colorspace == DSCS_BT709)
                                    *funcs++ = Dacc_RGB_to_YCbCr_BT709;
+                              else if (destination->config.colorspace == DSCS_BT2020)
+                                   *funcs++ = Dacc_RGB_to_YCbCr_BT2020;
                          }
                          else
                               *funcs++ = Dacc_Alpha_to_YCbCr;
@@ -10896,6 +10946,8 @@ gAcquireSetup( CardState           *state,
                                    *funcs++ = Dacc_YCbCr_to_RGB_BT601;
                               else if (source->config.colorspace == DSCS_BT709)
                                    *funcs++ = Dacc_YCbCr_to_RGB_BT709;
+                              else if (source->config.colorspace == DSCS_BT2020)
+                                   *funcs++ = Dacc_YCbCr_to_RGB_BT2020;
                          }
                     }
 

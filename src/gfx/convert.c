@@ -36,23 +36,27 @@ static const u8 lookup2to8[] = { 0x00, 0x55, 0xaa, 0xff };
 #define EXPAND_6to8(v) (((v) << 2) | ((v) >> 4))
 #define EXPAND_7to8(v) (((v) << 1) | ((v) >> 6))
 
-#define YCBCR_TO_RGB(y,cb,cr,r,g,b)          \
-     if (colorspace == DSCS_BT601)           \
-          YCBCR_TO_RGB_BT601(y,cb,cr,r,g,b); \
-     else if (colorspace == DSCS_BT709)      \
-          YCBCR_TO_RGB_BT709(y,cb,cr,r,g,b); \
-     else {                                  \
-          r = g = b = 0;                     \
+#define YCBCR_TO_RGB(y,cb,cr,r,g,b)           \
+     if (colorspace == DSCS_BT601)            \
+          YCBCR_TO_RGB_BT601(y,cb,cr,r,g,b);  \
+     else if (colorspace == DSCS_BT709)       \
+          YCBCR_TO_RGB_BT709(y,cb,cr,r,g,b);  \
+     else if (colorspace == DSCS_BT2020)      \
+          YCBCR_TO_RGB_BT2020(y,cb,cr,r,g,b); \
+     else {                                   \
+          r = g = b = 0;                      \
      }
 
-#define RGB_TO_YCBCR(r,g,b,y,cb,cr)          \
-     if (colorspace == DSCS_BT601)           \
-          RGB_TO_YCBCR_BT601(r,g,b,y,cb,cr); \
-     else if (colorspace == DSCS_BT709)      \
-          RGB_TO_YCBCR_BT709(r,g,b,y,cb,cr); \
-     else {                                  \
-          y = 16;                            \
-          cb = cr = 128;                     \
+#define RGB_TO_YCBCR(r,g,b,y,cb,cr)           \
+     if (colorspace == DSCS_BT601)            \
+          RGB_TO_YCBCR_BT601(r,g,b,y,cb,cr);  \
+     else if (colorspace == DSCS_BT709)       \
+          RGB_TO_YCBCR_BT709(r,g,b,y,cb,cr);  \
+     else if (colorspace == DSCS_BT2020)      \
+          RGB_TO_YCBCR_BT2020(r,g,b,y,cb,cr); \
+     else {                                   \
+          y = 16;                             \
+          cb = cr = 128;                      \
      }
 
 /**********************************************************************************************************************/
