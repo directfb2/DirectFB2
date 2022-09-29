@@ -266,6 +266,8 @@ IDirectFBPalette_FindBestMatchYUV( IDirectFBPalette *thiz,
           YCBCR_TO_RGB_BT601( y, u, v, r, g, b );
      else if (data->palette->colorspace == DSCS_RGB || data->palette->colorspace == DSCS_BT709)
           YCBCR_TO_RGB_BT709( y, u, v, r, g, b );
+     else if (data->palette->colorspace == DSCS_BT2020)
+          YCBCR_TO_RGB_BT2020( y, u, v, r, g, b );
      else
           r = g = b = 0;
 

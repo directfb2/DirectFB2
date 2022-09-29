@@ -71,14 +71,16 @@ write_argb_span( u32         *src,
           }
      }
 
-#define RGB_TO_YCBCR(r,g,b,y,cb,cr)                         \
-     if (dst_surface->config.colorspace == DSCS_BT601)      \
-          RGB_TO_YCBCR_BT601(r,g,b,y,cb,cr);                \
-     else if (dst_surface->config.colorspace == DSCS_BT709) \
-          RGB_TO_YCBCR_BT709(r,g,b,y,cb,cr);                \
-     else {                                                 \
-          y = 16;                                           \
-          cb = cr = 128;                                    \
+#define RGB_TO_YCBCR(r,g,b,y,cb,cr)                          \
+     if (dst_surface->config.colorspace == DSCS_BT601)       \
+          RGB_TO_YCBCR_BT601(r,g,b,y,cb,cr);                 \
+     else if (dst_surface->config.colorspace == DSCS_BT709)  \
+          RGB_TO_YCBCR_BT709(r,g,b,y,cb,cr);                 \
+     else if (dst_surface->config.colorspace == DSCS_BT2020) \
+          RGB_TO_YCBCR_BT2020(r,g,b,y,cb,cr);                \
+     else {                                                  \
+          y = 16;                                            \
+          cb = cr = 128;                                     \
      }
 
      switch (dst_surface->config.format) {

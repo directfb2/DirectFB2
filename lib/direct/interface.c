@@ -422,8 +422,8 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
           DirectInterfaceImplementation *test_impl;
 
           if (strlen( entry.name ) < 4 ||
-              entry.name[strlen( entry.name ) - 1] != 'o' ||
-              entry.name[strlen( entry.name ) - 2] != 's')
+              entry.name[strlen( entry.name ) - 2] != 's' ||
+              entry.name[strlen( entry.name ) - 1] != 'o')
                continue;
 
           snprintf( buf, sizeof(buf), "%s/%s", interface_dir, entry.name );
