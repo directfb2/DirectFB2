@@ -1,3 +1,24 @@
+commit 821cffd5f7102eaa5bf75da1190e0670293e50a9
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Oct 8 02:44:17 2022 +0200
+
+    Add support for static libraries (MCU targets)
+
+commit 9a2d1bf1beb2c8d8c8bf1ca5154a19acffe2f4f8
+Merge: 1989eb1 c61ab74
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Sep 29 17:49:11 2022 +0200
+
+    Merge pull request #53 from caramelli/master
+    
+    Add support for BT.2020 conversion
+
+commit c61ab74f402dab12de791a69d40fe8cae2a399bc
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Sep 29 17:49:33 2022 +0200
+
+    Update ChangeLog
+
 commit 9328df9ddd34e097606b47776a94b73c947fb417
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Thu Sep 29 17:49:25 2022 +0200
