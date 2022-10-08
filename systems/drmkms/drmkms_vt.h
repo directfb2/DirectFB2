@@ -23,11 +23,11 @@
 
 /**********************************************************************************************************************/
 
-DFBResult vt_initialize( CoreDFB *core );
+DFBResult drmkms_vt_initialize( CoreDFB *core );
 
-DFBResult vt_shutdown  ( bool     emergency );
+DFBResult drmkms_vt_shutdown  ( bool     emergency );
 
-bool      vt_switch_num( int      num,
-                         bool     key_pressed );
+bool      drmkms_vt_switch_num( int      num,
+                                bool     key_pressed );
 
 #endif

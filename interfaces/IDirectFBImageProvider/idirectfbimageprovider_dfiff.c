@@ -44,11 +44,10 @@ typedef struct {
 
      void                  *ptr;                     /* pointer to raw file data (mapped) */
      int                    len;                     /* data length, i.e. file size */
-
-     DFBSurfaceDescription  desc;
-
      int                    pitch;
      bool                   premultiplied;
+
+     DFBSurfaceDescription  desc;
 
      DIRenderCallback       render_callback;
      void                  *render_callback_context;

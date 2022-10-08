@@ -94,6 +94,8 @@ else
   build_h.set10('DIRECT_BUILD_DEBUGS', get_option('debug-support'))
 endif
 
+build_h.set10('DIRECT_BUILD_DYNLOAD', get_option('default_library') == 'shared')
+
 build_h.set10('DIRECT_BUILD_MEMCPY_PROBING', get_option('memcpy-probing'))
 
 build_h.set10('DIRECT_BUILD_SENTINELS', get_option('sentinels'))
@@ -134,24 +136,33 @@ configure_file(configuration: build_h,
                install: true,
                install_dir: join_paths(get_option('includedir'), 'directfb/direct'))
 
-libdl_dep = cc.find_library('dl')
+libdl_dep = []
+moduledir_def = []
+if get_option('default_library') == 'shared'
+  libdl_dep = cc.find_library('dl')
+  moduledir_def = '-DMODULEDIR="@0@"'.format(moduledir)
+endif
+
 librt_dep = []
+libdirect_private = ['-Wl,-u,__D_init_all']
 if not cc.has_function('clock_gettime')
   librt_dep = cc.find_library('rt')
+  libdirect_private += ['-lrt']
 endif
 threads_dep = dependency('threads')
+libdirect_private += ['-lpthread']
 
 libdirect = library('direct-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
                     direct_sources, os_linux_sources,
                     include_directories: [config_inc, lib_inc],
-                    c_args: ['-DMODULEDIR="@0@"'.format(moduledir)],
+                    c_args: moduledir_def,
                     dependencies: [libdl_dep, librt_dep, threads_dep],
                     version: '0.@0@.0'.format(directfb_micro_version),
                     install: true)
 
 meson.add_install_script(join_paths(meson.source_root(), 'meson_symlink.sh'),
-                         'libdirect-@0@.@1@.so'.format(directfb_major_version, directfb_minor_version),
-                         join_paths(get_option('prefix'), get_option('libdir'), 'libdirect.so'))
+                         'libdirect-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
+                         join_paths(get_option('prefix'), get_option('libdir'), 'libdirect' + libsuffix))
 
 install_headers(direct_headers, subdir: 'directfb/direct')
 install_headers(os_headers, subdir: 'directfb/direct/os')
@@ -161,6 +172,7 @@ pkgconfig.generate(filebase: 'direct',
                    name: 'Direct',
                    description: 'DirectFB low-level library',
                    libraries: '-L${libdir} -ldirect',
+                   libraries_private: libdirect_private,
                    subdirs: 'directfb')
 
 direct_dep = declare_dependency(include_directories: lib_inc, link_with: libdirect)

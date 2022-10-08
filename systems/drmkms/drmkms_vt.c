@@ -302,7 +302,7 @@ vt_start_flushing()
 }
 
 DFBResult
-vt_initialize( CoreDFB *core )
+drmkms_vt_initialize( CoreDFB *core )
 {
      DFBResult       ret;
      struct vt_stat  vs;
@@ -454,7 +454,7 @@ vt_stop_flushing()
 }
 
 DFBResult
-vt_shutdown( bool emergency )
+drmkms_vt_shutdown( bool emergency )
 {
      const char blankon_str[]  = "\033[9;10]";
      const char cursoron_str[] = "\033[?0;0;0c";
@@ -532,8 +532,8 @@ vt_shutdown( bool emergency )
 }
 
 bool
-vt_switch_num( int  num,
-               bool key_pressed )
+drmkms_vt_switch_num( int  num,
+                      bool key_pressed )
 {
      D_DEBUG_AT( VT, "%s( %d )\n", __FUNCTION__, num );
 

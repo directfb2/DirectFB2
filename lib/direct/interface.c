@@ -221,14 +221,16 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
                     DirectInterfaceProbeFunc   probe,
                     void                      *probe_ctx )
 {
-     DirectResult                   ret;
      int                            n   = 0;
      int                            idx = -1;
+#if DIRECT_BUILD_DYNLOAD
+     DirectResult                   ret;
      int                            len;
      DirectDir                      dir;
      char                          *interface_dir;
      DirectEntry                    entry;
      const char                    *path;
+#endif /* DIRECT_BUILD_DYNLOAD */
      DirectInterfaceImplementation *impl;
 
      D_DEBUG_AT( Direct_Interface, "%s( %p, '%s', '%s', %p, %p )\n", __FUNCTION__,
@@ -300,6 +302,7 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
           }
      }
 
+#if DIRECT_BUILD_DYNLOAD
      /* Try to load it dynamically. */
 
      /* NULL type means we can't find plugin, so stop immediately. */
@@ -478,6 +481,7 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
      }
 
      direct_dir_close( &dir );
+#endif /* DIRECT_BUILD_DYNLOAD */
 
      direct_mutex_unlock( &implementations_mutex );
 

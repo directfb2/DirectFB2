@@ -167,14 +167,14 @@ fbdev_ioctl_call_handler( int           caller,
      shared = fbdev->shared;
 
      if (shared->vt && call_arg == FBIOPUT_VSCREENINFO)
-          vt_set_graphics_mode( true );
+          fbdev_vt_set_graphics_mode( true );
 
      erno = ioctl( fbdev->fd, call_arg, call_ptr );
      if (erno < 0)
           erno = errno;
 
      if (shared->vt && call_arg == FBIOPUT_VSCREENINFO)
-          vt_set_graphics_mode( false );
+          fbdev_vt_set_graphics_mode( false );
 
      *ret_val = erno;
 
@@ -371,7 +371,7 @@ system_initialize( CoreDFB  *core,
           goto error;
 
      if (shared->vt) {
-          ret = vt_initialize( core, fbdev->fd );
+          ret = fbdev_vt_initialize( core, fbdev->fd );
           if (ret)
                goto error;
      }
@@ -473,7 +473,7 @@ error:
           ioctl( fbdev->fd, FBIOPUT_VSCREENINFO, &shared->orig_var );
 
      if (shared->vt)
-          vt_shutdown( false, fbdev->fd );
+          fbdev_vt_shutdown( false, fbdev->fd );
 
      local_deinit( fbdev );
 
@@ -568,7 +568,7 @@ system_shutdown( bool emergency )
      ioctl( fbdev->fd, FBIOPUT_VSCREENINFO, &shared->orig_var );
 
      if (shared->vt)
-          vt_shutdown( emergency, fbdev->fd );
+          fbdev_vt_shutdown( emergency, fbdev->fd );
 
      local_deinit( fbdev );
 
@@ -662,7 +662,7 @@ system_input_filter( CoreInputDevice *device,
      if (shared->vt) {
           if (DFB_KEY_TYPE( event->key_symbol ) == DIKT_FUNCTION && event->modifiers == (DIMM_CONTROL | DIMM_ALT) &&
               (event->type == DIET_KEYPRESS || event->type == DIET_KEYRELEASE))
-               return vt_switch_num( event->key_symbol - DIKS_F1 + 1, event->type == DIET_KEYPRESS );
+               return fbdev_vt_switch_num( event->key_symbol - DIKS_F1 + 1, event->type == DIET_KEYPRESS );
      }
 
      return false;

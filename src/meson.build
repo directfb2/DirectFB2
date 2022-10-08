@@ -183,8 +183,8 @@ libdirectfb = library('directfb-@0@.@1@'.format(directfb_major_version, directfb
                       install: true)
 
 meson.add_install_script(join_paths(meson.source_root(), 'meson_symlink.sh'),
-                         'libdirectfb-@0@.@1@.so'.format(directfb_major_version, directfb_minor_version),
-                         join_paths(get_option('prefix'), get_option('libdir'), 'libdirectfb.so'))
+                         'libdirectfb-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
+                         join_paths(get_option('prefix'), get_option('libdir'), 'libdirectfb' + libsuffix))
 
 install_headers('idirectfb.h', subdir: 'directfb-internal')
 install_headers(core_headers, subdir: 'directfb-internal/core')
@@ -197,15 +197,15 @@ pkgconfig.generate(filebase: 'directfb',
                    name: 'DirectFB',
                    description: 'Graphics and windowing library in Frame Buffer memory',
                    requires: 'direct fusion',
+                   requires_private: 'directfb-inputdrivers directfb-interfaces directfb-systems directfb-wm',
                    libraries: '-L${libdir} -ldirectfb',
                    subdirs: 'directfb')
 
 pkgconfig.generate(filebase: 'directfb-internal',
                    variables: ['moduledirname=' + moduledirname, 'moduledir=' + moduledir],
-                   name: 'DirectFB-Internal',
+                   name: 'DirectFB-internal',
                    description: 'DirectFB internal module infrastructure',
                    requires: 'directfb',
-                   extra_cflags: '-D_GNU_SOURCE',
                    subdirs: 'directfb-internal')
 
 directfb_dep = declare_dependency(include_directories: directfb_inc, link_with: [libdirectfb, libdirect, libfusion])
