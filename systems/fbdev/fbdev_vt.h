@@ -23,15 +23,15 @@
 
 /**********************************************************************************************************************/
 
-DFBResult vt_initialize       ( CoreDFB *core,
-                                int      fbdev_fd );
+DFBResult fbdev_vt_initialize       ( CoreDFB *core,
+                                      int      fbdev_fd );
 
-DFBResult vt_shutdown         ( bool     emergency,
-                                int      fbdev_fd );
+DFBResult fbdev_vt_shutdown         ( bool     emergency,
+                                      int      fbdev_fd );
 
-bool      vt_switch_num       ( int      num,
-                                bool     key_pressed );
+bool      fbdev_vt_switch_num       ( int      num,
+                                      bool     key_pressed );
 
-void      vt_set_graphics_mode( bool     set );
+void      fbdev_vt_set_graphics_mode( bool     set );
 
 #endif

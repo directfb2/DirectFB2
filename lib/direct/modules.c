@@ -25,12 +25,16 @@ D_DEBUG_DOMAIN( Direct_Modules, "Direct/Modules", "Direct Modules loading and re
 
 /**********************************************************************************************************************/
 
+#if DIRECT_BUILD_DYNLOAD
+
 static DirectModuleEntry *lookup_by_name( const DirectModuleDir *directory, const char *name );
 static DirectModuleEntry *lookup_by_file( const DirectModuleDir *directory, const char *file );
 
 static void *open_module  ( DirectModuleEntry *module );
 static bool  load_module  ( DirectModuleEntry *module );
 static void  unload_module( DirectModuleEntry *module );
+
+#endif /* DIRECT_BUILD_DYNLOAD */
 
 /**********************************************************************************************************************/
 
@@ -68,6 +72,7 @@ direct_modules_register( DirectModuleDir *directory,
 
      D_DEBUG_AT( Direct_Modules, "Registering '%s' ('%s')...\n", name, directory->path );
 
+#if DIRECT_BUILD_DYNLOAD
      if ((entry = lookup_by_name( directory, name )) != NULL) {
           D_DEBUG_AT( Direct_Modules, "  -> found entry %p\n", entry );
 
@@ -78,6 +83,7 @@ direct_modules_register( DirectModuleDir *directory,
 
           return;
      }
+#endif /* DIRECT_BUILD_DYNLOAD */
 
      if (directory->loading) {
           entry = directory->loading;
@@ -121,10 +127,13 @@ void
 direct_modules_unregister( DirectModuleDir *directory,
                            const char      *name )
 {
+#if DIRECT_BUILD_DYNLOAD
      DirectModuleEntry *entry;
+#endif /* DIRECT_BUILD_DYNLOAD */
 
      D_DEBUG_AT( Direct_Modules, "Unregistering '%s' ('%s')...\n", name, directory->path );
 
+#if DIRECT_BUILD_DYNLOAD
      entry = lookup_by_name( directory, name );
      if (!entry) {
           D_ERROR( "Direct/Modules: Unregister failed, could not find '%s' module!\n", name );
@@ -140,6 +149,7 @@ direct_modules_unregister( DirectModuleDir *directory,
      D_MAGIC_CLEAR( entry );
 
      D_FREE( entry );
+#endif /* DIRECT_BUILD_DYNLOAD */
 
      D_DEBUG_AT( Direct_Modules, "...unregistered\n" );
 }
@@ -147,6 +157,7 @@ direct_modules_unregister( DirectModuleDir *directory,
 int
 direct_modules_explore_directory( DirectModuleDir *directory )
 {
+#if DIRECT_BUILD_DYNLOAD
      DirectResult   ret;
      DirectDir      dir;
      DirectEntry    entry;
@@ -242,6 +253,9 @@ direct_modules_explore_directory( DirectModuleDir *directory )
      direct_dir_close( &dir );
 
      return count;
+#else /* DIRECT_BUILD_DYNLOAD */
+     return 0;
+#endif /* DIRECT_BUILD_DYNLOAD */
 }
 
 const void *
@@ -255,10 +269,12 @@ direct_module_ref( DirectModuleEntry *module )
      if (module->disabled)
           return NULL;
 
+#if DIRECT_BUILD_DYNLOAD
      if (!module->loaded && !load_module( module )) {
           D_DEBUG_AT( Direct_Modules, "  -> load_module failed, returning NULL\n" );
           return NULL;
      }
+#endif /* DIRECT_BUILD_DYNLOAD */
 
      module->refs++;
 
@@ -280,11 +296,15 @@ direct_module_unref( DirectModuleEntry *module )
      if (--module->refs)
           return;
 
+#if DIRECT_BUILD_DYNLOAD
      if (module->dynamic)
           unload_module( module );
+#endif /* DIRECT_BUILD_DYNLOAD */
 }
 
 /**********************************************************************************************************************/
+
+#if DIRECT_BUILD_DYNLOAD
 
 static DirectModuleEntry *
 lookup_by_name( const DirectModuleDir *directory,
@@ -415,3 +435,5 @@ open_module( DirectModuleEntry *module )
 
      return handle;
 }
+
+#endif /* DIRECT_BUILD_DYNLOAD */

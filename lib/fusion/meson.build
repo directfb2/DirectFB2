@@ -75,6 +75,8 @@ configure_file(configuration: build_h,
                install: true,
                install_dir: join_paths(get_option('includedir'), 'directfb/fusion'))
 
+libfusion_private = ['-Wl,-u,__Fusion_init_all']
+
 libfusion = library('fusion-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
                     fusion_sources, shm_sources,
                     include_directories: [config_inc, lib_inc],
@@ -83,16 +85,17 @@ libfusion = library('fusion-@0@.@1@'.format(directfb_major_version, directfb_min
                     install: true)
 
 meson.add_install_script(join_paths(meson.source_root(), 'meson_symlink.sh'),
-                         'libfusion-@0@.@1@.so'.format(directfb_major_version, directfb_minor_version),
-                         join_paths(get_option('prefix'), get_option('libdir'), 'libfusion.so'))
+                         'libfusion-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
+                         join_paths(get_option('prefix'), get_option('libdir'), 'libfusion' + libsuffix))
 
 install_headers(fusion_headers, subdir: 'directfb/fusion')
 
 pkgconfig.generate(filebase: 'fusion',
                    name: 'Fusion',
                    description: 'DirectFB IPC library',
-                   requires: 'direct',
+                   requires_private: 'direct',
                    libraries: '-L${libdir} -lfusion',
+                   libraries_private: libfusion_private,
                    subdirs: 'directfb')
 
 fusion_dep = declare_dependency(include_directories: lib_inc, link_with: libfusion)

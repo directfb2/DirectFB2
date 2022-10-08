@@ -240,7 +240,7 @@ system_initialize( CoreDFB  *core,
           goto error;
 
      if (shared->vt) {
-          ret = vt_initialize( core );
+          ret = drmkms_vt_initialize( core );
           if (ret)
                goto error;
      }
@@ -265,7 +265,7 @@ system_initialize( CoreDFB  *core,
 
 error:
      if (shared->vt)
-          vt_shutdown( false );
+          drmkms_vt_shutdown( false );
 
      local_deinit( drmkms );
 
@@ -343,7 +343,7 @@ system_shutdown( bool emergency )
      }
 
      if (shared->vt)
-          vt_shutdown( emergency );
+          drmkms_vt_shutdown( emergency );
 
      local_deinit( drmkms );
 
@@ -421,7 +421,7 @@ system_input_filter( CoreInputDevice *device,
      if (shared->vt) {
           if (DFB_KEY_TYPE( event->key_symbol ) == DIKT_FUNCTION && event->modifiers == (DIMM_CONTROL | DIMM_ALT) &&
               (event->type == DIET_KEYPRESS || event->type == DIET_KEYRELEASE))
-               return vt_switch_num( event->key_symbol - DIKS_F1 + 1, event->type == DIET_KEYPRESS );
+               return drmkms_vt_switch_num( event->key_symbol - DIKS_F1 + 1, event->type == DIET_KEYPRESS );
      }
 
      return false;

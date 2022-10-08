@@ -20,7 +20,9 @@
 #define __DIRECT__OS__LINUX__TYPES_H__
 
 #include <dirent.h>
+#if DIRECT_BUILD_DYNLOAD
 #include <dlfcn.h>
+#endif
 #include <errno.h>
 #include <fcntl.h>
 #include <grp.h>

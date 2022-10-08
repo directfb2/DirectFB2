@@ -351,8 +351,8 @@ vt_start_flushing()
 }
 
 DFBResult
-vt_initialize( CoreDFB *core,
-               int      fbdev_fd )
+fbdev_vt_initialize( CoreDFB *core,
+                     int      fbdev_fd )
 {
      DFBResult       ret;
      struct vt_stat  vs;
@@ -512,8 +512,8 @@ vt_stop_flushing()
 }
 
 DFBResult
-vt_shutdown( bool emergency,
-             int  fbdev_fd )
+fbdev_vt_shutdown( bool emergency,
+                   int  fbdev_fd )
 {
      const char blankon_str[]  = "\033[9;10]";
      const char cursoron_str[] = "\033[?0;0;0c";
@@ -597,8 +597,8 @@ vt_shutdown( bool emergency,
 }
 
 bool
-vt_switch_num( int  num,
-               bool key_pressed )
+fbdev_vt_switch_num( int  num,
+                     bool key_pressed )
 {
      D_DEBUG_AT( VT, "%s( %d )\n", __FUNCTION__, num );
 
@@ -617,7 +617,7 @@ vt_switch_num( int  num,
 }
 
 void
-vt_set_graphics_mode( bool set )
+fbdev_vt_set_graphics_mode( bool set )
 {
      const char blankoff_str[]  = "\033[9;0]";
      const char cursoroff_str[] = "\033[?1;0;0c";
