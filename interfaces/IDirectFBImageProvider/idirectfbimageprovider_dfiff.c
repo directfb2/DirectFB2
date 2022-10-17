@@ -192,10 +192,10 @@ IDirectFBImageProvider_DFIFF_RenderTo( IDirectFBImageProvider *thiz,
                return ret;
      }
      else {
-          IDirectFBSurface      *source;
-          DFBSurfaceDescription  desc;
           DFBRegion              clip = DFB_REGION_INIT_FROM_RECTANGLE( &clipped );
           DFBRegion              old_clip;
+          DFBSurfaceDescription  desc;
+          IDirectFBSurface      *source;
 
           desc = data->desc;
 
@@ -319,12 +319,12 @@ Construct( IDirectFBImageProvider *thiz,
 
      data->ptr              = ptr;
      data->len              = info.size;
+     data->pitch            = header->pitch;
+     data->premultiplied    = header->flags & DFIFF_FLAG_PREMULTIPLIED ? true : false;
      data->desc.flags       = DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT;
      data->desc.width       = header->width;
      data->desc.height      = header->height;
      data->desc.pixelformat = header->format;
-     data->pitch            = header->pitch;
-     data->premultiplied    = header->flags & DFIFF_FLAG_PREMULTIPLIED ? true : false;
 
      thiz->AddRef                = IDirectFBImageProvider_DFIFF_AddRef;
      thiz->Release               = IDirectFBImageProvider_DFIFF_Release;
