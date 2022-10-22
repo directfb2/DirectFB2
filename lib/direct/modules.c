@@ -108,7 +108,6 @@ direct_modules_register( DirectModuleDir *directory,
      entry->loaded    = true;
      entry->name      = D_STRDUP( name );
      entry->funcs     = funcs;
-
      entry->disabled  = suppress_module( name );
 
      if (abi_version != directory->abi_version) {
@@ -143,6 +142,7 @@ direct_modules_unregister( DirectModuleDir *directory,
      D_MAGIC_ASSERT( entry, DirectModuleEntry );
 
      D_FREE( entry->name );
+     D_FREE( entry->file );
 
      direct_list_remove( &directory->entries, &entry->link );
 
@@ -158,13 +158,13 @@ int
 direct_modules_explore_directory( DirectModuleDir *directory )
 {
 #if DIRECT_BUILD_DYNLOAD
-     DirectResult   ret;
-     DirectDir      dir;
-     DirectEntry    entry;
-     int            count = 0;
-     const char    *pathfront = "";
-     const char    *path;
-     char          *buf;
+     DirectResult  ret;
+     DirectDir     dir;
+     DirectEntry   entry;
+     int           count = 0;
+     const char   *pathfront = "";
+     const char   *path;
+     char         *buf;
 
      D_ASSERT( directory != NULL );
      D_ASSERT( directory->path != NULL );
@@ -182,7 +182,7 @@ direct_modules_explore_directory( DirectModuleDir *directory )
      buf = alloca( strlen( pathfront ) + 1 + strlen( path ) + 1 ); /* pre, slash, post, 0 */
      sprintf( buf, "%s/%s", pathfront, path );
 
-     ret = direct_dir_open ( &dir, buf );
+     ret = direct_dir_open( &dir, buf );
      if (ret) {
           D_DEBUG_AT( Direct_Modules, "  -> error opening directory '%s'!\n", buf );
           return 0;
@@ -212,6 +212,7 @@ direct_modules_explore_directory( DirectModuleDir *directory )
           module->directory = directory;
           module->dynamic   = true;
           module->file      = D_STRDUP( entry.name );
+
           if (!module->file) {
                D_MAGIC_CLEAR( module );
                D_FREE( module );
