@@ -21,10 +21,9 @@
 
 /**********************************************************************************************************************/
 
-#define D_CONST_FUNC                    __attribute__((const))
-#define D_FORMAT_PRINTF(n)              __attribute__((__format__ (__printf__, n, n+1)))
-#define D_FORMAT_VPRINTF(n)             __attribute__((__format__ (__printf__, n, 0)))
-#define D_UNUSED                        __attribute__((unused))
-#define __dfb_no_instrument_function__  __attribute__((no_instrument_function))
+#define D_FORMAT_PRINTF(n)             __attribute__((__format__(__printf__,n,n+1)))
+#define D_FORMAT_VPRINTF(n)            __attribute__((__format__(__printf__,n,0)))
+#define D_UNUSED                       __attribute__((unused))
+#define __dfb_no_instrument_function__ __attribute__((no_instrument_function))
 
 #endif

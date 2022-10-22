@@ -72,6 +72,11 @@ static int   device_nums[MAX_LINUX_INPUT_DEVICES] = { 0 };
 /* Number of entries in the device_names and device_nums arrays. */
 static int   num_devices = 0;
 
+#define MAX_LINUX_INPUT_EVENTS 64
+
+/* Input events filled on read. */
+struct input_event events[MAX_LINUX_INPUT_EVENTS];
+
 /**********************************************************************************************************************/
 
 #define OFF(x)              ((x) % (sizeof(long) * 8))
@@ -827,34 +832,34 @@ static void
 flush_xy( LinuxInputData *data,
           bool            last )
 {
-     DFBInputEvent evt = { .type = DIET_UNKNOWN };
+     DFBInputEvent devt = { .type = DIET_UNKNOWN };
 
      if (data->dx) {
-          evt.type    = DIET_AXISMOTION;
-          evt.flags   = DIEF_AXISREL;
-          evt.axis    = DIAI_X;
-          evt.axisrel = data->dx;
+          devt.type    = DIET_AXISMOTION;
+          devt.flags   = DIEF_AXISREL;
+          devt.axis    = DIAI_X;
+          devt.axisrel = data->dx;
 
           /* Signal immediately following event. */
           if (!last || data->dy)
-               evt.flags |= DIEF_FOLLOW;
+               devt.flags |= DIEF_FOLLOW;
 
-          dfb_input_dispatch( data->device, &evt );
+          dfb_input_dispatch( data->device, &devt );
 
           data->dx = 0;
      }
 
      if (data->dy) {
-          evt.type    = DIET_AXISMOTION;
-          evt.flags   = DIEF_AXISREL;
-          evt.axis    = DIAI_Y;
-          evt.axisrel = data->dy;
+          devt.type    = DIET_AXISMOTION;
+          devt.flags   = DIEF_AXISREL;
+          devt.axis    = DIAI_Y;
+          devt.axisrel = data->dy;
 
           /* Signal immediately following event. */
           if (!last)
-               evt.flags |= DIEF_FOLLOW;
+               devt.flags |= DIEF_FOLLOW;
 
-          dfb_input_dispatch( data->device, &evt );
+          dfb_input_dispatch( data->device, &devt );
 
           data->dy = 0;
      }
@@ -929,10 +934,9 @@ devinput_event_thread( DirectThread *thread,
      }
 
      while (1) {
-          DFBInputEvent      devt = { .type = DIET_UNKNOWN };
-          fd_set             set;
-          struct input_event levt[64];
-          ssize_t            len;
+          DFBInputEvent devt = { .type = DIET_UNKNOWN };
+          fd_set        set;
+          ssize_t       len;
 
           /* Get input event. */
           FD_ZERO( &set );
@@ -973,21 +977,21 @@ devinput_event_thread( DirectThread *thread,
                continue;
           }
 
-          len = read( data->fd, levt, sizeof(levt) );
+          len = read( data->fd, events, sizeof(events) );
           if (len < 0 && errno != EINTR)
                break;
 
           if (len <= 0)
                continue;
 
-          for (i = 0; i < len / sizeof(levt[0]); i++) {
-               DFBInputEvent dfb_event = { .type = DIET_UNKNOWN };
+          for (i = 0; i < len / sizeof(events[0]); i++) {
+               DFBInputEvent evt = { .type = DIET_UNKNOWN };
 
                if (data->touchpad) {
-                    status = touchpad_fsm( &fsm_state, data->touch_abs, &levt[i], &dfb_event );
+                    status = touchpad_fsm( &fsm_state, data->touch_abs, &events[i], &evt );
                     if (status < 0) {
                          /* Not handled. Try the direct approach. */
-                         if (!translate_event( data, &levt[i], &dfb_event ))
+                         if (!translate_event( data, &events[i], &evt ))
                               continue;
                     }
                     else if (status == 0) {
@@ -996,7 +1000,7 @@ devinput_event_thread( DirectThread *thread,
                     }
                }
                else {
-                    if (!translate_event( data, &levt[i], &dfb_event ))
+                    if (!translate_event( data, &events[i], &evt ))
                          continue;
                }
 
@@ -1020,7 +1024,7 @@ devinput_event_thread( DirectThread *thread,
                     devt.flags = DIEF_NONE;
                }
 
-               devt = dfb_event;
+               devt = evt;
 
                if (D_FLAGS_IS_SET( devt.flags, DIEF_AXISREL ) &&
                    devt.type == DIET_AXISMOTION               &&
@@ -1569,6 +1573,8 @@ driver_close_device( void *driver_data )
           close( data->vt_fd );
 
      close( data->fd );
+
+     D_FREE( device_names[data->index] );
 
      D_FREE( data );
 }

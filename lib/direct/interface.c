@@ -185,8 +185,8 @@ DirectUnregisterInterface( DirectInterfaceFuncs *funcs )
           D_MAGIC_ASSERT( impl, DirectInterfaceImplementation );
 
           if (impl->funcs == funcs) {
+               D_FREE( impl->filename  );
                direct_list_remove( &implementations, &impl->link );
-
                break;
           }
      }
