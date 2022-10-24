@@ -63,7 +63,7 @@ struct __D_DirectTraceBuffer {
 /**********************************************************************************************************************/
 
 static DirectLink  *buffers;
-static DirectMutex  buffers_lock = DIRECT_RECURSIVE_MUTEX_INITIALIZER();
+static DirectMutex  buffers_lock = DIRECT_MUTEX_INITIALIZER();
 
 __dfb_no_instrument_function__
 static __inline__ DirectTraceBuffer *
@@ -110,7 +110,7 @@ typedef struct {
 } SymbolTable;
 
 static DirectLink  *tables      = NULL;
-static DirectMutex  tables_lock = DIRECT_RECURSIVE_MUTEX_INITIALIZER();
+static DirectMutex  tables_lock = DIRECT_MUTEX_INITIALIZER();
 
 __dfb_no_instrument_function__
 static void
