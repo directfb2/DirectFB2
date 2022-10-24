@@ -27,8 +27,7 @@ typedef struct {
      pthread_mutex_t lock;
 } DirectMutex;
 
-#define DIRECT_MUTEX_INITIALIZER()           { PTHREAD_MUTEX_INITIALIZER }
-#define DIRECT_RECURSIVE_MUTEX_INITIALIZER() { PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP }
+#define DIRECT_MUTEX_INITIALIZER() { PTHREAD_MUTEX_INITIALIZER }
 
 typedef struct {
      pthread_rwlock_t lock;

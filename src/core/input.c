@@ -414,6 +414,13 @@ dfb_input_core_shutdown( DFBInputCore *data,
           }
 
           if (!--driver->nr_devices) {
+               funcs = driver->funcs;
+
+               D_ASSERT( driver->funcs != NULL );
+               D_ASSERT( driver->funcs->CloseDevice != NULL );
+
+               funcs->CloseDevice( NULL );
+
                direct_module_unref( driver->module );
                D_FREE( driver );
           }

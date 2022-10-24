@@ -19,6 +19,7 @@
 #include <direct/direct.h>
 #include <direct/log.h>
 #include <direct/result.h>
+#include <direct/thread.h>
 #include <directfb.h>
 #include <directfb_version.h>
 #include <idirectfb.h>
@@ -29,6 +30,11 @@ D_DEBUG_DOMAIN( DirectFB_Main, "DirectFB/Main", "DirectFB Main Functions" );
 /**********************************************************************************************************************/
 
 IDirectFB *idirectfb_singleton = NULL;
+
+static DirectMutex idirectfb_lock;
+static DirectOnce  idirectfb_init_once = DIRECT_ONCE_INIT();
+
+/**********************************************************************************************************************/
 
 const char *
 DirectFBCheckVersion( unsigned int required_major,
@@ -86,6 +92,12 @@ DirectFBSetOption( const char *name, const char *value )
      return DFB_OK;
 }
 
+static void
+init_once()
+{
+     direct_recursive_mutex_init( &idirectfb_lock );
+}
+
 DFBResult
 DirectFBCreate( IDirectFB **ret_interface )
 {
@@ -129,9 +141,9 @@ DirectFBCreate( IDirectFB **ret_interface )
                              DIRECTFB_VERSION_VENDOR );
      }
 
-     static DirectMutex lock = DIRECT_RECURSIVE_MUTEX_INITIALIZER();
+     direct_once( &idirectfb_init_once, init_once );
 
-     direct_mutex_lock( &lock );
+     direct_mutex_lock( &idirectfb_lock );
 
      if (idirectfb_singleton) {
           D_DEBUG_AT( DirectFB_Main, "  -> using (new) singleton %p\n", idirectfb_singleton );
@@ -140,7 +152,7 @@ DirectFBCreate( IDirectFB **ret_interface )
 
           *ret_interface = idirectfb_singleton;
 
-          direct_mutex_unlock( &lock );
+          direct_mutex_unlock( &idirectfb_lock );
           return DFB_OK;
      }
 
@@ -152,14 +164,14 @@ DirectFBCreate( IDirectFB **ret_interface )
 
      ret = IDirectFB_Construct( dfb );
      if (ret) {
-         D_DEBUG_AT( DirectFB_Main, "  -> resetting singleton to NULL!\n" );
-         idirectfb_singleton = NULL;
+          D_DEBUG_AT( DirectFB_Main, "  -> resetting singleton to NULL!\n" );
+          idirectfb_singleton = NULL;
 
-          direct_mutex_unlock( &lock );
+          direct_mutex_unlock( &idirectfb_lock );
           return ret;
      }
 
-     direct_mutex_unlock( &lock );
+     direct_mutex_unlock( &idirectfb_lock );
 
      ret = IDirectFB_WaitInitialised( dfb );
      if (ret) {
