@@ -1296,6 +1296,17 @@ driver_get_available()
      char         *skipdev;
      char          buf[32];
 
+     if (num_devices) {
+          for (i = 0; i < num_devices; i++) {
+               D_FREE( device_names[i] );
+               device_names[i] = NULL;
+          }
+
+          num_devices = 0;
+
+          return 0;
+     }
+
      /* Use the devices specified in the configuration. */
      if ((value = direct_config_get_value( "linux-input-devices" ))) {
           const char *device;
@@ -1430,8 +1441,8 @@ driver_open_device( CoreInputDevice  *device,
 
           /* Turn off LEDs. */
           set_led( data, LED_SCROLLL, 0 );
-          set_led( data, LED_NUML, 0 );
-          set_led( data, LED_CAPSL, 0 );
+          set_led( data, LED_NUML,    0 );
+          set_led( data, LED_CAPSL,   0 );
      }
 
      data->touchpad = touchpad;
@@ -1558,14 +1569,7 @@ driver_close_device( void *driver_data )
 
      D_DEBUG_AT( Linux_Input, "%s()\n", __FUNCTION__ );
 
-     if (!data) {
-          int i;
-
-          for (i = 0; i < num_devices; i++)
-               D_FREE( device_names[i] );
-
-          return;
-     }
+     D_ASSERT( data != NULL );
 
      /* Write to the quit pipe to terminate the devinput event thread. */
      res = write( data->quitpipe[1], " ", 1 );
@@ -1579,8 +1583,8 @@ driver_close_device( void *driver_data )
      /* Restore LEDs state. */
      if (data->has_leds) {
           set_led( data, LED_SCROLLL, test_bit( LED_SCROLLL, data->led_state ) );
-          set_led( data, LED_NUML, test_bit( LED_NUML, data->led_state ) );
-          set_led( data, LED_CAPSL, test_bit( LED_CAPSL, data->led_state ) );
+          set_led( data, LED_NUML,    test_bit( LED_NUML,    data->led_state ) );
+          set_led( data, LED_CAPSL,   test_bit( LED_CAPSL,   data->led_state ) );
      }
 
      if (data->grab)
@@ -1666,7 +1670,7 @@ unregister_device_node( int  event_num,
 
      D_ASSERT( index != NULL );
 
-     for (i = 0; i < MAX_LINUX_INPUT_DEVICES; i++) {
+     for (i = 0; i < num_devices; i++) {
           if (device_nums[i] == event_num) {
                device_nums[i] = MAX_LINUX_INPUT_DEVICES;
                num_devices--;

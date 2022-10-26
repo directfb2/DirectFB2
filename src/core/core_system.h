@@ -83,16 +83,16 @@ static CoreSystemFuncs system_funcs = {
      .GetDeviceID         = system_get_deviceid,
 };
 
-#define DFB_CORE_SYSTEM(shortname)                                     \
-__attribute__((constructor)) void directfb_##shortname##_ctor( void ); \
-                                                                       \
-void                                                                   \
-directfb_##shortname##_ctor()                                          \
-{                                                                      \
-     direct_modules_register( &dfb_core_systems,                       \
-                              DFB_CORE_SYSTEM_ABI_VERSION,             \
-                              #shortname,                              \
-                              &system_funcs );                         \
+#define DFB_CORE_SYSTEM(shortname)                         \
+                                                           \
+__attribute__((constructor))                               \
+static void                                                \
+directfb_##shortname##_ctor()                              \
+{                                                          \
+     direct_modules_register( &dfb_core_systems,           \
+                              DFB_CORE_SYSTEM_ABI_VERSION, \
+                              #shortname,                  \
+                              &system_funcs );             \
 }
 
 #endif
