@@ -24,7 +24,7 @@
 #include <directfb_windows.h>
 #include <fusion/reactor.h>
 
-DECLARE_MODULE_DIRECTORY( dfb_core_wm_modules );
+DECLARE_MODULE_DIRECTORY( dfb_wm_modules );
 
 /**********************************************************************************************************************/
 

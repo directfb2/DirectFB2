@@ -37,7 +37,7 @@
 D_DEBUG_DOMAIN( Core_Input,    "Core/Input",     "DirectFB Core Input" );
 D_DEBUG_DOMAIN( Core_InputEvt, "Core/Input/Evt", "DirectFB Core Input Events & Dispatch" );
 
-DEFINE_MODULE_DIRECTORY( dfb_input_modules, "inputdrivers", DFB_INPUT_DRIVER_ABI_VERSION );
+DEFINE_MODULE_DIRECTORY( dfb_input_drivers, "inputdrivers", DFB_INPUT_DRIVER_ABI_VERSION );
 
 /**********************************************************************************************************************/
 
@@ -253,7 +253,7 @@ dfb_input_core_initialize( CoreDFB            *core,
      data->core   = core;
      data->shared = shared;
 
-     direct_modules_explore_directory( &dfb_input_modules );
+     direct_modules_explore_directory( &dfb_input_drivers );
 
 #if FUSION_BUILD_MULTI
      /* Create the reactor that responds input device hot-plug events. */
@@ -417,9 +417,9 @@ dfb_input_core_shutdown( DFBInputCore *data,
                funcs = driver->funcs;
 
                D_ASSERT( driver->funcs != NULL );
-               D_ASSERT( driver->funcs->CloseDevice != NULL );
+               D_ASSERT( driver->funcs->GetAvailable != NULL );
 
-               funcs->CloseDevice( NULL );
+               funcs->GetAvailable();
 
                direct_module_unref( driver->module );
                D_FREE( driver );
@@ -427,6 +427,8 @@ dfb_input_core_shutdown( DFBInputCore *data,
 
 #if FUSION_BUILD_MULTI
           fusion_ref_destroy( &ishared->ref );
+#else /* FUSION_BUILD_MULTI */
+          fusion_reactor_free( ishared->reactor );
 #endif /* FUSION_BUILD_MULTI */
 
           fusion_reactor_free( ishared->reactor );
@@ -1199,7 +1201,7 @@ init_devices( CoreDFB *core )
 
      D_ASSERT( core_input != NULL );
 
-     direct_list_foreach_safe (module, next, dfb_input_modules.entries) {
+     direct_list_foreach_safe (module, next, dfb_input_drivers.entries) {
           DFBResult               ret;
           CoreInputDriver        *driver;
           const InputDriverFuncs *funcs;

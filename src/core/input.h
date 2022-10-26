@@ -25,7 +25,7 @@
 #include <fusion/reactor.h>
 #include <fusion/ref.h>
 
-DECLARE_MODULE_DIRECTORY( dfb_input_modules );
+DECLARE_MODULE_DIRECTORY( dfb_input_drivers );
 
 /**********************************************************************************************************************/
 

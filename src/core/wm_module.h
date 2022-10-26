@@ -237,16 +237,16 @@ static CoreWMFuncs wm_funcs = {
      .UpdateCursor         = wm_update_cursor
 };
 
-#define DFB_WINDOW_MANAGER(shortname)                                  \
-__attribute__((constructor)) void directfb_##shortname##_ctor( void ); \
-                                                                       \
-void                                                                   \
-directfb_##shortname##_ctor()                                          \
-{                                                                      \
-     direct_modules_register( &dfb_core_wm_modules,                    \
-                              DFB_CORE_WM_ABI_VERSION,                 \
-                              #shortname,                              \
-                              &wm_funcs );                             \
+#define DFB_WINDOW_MANAGER(shortname)                  \
+                                                       \
+__attribute__((constructor))                           \
+static void                                            \
+directfb_##shortname##_ctor()                          \
+{                                                      \
+     direct_modules_register( &dfb_wm_modules,         \
+                              DFB_CORE_WM_ABI_VERSION, \
+                              #shortname,              \
+                              &wm_funcs );             \
 }
 
 #endif
