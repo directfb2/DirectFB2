@@ -165,7 +165,7 @@ direct_thread_deinit( DirectThread *thread )
 
      if (!thread->joined && !pthread_equal( thread->handle, pthread_self() )) {
           if (thread->canceled)
-               D_DEBUG_AT( Direct_Thread, "  -> cancled but not joined!\n" );
+               D_DEBUG_AT( Direct_Thread, "  -> canceled but not joined!\n" );
           else {
                D_DEBUG_AT( Direct_Thread, "  -> still running!\n" );
 

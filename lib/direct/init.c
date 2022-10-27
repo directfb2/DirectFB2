@@ -61,7 +61,7 @@ static Func deinit_funcs[] = {
 /**********************************************************************************************************************/
 
 __attribute__((constructor))
-static void
+void
 __D_init_all()
 {
      size_t i;
@@ -73,7 +73,7 @@ __D_init_all()
 }
 
 __attribute__((destructor))
-static void
+void
 __D_deinit_all()
 {
      size_t i;
