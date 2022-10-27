@@ -57,7 +57,7 @@ directfb_##shortname##_ctor()                                  \
 }                                                              \
                                                                \
 __attribute__((destructor))                                    \
-void                                                           \
+static void                                                    \
 directfb_##shortname##_dtor()                                  \
 {                                                              \
      direct_modules_unregister( &dfb_graphics_drivers,         \

@@ -121,10 +121,7 @@ IDirectFBImageProvider_DFIFF_GetImageDescription( IDirectFBImageProvider *thiz,
      if (!ret_desc)
           return DFB_INVARG;
 
-     ret_desc->caps = DICAPS_NONE;
-
-     if (DFB_PIXELFORMAT_HAS_ALPHA( data->desc.pixelformat ))
-          ret_desc->caps |= DICAPS_ALPHACHANNEL;
+     ret_desc->caps = DFB_PIXELFORMAT_HAS_ALPHA( data->desc.pixelformat ) ? DICAPS_ALPHACHANNEL : DICAPS_NONE;
 
      return DFB_OK;
 }

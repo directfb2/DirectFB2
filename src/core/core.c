@@ -1829,6 +1829,8 @@ dfb_core_arena_initialize( void *ctx )
           return ret;
      }
 
+     fusion_hash_set_autofree( shared->field_hash, true, false );
+
      D_MAGIC_SET( shared, CoreDFBShared );
 
      CoreDFB_Init_Dispatch( core, core, &shared->call );
