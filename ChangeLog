@@ -1,3 +1,84 @@
+commit fb7411f36a7bbc0af99089a9dc179fffe30b0c29
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Oct 27 03:38:00 2022 +0200
+
+    Core/Main: Call fusion_hash_set_autofree()
+
+commit ae9393d2d756a7a6907da5ec481e2b3e4e91efb0
+Merge: 85ee588 0659ed2
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Oct 26 10:33:49 2022 +0200
+
+    Merge pull request #59 from caramelli/master
+    
+    Fusion: Fix memory leak and destroy event_dispatcher_thread on exit
+
+commit 0659ed23c1d3bd86e06b70cdc1680d1c1e8de88e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Oct 26 09:51:13 2022 +0200
+
+    Fusion: Fix memory leak and destroy event_dispatcher_thread on exit
+
+commit 85ee588f636d4836bdf7c1d0db47b74d4ec3827d
+Merge: 3e0a706 d2a158a
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Oct 24 18:50:13 2022 +0200
+
+    Merge pull request #58 from caramelli/master
+    
+    Add musl libc compatibility
+
+commit d2a158a3a89910e99f50e6ff8f073a457dcfcea0
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Oct 24 18:46:49 2022 +0200
+
+    Add musl libc compatibility
+
+commit 3e0a706978538a2e2050a2745edb6ad0c30ad39c
+Merge: 651ac43 cb3fb64
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Oct 22 15:59:59 2022 +0200
+
+    Merge pull request #56 from caramelli/master
+    
+    Input/Linux: Uninitialised value was created by a stack allocation
+
+commit cb3fb6487b6b8e5b66a9c1cb7a08673d50d49cc4
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Oct 22 15:59:16 2022 +0200
+
+    Input/Linux: Uninitialised value was created by a stack allocation
+
+commit 651ac43bbb8daf812b410a66736a0ce457b00498
+Merge: 3392959 857032f
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Oct 17 17:57:33 2022 +0200
+
+    Merge pull request #55 from caramelli/master
+    
+    Meson: Add the boolean check kwarg to the run_command() call
+
+commit 857032f9a16800f352cead58a1958965231c5ff7
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Oct 17 17:47:12 2022 +0200
+
+    Meson: Add the boolean check kwarg to the run_command() call
+
+commit 339295980e9a0eeda55641dd35691942512bc70b
+Merge: 9a2d1bf 00c3612
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Oct 8 02:45:31 2022 +0200
+
+    Merge pull request #54 from caramelli/master
+    
+    Add support for static libraries (MCU targets)
+
+commit 00c361275f506b798f06ff0979b6fa0ec89e1a80
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Oct 8 02:45:07 2022 +0200
+
+    Update ChangeLog
+
 commit 821cffd5f7102eaa5bf75da1190e0670293e50a9
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Sat Oct 8 02:44:17 2022 +0200
