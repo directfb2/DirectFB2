@@ -795,7 +795,7 @@ dfb_gfxcard_state_check( CardState           *state,
 
      /* Move modification flags to the set for drivers. */
      state->mod_hw   |= state->modified;
-     state->modified  = 0;
+     state->modified  = SMF_NONE;
 
      /* If back_buffer policy is 'system only' and the GPU does not fully support system memory surfaces, there's no
         acceleration available. */
@@ -986,7 +986,7 @@ dfb_gfxcard_state_acquire( CardState *state, DFBAccelerationMask accel )
 
           /* ...set all modification bits and clear 'set' functions. */
           state->mod_hw |= SMF_ALL;
-          state->set     = 0;
+          state->set     = DFXL_NONE;
 
           shared->state  = state;
           shared->holder = state->fusion_id;
@@ -1019,7 +1019,7 @@ dfb_gfxcard_state_acquire( CardState *state, DFBAccelerationMask accel )
           D_DEBUG_AT( Core_GfxState, "  -> mod_hw 0x%08x, set 0x%08x\n", state->mod_hw, state->set );
      }
 
-     state->modified = 0;
+     state->modified = SMF_NONE;
 
      return true;
 }
@@ -1251,7 +1251,7 @@ dfb_gfxcard_state_check_acquire( CardState           *state,
 
      /* Move modification flags for drivers. */
      state->mod_hw   |= state->modified;
-     state->modified  = 0;
+     state->modified  = SMF_NONE;
 
      if (state->destination_flip_count_used)
           dst_buffer = dfb_surface_get_buffer3( dst, state->to, state->to_eye, state->destination_flip_count );
@@ -1396,7 +1396,7 @@ dfb_gfxcard_state_check_acquire( CardState           *state,
 
           /* ...set all modification bits and clear 'set' functions. */
           state->mod_hw |= SMF_ALL;
-          state->set     = 0;
+          state->set     = DFXL_NONE;
 
           shared->state  = state;
           shared->holder = state->fusion_id;
@@ -1427,7 +1427,7 @@ dfb_gfxcard_state_check_acquire( CardState           *state,
           D_DEBUG_AT( Core_GfxState, "  -> mod_hw 0x%08x, set 0x%08x\n", state->mod_hw, state->set );
      }
 
-     state->modified = 0;
+     state->modified = SMF_NONE;
 
      return true;
 }

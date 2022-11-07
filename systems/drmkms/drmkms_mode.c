@@ -98,8 +98,11 @@ drmkms_dsor_dsef_to_mode( DRMKMSData                *drmkms,
 
      D_DEBUG_AT( DRMKMS_Mode, "%s( dsor %x, dsef %x)\n", __FUNCTION__, dsor, dsef );
 
-     if (res >= D_ARRAY_SIZE(xres_table) || freq >= D_ARRAY_SIZE(freq_table))
+     if (res == -1 || res >= D_ARRAY_SIZE(xres_table) || freq >= D_ARRAY_SIZE(freq_table))
           return NULL;
+
+     if (freq == -1)
+          freq = 0;
 
      return drmkms_find_mode( drmkms, connector, xres_table[res], yres_table[res], freq_table[freq] );
 }

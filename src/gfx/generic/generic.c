@@ -9734,8 +9734,8 @@ gGetDeviceInfo( GraphicsDeviceInfo *info )
 
      info->caps.flags    = 0;
      info->caps.accel    = DFXL_NONE;
-     info->caps.drawing  = DSDRAW_NOFX;
      info->caps.blitting = DSBLIT_NOFX;
+     info->caps.drawing  = DSDRAW_NOFX;
      info->caps.clip     = 0;
 }
 

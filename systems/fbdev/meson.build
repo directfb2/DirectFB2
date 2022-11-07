@@ -30,7 +30,7 @@ fbdev_sources = [
 ]
 
 library('directfb_fbdev',
-         fbdev_sources,
-         dependencies: directfb_dep,
-         install: true,
-         install_dir: join_paths(moduledir, 'systems'))
+        fbdev_sources,
+        dependencies: directfb_dep,
+        install: true,
+        install_dir: join_paths(moduledir, 'systems'))

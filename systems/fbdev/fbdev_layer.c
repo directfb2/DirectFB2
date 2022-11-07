@@ -451,5 +451,5 @@ const DisplayLayerFuncs fbdevPrimaryLayerFuncs = {
      .SetColorAdjustment = fbdevPrimarySetColorAdjustment,
      .TestRegion         = fbdevPrimaryTestRegion,
      .SetRegion          = fbdevPrimarySetRegion,
-     .FlipRegion         = fbdevPrimaryFlipRegion,
+     .FlipRegion         = fbdevPrimaryFlipRegion
 };

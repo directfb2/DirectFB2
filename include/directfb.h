@@ -1728,6 +1728,14 @@ D_DEFINE_INTERFACE( IDirectFB,
           DFBSurfaceID                       surface_id,
           IDirectFBSurface                 **ret_interface
      );
+
+     /*
+      * Get surface pixel format suitable for fonts.
+      */
+     DFBResult (*GetFontSurfaceFormat) (
+          IDirectFB                         *thiz,
+          DFBSurfacePixelFormat             *ret_fontformat
+     );
 )
 
 /*******************

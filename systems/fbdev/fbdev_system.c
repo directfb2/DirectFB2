@@ -283,7 +283,8 @@ local_deinit( FBDevData *fbdev )
      if (fbdev->addr)
           munmap( fbdev->addr, fbdev->fix->smem_len );
 
-     D_FREE( fbdev->fix );
+     if (fbdev->fix)
+          D_FREE( fbdev->fix );
 
      if (fbdev->fd != -1)
           close( fbdev->fd );

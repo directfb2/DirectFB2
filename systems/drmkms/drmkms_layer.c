@@ -57,7 +57,6 @@ drmkmsPrimaryInitLayer( CoreLayer                  *layer,
      /* Set type and capabilities. */
      description->type             = DLTF_GRAPHICS;
      description->caps             = DLCAPS_SURFACE;
-     description->surface_caps     = DSCAPS_NONE;
      description->surface_accessor = CSAID_LAYER0;
 
      /* Set name. */
@@ -336,7 +335,6 @@ drmkmsPlaneInitLayer( CoreLayer                  *layer,
      /* Set type and capabilities. */
      description->type             = DLTF_GRAPHICS;
      description->caps             = DLCAPS_SURFACE | DLCAPS_SCREEN_POSITION | DLCAPS_ALPHACHANNEL;
-     description->surface_caps     = DSCAPS_NONE;
      description->surface_accessor = CSAID_LAYER0;
 
      /* Set name. */
@@ -696,5 +694,5 @@ const DisplayLayerFuncs drmkmsPlaneLayerFuncs = {
      .SetRegion     = drmkmsPlaneSetRegion,
      .RemoveRegion  = drmkmsPlaneRemoveRegion,
      .FlipRegion    = drmkmsPlaneFlipRegion,
-     .UpdateRegion  = drmkmsPlaneUpdateRegion,
+     .UpdateRegion  = drmkmsPlaneUpdateRegion
 };

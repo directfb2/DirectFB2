@@ -150,7 +150,7 @@ if not cc.has_function('clock_gettime')
   libdirect_private += ['-lrt']
 endif
 threads_dep = dependency('threads')
-libdirect_private += ['-lpthread']
+libdirect_private += ['-pthread']
 
 libdirect = library('direct-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
                     direct_sources, os_linux_sources,
