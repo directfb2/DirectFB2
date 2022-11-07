@@ -1374,8 +1374,8 @@ IDirectFBSurface_Blit( IDirectFBSurface   *thiz,
           return DFB_INVAREA;
 
      if (source_rect) {
-          D_DEBUG_AT( Surface, "  -> [%2d] %4d,%4d-%4dx%4d <- %4d,%4d\n",
-                      0, dx, dy, source_rect->w, source_rect->h, source_rect->x, source_rect->y );
+          D_DEBUG_AT( Surface, "  -> [%2d] %4d,%4d-%4dx%4d <- %4d,%4d\n", 0,
+                      dx, dy, source_rect->w, source_rect->h, source_rect->x, source_rect->y );
 
           if (source_rect->w < 1 || source_rect->h < 1)
                return DFB_OK;
@@ -1463,8 +1463,8 @@ IDirectFBSurface_TileBlit( IDirectFBSurface   *thiz,
           return DFB_INVAREA;
 
      if (source_rect) {
-          D_DEBUG_AT( Surface, "  -> [%2d] %4d,%4d-%4dx%4d <- %4d,%4d\n",
-                      0, dx, dy, source_rect->w, source_rect->h, source_rect->x, source_rect->y );
+          D_DEBUG_AT( Surface, "  -> [%2d] %4d,%4d-%4dx%4d <- %4d,%4d\n", 0,
+                      dx, dy, source_rect->w, source_rect->h, source_rect->x, source_rect->y );
 
           if (source_rect->w < 1 || source_rect->h < 1)
                return DFB_OK;

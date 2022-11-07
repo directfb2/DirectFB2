@@ -114,7 +114,7 @@ fbdevInitPool( CoreDFB                    *core,
      ret_desc->access[CSAID_LAYER14] = CSAF_READ;
      ret_desc->access[CSAID_LAYER15] = CSAF_READ;
 
-     snprintf( ret_desc->name, DFB_SURFACE_POOL_DESC_NAME_LENGTH, "FBDev" );
+     snprintf( ret_desc->name, DFB_SURFACE_POOL_DESC_NAME_LENGTH, "FBDev Surface Pool" );
 
      ret = surfacemanager_create( core, fbdev->fix->smem_len, &data->manager );
      if (ret)
@@ -407,5 +407,5 @@ const SurfacePoolFuncs fbdevSurfacePoolFuncs = {
      .DeallocateBuffer   = fbdevDeallocateBuffer,
      .Lock               = fbdevLock,
      .Unlock             = fbdevUnlock,
-     .MuckOut            = fbdevMuckOut,
+     .MuckOut            = fbdevMuckOut
 };

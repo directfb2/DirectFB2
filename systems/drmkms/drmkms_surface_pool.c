@@ -146,7 +146,7 @@ drmkmsInitPool( CoreDFB                    *core,
      ret_desc->access[CSAID_LAYER14] = CSAF_READ;
      ret_desc->access[CSAID_LAYER15] = CSAF_READ;
 
-     snprintf( ret_desc->name, DFB_SURFACE_POOL_DESC_NAME_LENGTH, "DRMKMS" );
+     snprintf( ret_desc->name, DFB_SURFACE_POOL_DESC_NAME_LENGTH, "DRMKMS Surface Pool" );
 
      local->drmkms = drmkms;
      local->core   = core;
@@ -490,11 +490,6 @@ drmkmsAllocateBuffer( CoreSurfacePool       *pool,
      return DFB_OK;
 
 error:
-     if (alloc->addr) {
-          munmap( alloc->addr, alloc->size );
-          alloc->addr = NULL;
-     }
-
      if (alloc->fb_id) {
           drmModeRmFB( local->drmkms->fd, alloc->fb_id );
           alloc->fb_id = 0;

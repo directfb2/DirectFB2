@@ -1720,6 +1720,22 @@ IDirectFB_GetSurface( IDirectFB         *thiz,
      return ret;
 }
 
+static DFBResult
+IDirectFB_GetFontSurfaceFormat( IDirectFB             *thiz,
+                                DFBSurfacePixelFormat *ret_fontformat )
+{
+     DIRECT_INTERFACE_GET_DATA( IDirectFB )
+
+     D_DEBUG_AT( DirectFB, "%s( %p )\n", __FUNCTION__, thiz );
+
+     if (!ret_fontformat)
+          return DFB_INVARG;
+
+     *ret_fontformat = dfb_config->font_format;
+
+     return DFB_OK;
+}
+
 static void
 LoadBackgroundImage( IDirectFB       *dfb,
                      CoreWindowStack *stack,
@@ -2058,6 +2074,7 @@ IDirectFB_Construct( IDirectFB *thiz )
      thiz->WaitForSync            = IDirectFB_WaitForSync;
      thiz->GetInterface           = IDirectFB_GetInterface;
      thiz->GetSurface             = IDirectFB_GetSurface;
+     thiz->GetFontSurfaceFormat   = IDirectFB_GetFontSurfaceFormat;
 
      direct_mutex_init( &data->init_lock );
      direct_waitqueue_init( &data->init_wq );

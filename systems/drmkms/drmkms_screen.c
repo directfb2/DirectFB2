@@ -604,5 +604,5 @@ const ScreenFuncs drmkmsScreenFuncs = {
      .SetEncoderConfig  = drmkmsSetEncoderConfig,
      .TestOutputConfig  = drmkmsTestOutputConfig,
      .SetOutputConfig   = drmkmsSetOutputConfig,
-     .GetScreenSize     = drmkmsGetScreenSize,
+     .GetScreenSize     = drmkmsGetScreenSize
 };
