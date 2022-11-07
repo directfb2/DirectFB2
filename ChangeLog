@@ -1,3 +1,24 @@
+commit 76fa4a7639c60fbddaf295fdef0aa97079128fe7
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Nov 7 19:57:00 2022 +0100
+
+    IDirectFB: Add GetFontSurfaceFormat()
+
+commit 634b1a25488bc8a64b7026416712ebf99f66b91f
+Merge: ae9393d 54efecd
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Oct 27 03:46:51 2022 +0200
+
+    Merge pull request #60 from caramelli/master
+    
+    Core/Main: Call fusion_hash_set_autofree()
+
+commit 54efecd8acae0e6828f75c7ea8b1e2f128e2919d
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Oct 27 03:38:15 2022 +0200
+
+    Update ChangeLog
+
 commit fb7411f36a7bbc0af99089a9dc179fffe30b0c29
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Thu Oct 27 03:38:00 2022 +0200
