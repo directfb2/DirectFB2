@@ -27,7 +27,7 @@
 #include "drmkms_system.h"
 #include "drmkms_vt.h"
 
-D_DEBUG_DOMAIN( DRMKMS_System, "DRMKMS/System", "DRM/KMS System" );
+D_DEBUG_DOMAIN( DRMKMS_System, "DRMKMS/System", "DRM/KMS System Module" );
 
 DFB_CORE_SYSTEM( drmkms )
 

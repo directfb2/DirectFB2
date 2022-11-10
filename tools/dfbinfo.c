@@ -46,15 +46,13 @@ static const DirectFBScreenOutputSignalsNames(signals);
 
 static IDirectFB *dfb = NULL;
 
-static DFBBoolean parse_command_line ( int argc, char *argv[] );
-static void       enum_input_devices ( void );
-static void       enum_screens ( void );
-static void       enum_video_modes ( void );
+static void enum_input_devices ( void );
+static void enum_screens ( void );
+static void enum_video_modes ( void );
 
 /**********************************************************************************************************************/
 
-int
-main( int argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
      DFBResult ret;
 
@@ -62,12 +60,8 @@ main( int argc, char *argv[] )
      ret = DirectFBInit( &argc, &argv );
      if (ret) {
           DirectFBError( "DirectFBInit() failed", ret );
-          return -1;
+          return 1;
      }
-
-     /* Parse the command line. */
-     if (!parse_command_line( argc, argv ))
-          return -2;
 
      DirectFBSetOption( "bg-none", NULL );
      DirectFBSetOption( "no-cursor", NULL );
@@ -76,7 +70,7 @@ main( int argc, char *argv[] )
      ret = DirectFBCreate( &dfb );
      if (ret) {
           DirectFBError( "DirectFBCreate() failed", ret );
-          return -3;
+          return 1;
      }
 
      enum_video_modes();
@@ -86,15 +80,7 @@ main( int argc, char *argv[] )
      /* Release the main interface. */
      dfb->Release( dfb );
 
-     return EXIT_SUCCESS;
-}
-
-/**********************************************************************************************************************/
-
-static DFBBoolean
-parse_command_line( int argc, char *argv[] )
-{
-     return DFB_TRUE;
+     return 0;
 }
 
 /**********************************************************************************************************************/

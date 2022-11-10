@@ -14,12 +14,6 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
-executable('dfbg',
-           'dfbg.c',
-           dependencies: directfb_dep,
-           install: true)
-
-executable('dfbinfo',
-           'dfbinfo.c', directfb_strings,
-           dependencies: directfb_dep,
-           install: true)
+executable('dfbg',      'dfbg.c',                      dependencies: directfb_dep, install: true)
+executable('dfbinfo',   'dfbinfo.c', directfb_strings, dependencies: directfb_dep, install: true)
+executable('dfiffinfo', 'dfiffinfo.c',                 dependencies: directfb_dep, install: true)

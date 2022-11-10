@@ -34,8 +34,7 @@ static void       set_background_image( void );
 
 /**********************************************************************************************************************/
 
-int
-main( int   argc, char *argv[] )
+int main( int argc, char *argv[] )
 {
      DFBResult ret;
 
@@ -89,13 +88,12 @@ main( int   argc, char *argv[] )
      /* Release the main interface. */
      dfb->Release( dfb );
 
-     return EXIT_SUCCESS;
+     return 0;
 }
 
 /**********************************************************************************************************************/
 
-static void
-print_usage( const char *name )
+static void print_usage( const char *name )
 {
      fprintf( stderr, "\nDirectFB Desktop Background Configuration\n\n" );
      fprintf( stderr, "Usage: %s [options] <imagefile>|<color>\n\n", name );
@@ -107,8 +105,7 @@ print_usage( const char *name )
      fprintf( stderr, "\n" );
 }
 
-static DFBBoolean
-parse_command_line( int argc, char *argv[] )
+static DFBBoolean parse_command_line( int argc, char *argv[] )
 {
      int n;
 
@@ -153,8 +150,7 @@ parse_command_line( int argc, char *argv[] )
 
 /**********************************************************************************************************************/
 
-static void
-set_background_color()
+static void set_background_color()
 {
      DFBResult  ret;
      char      *error;
@@ -185,8 +181,7 @@ set_background_color()
           DirectFBError( "SetBackgroundMode() failed", ret );
 }
 
-static void
-set_background_image()
+static void set_background_image()
 {
      DFBResult               ret;
      DFBSurfaceDescription   desc;

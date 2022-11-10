@@ -19,7 +19,8 @@ Modularization of the source code, which now only contains:
   - the DFVFF (DirectFB Fast Video File Format) video provider
 
 Separate packages for:
-  - additional system and input driver modules
+  - additional system modules
+  - additional input drivers
   - additional WM modules
   - additional font/image/video providers
   - GFX drivers (hardware acceleration)

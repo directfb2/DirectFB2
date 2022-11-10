@@ -29,7 +29,7 @@
 #include "fbdev_system.h"
 #include "fbdev_vt.h"
 
-D_DEBUG_DOMAIN( FBDev_System, "FBDev/System", "FBDev System" );
+D_DEBUG_DOMAIN( FBDev_System, "FBDev/System", "FBDev System Module" );
 
 DFB_CORE_SYSTEM( fbdev )
 
