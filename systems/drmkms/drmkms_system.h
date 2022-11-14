@@ -19,33 +19,12 @@
 #ifndef __DRMKMS_SYSTEM_H__
 #define __DRMKMS_SYSTEM_H__
 
-#include <core/layer_region.h>
+#include <core/coretypes.h>
+#include <fusion/types.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
 /**********************************************************************************************************************/
-
-typedef struct {
-     int                    layer_index;
-     int                    plane_index;
-
-     drmModePlane          *plane;
-     uint32_t               colorkey_propid;
-     uint32_t               zpos_propid;
-     uint32_t               alpha_propid;
-
-     int                    level;
-
-     CoreLayerRegionConfig *config;
-     bool                   muted;
-
-     CoreSurface           *surface;
-     int                    surfacebuffer_index;
-     bool                   flip_pending;
-
-     DirectMutex            lock;
-     DirectWaitQueue        wq_event;
-} DRMKMSLayerData;
 
 typedef struct {
      FusionSHMPoolShared *shmpool;
@@ -81,11 +60,9 @@ typedef struct {
 
      drmModeRes         *resources;       /* display configuration information */
      drmModePlaneRes    *plane_resources; /* planes information */
-
      drmModeConnector   *connector[8];
      drmModeEncoder     *encoder[8];
      drmModeCrtc        *crtc;
-
      DFBDisplayLayerIDs  layer_ids[8];
      DFBDisplayLayerID   layer_id_next;
 

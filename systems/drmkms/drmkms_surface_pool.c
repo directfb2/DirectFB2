@@ -32,10 +32,6 @@ D_DEBUG_DOMAIN( DRMKMS_SurfLock, "DRMKMS/SurfLock", "DRM/KMS Surface Pool Locks"
 /**********************************************************************************************************************/
 
 typedef struct {
-     int magic;
-} DRMKMSPoolData;
-
-typedef struct {
      int          magic;
 
      DRMKMSData  *drmkms;
@@ -81,12 +77,6 @@ typedef struct {
 /**********************************************************************************************************************/
 
 static int
-drmkmsPoolDataSize()
-{
-     return sizeof(DRMKMSPoolData);
-}
-
-static int
 drmkmsPoolLocalDataSize()
 {
      return sizeof(DRMKMSPoolLocalData);
@@ -106,17 +96,13 @@ drmkmsInitPool( CoreDFB                    *core,
                 void                       *system_data,
                 CoreSurfacePoolDescription *ret_desc )
 {
-     DRMKMSPoolData      *data   = pool_data;
      DRMKMSPoolLocalData *local  = pool_local;
      DRMKMSData          *drmkms = system_data;
-
-     D_UNUSED_P( data );
 
      D_DEBUG_AT( DRMKMS_Surfaces, "%s()\n", __FUNCTION__ );
 
      D_ASSERT( core != NULL );
      D_MAGIC_ASSERT( pool, CoreSurfacePool );
-     D_ASSERT( data != NULL );
      D_ASSERT( local != NULL );
      D_ASSERT( drmkms != NULL );
      D_ASSERT( drmkms->shared != NULL );
@@ -154,7 +140,6 @@ drmkmsInitPool( CoreDFB                    *core,
      direct_hash_create( 17, &local->hash );
      direct_mutex_init( &local->lock );
 
-     D_MAGIC_SET( data, DRMKMSPoolData );
      D_MAGIC_SET( local, DRMKMSPoolLocalData );
 
      return DFB_OK;
@@ -167,17 +152,13 @@ drmkmsJoinPool( CoreDFB         *core,
                 void            *pool_local,
                 void            *system_data )
 {
-     DRMKMSPoolData      *data   = pool_data;
      DRMKMSPoolLocalData *local  = pool_local;
      DRMKMSData          *drmkms = system_data;
-
-     D_UNUSED_P( data );
 
      D_DEBUG_AT( DRMKMS_Surfaces, "%s()\n", __FUNCTION__ );
 
      D_ASSERT( core != NULL );
      D_MAGIC_ASSERT( pool, CoreSurfacePool );
-     D_MAGIC_ASSERT( data, DRMKMSPoolData );
      D_ASSERT( local != NULL );
      D_ASSERT( drmkms != NULL );
      D_ASSERT( drmkms->shared != NULL );
@@ -198,21 +179,16 @@ drmkmsDestroyPool( CoreSurfacePool *pool,
                    void            *pool_data,
                    void            *pool_local )
 {
-     DRMKMSPoolData      *data  = pool_data;
      DRMKMSPoolLocalData *local = pool_local;
-
-     D_UNUSED_P( data );
 
      D_DEBUG_AT( DRMKMS_Surfaces, "%s()\n", __FUNCTION__ );
 
      D_MAGIC_ASSERT( pool, CoreSurfacePool );
-     D_MAGIC_ASSERT( data, DRMKMSPoolData );
      D_MAGIC_ASSERT( local, DRMKMSPoolLocalData );
 
      direct_mutex_deinit( &local->lock );
      direct_hash_destroy( local->hash );
 
-     D_MAGIC_CLEAR( data );
      D_MAGIC_CLEAR( local );
 
      return DFB_OK;
@@ -223,15 +199,11 @@ drmkmsLeavePool( CoreSurfacePool *pool,
                  void            *pool_data,
                  void            *pool_local )
 {
-     DRMKMSPoolData      *data  = pool_data;
      DRMKMSPoolLocalData *local = pool_local;
-
-     D_UNUSED_P( data );
 
      D_DEBUG_AT( DRMKMS_Surfaces, "%s()\n", __FUNCTION__ );
 
      D_MAGIC_ASSERT( pool, CoreSurfacePool );
-     D_MAGIC_ASSERT( data, DRMKMSPoolData );
      D_MAGIC_ASSERT( local, DRMKMSPoolLocalData );
 
      direct_mutex_deinit( &local->lock );
@@ -250,16 +222,13 @@ drmkmsTestConfig( CoreSurfacePool         *pool,
                   const CoreSurfaceConfig *config )
 {
      CoreSurface         *surface;
-     DRMKMSPoolData      *data  = pool_data;
      DRMKMSPoolLocalData *local = pool_local;
 
-     D_UNUSED_P( data );
      D_UNUSED_P( local );
 
      D_DEBUG_AT( DRMKMS_Surfaces, "%s( %p )\n", __FUNCTION__, buffer );
 
      D_MAGIC_ASSERT( pool, CoreSurfacePool );
-     D_MAGIC_ASSERT( data, DRMKMSPoolData );
      D_MAGIC_ASSERT( local, DRMKMSPoolLocalData );
      D_MAGIC_ASSERT( buffer, CoreSurfaceBuffer );
      D_MAGIC_ASSERT( buffer->surface, CoreSurface );
@@ -304,7 +273,6 @@ drmkmsAllocateBuffer( CoreSurfacePool       *pool,
      int                           pitch;
      int                           length;
      CoreSurface                  *surface;
-     DRMKMSPoolData               *data  = pool_data;
      DRMKMSPoolLocalData          *local = pool_local;
      DRMKMSAllocationData         *alloc = alloc_data;
      DRMKMSData                   *drmkms;
@@ -316,12 +284,9 @@ drmkmsAllocateBuffer( CoreSurfacePool       *pool,
      struct drm_mode_destroy_dumb  dreq;
      struct drm_mode_map_dumb      mreq;
 
-     D_UNUSED_P( data );
-
      D_DEBUG_AT( DRMKMS_Surfaces, "%s( %p )\n", __FUNCTION__, buffer );
 
      D_MAGIC_ASSERT( pool, CoreSurfacePool );
-     D_MAGIC_ASSERT( data, DRMKMSPoolData );
      D_MAGIC_ASSERT( local, DRMKMSPoolLocalData );
      D_MAGIC_ASSERT( buffer, CoreSurfaceBuffer );
      D_MAGIC_ASSERT( buffer->surface, CoreSurface );
@@ -518,16 +483,13 @@ drmkmsDeallocateBuffer( CoreSurfacePool       *pool,
                         CoreSurfaceAllocation *allocation,
                         void                  *alloc_data )
 {
-     DRMKMSPoolData       *data  = pool_data;
      DRMKMSPoolLocalData  *local = pool_local;
      DRMKMSAllocationData *alloc = alloc_data;
-
-     D_UNUSED_P( data );
 
      D_DEBUG_AT( DRMKMS_Surfaces, "%s( %p )\n", __FUNCTION__, buffer );
 
      D_MAGIC_ASSERT( pool, CoreSurfacePool );
-     D_MAGIC_ASSERT( data, DRMKMSPoolData );
+     D_MAGIC_ASSERT( local, DRMKMSPoolLocalData );
      D_MAGIC_ASSERT( alloc, DRMKMSAllocationData );
 
      dfb_gfxcard_sync();
@@ -764,7 +726,6 @@ drmkmsUnlock( CoreSurfacePool       *pool,
 }
 
 const SurfacePoolFuncs drmkmsSurfacePoolFuncs = {
-     .PoolDataSize       = drmkmsPoolDataSize,
      .PoolLocalDataSize  = drmkmsPoolLocalDataSize,
      .AllocationDataSize = drmkmsAllocationDataSize,
      .InitPool           = drmkmsInitPool,

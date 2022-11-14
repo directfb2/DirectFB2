@@ -21,7 +21,6 @@
 #include <core/layers.h>
 #include <core/screens.h>
 #include <core/surface_pool.h>
-#include <direct/thread.h>
 #include <fusion/shmalloc.h>
 
 #include "drmkms_system.h"
@@ -37,48 +36,6 @@ extern const ScreenFuncs       drmkmsScreenFuncs;
 extern const DisplayLayerFuncs drmkmsPrimaryLayerFuncs;
 extern const DisplayLayerFuncs drmkmsPlaneLayerFuncs;
 extern const SurfacePoolFuncs  drmkmsSurfacePoolFuncs;
-
-static void
-drmkms_page_flip_handler( int           fd,
-                          unsigned int  frame,
-                          unsigned int  sec,
-                          unsigned int  usec,
-                          void         *data )
-{
-     DRMKMSLayerData *layer_data = data;
-
-     D_DEBUG_AT( DRMKMS_System, "%s()\n", __FUNCTION__ );
-
-     direct_mutex_lock( &layer_data->lock );
-
-     if (layer_data->flip_pending) {
-          dfb_surface_notify_display2( layer_data->surface, layer_data->surfacebuffer_index );
-
-          dfb_surface_unref( layer_data->surface );
-     }
-
-     layer_data->flip_pending = false;
-
-     direct_waitqueue_broadcast( &layer_data->wq_event );
-
-     direct_mutex_unlock( &layer_data->lock );
-
-     D_DEBUG_AT( DRMKMS_System, "%s() done\n", __FUNCTION__ );
-}
-
-static void *
-drmkms_buffer_thread( DirectThread *thread,
-                      void         *arg )
-{
-     DRMKMSData *drmkms = arg;
-
-     D_DEBUG_AT( DRMKMS_System, "%s()\n", __FUNCTION__ );
-
-     while (true)
-        drmHandleEvent( drmkms->fd, &drmkms->event_context );
-
-     return NULL;
-}
 
 static DFBResult
 local_init( const char *device_name,
@@ -140,10 +97,8 @@ local_deinit( DRMKMSData *drmkms )
      if (drmkms->resources)
           drmModeFreeResources( drmkms->resources );
 
-     if (drmkms->fd != -1) {
-          drmDropMaster( drmkms->fd );
+     if (drmkms->fd != -1)
           close( drmkms->fd );
-     }
 
      return DFB_OK;
 }
@@ -244,12 +199,6 @@ system_initialize( CoreDFB  *core,
           if (ret)
                goto error;
      }
-
-     drmkms->event_context.version           = DRM_EVENT_CONTEXT_VERSION;
-     drmkms->event_context.vblank_handler    = drmkms_page_flip_handler;
-     drmkms->event_context.page_flip_handler = drmkms_page_flip_handler;
-
-     drmkms->thread = direct_thread_create( DTT_CRITICAL, drmkms_buffer_thread, drmkms, "DRMKMS Buffer" );
 
      *ret_data = drmkms;
 
