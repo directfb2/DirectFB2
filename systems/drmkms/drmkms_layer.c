@@ -17,10 +17,77 @@
 */
 
 #include <core/layers.h>
+#include <direct/thread.h>
 
 #include "drmkms_system.h"
 
 D_DEBUG_DOMAIN( DRMKMS_Layer, "DRMKMS/Layer", "DRM/KMS Layer" );
+
+/**********************************************************************************************************************/
+
+typedef struct {
+     int                    layer_index;
+     int                    plane_index;
+
+     drmModePlane          *plane;
+     uint32_t               colorkey_propid;
+     uint32_t               zpos_propid;
+     uint32_t               alpha_propid;
+
+     int                    level;
+
+     CoreLayerRegionConfig *config;
+     bool                   muted;
+
+     CoreSurface           *surface;
+     int                    surfacebuffer_index;
+     bool                   flip_pending;
+
+     DirectMutex            lock;
+     DirectWaitQueue        wq_event;
+} DRMKMSLayerData;
+
+static void
+drmkms_page_flip_handler( int           fd,
+                          unsigned int  frame,
+                          unsigned int  sec,
+                          unsigned int  usec,
+                          void         *data )
+{
+     DRMKMSLayerData *layer_data = data;
+
+     D_DEBUG_AT( DRMKMS_System, "%s()\n", __FUNCTION__ );
+
+     direct_mutex_lock( &layer_data->lock );
+
+     if (layer_data->flip_pending) {
+          dfb_surface_notify_display2( layer_data->surface, layer_data->surfacebuffer_index );
+
+          dfb_surface_unref( layer_data->surface );
+     }
+
+     layer_data->flip_pending = false;
+
+     direct_waitqueue_broadcast( &layer_data->wq_event );
+
+     direct_mutex_unlock( &layer_data->lock );
+
+     D_DEBUG_AT( DRMKMS_System, "%s() done\n", __FUNCTION__ );
+}
+
+static void *
+drmkms_buffer_thread( DirectThread *thread,
+                      void         *arg )
+{
+     DRMKMSData *drmkms = arg;
+
+     D_DEBUG_AT( DRMKMS_System, "%s()\n", __FUNCTION__ );
+
+     while (true)
+        drmHandleEvent( drmkms->fd, &drmkms->event_context );
+
+     return NULL;
+}
 
 /**********************************************************************************************************************/
 
@@ -70,8 +137,13 @@ drmkmsPrimaryInitLayer( CoreLayer                  *layer,
      config->buffermode  = DLBM_FRONTONLY;
 
      direct_mutex_init( &data->lock );
-
      direct_waitqueue_init( &data->wq_event );
+
+     drmkms->event_context.version           = DRM_EVENT_CONTEXT_VERSION;
+     drmkms->event_context.vblank_handler    = drmkms_page_flip_handler;
+     drmkms->event_context.page_flip_handler = drmkms_page_flip_handler;
+
+     drmkms->thread = direct_thread_create( DTT_CRITICAL, drmkms_buffer_thread, drmkms, "DRMKMS Buffer" );
 
      return DFB_OK;
 }

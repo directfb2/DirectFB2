@@ -19,7 +19,6 @@
 #ifndef __FBDEV_SYSTEM_H__
 #define __FBDEV_SYSTEM_H__
 
-#include <core/layer_region.h>
 #include <core/system.h>
 #include <linux/fb.h>
 
@@ -68,8 +67,6 @@ typedef struct {
      } device;
 
      FusionCall                call;                 /* ioctl rpc */
-
-     CoreLayerRegionConfig     config;               /* configuration of the layer region */
 
      SurfaceManager           *manager;              /* surface manager */
 } FBDevDataShared;

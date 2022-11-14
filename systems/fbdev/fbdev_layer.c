@@ -27,6 +27,10 @@ D_DEBUG_DOMAIN( FBDev_Layer, "FBDev/Layer", "FBDev Layer" );
 
 /**********************************************************************************************************************/
 
+typedef struct {
+     CoreLayerRegionConfig config;
+} FBDevLayerData;
+
 static DFBResult
 pan_display( FBDevData *fbdev,
              int        xoffset,
@@ -131,6 +135,12 @@ set_palette( FBDevData   *fbdev,
 }
 
 /**********************************************************************************************************************/
+
+static int
+fbdevPrimaryLayerDataSize()
+{
+     return sizeof(FBDevLayerData);
+}
 
 static DFBResult
 fbdevPrimaryInitLayer( CoreLayer                  *layer,
@@ -356,11 +366,13 @@ fbdevPrimarySetRegion( CoreLayer                  *layer,
      DFBResult        ret;
      FBDevData       *fbdev = driver_data;
      FBDevDataShared *shared;
+     FBDevLayerData  *data  = layer_data;
 
      D_DEBUG_AT( FBDev_Layer, "%s()\n", __FUNCTION__ );
 
      D_ASSERT( fbdev != NULL );
      D_ASSERT( fbdev->shared != NULL );
+     D_ASSERT( data != NULL );
 
      shared = fbdev->shared;
 
@@ -399,7 +411,7 @@ fbdevPrimarySetRegion( CoreLayer                  *layer,
      if ((updated & CLRCF_PALETTE) && palette)
           set_palette( fbdev, palette );
 
-     shared->config = *config;
+     data->config = *config;
 
      return DFB_OK;
 }
@@ -419,16 +431,18 @@ fbdevPrimaryFlipRegion( CoreLayer             *layer,
      DFBResult              ret;
      FBDevData             *fbdev = driver_data;
      FBDevDataShared       *shared;
+     FBDevLayerData        *data  = layer_data;
      CoreLayerRegionConfig *config;
 
      D_DEBUG_AT( FBDev_Layer, "%s()\n", __FUNCTION__ );
 
      D_ASSERT( fbdev != NULL );
      D_ASSERT( fbdev->shared != NULL );
+     D_ASSERT( data != NULL );
 
      shared = fbdev->shared;
 
-     config = &shared->config;
+     config = &data->config;
 
      if (((flags & DSFLIP_WAITFORSYNC) == DSFLIP_WAITFORSYNC) && !shared->pollvsync_after)
           dfb_screen_wait_vsync( dfb_screen_at( DSCID_PRIMARY ) );
@@ -447,6 +461,7 @@ fbdevPrimaryFlipRegion( CoreLayer             *layer,
 }
 
 const DisplayLayerFuncs fbdevPrimaryLayerFuncs = {
+     .LayerDataSize      = fbdevPrimaryLayerDataSize,
      .InitLayer          = fbdevPrimaryInitLayer,
      .SetColorAdjustment = fbdevPrimarySetColorAdjustment,
      .TestRegion         = fbdevPrimaryTestRegion,

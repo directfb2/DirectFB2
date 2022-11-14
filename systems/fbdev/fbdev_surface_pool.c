@@ -298,6 +298,7 @@ fbdevDeallocateBuffer( CoreSurfacePool       *pool,
 
      D_MAGIC_ASSERT( pool, CoreSurfacePool );
      D_MAGIC_ASSERT( data, FBDevPoolData );
+     D_MAGIC_ASSERT( local, FBDevPoolLocalData );
      D_MAGIC_ASSERT( alloc, FBDevAllocationData );
 
      if (alloc->chunk)
