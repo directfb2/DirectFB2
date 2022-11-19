@@ -1,3 +1,39 @@
+commit 64471d3ce80ff3f948e02d809c51247a50e058ca
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Nov 19 10:32:50 2022 +0100
+
+    IDirectFBSurface: Set flip_func to control the triggering of the actual Flip
+
+commit ab426077fe6c9dbfa8b0dfe95b7789d15172a159
+Merge: 1989def ee6ffd6
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Nov 14 12:20:31 2022 +0100
+
+    Merge pull request #64 from caramelli/master
+    
+    drmkms: Unused PoolData
+
+commit ee6ffd6e8ff0d09cd886e7abbcc2dc26a0c06873
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Nov 14 12:00:12 2022 +0100
+
+    drmkms: Unused PoolData
+
+commit 1989def37e4768782f98f57ba60be5f4b9d53f69
+Merge: e2814bb 3310069
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Nov 10 12:11:25 2022 +0100
+
+    Merge pull request #63 from caramelli/master
+    
+    tools: Add dfiffinfo
+
+commit 331006993b9d711fe88e74a82013e1debbddcb90
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Nov 10 11:41:08 2022 +0100
+
+    Update ChangeLog
+
 commit 27d02177ae28cec5f8ea1e9afff402298c83d9f7
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Thu Nov 10 11:40:56 2022 +0100
