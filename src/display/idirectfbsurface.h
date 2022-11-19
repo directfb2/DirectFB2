@@ -22,6 +22,8 @@
 #include <core/CoreGraphicsStateClient.h>
 #include <core/state.h>
 
+typedef DFBResult (*FlipFunc)( void *ctx );
+
 /*
  * private data struct of IDirectFBSurface
  */
@@ -123,6 +125,9 @@ typedef struct {
      unsigned int             local_buffer_count;
 
      CoreSurfaceAllocation   *allocations[MAX_SURFACE_BUFFERS];
+
+     FlipFunc                 flip_func;
+     void                    *flip_func_ctx;
 } IDirectFBSurface_data;
 
 /*

@@ -85,7 +85,7 @@ D_DEFINE_INTERFACE( IDirectFBGL,
       */
      DFBResult (*GetAttributes) (
           IDirectFBGL                       *thiz,
-          DFBGLAttributes                   *attributes
+          DFBGLAttributes                   *ret_attributes
      );
 
      /*
