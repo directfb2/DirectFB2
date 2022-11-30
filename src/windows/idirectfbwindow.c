@@ -1485,6 +1485,8 @@ IDirectFBWindow_Construct( IDirectFBWindow *thiz,
                            IDirectFB       *idirectfb,
                            bool             created )
 {
+     DFBResult ret;
+
      DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBWindow )
 
      D_DEBUG_AT( Window, "%s( %p ) <- %4d,%4d-%4dx%4d\n", __FUNCTION__,
@@ -1498,7 +1500,12 @@ IDirectFBWindow_Construct( IDirectFBWindow *thiz,
      data->created      = created;
      data->cursor_flags = DWCF_INVISIBLE;
 
-     dfb_window_attach( window, IDirectFBWindow_React, data, &data->reaction );
+     ret = dfb_window_attach( window, IDirectFBWindow_React, data, &data->reaction );
+     if (ret) {
+          D_DERROR( ret, "IDirectFBWindow: Could not attach to reactor!\n" );
+          DIRECT_DEALLOCATE_INTERFACE( thiz );
+          return ret;
+     }
 
      thiz->AddRef               = IDirectFBWindow_AddRef;
      thiz->Release              = IDirectFBWindow_Release;

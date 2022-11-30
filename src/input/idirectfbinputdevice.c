@@ -410,6 +410,8 @@ DFBResult
 IDirectFBInputDevice_Construct( IDirectFBInputDevice *thiz,
                                 CoreInputDevice      *device )
 {
+     DFBResult ret;
+
      DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBInputDevice )
 
      D_DEBUG_AT( InputDevice, "%s( %p )\n", __FUNCTION__, thiz );
@@ -419,7 +421,12 @@ IDirectFBInputDevice_Construct( IDirectFBInputDevice *thiz,
 
      dfb_input_device_description( device, &data->desc );
 
-     dfb_input_attach( data->device, IDirectFBInputDevice_React, data, &data->reaction );
+     ret = dfb_input_attach( data->device, IDirectFBInputDevice_React, data, &data->reaction );
+     if (ret) {
+          D_DERROR( ret, "IDirectFBInputDevice: Could not attach to reactor!\n" );
+          DIRECT_DEALLOCATE_INTERFACE( thiz );
+          return ret;
+     }
 
      thiz->AddRef            = IDirectFBInputDevice_AddRef;
      thiz->Release           = IDirectFBInputDevice_Release;

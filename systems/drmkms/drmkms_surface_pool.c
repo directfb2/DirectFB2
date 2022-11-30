@@ -43,19 +43,19 @@ typedef struct {
 } DRMKMSPoolLocalData;
 
 typedef struct {
-     int            magic;
+     int           magic;
 
-     unsigned int   handle;
-     unsigned int   pitch;
-     int            size;
+     unsigned int  handle;
+     unsigned int  pitch;
+     int           size;
 
-     int            prime_fd;
+     int           prime_fd;
 
-     uint32_t       name;
+     uint32_t      name;
 
-     uint32_t       fb_id;
+     uint32_t      fb_id;
 
-     void          *addr;
+     void         *addr;
 } DRMKMSAllocationData;
 
 typedef struct {

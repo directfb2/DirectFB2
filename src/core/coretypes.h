@@ -52,9 +52,9 @@ typedef struct __DFB_CoreSurfacePoolBridge   CoreSurfacePoolBridge;
 typedef struct __DFB_CoreWindow              CoreWindow;
 typedef struct __DFB_CoreWindowConfig        CoreWindowConfig;
 typedef struct __DFB_CoreWindowStack         CoreWindowStack;
+typedef struct __DFB_GenefxState             GenefxState;
 typedef struct __DFB_GraphicsDeviceInfo      GraphicsDeviceInfo;
 typedef struct __DFB_GraphicsDriverInfo      GraphicsDriverInfo;
-typedef struct __DFB_GenefxState             GenefxState;
 
 /**********************************************************************************************************************/
 
@@ -105,7 +105,7 @@ typedef enum {
      CSAID_LAYER14 = 0x00000016,
      CSAID_LAYER15 = 0x00000017,
 
-     _CSAID_NUM    = 0x00000018, /* number of statically assigned IDs for usage in static arrays */
+     CSAID_NUM     = 0x00000018, /* number of statically assigned IDs for usage in static arrays */
 
      CSAID_ANY     = 0x00000100  /* any other accessor needs to be registered using IDs starting from here */
 } CoreSurfaceAccessorID;

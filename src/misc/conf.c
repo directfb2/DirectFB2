@@ -1408,8 +1408,8 @@ dfb_config_set( const char *name,
 }
 
 DFBResult
-dfb_config_init( int    *argc,
-                 char *(*argv[]) )
+dfb_config_init( int   *argc,
+                 char **argv[] )
 {
      DFBResult  ret;
      int        i;

@@ -355,15 +355,11 @@ IDirectFBDataBuffer_Streamed_Construct( IDirectFBDataBuffer *thiz,
                                         CoreDFB             *core,
                                         IDirectFB           *idirectfb )
 {
-     DFBResult ret;
-
      DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBDataBuffer_Streamed )
 
      D_DEBUG_AT( DataBuffer, "%s( %p )\n", __FUNCTION__, thiz );
 
-     ret = IDirectFBDataBuffer_Construct( thiz, NULL, NULL, 0, core, idirectfb );
-     if (ret)
-          return ret;
+     IDirectFBDataBuffer_Construct( thiz, NULL, NULL, 0, core, idirectfb );
 
      direct_mutex_init( &data->chunks_mutex );
      direct_waitqueue_init( &data->wait_condition );

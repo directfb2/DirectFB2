@@ -44,7 +44,7 @@ typedef enum {
 
 typedef struct {
      CoreSurfacePoolCapabilities caps;
-     CoreSurfaceAccessFlags      access[_CSAID_NUM];
+     CoreSurfaceAccessFlags      access[CSAID_NUM];
      CoreSurfaceTypeFlags        types;
      CoreSurfacePoolPriority     priority;
      char                        name[DFB_SURFACE_POOL_DESC_NAME_LENGTH];

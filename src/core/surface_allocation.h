@@ -42,32 +42,32 @@ struct __DFB_CoreSurfaceAllocation {
 
      int                           magic;
 
-     DirectSerial                  serial;               /* Equals serial of buffer if content is up to date. */
+     DirectSerial                  serial;              /* Equals serial of buffer if content is up to date. */
 
-     CoreSurfaceBuffer            *buffer;               /* Surface buffer owning this allocation. */
-     CoreSurface                  *surface;              /* Surface owning the buffer of this allocation. */
-     CoreSurfacePool              *pool;                 /* Surface pool providing the allocation. */
-     void                         *data;                 /* Pool's private data for this allocation. */
-     int                           size;                 /* Amount of data used by this allocation. */
-     unsigned long                 offset;               /* Offset within address range of pool if contiguous. */
+     CoreSurfaceBuffer            *buffer;              /* Surface buffer owning this allocation. */
+     CoreSurface                  *surface;             /* Surface owning the buffer of this allocation. */
+     CoreSurfacePool              *pool;                /* Surface pool providing the allocation. */
+     void                         *data;                /* Pool's private data for this allocation. */
+     int                           size;                /* Amount of data used by this allocation. */
+     unsigned long                 offset;              /* Offset within address range of pool if contiguous. */
 
-     CoreSurfaceAllocationFlags    flags;                /* Configuration and state flags. */
+     CoreSurfaceAllocationFlags    flags;               /* Configuration and state flags. */
 
-     const CoreSurfaceAccessFlags *access;               /* Possible access flags (pointer to pool description). */
-     CoreSurfaceAccessFlags        accessed[_CSAID_NUM]; /* Access since last synchronization. */
+     const CoreSurfaceAccessFlags *access;              /* Possible access flags (pointer to pool description). */
+     CoreSurfaceAccessFlags        accessed[CSAID_NUM]; /* Access since last synchronization. */
 
-     CoreSurfaceConfig             config;               /* Configuration of its surface at the time of the allocation
-                                                            creation. */
-     CoreSurfaceTypeFlags          type;                 /* Classification of the surface. */
+     CoreSurfaceConfig             config;              /* Configuration of its surface at the time of the allocation
+                                                           creation. */
+     CoreSurfaceTypeFlags          type;                /* Classification of the surface. */
 
-     unsigned long                 resource_id;          /* layer id, window id, or user specified */
-     int                           index;                /* index of surface buffer */
+     unsigned long                 resource_id;         /* layer id, window id, or user specified */
+     int                           index;               /* index of surface buffer */
 
-     CoreGraphicsSerial            gfx_serial;           /* graphics serial */
+     CoreGraphicsSerial            gfx_serial;          /* graphics serial */
 
-     FusionCall                    call;                 /* dispatch */
+     FusionCall                    call;                /* dispatch */
 
-     FusionObjectID                buffer_id;            /* buffer id */
+     FusionObjectID                buffer_id;           /* buffer id */
 };
 
 #if D_DEBUG_ENABLED

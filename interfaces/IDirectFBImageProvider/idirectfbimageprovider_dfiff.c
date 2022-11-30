@@ -291,7 +291,7 @@ Construct( IDirectFBImageProvider *thiz,
      /* Open the file. */
      ret = direct_file_open( &fd, buffer_data->filename, O_RDONLY, 0 );
      if (ret) {
-          D_DERROR( ret, "ImageProvider/DFIFF: Failed to open '%s'!\n", buffer_data->filename );
+          D_DERROR( ret, "ImageProvider/DFIFF: Failed to open file '%s'!\n", buffer_data->filename );
           DIRECT_DEALLOCATE_INTERFACE( thiz );
           return ret;
      }
