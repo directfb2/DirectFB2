@@ -331,8 +331,11 @@ IDirectFBSurface_Layer_Construct( IDirectFBSurface       *thiz,
 
      D_DEBUG_AT( Surface, "%s( %p )\n", __FUNCTION__, thiz );
 
-     if (dfb_layer_region_ref( region ))
-          return DFB_FUSION;
+     ret = dfb_layer_region_ref( region );
+     if (ret) {
+          DIRECT_DEALLOCATE_INTERFACE( thiz );
+          return ret;
+     }
 
      ret = CoreLayerRegion_GetSurface( region, &surface );
      if (ret) {

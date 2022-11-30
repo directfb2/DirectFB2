@@ -280,12 +280,11 @@ IDirectFBDataBuffer_File_Construct( IDirectFBDataBuffer *thiz,
 
      D_DEBUG_AT( DataBuffer, "%s( %p )\n", __FUNCTION__, thiz );
 
-     ret = IDirectFBDataBuffer_Construct( thiz, filename, NULL, 0, core, idirectfb );
-     if (ret)
-          return ret;
+     IDirectFBDataBuffer_Construct( thiz, filename, NULL, 0, core, idirectfb );
 
      ret = direct_stream_create( filename, &data->stream );
      if (ret) {
+          D_DERROR( ret, "IDirectFBDataBufferF: Failed to create stream '%s'!\n", filename );
           DIRECT_DEALLOCATE_INTERFACE( thiz );
           return ret;
      }

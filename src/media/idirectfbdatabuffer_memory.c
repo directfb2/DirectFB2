@@ -243,15 +243,11 @@ IDirectFBDataBuffer_Memory_Construct( IDirectFBDataBuffer *thiz,
                                       CoreDFB             *core,
                                       IDirectFB           *idirectfb )
 {
-     DFBResult ret;
-
      DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBDataBuffer_Memory )
 
      D_DEBUG_AT( DataBuffer, "%s( %p )\n", __FUNCTION__, thiz );
 
-     ret = IDirectFBDataBuffer_Construct( thiz, NULL, buffer, length, core, idirectfb );
-     if (ret)
-          return ret;
+     IDirectFBDataBuffer_Construct( thiz, NULL, buffer, length, core, idirectfb );
 
      data->buffer = buffer;
      data->length = length;

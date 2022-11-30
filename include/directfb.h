@@ -120,7 +120,7 @@ const char DIRECTFB_API *DirectFBCheckVersion (
  */
 DFBResult  DIRECTFB_API  DirectFBInit (
      int                                    *argc,               /* pointer to main()'s argc */
-     char                                 *(*argv[])             /* pointer to main()'s argv */
+     char                                  **argv[]              /* pointer to main()'s argv */
 );
 
 /*
@@ -418,8 +418,6 @@ typedef unsigned int DFBWindowID;
 #define DTEID_UTF8                           0x00000000          /* UTF-8 */
 #define DTEID_OTHER                          0x00000001          /* Other */
 
-/**********************************************************************************************************************/
-
 /*************
  * IDirectFB *
  *************/
@@ -646,7 +644,7 @@ typedef enum {
 } DFBSurfaceCapabilities;
 
 /*
- * Encodes format constants in the following way (bit 31 - 0):
+ * Encodes pixel format constants in the following way (bit 31 - 0):
  *
  * lkjj:hhgg | gfff:eeed | cccc:bbbb | baaa:aaaa
  *
@@ -1876,6 +1874,7 @@ typedef enum {
      DSETV_NTSC_M_JPN                      = 0x00000200,         /* NTSC_JPN support */
      DSETV_DIGITAL                         = 0x00000400,         /* TV standards from the digital domain */
      DSETV_NTSC_443                        = 0x00000800,         /* NTSC with 4.43MHz colour carrier */
+
      DSETV_ALL                             = 0x00000FFF          /* All TV Standards */
 } DFBScreenEncoderTVStandards;
 
@@ -1941,6 +1940,7 @@ typedef enum {
     DSOR_2560_1600                         = 0x00100000,         /* 2650x1600 Resolution */
     DSOR_3840_2160                         = 0x00200000,         /* 3840x2160 Resolution */
     DSOR_4096_2160                         = 0x00400000,         /* 4096x2160 Resolution */
+
     DSOR_ALL                               = 0x004FFFFF          /* All Resolutions */
 } DFBScreenOutputResolution;
 
@@ -1973,7 +1973,8 @@ typedef enum {
                                                                     width single frame, left on left half of frame.
                                                                     The packed frame is output on each vsync.
                                                                     Requires HDMI v1.4a. */
-     DSEPF_ALL                             = 0x0000001F
+
+     DSEPF_ALL                             = 0x0000001F          /* All of these. */
 } DFBScreenEncoderPictureFraming;
 
 /*
@@ -1986,7 +1987,7 @@ typedef enum {
     DFB_ASPECT_RATIO_e16x9                 = 0x00000002          /* 16x9 */
 } DFBDisplayAspectRatio;
 
-#define DFB_SCREEN_ENCODER_DESC_NAME_LENGTH    24
+#define DFB_SCREEN_ENCODER_DESC_NAME_LENGTH  24
 
 /*
  * Description of a display encoder.
@@ -2395,7 +2396,7 @@ typedef enum {
      DDLSCAPS_ALL                          = 0x00000001          /* All of these. */
 } DFBDisplayLayerSourceCaps;
 
-#define DFB_DISPLAY_LAYER_SOURCE_DESC_NAME_LENGTH    24
+#define DFB_DISPLAY_LAYER_SOURCE_DESC_NAME_LENGTH 24
 
 /*
  * Description of a display layer source.
@@ -3124,7 +3125,7 @@ D_DEFINE_INTERFACE( IDirectFBDisplayLayer,
      /*
       * Switch the layer context.
       *
-      * Switches to the shared context unless 'exclusive'is
+      * Switches to the shared context unless 'exclusive' is
       * DFB_TRUE and the cooperative level of this interface is
       * DLSCL_EXCLUSIVE.
       */
@@ -6602,7 +6603,7 @@ typedef enum {
      DVCAPS_HUE                            = 0x00000040,         /* supports hue adjustment */
      DVCAPS_SATURATION                     = 0x00000080,         /* supports saturation adjustment */
      DVCAPS_INTERACTIVE                    = 0x00000100,         /* supports sending an input or window event */
-     DVCAPS_VOLUME                         = 0x00000200,         /* supports volume adjustment */
+     DVCAPS_VOLUME                         = 0x00000200          /* supports volume adjustment */
 } DFBVideoProviderCapabilities;
 
 /*
@@ -6616,15 +6617,10 @@ typedef enum {
 } DFBStreamCapabilities;
 
 #define DFB_STREAM_DESC_ENCODING_LENGTH       30
-
 #define DFB_STREAM_DESC_TITLE_LENGTH         255
-
 #define DFB_STREAM_DESC_AUTHOR_LENGTH        255
-
 #define DFB_STREAM_DESC_ALBUM_LENGTH         255
-
 #define DFB_STREAM_DESC_GENRE_LENGTH          32
-
 #define DFB_STREAM_DESC_COMMENT_LENGTH       255
 
 /*
@@ -6674,7 +6670,7 @@ typedef enum {
      DVPLAY_NOFX                           = 0x00000000,         /* normal playback */
      DVPLAY_REWIND                         = 0x00000001,         /* reverse playback */
      DVPLAY_LOOPING                        = 0x00000002          /* automatically restart playback when end-of-stream is
-                                                                    reached. */
+                                                                    reached */
 } DFBVideoProviderPlaybackFlags;
 
 /*

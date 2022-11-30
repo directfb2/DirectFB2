@@ -361,14 +361,14 @@ dfb_surface_pools_negotiate( CoreSurfaceBuffer       *buffer,
 
      FUSION_SKIRMISH_ASSERT( &surface->lock );
 
-     D_ASSUME( accessor < _CSAID_NUM );
+     D_ASSUME( accessor < CSAID_NUM );
 
      if (accessor >= CSAID_ANY) {
           D_UNIMPLEMENTED();
           return DFB_UNIMPLEMENTED;
      }
 
-     if (accessor < 0 || accessor >= _CSAID_NUM)
+     if (accessor < 0 || accessor >= CSAID_NUM)
           return DFB_INVARG;
 
      type = surface->type & ~(CSTF_INTERNAL | CSTF_EXTERNAL);
@@ -567,14 +567,14 @@ dfb_surface_pools_allocate( CoreSurfaceBuffer       *buffer,
                  (surface->type & CSTF_EXTERNAL)     ? " EXTERNAL"     : "",
                  (surface->type & CSTF_PREALLOCATED) ? " PREALLOCATED" : "" );
 
-     D_ASSUME( accessor < _CSAID_NUM );
+     D_ASSUME( accessor < CSAID_NUM );
 
      if (accessor >= CSAID_ANY) {
           D_UNIMPLEMENTED();
           return DFB_UNIMPLEMENTED;
      }
 
-     if (accessor < 0 || accessor >= _CSAID_NUM)
+     if (accessor < 0 || accessor >= CSAID_NUM)
           return DFB_INVARG;
 
      /* Build a list of possible pools being free or out of memory. */

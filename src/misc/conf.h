@@ -145,14 +145,14 @@ extern DFBConfig *dfb_config;
 /*
  * Set indiviual option.
  */
-DFBResult dfb_config_set   ( const char *name,
-                             const char *value );
+DFBResult dfb_config_set   ( const char  *name,
+                             const char  *value );
 
 /*
  * Allocate config struct, fill with defaults and parse command line options for overrides.
  */
-DFBResult dfb_config_init  ( int          *argc,
-                             char       *(*argv[]) );
+DFBResult dfb_config_init  ( int         *argc,
+                             char       **argv[] );
 
 /*
  * Free config struct.

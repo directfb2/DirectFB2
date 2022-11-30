@@ -346,9 +346,9 @@ IDirectFB_SetVideoMode( IDirectFB *thiz,
                         int        bpp )
 {
      DFBResult             ret;
+     DFBDisplayLayerConfig config;
      DFBSurfacePixelFormat format;
      DFBSurfaceColorSpace  colorspace;
-     DFBDisplayLayerConfig config;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -510,16 +510,16 @@ IDirectFB_CreateSurface( IDirectFB                    *thiz,
                          const DFBSurfaceDescription  *desc,
                          IDirectFBSurface            **ret_interface )
 {
-     IDirectFBSurface       *iface;
      DFBResult               ret;
-     int                     width = 256;
-     int                     height = 256;
+     DFBDisplayLayerConfig   config;
      DFBSurfacePixelFormat   format;
      DFBSurfaceColorSpace    colorspace;
-     DFBSurfaceCapabilities  caps = DSCAPS_NONE;
-     CoreSurface            *surface = NULL;
+     CoreSurface            *surface;
+     IDirectFBSurface       *iface;
      unsigned long           resource_id = 0;
-     DFBDisplayLayerConfig   config;
+     int                     width       = 256;
+     int                     height      = 256;
+     DFBSurfaceCapabilities  caps        = DSCAPS_NONE;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1025,10 +1025,10 @@ IDirectFB_CreatePalette( IDirectFB                    *thiz,
                          IDirectFBPalette            **ret_interface )
 {
      DFBResult             ret;
+     CorePalette          *palette;
      IDirectFBPalette     *iface;
      unsigned int          size       = 256;
      DFBSurfaceColorSpace  colorspace = DSCS_RGB;
-     CorePalette          *palette    = NULL;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1096,8 +1096,8 @@ IDirectFB_GetScreen( IDirectFB        *thiz,
                      DFBScreenID       screen_id,
                      IDirectFBScreen **ret_interface )
 {
+     GetScreen_Context  context;
      IDirectFBScreen   *iface;
-     GetScreen_Context context;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1148,8 +1148,8 @@ IDirectFB_GetDisplayLayer( IDirectFB              *thiz,
                            DFBDisplayLayerID       layer_id,
                            IDirectFBDisplayLayer **ret_interface )
 {
+     GetDisplayLayer_Context  context;
      IDirectFBDisplayLayer   *iface;
-     GetDisplayLayer_Context context;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1202,8 +1202,8 @@ IDirectFB_GetInputDevice( IDirectFB             *thiz,
                           DFBInputDeviceID       device_id,
                           IDirectFBInputDevice **ret_interface )
 {
+     GetInputDevice_Context  context;
      IDirectFBInputDevice   *iface;
-     GetInputDevice_Context context;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1304,8 +1304,8 @@ IDirectFB_CreateInputEventBuffer( IDirectFB                   *thiz,
                                   IDirectFBEventBuffer       **ret_interface )
 {
      DFBResult                  ret;
-     IDirectFBEventBuffer      *iface;
      CreateEventBuffer_Context  context;
+     IDirectFBEventBuffer      *iface;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1356,9 +1356,9 @@ IDirectFB_CreateImageProvider( IDirectFB               *thiz,
                                const char              *filename,
                                IDirectFBImageProvider **ret_interface )
 {
-     DFBResult                 ret;
-     IDirectFBDataBuffer      *buffer;
-     IDirectFBImageProvider   *iface;
+     DFBResult               ret;
+     IDirectFBDataBuffer    *buffer;
+     IDirectFBImageProvider *iface;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1392,9 +1392,9 @@ IDirectFB_CreateVideoProvider( IDirectFB               *thiz,
                                const char              *filename,
                                IDirectFBVideoProvider **ret_interface )
 {
-     DFBResult                 ret;
-     IDirectFBDataBuffer      *buffer;
-     IDirectFBVideoProvider   *iface;
+     DFBResult               ret;
+     IDirectFBDataBuffer    *buffer;
+     IDirectFBVideoProvider *iface;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1429,9 +1429,9 @@ IDirectFB_CreateFont( IDirectFB                 *thiz,
                       const DFBFontDescription  *desc,
                       IDirectFBFont            **ret_interface )
 {
-     DFBResult                 ret;
-     IDirectFBDataBuffer      *buffer;
-     IDirectFBFont            *iface;
+     DFBResult            ret;
+     IDirectFBDataBuffer *buffer;
+     IDirectFBFont       *iface;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 

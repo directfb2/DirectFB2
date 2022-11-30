@@ -226,7 +226,6 @@ drmkmsPrimarySetRegion( CoreLayer                  *layer,
                err = drmModeSetCrtc( drmkms->fd, drmkms->encoder[index]->crtc_id,
                                      (uint32_t)(long) left_lock->handle, config->source.x, config->source.y,
                                      &drmkms->connector[index]->connector_id, 1, &shared->mode[index] );
-
                if (err) {
                     ret = errno2result( errno );
                     D_PERROR( "DRMKMS/Layer: "
@@ -252,16 +251,11 @@ drmkmsPrimarySetRegion( CoreLayer                  *layer,
 }
 
 static DFBResult
-drmkmsPrimaryUpdateFlipRegion( CoreLayer             *layer,
-                               void                  *driver_data,
+drmkmsPrimaryUpdateFlipRegion( void                  *driver_data,
                                void                  *layer_data,
-                               void                  *region_data,
                                CoreSurface           *surface,
                                DFBSurfaceFlipFlags    flags,
-                               const DFBRegion       *left_update,
                                CoreSurfaceBufferLock *left_lock,
-                               const DFBRegion       *right_update,
-                               CoreSurfaceBufferLock *right_lock,
                                bool                   flip )
 {
      DFBResult         ret;
@@ -345,8 +339,7 @@ drmkmsPrimaryFlipRegion( CoreLayer             *layer,
                          const DFBRegion       *right_update,
                          CoreSurfaceBufferLock *right_lock )
 {
-     return drmkmsPrimaryUpdateFlipRegion( layer, driver_data, layer_data, region_data, surface, flags,
-                                           left_update, left_lock, right_update, right_lock, true );
+     return drmkmsPrimaryUpdateFlipRegion( driver_data, layer_data, surface, flags, left_lock, true );
 }
 
 static DFBResult
@@ -360,8 +353,7 @@ drmkmsPrimaryUpdateRegion( CoreLayer             *layer,
                            const DFBRegion       *right_update,
                            CoreSurfaceBufferLock *right_lock )
 {
-     return drmkmsPrimaryUpdateFlipRegion( layer, driver_data, layer_data, region_data, surface, DSFLIP_ONSYNC,
-                                           left_update, left_lock, right_update, right_lock, false );
+     return drmkmsPrimaryUpdateFlipRegion( driver_data, layer_data, surface, DSFLIP_ONSYNC, left_lock, false );
 }
 
 static int
@@ -631,7 +623,6 @@ drmkmsPlaneRemoveRegion( CoreLayer *layer,
      if (!data->muted) {
           err = drmModeSetPlane( drmkms->fd, data->plane->plane_id, drmkms->encoder[0]->crtc_id, 0, 0,
                                  0, 0, 0, 0, 0, 0, 0, 0 );
-
           if (err) {
                ret = errno2result( errno );
                D_PERROR( "DRMKMS/Layer: drmModeSetPlane() failed removing plane!\n" );
@@ -643,16 +634,11 @@ drmkmsPlaneRemoveRegion( CoreLayer *layer,
 }
 
 static DFBResult
-drmkmsPlaneUpdateFlipRegion( CoreLayer             *layer,
-                             void                  *driver_data,
+drmkmsPlaneUpdateFlipRegion( void                  *driver_data,
                              void                  *layer_data,
-                             void                  *region_data,
                              CoreSurface           *surface,
                              DFBSurfaceFlipFlags    flags,
-                             const DFBRegion       *left_update,
                              CoreSurfaceBufferLock *left_lock,
-                             const DFBRegion       *right_update,
-                             CoreSurfaceBufferLock *right_lock,
                              bool                   flip )
 {
      DFBResult              ret;
@@ -685,7 +671,6 @@ drmkmsPlaneUpdateFlipRegion( CoreLayer             *layer,
                                  config->dest.x, config->dest.y, config->dest.w, config->dest.h,
                                  config->source.x << 16, config->source.y << 16,
                                  config->source.w << 16, config->source.h << 16 );
-
           if (err) {
                ret = errno2result( errno );
                D_PERROR( "DRMKMS/Layer: Failed setting plane configuration!\n" );
@@ -729,8 +714,7 @@ drmkmsPlaneFlipRegion( CoreLayer             *layer,
                        const DFBRegion       *right_update,
                        CoreSurfaceBufferLock *right_lock )
 {
-     return drmkmsPlaneUpdateFlipRegion( layer, driver_data, layer_data, region_data, surface, flags,
-                                         left_update, left_lock, right_update, right_lock, true );
+     return drmkmsPlaneUpdateFlipRegion( driver_data, layer_data, surface, flags, left_lock, true );
 }
 
 static DFBResult
@@ -744,8 +728,7 @@ drmkmsPlaneUpdateRegion( CoreLayer             *layer,
                          const DFBRegion       *right_update,
                          CoreSurfaceBufferLock *right_lock )
 {
-     return drmkmsPlaneUpdateFlipRegion( layer, driver_data, layer_data, region_data, surface, DSFLIP_ONSYNC,
-                                         left_update, left_lock, right_update, right_lock, false );
+     return drmkmsPlaneUpdateFlipRegion( driver_data, layer_data, surface, DSFLIP_ONSYNC, left_lock, false );
 }
 
 const DisplayLayerFuncs drmkmsPrimaryLayerFuncs = {

@@ -56,8 +56,8 @@ DirectFBCheckVersion( unsigned int required_major,
 }
 
 DFBResult
-DirectFBInit( int    *argc,
-              char *(*argv[]) )
+DirectFBInit( int   *argc,
+              char **argv[] )
 {
      DFBResult ret;
 
@@ -71,7 +71,8 @@ DirectFBInit( int    *argc,
 }
 
 DFBResult
-DirectFBSetOption( const char *name, const char *value )
+DirectFBSetOption( const char *name,
+                   const char *value )
 {
      DFBResult ret;
 
@@ -131,7 +132,7 @@ DirectFBCreate( IDirectFB **ret_interface )
           direct_log_printf( NULL,
                              "\n"
                              "   ~~~~~~~~~~~~~~~~~~~~~~~~~~| DirectFB %d.%d.%d %s |~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-                             "        (c) 2017-2021  DirectFB2 Open Source Project (fork of DirectFB)\n"
+                             "        (c) 2017-2022  DirectFB2 Open Source Project (fork of DirectFB)\n"
                              "        (c) 2012-2016  DirectFB integrated media GmbH\n"
                              "        (c) 2001-2016  The world wide DirectFB Open Source Community\n"
                              "        (c) 2000-2004  Convergence (integrated media) GmbH\n"
@@ -153,6 +154,7 @@ DirectFBCreate( IDirectFB **ret_interface )
           *ret_interface = idirectfb_singleton;
 
           direct_mutex_unlock( &idirectfb_lock );
+
           return DFB_OK;
      }
 
@@ -166,7 +168,6 @@ DirectFBCreate( IDirectFB **ret_interface )
      if (ret) {
           D_DEBUG_AT( DirectFB_Main, "  -> resetting singleton to NULL!\n" );
           idirectfb_singleton = NULL;
-
           direct_mutex_unlock( &idirectfb_lock );
           return ret;
      }

@@ -134,7 +134,7 @@ Construct( IDirectFBFont              *thiz,
      /* Open the file. */
      ret = direct_file_open( &fd, ctx->filename, O_RDONLY, 0 );
      if (ret) {
-          D_DERROR( ret, "Font/DGIFF: Failed to open '%s'!\n", ctx->filename );
+          D_DERROR( ret, "Font/DGIFF: Failed to open file '%s'!\n", ctx->filename );
           return ret;
      }
 

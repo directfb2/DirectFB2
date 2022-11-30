@@ -281,13 +281,16 @@ IDirectFBPalette_Construct( IDirectFBPalette *thiz,
                             CorePalette      *palette,
                             CoreDFB          *core )
 {
+     DFBResult ret;
+
      DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBPalette )
 
      D_DEBUG_AT( Palette, "%s( %p )\n", __FUNCTION__, thiz );
 
-     if (dfb_palette_ref( palette )) {
+     ret = dfb_palette_ref( palette );
+     if (ret) {
           DIRECT_DEALLOCATE_INTERFACE( thiz );
-          return DFB_FAILURE;
+          return ret;
      }
 
      data->ref     = 1;

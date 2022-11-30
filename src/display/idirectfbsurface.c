@@ -626,7 +626,7 @@ static DFBResult
 IDirectFBSurface_GetFramebufferOffset( IDirectFBSurface *thiz,
                                        int              *offset )
 {
-     DIRECT_INTERFACE_GET_DATA(IDirectFBSurface)
+     DIRECT_INTERFACE_GET_DATA( IDirectFBSurface )
 
      D_DEBUG_AT( Surface, "%s( %p )\n", __FUNCTION__, thiz );
 
@@ -3812,9 +3812,10 @@ IDirectFBSurface_Construct( IDirectFBSurface       *thiz,
 
      D_DEBUG_AT( Surface, "%s( %p )\n", __FUNCTION__, thiz );
 
-     if (dfb_surface_ref( surface )) {
+     ret = dfb_surface_ref( surface );
+     if (ret) {
           DIRECT_DEALLOCATE_INTERFACE( thiz );
-          return DFB_FAILURE;
+          return ret;
      }
 
      data->ref                = 1;
@@ -3838,11 +3839,17 @@ IDirectFBSurface_Construct( IDirectFBSurface       *thiz,
           }
 
           parent_data = parent->priv;
-          if (!parent_data)
+          if (!parent_data) {
+               dfb_surface_unref( surface );
+               DIRECT_DEALLOCATE_INTERFACE( thiz );
                return DFB_DEAD;
+          }
 
-          if (!parent_data)
+          if (!parent_data) {
+               dfb_surface_unref( surface );
+               DIRECT_DEALLOCATE_INTERFACE( thiz );
                return DFB_DESTROYED;
+          }
 
           direct_mutex_lock( &parent_data->children_lock );
 
@@ -3899,13 +3906,26 @@ IDirectFBSurface_Construct( IDirectFBSurface       *thiz,
      data->state.modified = SMF_ALL;
 
      ret = CoreGraphicsStateClient_Init( &data->state_client, &data->state );
-     if (ret)
+     if (ret) {
+          dfb_state_destroy( &data->state );
+          if (parent)
+               parent->Release( parent );
+          dfb_surface_unref( surface );
+          DIRECT_DEALLOCATE_INTERFACE( thiz );
           return ret;
+     }
 
      if (data->surface->config.flags & CSCONF_PREALLOCATED) {
           ret = register_prealloc( data );
-          if (ret)
+          if (ret) {
+               CoreGraphicsStateClient_Deinit( &data->state_client );
+               dfb_state_destroy( &data->state );
+               if (parent)
+                    parent->Release( parent );
+               dfb_surface_unref( surface );
+               DIRECT_DEALLOCATE_INTERFACE( thiz );
                return ret;
+          }
      }
 
      dfb_surface_attach( surface, IDirectFBSurface_React, thiz, &data->reaction );

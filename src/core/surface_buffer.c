@@ -318,14 +318,14 @@ dfb_surface_buffer_lock( CoreSurfaceBuffer      *buffer,
 
      FUSION_SKIRMISH_ASSERT( &buffer->surface->lock );
 
-     D_ASSUME( accessor < _CSAID_NUM );
+     D_ASSUME( accessor < CSAID_NUM );
 
      if (accessor >= CSAID_ANY) {
           D_UNIMPLEMENTED();
           return DFB_UNIMPLEMENTED;
      }
 
-     if (accessor < 0 || accessor >= _CSAID_NUM)
+     if (accessor < 0 || accessor >= CSAID_NUM)
           return DFB_INVARG;
 
      if (direct_log_domain_check( &Core_SurfBuffer )) {
