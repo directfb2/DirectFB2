@@ -52,25 +52,25 @@ drmkms_page_flip_handler( int           fd,
                           unsigned int  frame,
                           unsigned int  sec,
                           unsigned int  usec,
-                          void         *data )
+                          void         *layer_data )
 {
-     DRMKMSLayerData *layer_data = data;
+     DRMKMSLayerData *data = layer_data;
 
      D_DEBUG_AT( DRMKMS_System, "%s()\n", __FUNCTION__ );
 
-     direct_mutex_lock( &layer_data->lock );
+     direct_mutex_lock( &data->lock );
 
-     if (layer_data->flip_pending) {
-          dfb_surface_notify_display2( layer_data->surface, layer_data->surfacebuffer_index );
+     if (data->flip_pending) {
+          dfb_surface_notify_display2( data->surface, data->surfacebuffer_index );
 
-          dfb_surface_unref( layer_data->surface );
+          dfb_surface_unref( data->surface );
      }
 
-     layer_data->flip_pending = false;
+     data->flip_pending = false;
 
-     direct_waitqueue_broadcast( &layer_data->wq_event );
+     direct_waitqueue_broadcast( &data->wq_event );
 
-     direct_mutex_unlock( &layer_data->lock );
+     direct_mutex_unlock( &data->lock );
 
      D_DEBUG_AT( DRMKMS_System, "%s() done\n", __FUNCTION__ );
 }
@@ -293,7 +293,7 @@ drmkmsPrimaryUpdateFlipRegion( void                  *driver_data,
      D_DEBUG_AT( DRMKMS_Layer, "  -> calling drmModePageFlip()\n" );
 
      err = drmModePageFlip( drmkms->fd, drmkms->encoder[index]->crtc_id, (uint32_t)(long) left_lock->handle,
-                            DRM_MODE_PAGE_FLIP_EVENT, layer_data );
+                            DRM_MODE_PAGE_FLIP_EVENT, data );
      if (err) {
           ret = errno2result( errno );
           D_PERROR( "DRMKMS/Layer: drmModePageFlip() failed!\n" );
