@@ -1,3 +1,39 @@
+commit 5ff1a698b3d5607c089b50910fa73138f98e4ec9
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Dec 3 07:25:11 2022 +0100
+
+    Move tools to DirectFB2-tools repository (for static library support)
+
+commit 96a680da988cf3466f5106b943bc9739b2199fa9
+Merge: 2519295 4db5565
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Nov 30 17:59:49 2022 +0100
+
+    Merge pull request #67 from caramelli/master
+    
+    Add DIRECT_DEALLOCATE_INTERFACE() calls on error
+
+commit 4db5565d6ec9e5c5c06fe528bf111209bf11a112
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Nov 30 17:52:13 2022 +0100
+
+    Add DIRECT_DEALLOCATE_INTERFACE() calls on error
+
+commit 2519295bc91765c1fc036d6ee206f163f7509c37
+Merge: ab42607 896141d
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Nov 19 10:33:09 2022 +0100
+
+    Merge pull request #65 from caramelli/master
+    
+    IDirectFBSurface: Set flip_func to control the triggering of the actual Flip
+
+commit 896141dcd2ccb610c6aedad904dc1602ba9289f4
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Nov 19 10:33:03 2022 +0100
+
+    Update ChangeLog
+
 commit 64471d3ce80ff3f948e02d809c51247a50e058ca
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Sat Nov 19 10:32:50 2022 +0100

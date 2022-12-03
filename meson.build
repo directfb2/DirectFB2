@@ -186,7 +186,3 @@ pkgconfig.generate(filebase: 'directfb-wm',
                    description: 'DirectFB wm modules',
                    libraries: libdirectfb_wm,
                    libraries_private: libdirectfb_wm_private)
-
-# tools
-
-subdir('tools')

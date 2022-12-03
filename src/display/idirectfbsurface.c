@@ -3589,9 +3589,13 @@ IDirectFBSurface_Allocate( IDirectFBSurface            *thiz,
      else
           ret = DFB_NOSYSTEMMEMORY;
 
-     dfb_surface_allocation_unref( allocation );
+     if (ret)
+          goto out;
 
      *ret_interface = iface;
+
+out:
+     dfb_surface_allocation_unref( allocation );
 
      return ret;
 }
@@ -3625,9 +3629,13 @@ IDirectFBSurface_GetAllocation( IDirectFBSurface            *thiz,
      else
           ret = DFB_NOSYSTEMMEMORY;
 
-     dfb_surface_allocation_unref( allocation );
+     if (ret)
+          goto out;
 
      *ret_interface = iface;
+
+out:
+     dfb_surface_allocation_unref( allocation );
 
      return ret;
 }
