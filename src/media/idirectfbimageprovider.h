@@ -21,8 +21,6 @@
 
 #include <core/coretypes.h>
 
-/**********************************************************************************************************************/
-
 /*
  * probing context
  */
@@ -31,10 +29,8 @@ typedef struct {
      const char    *filename;
 } IDirectFBImageProvider_ProbeContext;
 
-/**********************************************************************************************************************/
-
 /*
- * Create (probing) the image provider.
+ * create (probing) the image provider
  */
 DFBResult IDirectFBImageProvider_CreateFromBuffer( IDirectFBDataBuffer     *buffer,
                                                    CoreDFB                 *core,

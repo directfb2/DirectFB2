@@ -33,6 +33,9 @@ D_DEBUG_DOMAIN( Window, "IDirectFBWindow", "IDirectFBWindow Interface" );
 
 /**********************************************************************************************************************/
 
+/*
+ * private data struct of IDirectFBWindow
+ */
 typedef struct {
      int                   ref;          /* reference counter */
 

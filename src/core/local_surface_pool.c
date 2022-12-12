@@ -241,5 +241,5 @@ const SurfacePoolFuncs localSurfacePoolFuncs = {
      .AllocateBuffer     = localAllocateBuffer,
      .DeallocateBuffer   = localDeallocateBuffer,
      .Lock               = localLock,
-     .Unlock             = localUnlock,
+     .Unlock             = localUnlock
 };

@@ -19,65 +19,20 @@
 #ifndef __IDIRECTFB_H__
 #define __IDIRECTFB_H__
 
-#include <core/coredefs.h>
 #include <core/coretypes.h>
-#include <fusion/reactor.h>
-
-/**********************************************************************************************************************/
-
-typedef struct {
-     int                         ref;     /* reference counter */
-     CoreDFB                    *core;
-
-     DFBCooperativeLevel         level;   /* current cooperative level */
-
-     CoreLayer                  *layer;   /* primary display layer */
-     CoreLayerContext           *context; /* shared context of primary layer */
-     CoreWindowStack            *stack;   /* window stack of primary layer */
-
-     struct {
-          int                    width;
-          int                    height;
-          DFBSurfacePixelFormat  format;
-          DFBSurfaceColorSpace   colorspace;
-
-          CoreWindow            *window;
-          Reaction               reaction;
-          bool                   focused;
-
-          CoreLayerContext      *context;
-          DFBWindowOptions       window_options;
-     } primary;
-
-     bool                        app_focus;
-
-     struct {
-          CoreLayer             *layer;
-          CoreLayerContext      *context;
-          CoreLayerRegion       *region;
-          CoreSurface           *surface;
-          CorePalette           *palette;
-     } layers[MAX_LAYERS];
-
-     bool                        init_done;
-     DirectMutex                 init_lock;
-     DirectWaitQueue             init_wq;
-} IDirectFB_data;
-
-/**********************************************************************************************************************/
 
 extern IDirectFB *idirectfb_singleton;
 
-void              eventbuffer_containers_remove( IDirectFBEventBuffer *thiz );
+void eventbuffer_containers_remove( IDirectFBEventBuffer *thiz );
 
 /*
  * initializes interface struct and private data
  */
-DFBResult         IDirectFB_Construct          ( IDirectFB            *thiz );
+DFBResult IDirectFB_Construct      ( IDirectFB  *thiz );
 
-DFBResult         IDirectFB_WaitInitialised    ( IDirectFB            *thiz );
+DFBResult IDirectFB_WaitInitialised( IDirectFB  *thiz );
 
-DFBResult         IDirectFB_SetAppFocus        ( IDirectFB            *thiz,
-                                                 DFBBoolean            focused );
+DFBResult IDirectFB_SetAppFocus    ( IDirectFB  *thiz,
+                                     DFBBoolean  focused );
 
 #endif

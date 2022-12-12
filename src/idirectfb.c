@@ -58,6 +58,49 @@ D_DEBUG_DOMAIN( DirectFB, "IDirectFB", "IDirectFB Interface" );
 
 /**********************************************************************************************************************/
 
+/*
+ * private data struct of IDirectFB
+ */
+typedef struct {
+     int                         ref;            /* reference counter */
+
+     CoreDFB                    *core;           /* the core object */
+
+     DFBCooperativeLevel         level;          /* current cooperative level */
+
+     CoreLayer                  *layer;          /* primary display layer */
+     CoreLayerContext           *context;        /* shared context of primary layer */
+     CoreWindowStack            *stack;          /* window stack of primary layer */
+
+     struct {
+          int                    width;
+          int                    height;
+          DFBSurfacePixelFormat  format;
+          DFBSurfaceColorSpace   colorspace;
+
+          CoreWindow            *window;
+          Reaction               reaction;
+          bool                   focused;
+
+          CoreLayerContext      *context;
+          DFBWindowOptions       window_options;
+     } primary;
+
+     bool                        app_focus;
+
+     struct {
+          CoreLayer             *layer;
+          CoreLayerContext      *context;
+          CoreLayerRegion       *region;
+          CoreSurface           *surface;
+          CorePalette           *palette;
+     } layers[MAX_LAYERS];
+
+     bool                        init_done;
+     DirectMutex                 init_lock;
+     DirectWaitQueue             init_wq;
+} IDirectFB_data;
+
 typedef struct {
      DFBScreenCallback  callback;
      void              *callback_ctx;

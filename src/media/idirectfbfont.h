@@ -21,8 +21,9 @@
 
 #include <core/coretypes.h>
 
-/**********************************************************************************************************************/
-
+/*
+ * type of probing context
+ */
 typedef enum {
      IDFBFONT_CONTEXT_CONTENT_TYPE_UNKNOWN  = 0x00000000,
 
@@ -41,8 +42,6 @@ typedef struct {
      IDirectFBFont_ProbeContextContentType  content_type;
 } IDirectFBFont_ProbeContext;
 
-/**********************************************************************************************************************/
-
 /*
  * private data struct of IDirectFBFont
  */
@@ -58,18 +57,18 @@ typedef struct {
 } IDirectFBFont_data;
 
 /*
- * Common code to initialize interface struct and private data.
+ * common code to initialize interface struct and private data
  */
 DFBResult IDirectFBFont_Construct       ( IDirectFBFont             *thiz,
                                           CoreFont                  *font );
 
 /*
- * Common code to destroy font and free private data.
+ * common code to destroy font and free private data
  */
 void      IDirectFBFont_Destruct        ( IDirectFBFont             *thiz );
 
 /*
- * Create (probing) the font.
+ * create (probing) the font
  */
 DFBResult IDirectFBFont_CreateFromBuffer( IDirectFBDataBuffer       *buffer,
                                           CoreDFB                   *core,

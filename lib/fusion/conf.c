@@ -40,6 +40,7 @@ const char   *fusion_config_usage =
      "  trace-ref=<hexid>              Trace FusionRef up/down ('all' traces all)\n"
      "  call-bin-max-num=<n>           Set maximum call number for async call buffer (default = 512, 0 = disable)\n"
      "  call-bin-max-data=<n>          Set maximum call data size for async call buffer (default = 65536)\n"
+     "  [no-]shutdown-info             Dump objects from all pools if some objects remain alive\n"
      "\n";
 
 /**********************************************************************************************************************/
@@ -194,6 +195,12 @@ fusion_config_set( const char *name,
                D_ERROR( "Fusion/Config: '%s': No value specified!\n", name );
                return DR_INVARG;
           }
+     } else
+     if (strcmp( name, "shutdown-info" ) == 0) {
+          fusion_config->shutdown_info = true;
+     } else
+     if (strcmp( name, "no-shutdown-info" ) == 0) {
+          fusion_config->shutdown_info = false;
      }
      else
           return DR_INVARG;

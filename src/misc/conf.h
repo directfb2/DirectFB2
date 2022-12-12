@@ -70,7 +70,6 @@ typedef struct
      bool                        core_sighandler;
      bool                        ownership_check;
      bool                        deinit_check;
-     bool                        shutdown_info;
      char                       *resource_manager;
      int                         session;
      long long                   screen_frame_interval;

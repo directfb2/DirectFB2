@@ -7187,8 +7187,8 @@ Bop_a8_set_alphapixel_Aop_lut8( GenefxState *gfxs )
      u8  *D   = gfxs->Aop[0];
      u32  Cop = gfxs->Cop;
 
-# define SET_PIXEL(d,s) \
-     if (s & 0x80)      \
+#define SET_PIXEL(d,s) \
+     if (s & 0x80)     \
           d = Cop;
 
      SET_PIXEL_DUFFS_DEVICE( D, S, w );

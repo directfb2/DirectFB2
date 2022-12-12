@@ -271,6 +271,7 @@ dfb_surface_create( CoreDFB                  *core,
 
      D_DEBUG_AT( Core_Surface, "%s( %p, %p, %p )\n", __FUNCTION__, core, config, ret_surface );
 
+     /* Create the surface object. */
      surface = dfb_core_create_surface( core );
      if (!surface)
           return DFB_FUSION;
@@ -426,7 +427,7 @@ dfb_surface_create( CoreDFB                  *core,
 
      CoreSurface_Init_Dispatch( core, surface, &surface->call );
 
-     /* Activate object. */
+     /* Activate the object. */
      fusion_object_activate( &surface->object );
 
      if (dfb_config->surface_clear)

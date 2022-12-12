@@ -339,5 +339,5 @@ const SurfacePoolFuncs sharedSecureSurfacePoolFuncs = {
      .AllocateBuffer     = sharedSecureAllocateBuffer,
      .DeallocateBuffer   = sharedSecureDeallocateBuffer,
      .Lock               = sharedSecureLock,
-     .Unlock             = sharedSecureUnlock,
+     .Unlock             = sharedSecureUnlock
 };

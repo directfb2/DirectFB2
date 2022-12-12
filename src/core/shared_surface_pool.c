@@ -252,5 +252,5 @@ const SurfacePoolFuncs sharedSurfacePoolFuncs = {
      .AllocateBuffer     = sharedAllocateBuffer,
      .DeallocateBuffer   = sharedDeallocateBuffer,
      .Lock               = sharedLock,
-     .Unlock             = sharedUnlock,
+     .Unlock             = sharedUnlock
 };

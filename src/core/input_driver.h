@@ -25,11 +25,11 @@
 
 static int                   driver_get_available    ( void );
 
-static void                  driver_get_info         ( InputDriverInfo               *info );
+static void                  driver_get_info         ( InputDriverInfo               *driver_info );
 
 static DFBResult             driver_open_device      ( CoreInputDevice               *device,
                                                        unsigned int                   number,
-                                                       InputDeviceInfo               *info,
+                                                       InputDeviceInfo               *device_info,
                                                        void                         **driver_data );
 
 static DFBResult             driver_get_keymap_entry ( CoreInputDevice               *device,
@@ -124,7 +124,7 @@ static const InputDriverFuncs inputdriver_funcs = {
      .GetAxisInfo      = driver_get_axis_info,
 #endif
 #ifdef DFB_INPUTDRIVER_HAS_SET_CONFIGURATION
-     .SetConfiguration = driver_set_configuration,
+     .SetConfiguration = driver_set_configuration
 #endif
 };
 

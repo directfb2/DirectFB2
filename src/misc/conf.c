@@ -48,7 +48,6 @@ static const char *dfb_config_usage =
      "  [no-]core-sighandler           Enable core signal handler, for emergency shutdowns (default enabled)\n"
      "  [no-]ownership-check           Check privileges when calling GetSurface() or GetWindow() (default enabled)\n"
      "  [no-]deinit-check              Check if all allocated resources have been released on exit (default enabled)\n"
-     "  [no-]shutdown-info             Dump objects from all pools if some objects remain alive\n"
      "  resource-manager=<impl>        Specify a resource manager implementation\n"
      "  session=<num>                  Select the multi app world which is joined (starting with 0) or created (-1)\n"
      "  screen-frame-interval=<us>     Screen refresh interval used if not defined by the encoder (default = 16666)\n"
@@ -463,12 +462,6 @@ dfb_config_set( const char *name,
      } else
      if (strcmp( name, "no-deinit-check" ) == 0) {
           dfb_config->deinit_check = false;
-     } else
-     if (strcmp( name, "shutdown-info" ) == 0) {
-          dfb_config->shutdown_info = true;
-     } else
-     if (strcmp( name, "no-shutdown-info" ) == 0) {
-          dfb_config->shutdown_info = false;
      } else
      if (strcmp( name, "resource-manager" ) == 0) {
           if (value) {

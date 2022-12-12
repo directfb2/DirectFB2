@@ -89,9 +89,6 @@ static CorePart *core_parts[] = {
      &dfb_wm_core
 };
 
-/*
- * Ckecks if stack is clean, otherwise prints warning, then calls dfb_core_destroy().
- */
 static void dfb_core_deinit_check( void *ctx );
 
 static void dfb_core_thread_init_handler( DirectThread *thread, void *arg );
@@ -104,6 +101,13 @@ static int dfb_core_arena_initialize( void *ctx );
 static int dfb_core_arena_shutdown  ( void *ctx, bool emergency );
 static int dfb_core_arena_join      ( void *ctx );
 static int dfb_core_arena_leave     ( void *ctx, bool emergency );
+
+typedef struct {
+     ICoreResourceClient *client;
+     CoreSlave            slave;
+} ResourceIdentity;
+
+/**********************************************************************************************************************/
 
 static FusionCallHandlerResult
 Core_AsyncCall_Handler( int           caller,   /* fusion id of the caller */
@@ -120,22 +124,14 @@ Core_AsyncCall_Handler( int           caller,   /* fusion id of the caller */
      return FCHR_RETURN;
 }
 
-typedef struct {
-     ICoreResourceClient *client;
-
-     CoreSlave            slave;
-} ResourceIdentity;
-
-/**********************************************************************************************************************/
-
 DFBResult
 dfb_core_create( CoreDFB **ret_core )
 {
-     DFBResult ret;
+     DFBResult  ret;
 #if FUSION_BUILD_MULTI
-     char      buf[16];
+     char       buf[16];
 #endif /* FUSION_BUILD_MULTI */
-     CoreDFB  *core   = NULL;
+     CoreDFB   *core = NULL;
 
      D_ASSERT( ret_core != NULL );
      D_ASSERT( dfb_config != NULL );
@@ -207,9 +203,9 @@ dfb_core_create( CoreDFB **ret_core )
      core->fusion_id = fusion_id( core->world );
 
 #if FUSION_BUILD_MULTI
-     D_DEBUG_AT( Core_Main, "  -> world %d, fusion id %lu\n", fusion_world_index(core->world), core->fusion_id );
+     D_DEBUG_AT( Core_Main, "  -> world %d, fusion id %lu\n", fusion_world_index( core->world ), core->fusion_id );
 
-     snprintf( buf, sizeof(buf), "%d", fusion_world_index(core->world) );
+     snprintf( buf, sizeof(buf), "%d", fusion_world_index( core->world ) );
 
      setenv( "DIRECTFB_SESSION", buf, true );
 #endif /* FUSION_BUILD_MULTI */
@@ -222,6 +218,7 @@ dfb_core_create( CoreDFB **ret_core )
      if (dfb_config->core_sighandler)
           direct_signal_handler_add( DIRECT_SIGNAL_ANY, dfb_core_signal_handler, core, &core->signal_handler );
 
+     /* Initialize async call. */
      fusion_call_init( &core_dfb->async_call, Core_AsyncCall_Handler, core, core_dfb->world );
      fusion_call_set_name( &core_dfb->async_call, "Core_AsyncCall" );
 
@@ -1680,7 +1677,7 @@ dfb_core_shutdown( CoreDFB *core,
      }
 
      if (ret == DFB_TIMEOUT) {
-          if (dfb_config->shutdown_info) {
+          if (fusion_config->shutdown_info) {
                D_ERROR( "Core/Main: Some objects remain alive, application or internal ref counting issue!\n" );
 
                /* Print objects from all pools. */
@@ -1691,7 +1688,7 @@ dfb_core_shutdown( CoreDFB *core,
      }
 
      /* Destroy window objects. */
-     fusion_object_pool_destroy( shared->window_pool, core->world, dfb_config->shutdown_info );
+     fusion_object_pool_destroy( shared->window_pool, core->world, fusion_config->shutdown_info );
      shared->window_pool = NULL;
 
      /* Close window stacks. */
@@ -1701,8 +1698,8 @@ dfb_core_shutdown( CoreDFB *core,
      CoreDFB_Deinit_Dispatch( &shared->call );
 
      /* Destroy layer context and region objects. */
-     fusion_object_pool_destroy( shared->layer_region_pool, core->world, dfb_config->shutdown_info );
-     fusion_object_pool_destroy( shared->layer_context_pool, core->world, dfb_config->shutdown_info );
+     fusion_object_pool_destroy( shared->layer_region_pool, core->world, fusion_config->shutdown_info );
+     fusion_object_pool_destroy( shared->layer_context_pool, core->world, fusion_config->shutdown_info );
 
      /* Shutdown WM core. */
      dfb_core_part_shutdown( core, &dfb_wm_core, emergency );
@@ -1712,12 +1709,12 @@ dfb_core_shutdown( CoreDFB *core,
      dfb_core_part_shutdown( core, &dfb_screen_core, emergency );
 
      /* Destroy surface and palette objects. */
-     fusion_object_pool_destroy( shared->graphics_state_pool, core->world, dfb_config->shutdown_info );
-     fusion_object_pool_destroy( shared->surface_client_pool, core->world, dfb_config->shutdown_info );
-     fusion_object_pool_destroy( shared->surface_pool, core->world, dfb_config->shutdown_info );
-     fusion_object_pool_destroy( shared->surface_buffer_pool, core->world, dfb_config->shutdown_info );
-     fusion_object_pool_destroy( shared->surface_allocation_pool, core->world, dfb_config->shutdown_info );
-     fusion_object_pool_destroy( shared->palette_pool, core->world, dfb_config->shutdown_info );
+     fusion_object_pool_destroy( shared->graphics_state_pool, core->world, fusion_config->shutdown_info );
+     fusion_object_pool_destroy( shared->surface_client_pool, core->world, fusion_config->shutdown_info );
+     fusion_object_pool_destroy( shared->surface_pool, core->world, fusion_config->shutdown_info );
+     fusion_object_pool_destroy( shared->surface_buffer_pool, core->world, fusion_config->shutdown_info );
+     fusion_object_pool_destroy( shared->surface_allocation_pool, core->world, fusion_config->shutdown_info );
+     fusion_object_pool_destroy( shared->palette_pool, core->world, fusion_config->shutdown_info );
 
      /* Destroy remaining core parts. */
      dfb_core_part_shutdown( core, &dfb_graphics_core, emergency );
@@ -1784,6 +1781,8 @@ dfb_core_join( CoreDFB *core )
 
      return DFB_OK;
 }
+
+/**********************************************************************************************************************/
 
 static void
 dfb_core_leave_callback( FusionWorld *world,

@@ -57,7 +57,7 @@ typedef struct {
 /*
  * Creates a pool of palette objects.
  */
-FusionObjectPool *dfb_palette_pool_create        ( const FusionWorld *world );
+FusionObjectPool *dfb_palette_pool_create        ( const FusionWorld     *world );
 
 /*
  * Generates dfb_palette_ref(), dfb_palette_attach() etc.
@@ -70,26 +70,26 @@ typedef enum {
 
 /**********************************************************************************************************************/
 
-DFBResult    dfb_palette_create             ( CoreDFB               *core,
-                                              unsigned int           size,
-                                              DFBSurfaceColorSpace   colorspace,
-                                              CorePalette          **ret_palette );
+DFBResult         dfb_palette_create             ( CoreDFB               *core,
+                                                   unsigned int           size,
+                                                   DFBSurfaceColorSpace   colorspace,
+                                                   CorePalette          **ret_palette );
 
-void         dfb_palette_generate_rgb332_map( CorePalette           *palette );
+void              dfb_palette_generate_rgb332_map( CorePalette           *palette );
 
-void         dfb_palette_generate_rgb121_map( CorePalette           *palette );
+void              dfb_palette_generate_rgb121_map( CorePalette           *palette );
 
-unsigned int dfb_palette_search             ( CorePalette           *palette,
-                                              u8                     r,
-                                              u8                     g,
-                                              u8                     b,
-                                              u8                     a );
+unsigned int      dfb_palette_search             ( CorePalette           *palette,
+                                                   u8                     r,
+                                                   u8                     g,
+                                                   u8                     b,
+                                                   u8                     a );
 
-void         dfb_palette_update             ( CorePalette           *palette,
-                                              int                    first,
-                                              int                    last );
+void              dfb_palette_update             ( CorePalette           *palette,
+                                                   int                    first,
+                                                   int                    last );
 
-bool         dfb_palette_equal              ( CorePalette           *palette1,
-                                              CorePalette           *palette2 );
+bool              dfb_palette_equal              ( CorePalette           *palette1,
+                                                   CorePalette           *palette2 );
 
 #endif
