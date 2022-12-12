@@ -65,18 +65,18 @@ typedef struct {
 } InputDeviceInfo;
 
 typedef enum {
-     DIAIF_NONE                    = 0x00000000, /* None of these. */
+     IDAIF_NONE    = 0x00000000, /* None of these. */
 
-     DIAIF_ABS_MIN                 = 0x00000001, /* Minimum possible value. */
-     DIAIF_ABS_MAX                 = 0x00000002, /* Maximum possible value. */
+     IDAIF_ABS_MIN = 0x00000001, /* Minimum possible value. */
+     IDAIF_ABS_MAX = 0x00000002, /* Maximum possible value. */
 
-     DIAIF_ALL                     = 0x00000003  /* All of these. */
+     IDAIF_ALL     = 0x00000003  /* All of these. */
 } InputDeviceAxisInfoFlags;
 
 typedef struct {
      InputDeviceAxisInfoFlags flags;
-     int                          abs_min;
-     int                          abs_max;
+     int                      abs_min;
+     int                      abs_max;
 } InputDeviceAxisInfo;
 
 typedef struct {

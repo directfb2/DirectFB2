@@ -265,7 +265,7 @@ dfb_input_core_initialize( CoreDFB            *core,
 
      fusion_reactor_add_permissions( shared->reactor, 0, FUSION_REACTOR_PERMIT_ATTACH_DETACH );
 
-     /* Attach local process function to the input hot-plug reactor. */
+     /* Attach the local processing function to the input hot-plug reactor. */
      ret = fusion_reactor_attach( shared->reactor, local_processing_hotplug, core, &local_processing_react );
      if (ret) {
           fusion_reactor_destroy( shared->reactor );
@@ -305,7 +305,7 @@ dfb_input_core_join( CoreDFB            *core,
      data->shared = shared;
 
 #if FUSION_BUILD_MULTI
-     /* Attach the local process function to the input hot-plug reactor. */
+     /* Attach the local processing function to the input hot-plug reactor. */
      ret = fusion_reactor_attach( shared->reactor, local_processing_hotplug, core, &local_processing_react );
      if (ret) {
           D_ERROR( "Core/Input: fusion_reactor_attach() failed!\n" );
@@ -1323,8 +1323,8 @@ init_devices( CoreDFB *core )
                device->driver      = driver;
                device->driver_data = driver_data;
 
-               D_INFO( "DirectFB/Input: %s %d.%d (%s)\n",
-                       buf, driver->info.version.major, driver->info.version.minor, driver->info.vendor );
+               D_INFO( "DirectFB/Input: %s %d.%d (%s)\n", buf,
+                       driver->info.version.major, driver->info.version.minor, driver->info.vendor );
 
 #if FUSION_BUILD_MULTI
                /* Initialize the ref between shared device and local device. */
@@ -1544,8 +1544,8 @@ dfb_input_create_device( int      device_index,
      device->driver      = driver;
      device->driver_data = driver_data;
 
-     D_INFO( "DirectFB/Input: %s %d.%d (%s)\n",
-             buf, driver->info.version.major, driver->info.version.minor, driver->info.vendor );
+     D_INFO( "DirectFB/Input: %s %d.%d (%s)\n", buf,
+             driver->info.version.major, driver->info.version.minor, driver->info.vendor );
 
 #if FUSION_BUILD_MULTI
      snprintf( buf, sizeof(buf), "Ref of input device(%u)", shared->id );
@@ -2504,12 +2504,12 @@ fixup_mouse_event( CoreInputDevice *device,
      switch (event->type) {
           case DIET_AXISMOTION:
                if ((event->flags & DIEF_AXISABS) && event->axis >= 0 && event->axis < shared->axis_num) {
-                    if (!(event->flags & DIEF_MIN) && (shared->axis_info[event->axis].flags & DIAIF_ABS_MIN)) {
+                    if (!(event->flags & DIEF_MIN) && (shared->axis_info[event->axis].flags & IDAIF_ABS_MIN)) {
                          event->min    = shared->axis_info[event->axis].abs_min;
                          event->flags |= DIEF_MIN;
                     }
 
-                    if (!(event->flags & DIEF_MAX) && (shared->axis_info[event->axis].flags & DIAIF_ABS_MAX)) {
+                    if (!(event->flags & DIEF_MAX) && (shared->axis_info[event->axis].flags & IDAIF_ABS_MAX)) {
                          event->max    = shared->axis_info[event->axis].abs_max;
                          event->flags |= DIEF_MAX;
                     }

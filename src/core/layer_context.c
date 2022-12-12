@@ -1744,6 +1744,7 @@ dfb_layer_context_create_window( CoreDFB                     *core,
           }
      }
 
+     /* Create the window object. */
      ret = dfb_window_create( stack, desc, &window );
      if (ret) {
           D_DEBUG_AT( Core_LayerContext, "  -> dfb_window_create() failed!\n" );
@@ -1751,6 +1752,7 @@ dfb_layer_context_create_window( CoreDFB                     *core,
           return ret;
      }
 
+     /* Return the new window. */
      *ret_window = window;
 
      dfb_layer_context_unlock( context );

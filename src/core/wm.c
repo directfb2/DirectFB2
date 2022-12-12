@@ -142,9 +142,8 @@ dfb_wm_core_initialize( CoreDFB         *core,
      /* Query module information. */
      funcs->GetWMInfo( &wm_shared->info );
 
-     D_INFO( "DirectFB/Core/WM: %s %d.%d (%s)\n",
-             wm_shared->info.name, wm_shared->info.version.major,
-             wm_shared->info.version.minor, wm_shared->info.vendor );
+     D_INFO( "DirectFB/Core/WM: %s %d.%d (%s)\n", wm_shared->info.name,
+             wm_shared->info.version.major, wm_shared->info.version.minor, wm_shared->info.vendor );
 
      /* Store module name in shared memory. */
      wm_shared->name = SHSTRDUP( wm_shared->shmpool, wm_local->module->name );

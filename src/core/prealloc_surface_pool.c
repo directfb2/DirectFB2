@@ -236,5 +236,5 @@ const SurfacePoolFuncs preallocSurfacePoolFuncs = {
      .DeallocateBuffer   = preallocDeallocateBuffer,
      .Lock               = preallocLock,
      .Unlock             = preallocUnlock,
-     .PreAlloc           = preallocPrealloc,
+     .PreAlloc           = preallocPrealloc
 };

@@ -98,6 +98,7 @@ dfb_surface_buffer_create( CoreDFB                 *core,
 
      D_DEBUG_AT( Core_SurfBuffer, "%s( %s )\n", __FUNCTION__, dfb_pixelformat_name( surface->config.format ) );
 
+     /* Create the buffer object. */
      buffer = dfb_core_create_surface_buffer( core );
      if (!buffer)
           return DFB_FUSION;
@@ -146,7 +147,7 @@ dfb_surface_buffer_create( CoreDFB                 *core,
           dfb_surface_allocation_update( allocation, CSAF_WRITE );
      }
 
-     /* Activate object. */
+     /* Activate the object. */
      fusion_object_activate( &buffer->object );
 
      /* Return the new buffer. */

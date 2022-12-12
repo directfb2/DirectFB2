@@ -97,6 +97,7 @@ dfb_surface_allocation_create( CoreDFB                *core,
      D_DEBUG_AT( Core_SurfAllocation, "%s( %dx%d %s )\n", __FUNCTION__,
                  buffer->config.size.w, buffer->config.size.h, dfb_pixelformat_name( buffer->config.format ) );
 
+     /* Create the allocation object. */
      allocation = dfb_core_create_surface_allocation( core );
      if (!allocation)
           return DFB_FUSION;
@@ -128,7 +129,7 @@ dfb_surface_allocation_create( CoreDFB                *core,
 
      D_MAGIC_SET( allocation, CoreSurfaceAllocation );
 
-     /* Activate object. */
+     /* Activate the object. */
      fusion_object_activate( &allocation->object );
 
      /* Return the new allocation. */

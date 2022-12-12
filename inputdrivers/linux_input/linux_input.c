@@ -1079,7 +1079,7 @@ devinput_event_thread( DirectThread *thread,
 
 static void
 get_device_info( int              fd,
-                 InputDeviceInfo *info,
+                 InputDeviceInfo *device_info,
                  bool            *touchpad )
 {
      int             i;
@@ -1096,15 +1096,15 @@ get_device_info( int              fd,
 
      D_DEBUG_AT( Linux_Input, "%s()\n", __FUNCTION__ );
 
-     info->desc.caps = 0;
+     device_info->desc.caps = 0;
 
      /* Get device name. */
-     ioctl( fd, EVIOCGNAME( DFB_INPUT_DEVICE_DESC_NAME_LENGTH - 1 ), info->desc.name );
+     ioctl( fd, EVIOCGNAME( DFB_INPUT_DEVICE_DESC_NAME_LENGTH - 1 ), device_info->desc.name );
 
-     D_DEBUG_AT( Linux_Input, "  -> name '%s'\n", info->desc.name );
+     D_DEBUG_AT( Linux_Input, "  -> name '%s'\n", device_info->desc.name );
 
      /* Set device vendor. */
-     snprintf( info->desc.vendor, DFB_INPUT_DEVICE_DESC_VENDOR_LENGTH, "Linux" );
+     snprintf( device_info->desc.vendor, DFB_INPUT_DEVICE_DESC_VENDOR_LENGTH, "Linux" );
 
      /* Get event type bits. */
      ioctl( fd, EVIOCGBIT( 0, sizeof(evbit) ), evbit );
@@ -1133,7 +1133,7 @@ get_device_info( int              fd,
                     num_buttons++;
 
           if (num_keys || num_ext_keys)
-               info->desc.caps |= DICAPS_KEYS;
+               device_info->desc.caps |= DICAPS_KEYS;
      }
 
      if (test_bit( EV_REL, evbit )) {
@@ -1166,72 +1166,72 @@ get_device_info( int              fd,
      else
           *touchpad = false;
 
-     info->desc.type = DIDTF_NONE;
+     device_info->desc.type = DIDTF_NONE;
 
      /* Mouse, Touchscreen or Joystick */
      if ((test_bit( EV_KEY, evbit ) && (test_bit( BTN_TOUCH, keybit ) || test_bit( BTN_TOOL_FINGER, keybit ))) ||
          ((num_rels >= 2 && num_buttons) || (num_abs == 2 && num_buttons == 1)))
-          info->desc.type |= DIDTF_MOUSE;
+          device_info->desc.type |= DIDTF_MOUSE;
      else if (num_abs && num_buttons)
-          info->desc.type |= DIDTF_JOYSTICK;
+          device_info->desc.type |= DIDTF_JOYSTICK;
 
      /* Keyboard */
      if (num_keys > 20) {
-          info->desc.type |= DIDTF_KEYBOARD;
+          device_info->desc.type |= DIDTF_KEYBOARD;
 
-          info->desc.min_keycode = 0;
-          info->desc.max_keycode = 127;
+          device_info->desc.min_keycode = 0;
+          device_info->desc.max_keycode = 127;
      }
      else
-          info->desc.min_keycode = info->desc.max_keycode = 0;
+          device_info->desc.min_keycode = device_info->desc.max_keycode = 0;
 
      /* Remote Control */
      if (num_ext_keys) {
-          info->desc.type |= DIDTF_REMOTE;
+          device_info->desc.type |= DIDTF_REMOTE;
      }
 
      /* Buttons */
      if (num_buttons) {
-          info->desc.caps       |= DICAPS_BUTTONS;
-          info->desc.max_button  = DIBI_FIRST + num_buttons - 1;
+          device_info->desc.caps       |= DICAPS_BUTTONS;
+          device_info->desc.max_button  = DIBI_FIRST + num_buttons - 1;
      }
      else
-          info->desc.max_button = 0;
+          device_info->desc.max_button = 0;
 
      /* Axes */
      if (num_rels || num_abs) {
-          info->desc.caps     |= DICAPS_AXES;
-          info->desc.max_axis  = DIAI_FIRST + MAX( num_rels, num_abs ) - 1;
+          device_info->desc.caps     |= DICAPS_AXES;
+          device_info->desc.max_axis  = DIAI_FIRST + MAX( num_rels, num_abs ) - 1;
      }
      else
-          info->desc.max_axis = 0;
+          device_info->desc.max_axis = 0;
 
      /* Primary input device */
-     if (info->desc.type & DIDTF_KEYBOARD)
-          info->prefered_id = DIDID_KEYBOARD;
-     else if (info->desc.type & DIDTF_REMOTE)
-          info->prefered_id = DIDID_REMOTE;
-     else if (info->desc.type & DIDTF_JOYSTICK)
-          info->prefered_id = DIDID_JOYSTICK;
-     else if (info->desc.type & DIDTF_MOUSE)
-          info->prefered_id = DIDID_MOUSE;
+     if (device_info->desc.type & DIDTF_KEYBOARD)
+          device_info->prefered_id = DIDID_KEYBOARD;
+     else if (device_info->desc.type & DIDTF_REMOTE)
+          device_info->prefered_id = DIDID_REMOTE;
+     else if (device_info->desc.type & DIDTF_JOYSTICK)
+          device_info->prefered_id = DIDID_JOYSTICK;
+     else if (device_info->desc.type & DIDTF_MOUSE)
+          device_info->prefered_id = DIDID_MOUSE;
      else
-          info->prefered_id = DIDID_ANY;
+          device_info->prefered_id = DIDID_ANY;
 
      /* Get VID and PID information. */
      ioctl( fd, EVIOCGID, &devinfo );
 
-     info->desc.vendor_id  = devinfo.vendor;
-     info->desc.product_id = devinfo.product;
+     device_info->desc.vendor_id  = devinfo.vendor;
+     device_info->desc.product_id = devinfo.product;
 
-     D_DEBUG_AT( Linux_Input, "  -> ids %d/%d\n", info->desc.vendor_id, info->desc.product_id );
+     D_DEBUG_AT( Linux_Input, "  -> ids %d/%d\n", device_info->desc.vendor_id, device_info->desc.product_id );
 }
 
 static bool
 check_device( const char *device )
 {
      int err, fd;
-     InputDeviceInfo info;
+     InputDeviceInfo device_info;
      bool            touchpad;
      bool            linux_input_grab;
      bool            linux_input_ir_only;
@@ -1267,19 +1267,19 @@ check_device( const char *device )
      }
 
      /* Get device information. */
-     get_device_info( fd, &info, &touchpad );
+     get_device_info( fd, &device_info, &touchpad );
 
      if (linux_input_grab)
           ioctl( fd, EVIOCGRAB, 0 );
 
      close( fd );
 
-     if (!info.desc.caps) {
+     if (!device_info.desc.caps) {
          D_DEBUG_AT( Linux_Input, "  -> no caps!\n" );
          return false;
      }
 
-     if (!linux_input_ir_only || (info.desc.type & DIDTF_REMOTE))
+     if (!linux_input_ir_only || (device_info.desc.type & DIDTF_REMOTE))
           return true;
 
      return false;
@@ -1359,19 +1359,19 @@ driver_get_available()
 }
 
 static void
-driver_get_info( InputDriverInfo *info )
+driver_get_info( InputDriverInfo *driver_info )
 {
-     info->version.major = 0;
-     info->version.minor = 1;
+     driver_info->version.major = 0;
+     driver_info->version.minor = 1;
 
-     snprintf( info->name,   DFB_INPUT_DRIVER_INFO_NAME_LENGTH,   "Linux Input" );
-     snprintf( info->vendor, DFB_INPUT_DRIVER_INFO_VENDOR_LENGTH, "DirectFB" );
+     snprintf( driver_info->name,   DFB_INPUT_DRIVER_INFO_NAME_LENGTH,   "Linux Input" );
+     snprintf( driver_info->vendor, DFB_INPUT_DRIVER_INFO_VENDOR_LENGTH, "DirectFB" );
 }
 
 static DFBResult
 driver_open_device( CoreInputDevice  *device,
                     unsigned int      number,
-                    InputDeviceInfo  *info,
+                    InputDeviceInfo  *device_info,
                     void            **driver_data )
 {
      LinuxInputData *data;
@@ -1405,7 +1405,7 @@ driver_open_device( CoreInputDevice  *device,
      }
 
      /* Fill device information. */
-     get_device_info( fd, info, &touchpad );
+     get_device_info( fd, device_info, &touchpad );
 
      /* Allocate and fill private data. */
      data = D_CALLOC( 1, sizeof(LinuxInputData) );
@@ -1420,7 +1420,7 @@ driver_open_device( CoreInputDevice  *device,
      data->index    = number;
      data->fd       = fd;
      data->grab     = linux_input_grab;
-     data->has_keys = (info->desc.caps & DICAPS_KEYS) != 0;
+     data->has_keys = (device_info->desc.caps & DICAPS_KEYS) != 0;
 
      /* Check if the device has LEDs. */
      err = ioctl( fd, EVIOCGBIT( EV_LED, sizeof(ledbit) ), ledbit );
@@ -1454,7 +1454,7 @@ driver_open_device( CoreInputDevice  *device,
 
      data->sensitivity = 0x100;
 
-     if (info->desc.min_keycode >= 0 && info->desc.max_keycode > info->desc.min_keycode) {
+     if (device_info->desc.min_keycode >= 0 && device_info->desc.max_keycode > device_info->desc.min_keycode) {
           data->vt_fd = open( "/dev/tty0", O_RDWR | O_NOCTTY );
 
           if (data->vt_fd < 0)
@@ -2014,7 +2014,7 @@ driver_get_axis_info( CoreInputDevice              *device,
 
                if (ioctl( data->fd, EVIOCGABS( axis ), &absinfo ) == 0 &&
                    (absinfo.minimum || absinfo.maximum)) {
-                    ret_info->flags   |= DIAIF_ABS_MIN | DIAIF_ABS_MAX;
+                    ret_info->flags   |= IDAIF_ABS_MIN | IDAIF_ABS_MAX;
                     ret_info->abs_min  = absinfo.minimum;
                     ret_info->abs_max  = absinfo.maximum;
                }

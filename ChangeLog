@@ -1,3 +1,24 @@
+commit 1e4c97c588121b3c814b108a26a356d977a946a6
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Dec 12 17:26:49 2022 +0100
+
+    Move shutdown-info parameter definition to fusion config
+
+commit 7fd8c8ef0492711667e668a73c2cc336636a97b4
+Merge: 96a680d 4388a63
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Dec 3 08:07:36 2022 +0100
+
+    Merge pull request #68 from caramelli/master
+    
+    Move tools to DirectFB2-tools repository (for static library support)
+
+commit 4388a633a043f34f3b12fdb6aa329d4ea800c45a
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Dec 3 07:25:42 2022 +0100
+
+    Update ChangeLog
+
 commit 5ff1a698b3d5607c089b50910fa73138f98e4ec9
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Sat Dec 3 07:25:11 2022 +0100

@@ -29,13 +29,13 @@
  * Forward declaration macro for interfaces.
  */
 #define D_DECLARE_INTERFACE(IFACE)                \
-     typedef struct _ ## IFACE IFACE;
+     typedef struct _##IFACE IFACE;
 
 /*
  * Macro for an interface definition.
  */
 #define D_DEFINE_INTERFACE(IFACE,...)             \
-     struct _ ## IFACE {                          \
+     struct _##IFACE {                            \
           void          *priv;                    \
           int            magic;                   \
           int            refs;                    \

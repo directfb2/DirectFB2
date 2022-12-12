@@ -559,8 +559,10 @@ typedef struct {
      DFBSurfaceBlittingFlags                 blitting_flags;     /* Supported blitting flags */
      DFBSurfaceDrawingFlags                  drawing_flags;      /* Supported drawing flags */
      unsigned int                            video_memory;       /* Amount of video memory in bytes */
+
      char name[DFB_GRAPHICS_DEVICE_DESC_NAME_LENGTH];            /* Device/Chipset name */
      char vendor[DFB_GRAPHICS_DEVICE_DESC_VENDOR_LENGTH];        /* Device vendor */
+
      DFBGraphicsDriverInfo                   driver;             /* Device driver information */
 } DFBGraphicsDeviceDescription;
 
@@ -1014,7 +1016,9 @@ typedef enum {
  */
 typedef struct {
      DFBScreenCapabilities                   caps;               /* Capability flags of the screen. */
+
      char name[DFB_SCREEN_DESC_NAME_LENGTH];                     /* Rough description. */
+
      int                                     mixers;             /* Number of mixers available. */
      int                                     encoders;           /* Number of display encoders available. */
      int                                     outputs;            /* Number of output connectors available. */
@@ -1099,7 +1103,9 @@ typedef enum {
 typedef struct {
      DFBDisplayLayerTypeFlags                type;               /* Classification of the display layer. */
      DFBDisplayLayerCapabilities             caps;               /* Capability flags of the display layer. */
+
      char name[DFB_DISPLAY_LAYER_DESC_NAME_LENGTH];              /* Display layer name. */
+
      int                                     level;              /* Default level. */
      int                                     regions;            /* Number of concurrent regions supported:
                                                                       -1 = unlimited,
@@ -1180,8 +1186,10 @@ typedef struct {
                                                                     between hardware keys is made */
      DFBInputDeviceAxisIdentifier            max_axis;           /* highest axis identifier */
      DFBInputDeviceButtonIdentifier          max_button;         /* highest button identifier */
+
      char name[DFB_INPUT_DEVICE_DESC_NAME_LENGTH];               /* device name */
      char vendor[DFB_INPUT_DEVICE_DESC_VENDOR_LENGTH];           /* device vendor */
+
      int                                     vendor_id;          /* vendor ID */
      int                                     product_id;         /* product ID */
 } DFBInputDeviceDescription;
@@ -1777,6 +1785,7 @@ typedef struct {
                                                                     in sub mode. */
      DFBDisplayLayerIDs                      sub_layers;         /* Layers available for sub mode
                                                                     with layer selection. */
+
      char name[DFB_SCREEN_MIXER_DESC_NAME_LENGTH];               /* Mixer name. */
 } DFBScreenMixerDescription;
 
@@ -1999,7 +2008,9 @@ typedef struct {
      DFBScreenOutputSignals                  out_signals;        /* Supported output signals. */
      DFBScreenOutputConnectors               all_connectors;     /* Supported output connectors */
      DFBScreenOutputResolution               all_resolutions;    /* Supported Resolutions. */
+
      char name[DFB_SCREEN_ENCODER_DESC_NAME_LENGTH];             /* Encoder name. */
+
      DFBScreenEncoderPictureFraming          all_framing;        /* Supported HDMI signaling modes. */
      DFBDisplayAspectRatio                   all_aspect_ratio;   /* Supported display aspect ratios. */
 } DFBScreenEncoderDescription;
@@ -6628,8 +6639,10 @@ typedef enum {
  */
 typedef struct {
      DFBStreamCapabilities                   caps;               /* capabilities */
+
      struct {
           char encoding[DFB_STREAM_DESC_ENCODING_LENGTH];        /* encoding (e.g. "h264") */
+
           double                             framerate;          /* number of frames per second */
           double                             aspect;             /* frame aspect ratio */
           int                                bitrate;            /* amount of bits per second */
@@ -6637,16 +6650,21 @@ typedef struct {
           int                                width;              /* width as reported by sequence header */
           int                                height;             /* height as reported by sequence header */
      } video;                                                    /* struct containing encoding properties for video */
+
      struct {
           char encoding[DFB_STREAM_DESC_ENCODING_LENGTH];        /* encoding (e.g. "aac") */
+
           int                                samplerate;         /* number of samples per second */
           int                                channels;           /* number of channels per sample */
           int                                bitrate;            /* amount of bits per second */
      } audio;                                                    /* struct containing encoding properties for audio */
+
      char title[DFB_STREAM_DESC_TITLE_LENGTH];                   /* title */
      char author[DFB_STREAM_DESC_AUTHOR_LENGTH];                 /* author */
      char album[DFB_STREAM_DESC_ALBUM_LENGTH];                   /* album */
+
      short                                   year;               /* year */
+
      char genre[DFB_STREAM_DESC_GENRE_LENGTH];                   /* genre */
      char comment[DFB_STREAM_DESC_COMMENT_LENGTH];               /* comment */
 } DFBStreamDescription;

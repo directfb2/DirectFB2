@@ -93,6 +93,7 @@ dfb_surface_client_create( CoreDFB            *core,
      D_DEBUG_AT( Core_SurfClient, "%s( %p %dx%d %s )\n", __FUNCTION__, surface,
                  surface->config.size.w, surface->config.size.h, dfb_pixelformat_name( surface->config.format ) );
 
+     /* Create the client object. */
      client = dfb_core_create_surface_client( core );
      if (!client)
           return DFB_FUSION;
@@ -115,7 +116,7 @@ dfb_surface_client_create( CoreDFB            *core,
 
      dfb_surface_unlock( surface );
 
-     /* Activate object. */
+     /* Activate the object. */
      fusion_object_activate( &client->object );
 
      /* Return the new client. */

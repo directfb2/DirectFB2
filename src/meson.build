@@ -187,12 +187,12 @@ meson.add_install_script(join_paths(meson.source_root(), 'meson_symlink.sh'),
                          'libdirectfb-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
                          join_paths(get_option('prefix'), get_option('libdir'), 'libdirectfb' + libsuffix))
 
-install_headers('idirectfb.h', subdir: 'directfb-internal')
-install_headers(core_headers, subdir: 'directfb-internal/core')
+install_headers('idirectfb.h',   subdir: 'directfb-internal')
+install_headers(core_headers,    subdir: 'directfb-internal/core')
 install_headers(display_headers, subdir: 'directfb-internal/display')
-install_headers(gfx_headers, subdir: 'directfb-internal/gfx')
-install_headers(media_headers, subdir: 'directfb-internal/media')
-install_headers(misc_headers, subdir: 'directfb-internal/misc')
+install_headers(gfx_headers,     subdir: 'directfb-internal/gfx')
+install_headers(media_headers,   subdir: 'directfb-internal/media')
+install_headers(misc_headers,    subdir: 'directfb-internal/misc')
 
 pkgconfig.generate(filebase: 'directfb',
                    name: 'DirectFB',

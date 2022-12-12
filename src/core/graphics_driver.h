@@ -25,15 +25,21 @@
 
 static int       driver_probe       ( void );
 
-static void      driver_get_info    ( GraphicsDriverInfo *info );
+static void      driver_get_info    ( GraphicsDriverInfo  *driver_info );
 
-static DFBResult driver_init_driver ( GraphicsDeviceFuncs *funcs, void *driver_data, void *device_data, CoreDFB *core );
+static DFBResult driver_init_driver ( GraphicsDeviceFuncs *funcs,
+                                      void                *driver_data,
+                                      void                *device_data,
+                                      CoreDFB             *core );
 
-static DFBResult driver_init_device ( GraphicsDeviceInfo *device_info, void *driver_data, void *device_data );
+static DFBResult driver_init_device ( GraphicsDeviceInfo  *device_info,
+                                      void                *driver_data,
+                                      void                *device_data );
 
-static void      driver_close_device( void *driver_data, void *device_data );
+static void      driver_close_device( void                *driver_data,
+                                      void                *device_data );
 
-static void      driver_close_driver( void *driver_data );
+static void      driver_close_driver( void                *driver_data );
 
 static GraphicsDriverFuncs gfxdriver_funcs = {
      .Probe         = driver_probe,

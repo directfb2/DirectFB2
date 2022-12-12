@@ -86,7 +86,6 @@ typedef struct {
 
 struct __DFB_GraphicsDeviceInfo {
      char             name[DFB_GRAPHICS_DEVICE_INFO_NAME_LENGTH];     /* Device name. */
-
      char             vendor[DFB_GRAPHICS_DEVICE_INFO_VENDOR_LENGTH]; /* Vendor of the device. */
 
      CardCapabilities caps;                                           /* Hardware acceleration capabilities. */
@@ -308,13 +307,19 @@ typedef struct {
 
      void      (*GetDriverInfo)( GraphicsDriverInfo  *driver_info );
 
-     DFBResult (*InitDriver)   ( GraphicsDeviceFuncs *funcs, void *driver_data, void *device_data, CoreDFB *core );
+     DFBResult (*InitDriver)   ( GraphicsDeviceFuncs *funcs,
+                                 void                *driver_data,
+                                 void                *device_data,
+                                 CoreDFB             *core );
 
-     DFBResult (*InitDevice)   ( GraphicsDeviceInfo *device_info, void *driver_data, void *device_data );
+     DFBResult (*InitDevice)   ( GraphicsDeviceInfo  *device_info,
+                                 void                *driver_data,
+                                 void                *device_data );
 
-     void      (*CloseDevice)  ( void *driver_data, void *device_data );
+     void      (*CloseDevice)  ( void                *driver_data,
+                                 void                *device_data );
 
-     void      (*CloseDriver)  ( void *driver_data );
+     void      (*CloseDriver)  ( void                *driver_data );
 } GraphicsDriverFuncs;
 
 typedef enum {

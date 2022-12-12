@@ -179,8 +179,7 @@ InitDevice_Async( void *ctx,
      data->caps   = shared->device_info.caps;
      data->limits = shared->device_info.limits;
 
-     D_INFO( "DirectFB/Graphics: %s %s %d.%d (%s)\n",
-             shared->device_info.vendor, shared->device_info.name,
+     D_INFO( "DirectFB/Graphics: %s %s %d.%d (%s)\n", shared->device_info.vendor, shared->device_info.name,
              shared->driver_info.version.major, shared->driver_info.version.minor, shared->driver_info.vendor );
 }
 
@@ -253,8 +252,7 @@ dfb_graphics_core_initialize( CoreDFB               *core,
                InitDevice_Async( data, NULL );
      }
      else
-          D_INFO( "DirectFB/Graphics: %s %s %d.%d (%s)\n",
-                  shared->device_info.vendor, shared->device_info.name,
+          D_INFO( "DirectFB/Graphics: %s %s %d.%d (%s)\n", shared->device_info.vendor, shared->device_info.name,
                   shared->driver_info.version.major, shared->driver_info.version.minor, shared->driver_info.vendor );
 
      if (dfb_config->software_only) {
@@ -361,8 +359,7 @@ dfb_graphics_core_join( CoreDFB               *core,
           return DFB_UNSUPPORTED;
      }
 
-     D_INFO( "DirectFB/Graphics: %s %s %d.%d (%s)\n",
-             shared->device_info.vendor, shared->device_info.name,
+     D_INFO( "DirectFB/Graphics: %s %s %d.%d (%s)\n", shared->device_info.vendor, shared->device_info.name,
              shared->driver_info.version.major, shared->driver_info.version.minor, shared->driver_info.vendor );
 
      if (dfb_config->software_only) {

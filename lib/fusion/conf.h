@@ -36,6 +36,7 @@ typedef struct {
      int           trace_ref;
      unsigned int  call_bin_max_num;
      unsigned int  call_bin_max_data;
+     bool          shutdown_info;
 } FusionConfig;
 
 /**********************************************************************************************************************/

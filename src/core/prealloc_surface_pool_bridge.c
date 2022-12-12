@@ -338,5 +338,5 @@ const SurfacePoolBridgeFuncs preallocSurfacePoolBridgeFuncs = {
      .LeavePoolBridge    = preallocLeavePoolBridge,
      .CheckTransfer      = preallocCheckTransfer,
      .StartTransfer      = preallocStartTransfer,
-     .FinishTransfer     = preallocFinishTransfer,
+     .FinishTransfer     = preallocFinishTransfer
 };
