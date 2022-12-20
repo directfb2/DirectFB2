@@ -82,7 +82,7 @@ spaced_primes_closest( unsigned int num )
           if (primes[i] > num)
                return primes[i];
 
-     return primes[nprimes - 1];
+     return primes[nprimes-1];
 }
 
 static __inline__ FusionHashNode **

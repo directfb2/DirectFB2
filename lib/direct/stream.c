@@ -1151,7 +1151,7 @@ direct_stream_create( const char    *filename,
      return DR_OK;
 }
 
-DirectStream*
+DirectStream *
 direct_stream_dup( DirectStream *stream )
 {
      D_MAGIC_ASSERT( stream, DirectStream );

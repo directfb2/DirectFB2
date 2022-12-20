@@ -331,7 +331,7 @@ dfb_updates_add( DFBUpdates      *updates,
           dfb_region_region_union( &updates->bounding, region );
 
           D_DEBUG_AT( DirectFB_Updates, "  -> added as      [%d] %4d,%4d-%4dx%4d\n", updates->num_regions - 1,
-                      DFB_RECTANGLE_VALS_FROM_REGION( &updates->regions[updates->num_regions - 1] ) );
+                      DFB_RECTANGLE_VALS_FROM_REGION( &updates->regions[updates->num_regions-1] ) );
      }
 }
 

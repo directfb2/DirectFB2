@@ -49,7 +49,8 @@ static const char *dfb_config_usage =
      "  [no-]ownership-check           Check privileges when calling GetSurface() or GetWindow() (default enabled)\n"
      "  [no-]deinit-check              Check if all allocated resources have been released on exit (default enabled)\n"
      "  resource-manager=<impl>        Specify a resource manager implementation\n"
-     "  session=<num>                  Select the multi app world which is joined (starting with 0) or created (-1)\n"
+     "  session=<num>                  Select the multi application world which is joined or created\n"
+     "                                 -1 forces the creation of a new world using the lowest unused session number\n"
      "  screen-frame-interval=<us>     Screen refresh interval used if not defined by the encoder (default = 16666)\n"
      "  [no-]primary-only              Tell application only about the primary layer\n"
      "  primary-id=<surface-id>        Set ID of primary surface to use\n"
@@ -1405,7 +1406,6 @@ dfb_config_init( int   *argc,
                  char **argv[] )
 {
      DFBResult  ret;
-     int        i;
      char      *home = direct_getenv( "HOME" );
      char      *prog = NULL;
      char      *session;
@@ -1509,6 +1509,8 @@ dfb_config_init( int   *argc,
 
      /* Read settings from command line. */
      if (argc && argv) {
+          int i;
+
           for (i = 1; i < *argc; i++) {
                if (strcmp( (*argv)[i], "--dfb-help" ) == 0) {
                     print_config_usage();

@@ -193,9 +193,9 @@ direct_modules_explore_directory( DirectModuleDir *directory )
           DirectModuleEntry *module;
           int                entry_len = strlen( entry.name );
 
-          if (entry_len < 4 ||
-              entry.name[entry_len-1] != 'o' ||
-              entry.name[entry_len-2] != 's')
+          if (entry_len < 4                  ||
+              entry.name[entry_len-2] != 's' ||
+              entry.name[entry_len-1] != 'o')
                continue;
 
           if (lookup_by_file( directory, entry.name ))

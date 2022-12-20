@@ -331,7 +331,7 @@ test_mode_simple( FBDevData       *fbdev,
      shared = fbdev->shared;
 
      var = shared->current_var;
-     ret = mode_to_var( mode, dfb_pixelformat_for_depth(mode->bpp), mode->xres, mode->yres,
+     ret = mode_to_var( mode, dfb_pixelformat_for_depth( mode->bpp ), mode->xres, mode->yres,
                         fbdev->fix->xpanstep, fbdev->fix->ypanstep, fbdev->fix->ywrapstep, 0, 0, DLBM_FRONTONLY,
                         &var );
      if (ret)

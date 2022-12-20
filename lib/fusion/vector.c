@@ -135,7 +135,7 @@ fusion_vector_insert( FusionVector *vector,
           return D_OOSHM();
 
      /* Move elements from insertion point one up. */
-     memmove( &vector->elements[index + 1], &vector->elements[index], (vector->count - index) * sizeof(void*) );
+     memmove( &vector->elements[index+1], &vector->elements[index], (vector->count - index) * sizeof(void*) );
 
      /* Insert the element into the vector. */
      vector->elements[index] = element;
@@ -168,11 +168,11 @@ fusion_vector_move( FusionVector *vector,
      /* Move elements that lie on the way to the new position. */
      if (to > from) {
           /* Element is moving up -> move other elements down. */
-          memmove( &vector->elements[from], &vector->elements[from + 1], (to - from) * sizeof(void*) );
+          memmove( &vector->elements[from], &vector->elements[from+1], (to - from) * sizeof(void*) );
      }
      else {
           /* Element is moving down -> move other elements up. */
-          memmove( &vector->elements[to + 1], &vector->elements[to], (from - to) * sizeof(void*) );
+          memmove( &vector->elements[to+1], &vector->elements[to], (from - to) * sizeof(void*) );
      }
 
      /* Restore the element at the new position. */
@@ -190,7 +190,7 @@ fusion_vector_remove( FusionVector *vector,
      D_ASSERT( index < vector->count );
 
      /* Move elements after this element one down. */
-     memmove( &vector->elements[index], &vector->elements[index + 1], (vector->count - index - 1) * sizeof(void*) );
+     memmove( &vector->elements[index], &vector->elements[index+1], (vector->count - index - 1) * sizeof(void*) );
 
      /* Decrease the element counter. */
      vector->count--;
