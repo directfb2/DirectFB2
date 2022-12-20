@@ -268,10 +268,10 @@ load_symbols( const char *filename )
           if (line[0] == ' ' || length < (digits + 5) || line[length-1] != '\n')
                continue;
 
-          if (line[digits + 1] != 't' && line[digits + 1] != 'T' && line[digits + 1] != 'W')
+          if (line[digits+1] != 't' && line[digits+1] != 'T' && line[digits+1] != 'W')
                continue;
 
-          if (line[digits] != ' ' || line[digits + 2] != ' ' || line[digits + 3] == '.')
+          if (line[digits] != ' ' || line[digits+2] != ' ' || line[digits+3] == '.')
                continue;
 
           for (n = 0; n < digits; n++) {

@@ -625,7 +625,7 @@ fusion_world_flush_calls( FusionWorld *world,
                return DR_OK;
           }
 
-          call_tls->bins[call_tls->bins_num - 1].flags &= ~(FCEF_FOLLOW | FCEF_QUEUE);
+          call_tls->bins[call_tls->bins_num-1].flags &= ~(FCEF_FOLLOW | FCEF_QUEUE);
 
           while (ioctl( world->fusion_fd, FUSION_CALL_EXECUTE3, call_tls->bins )) {
                switch (errno) {

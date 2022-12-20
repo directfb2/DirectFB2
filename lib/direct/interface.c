@@ -317,7 +317,7 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
 
      len = strlen( path ) + strlen( "/interfaces/" ) + strlen( type ) + 1;
      interface_dir = alloca( len );
-     snprintf( interface_dir, len, "%s%sinterfaces/%s", path, path[strlen( path ) - 1] == '/' ? "" : "/", type );
+     snprintf( interface_dir, len, "%s%sinterfaces/%s", path, path[strlen( path )-1] == '/' ? "" : "/", type );
 
      ret = direct_dir_open( &dir, interface_dir );
      if (ret) {
@@ -344,15 +344,16 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
 
                /* Iterate directory. */
                while (idx >= 0 && direct_dir_read( &dir, &entry ) == DR_OK) {
-                    void *handle = NULL;
                     char  buf[PATH_MAX];
+                    int   entry_len = strlen( entry.name );
+                    void *handle    = NULL;
 
                     DirectInterfaceImplementation *old_impl = (DirectInterfaceImplementation*) implementations;
                     DirectInterfaceImplementation *test_impl;
 
-                    if (strlen( entry.name ) < 4                    ||
-                        entry.name[strlen( entry.name ) - 2] != 's' ||
-                        entry.name[strlen( entry.name ) - 1] != 'o')
+                    if (entry_len < 4                  ||
+                        entry.name[entry_len-2] != 's' ||
+                        entry.name[entry_len-1] != 'o')
                          continue;
 
                     snprintf( buf, sizeof(buf), "%s/%s", interface_dir, entry.name );
@@ -418,15 +419,16 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
 
      /* Iterate directory. */
      while (direct_dir_read( &dir, &entry ) == DR_OK) {
-          void *handle = NULL;
           char  buf[PATH_MAX];
+          int   entry_len = strlen( entry.name );
+          void *handle    = NULL;
 
           DirectInterfaceImplementation *old_impl = (DirectInterfaceImplementation*) implementations;
           DirectInterfaceImplementation *test_impl;
 
-          if (strlen( entry.name ) < 4 ||
-              entry.name[strlen( entry.name ) - 2] != 's' ||
-              entry.name[strlen( entry.name ) - 1] != 'o')
+          if (entry_len < 4                  ||
+              entry.name[entry_len-2] != 's' ||
+              entry.name[entry_len-1] != 'o')
                continue;
 
           snprintf( buf, sizeof(buf), "%s/%s", interface_dir, entry.name );

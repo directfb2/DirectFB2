@@ -323,6 +323,8 @@ IDirectFBVideoProvider_DFVFF_GetStreamDescription( IDirectFBVideoProvider *thiz,
      if (!ret_desc)
           return DFB_INVARG;
 
+     memset( ret_desc, 0, sizeof(DFBStreamDescription) );
+
      ret_desc->caps = DVSCAPS_VIDEO;
 
      snprintf( ret_desc->video.encoding, DFB_STREAM_DESC_ENCODING_LENGTH, "rawvideo" );

@@ -17,7 +17,7 @@
 project('DirectFB2', 'c',
         version: '2.0.0',
         meson_version: '>= 0.50',
-        default_options: ['buildtype=release', 'c_std=gnu99'])
+        default_options: 'buildtype=release')
 
 directfb_version = meson.project_version()
 directfb_major_version = directfb_version.split('.')[0].to_int()

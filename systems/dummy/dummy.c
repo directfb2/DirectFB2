@@ -20,7 +20,7 @@
 #include <core/screens.h>
 #include <core/core_system.h>
 
-D_DEBUG_DOMAIN( Dummy_System, "Dummy/System", "Dummy System" );
+D_DEBUG_DOMAIN( Dummy_System, "Dummy/System", "Dummy System Module" );
 
 DFB_CORE_SYSTEM( dummy )
 

@@ -314,7 +314,7 @@ IDirectFBVideoProvider_CreateFromBuffer( IDirectFBDataBuffer     *buffer,
      if (!buffer_data)
           return DFB_DEAD;
 
-     /* Clear context header. */
+     /* Clear probe context header. */
      memset( ctx.header, 0, sizeof(ctx.header) );
 
      /* Provide a fallback for video providers without data buffer support. */

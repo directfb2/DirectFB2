@@ -86,7 +86,6 @@ pan_display( FBDevData *fbdev,
           D_PERROR( "FBDev/Layer: Panning display failed (xoffset = %u, yoffset = %u, ywrap = %d, vbl = %d)!\n",
                     var->xoffset, var->yoffset,
                     (var->vmode & FB_VMODE_YWRAP) ? 1 : 0, (var->activate & FB_ACTIVATE_VBL) ? 1 : 0);
-
           return ret;
      }
 
@@ -127,7 +126,6 @@ set_palette( FBDevData   *fbdev,
      if (fbdev_ioctl( fbdev, FBIOPUTCMAP, cmap, sizeof(*cmap) ) < 0) {
           ret = errno2result( errno );
           D_PERROR( "FBDev/Layer: Could not set the palette!\n" );
-
           return ret;
      }
 

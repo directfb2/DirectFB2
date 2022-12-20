@@ -55,6 +55,10 @@ else
   shm_sources = 'shm/fake.c'
 endif
 
+shm_headers = [
+  'shm/pool.h'
+]
+
 build_h = configuration_data()
 
 if get_option('multi')
@@ -89,6 +93,7 @@ meson.add_install_script(join_paths(meson.source_root(), 'meson_symlink.sh'),
                          join_paths(get_option('prefix'), get_option('libdir'), 'libfusion' + libsuffix))
 
 install_headers(fusion_headers, subdir: 'directfb/fusion')
+install_headers(shm_headers,    subdir: 'directfb/fusion/shm')
 
 pkgconfig.generate(filebase: 'fusion',
                    name: 'Fusion',
