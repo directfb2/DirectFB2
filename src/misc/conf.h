@@ -46,6 +46,7 @@ typedef struct {
      bool                                palette_set;
 
      int                                 rotate;
+     bool                                rotate_set;
 } DFBConfigLayer;
 
 typedef enum {
