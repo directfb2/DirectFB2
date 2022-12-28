@@ -268,11 +268,11 @@ dfb_layer_context_init( CoreLayerContext *context,
      context->config     = shared->default_config;
      context->adjustment = shared->default_adjustment;
 
-     /* If the user set the desired rotation use that */
+     /* Get the layer rotation. */
      if (dfb_config->layers[dfb_layer_id_translated( layer )].rotate_set)
           context->rotation = dfb_config->layers[dfb_layer_id_translated( layer )].rotate;
      else
-          dfb_screen_get_rotation(layer->screen, &context->rotation);
+          dfb_screen_get_rotation( layer->screen, &context->rotation );
 
      /* Initialize screen location. */
      context->screen.location.x = 0.0f;

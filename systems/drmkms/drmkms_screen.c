@@ -27,97 +27,9 @@ D_DEBUG_DOMAIN( DRMKMS_Screen, "DRMKMS/Screen", "DRM/KMS Screen" );
 
 extern const DisplayLayerFuncs drmkmsPrimaryLayerFuncs;
 
-static void
-drmkmsGetProp( DRMKMSData       *drmkms,
-               uint32_t          prop_id,
-               uint64_t          prop_value,
-               void            (*callback)(drmModePropertyPtr prop, uint64_t value, void *data),
-               void             *data )
-{
-    drmModePropertyPtr prop;
-
-    prop = drmModeGetProperty(drmkms->fd, prop_id);
-
-    callback(prop, prop_value, data);
-
-    drmModeFreeProperty(prop);
-}
-
-static void
-drmkmsForEachConnectorProp( DRMKMSData       *drmkms,
-                            drmModeConnector *connector,
-                            void            (*callback)(drmModePropertyPtr prop, uint64_t value, void *data),
-                            void             *data )
-{
-     drmModeObjectPropertiesPtr props;
-     int i;
-
-     props = drmModeObjectGetProperties(drmkms->fd, connector->connector_id,
-             DRM_MODE_OBJECT_CONNECTOR);
-
-     if (!props)
-          return;
-
-     for (i = 0; i < props->count_props; i++)
-          drmkmsGetProp(drmkms, props->props[i], props->prop_values[i], callback, data);
-
-     drmModeFreeObjectProperties(props);
+static const char *panel_orientation_table[] = {
+     "Normal", "Upside Down", "Left Side Up", "Right Side Up",
 };
-
-static void
-drmkmsGetPanelOrientationCallback( drmModePropertyPtr  prop,
-                                   uint64_t            value,
-                                   void               *data )
-{
-     int i;
-     int *result = (int *) data;
-     int rot = 0;
-     const int max_enum = 3;
-     const char *orientations[max_enum + 1];
-     const char *orientation;
-
-     if(strcmp(prop->name, "panel orientation") == 0) {
-          if (!drm_property_type_is(prop, DRM_MODE_PROP_ENUM)) {
-               D_INFO( "DRMKMS/Screen: panel orientation property is not enum!\n" );
-               return;
-          }
-
-          for (i = 0; i < prop->count_enums; i++) {
-               /* The maximum enum value should be 3,.. */
-               if (prop->enums[i].value > max_enum){
-                    D_INFO( "DRMKMS/Screen: orientation enum out of expected range\n" );
-                    return;
-               }
-               orientations[(int) prop->enums[i].value] = prop->enums[i].name;
-          }
-
-          if ((int) value == -1)
-               orientation = "unconfigured\n";
-          else {
-               orientation = orientations[(int) value];
-               if (strcmp(orientation, "Upside Down") == 0)
-                   rot = 180;
-          }
-
-          D_INFO( "DRMKMS/Screen: configured orientation: \"%s\" (%d), rotation %d\n",
-                  orientation, (int) value, rot);
-
-          if(result)
-               *result = rot;
-     }
-}
-
-static int
-drmkmsConnectorGetPanelOrientation( DRMKMSData       *drmkms,
-                                    drmModeConnector *connector )
-{
-    int rotation = 0;
-
-    drmkmsForEachConnectorProp(drmkms, connector,
-             drmkmsGetPanelOrientationCallback, &rotation);
-
-    return rotation;
-}
 
 static DFBResult
 drmkmsInitScreen( CoreScreen           *screen,
@@ -545,7 +457,7 @@ drmkmsSetEncoderConfig( CoreScreen                   *screen,
                                 &drmkms->connector[encoder]->connector_id, 1, mode );
           if (err) {
                ret = errno2result( errno );
-               D_PERROR( "DRMKMS/Layer: "
+               D_PERROR( "DRMKMS/Screen: "
                          "drmModeSetCrtc( crtc_id %u, fb_id %u, xy %d,%d, connector_id %u, mode %ux%u@%uHz )"
                          " failed for encoder %d!\n", drmkms->encoder[encoder]->crtc_id,
                          shared->primary_fb, shared->primary_rect.x, shared->primary_rect.y,
@@ -649,7 +561,7 @@ drmkmsSetOutputConfig( CoreScreen                  *screen,
                                 &drmkms->connector[output]->connector_id, 1, mode );
           if (err) {
                ret = errno2result( errno );
-               D_PERROR( "DRMKMS/Layer: "
+               D_PERROR( "DRMKMS/Screen: "
                          "drmModeSetCrtc( crtc_id %u, fb_id %u, xy %d,%d, connector_id %u, mode %ux%u@%uHz )"
                          " failed for output %d!\n", drmkms->encoder[output]->crtc_id,
                          shared->primary_fb, shared->primary_rect.x, shared->primary_rect.y,
@@ -674,6 +586,8 @@ drmkmsGetScreenSize( CoreScreen *screen,
      DRMKMSData       *drmkms = driver_data;
      DRMKMSDataShared *shared;
 
+     D_DEBUG_AT( DRMKMS_Screen, "%s()\n", __FUNCTION__ );
+
      D_ASSERT( drmkms != NULL );
      D_ASSERT( drmkms->shared != NULL );
 
@@ -688,11 +602,47 @@ drmkmsGetScreenSize( CoreScreen *screen,
 static DFBResult
 drmkmsGetScreenRotation( CoreScreen *screen,
                          void       *driver_data,
-                         int        *rotation )
+                         int        *ret_rotation )
 {
-     DRMKMSData       *drmkms = driver_data;
+     DRMKMSData              *drmkms = driver_data;
+     drmModeObjectProperties *props;
+     drmModePropertyRes      *prop;
+     int                      i;
 
-     *rotation = drmkmsConnectorGetPanelOrientation(drmkms, drmkms->connector[0]);
+     D_DEBUG_AT( DRMKMS_Screen, "%s()\n", __FUNCTION__ );
+
+     D_ASSERT( drmkms != NULL );
+
+     *ret_rotation = 0;
+
+     props = drmModeObjectGetProperties( drmkms->fd, drmkms->connector[0]->connector_id, DRM_MODE_OBJECT_CONNECTOR );
+     if (!props)
+          return DFB_OK;
+
+     for (i = 0; i < props->count_props; i++) {
+          prop = drmModeGetProperty( drmkms->fd, props->props[i] );
+
+          if (!strcmp( prop->name, "panel orientation" )) {
+               D_ASSUME( props->prop_values[i] >= 0 && props->prop_values[i] <= 3 );
+
+               for (i = 0; i < prop->count_enums; i++) {
+                    if (!strcmp( panel_orientation_table[props->prop_values[i]], "Upside Down" ))
+                         *ret_rotation = 180;
+                    else if (!strcmp( panel_orientation_table[props->prop_values[i]], "Left Side Up" ))
+                         *ret_rotation = 270;
+                    else if (!strcmp( panel_orientation_table[props->prop_values[i]], "Right Side Up" ))
+                         *ret_rotation = 90;
+               }
+
+               D_INFO( "DRMKMS/Screen: Using %s panel orientation (rotation = %d)\n",
+                       panel_orientation_table[props->prop_values[i]], *ret_rotation);
+               break;
+          }
+
+          drmModeFreeProperty( prop );
+     }
+
+     drmModeFreeObjectProperties( props );
 
      return DFB_OK;
 }
@@ -709,5 +659,5 @@ const ScreenFuncs drmkmsScreenFuncs = {
      .TestOutputConfig  = drmkmsTestOutputConfig,
      .SetOutputConfig   = drmkmsSetOutputConfig,
      .GetScreenSize     = drmkmsGetScreenSize,
-     .GetScreenRotation = drmkmsGetScreenRotation,
+     .GetScreenRotation = drmkmsGetScreenRotation
 };

@@ -650,20 +650,20 @@ dfb_screen_get_frame_interval( CoreScreen *screen,
 
 DFBResult
 dfb_screen_get_rotation( CoreScreen *screen,
-                         int        *rotation )
+                         int        *ret_rotation )
 {
-    const ScreenFuncs *funcs;
+     const ScreenFuncs *funcs;
 
-    D_ASSERT( screen != NULL );
-    D_ASSERT( screen->funcs != NULL );
-    D_ASSERT( rotation != NULL );
+     D_ASSERT( screen != NULL );
+     D_ASSERT( screen->funcs != NULL );
+     D_ASSERT( ret_rotation != NULL );
 
-    funcs = screen->funcs;
+     funcs = screen->funcs;
 
-    if (!funcs->GetScreenRotation) {
-         *rotation = 0;
-         return DFB_OK;
-    }
+     if (!funcs->GetScreenRotation) {
+          *ret_rotation = 0;
+          return DFB_OK;
+     }
 
-    return funcs->GetScreenRotation( screen, screen->driver_data, rotation );
+     return funcs->GetScreenRotation( screen, screen->driver_data, ret_rotation );
 }

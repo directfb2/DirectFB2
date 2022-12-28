@@ -416,6 +416,7 @@ drmkmsPlaneInitLayer( CoreLayer                  *layer,
           D_INFO( "DRMKMS/Layer: Supported properties for layer id %u\n", data->plane->plane_id );
           for (i = 0; i < props->count_props; i++) {
                prop = drmModeGetProperty( drmkms->fd, props->props[i] );
+
                if (!strcmp( prop->name, "colorkey" )) {
                     description->caps |= DLCAPS_SRC_COLORKEY;
                     data->colorkey_propid = prop->prop_id;
