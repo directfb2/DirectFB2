@@ -39,9 +39,11 @@ IPalette_Real__SetEntries( CorePalette    *obj,
           return DFB_INVARG;
 
      if (num) {
+          u32 i;
+
           direct_memcpy( obj->entries + offset, colors, num * sizeof(DFBColor) );
 
-          for (u32 i = offset; i < offset + num; i++) {
+          for (i = offset; i < offset + num; i++) {
                obj->entries_yuv[i].a = obj->entries[i].a;
 
                if (obj->colorspace == DSCS_BT601)
@@ -79,9 +81,11 @@ IPalette_Real__SetEntriesYUV( CorePalette       *obj,
           return DFB_INVARG;
 
      if (num) {
+          u32 i;
+
           direct_memcpy( obj->entries_yuv + offset, colors, num * sizeof(DFBColorYUV) );
 
-          for (u32 i = offset; i < offset + num; i++) {
+          for (i = offset; i < offset + num; i++) {
                obj->entries[i].a = obj->entries_yuv[i].a;
 
                if (obj->colorspace == DSCS_BT601)
