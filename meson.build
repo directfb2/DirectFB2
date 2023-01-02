@@ -16,7 +16,7 @@
 
 project('DirectFB2', 'c',
         version: '2.0.0',
-        meson_version: '>= 0.50',
+        meson_version: '>= 0.61',
         default_options: 'buildtype=release')
 
 directfb_version = meson.project_version()

@@ -183,9 +183,9 @@ libdirectfb = library('directfb-@0@.@1@'.format(directfb_major_version, directfb
                       version: '0.@0@.0'.format(directfb_micro_version),
                       install: true)
 
-meson.add_install_script(join_paths(meson.source_root(), 'meson_symlink.sh'),
-                         'libdirectfb-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
-                         join_paths(get_option('prefix'), get_option('libdir'), 'libdirectfb' + libsuffix))
+install_symlink('libdirectfb' + libsuffix,
+                pointing_to: 'libdirectfb-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
+                install_dir: join_paths(get_option('prefix'), get_option('libdir')))
 
 install_headers('idirectfb.h',   subdir: 'directfb-internal')
 install_headers(core_headers,    subdir: 'directfb-internal/core')

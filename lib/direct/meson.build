@@ -160,9 +160,9 @@ libdirect = library('direct-@0@.@1@'.format(directfb_major_version, directfb_min
                     version: '0.@0@.0'.format(directfb_micro_version),
                     install: true)
 
-meson.add_install_script(join_paths(meson.source_root(), 'meson_symlink.sh'),
-                         'libdirect-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
-                         join_paths(get_option('prefix'), get_option('libdir'), 'libdirect' + libsuffix))
+install_symlink('libdirect' + libsuffix,
+                pointing_to: 'libdirect-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
+                install_dir: join_paths(get_option('prefix'), get_option('libdir')))
 
 install_headers(direct_headers,   subdir: 'directfb/direct')
 install_headers(os_headers,       subdir: 'directfb/direct/os')

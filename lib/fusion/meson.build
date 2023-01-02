@@ -88,9 +88,9 @@ libfusion = library('fusion-@0@.@1@'.format(directfb_major_version, directfb_min
                     version: '0.@0@.0'.format(directfb_micro_version),
                     install: true)
 
-meson.add_install_script(join_paths(meson.source_root(), 'meson_symlink.sh'),
-                         'libfusion-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
-                         join_paths(get_option('prefix'), get_option('libdir'), 'libfusion' + libsuffix))
+install_symlink('libfusion' + libsuffix,
+                pointing_to: 'libfusion-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
+                install_dir: join_paths(get_option('prefix'), get_option('libdir')))
 
 install_headers(fusion_headers, subdir: 'directfb/fusion')
 install_headers(shm_headers,    subdir: 'directfb/fusion/shm')

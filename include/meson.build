@@ -43,7 +43,7 @@ configure_file(configuration: directfb_build_h,
                install_dir: join_paths(get_option('includedir'), 'directfb'))
 
 directfb_keynames = custom_target('directfb_keynames',
-                                  command: [join_paths(meson.source_root(), 'include/gen_directfb_keynames.sh'), '@INPUT@'],
+                                  command: ['gen_directfb_keynames.sh', '@INPUT@'],
                                   input: 'directfb_keyboard.h',
                                   output: 'directfb_keynames.h',
                                   capture: true,
@@ -51,7 +51,7 @@ directfb_keynames = custom_target('directfb_keynames',
                                   install_dir: join_paths(get_option('includedir'), 'directfb'))
 
 directfb_strings = custom_target('directfb_strings',
-                                 command: [join_paths(meson.source_root(), 'include/gen_directfb_strings.sh'), '@INPUT@'],
+                                 command: ['gen_directfb_strings.sh', '@INPUT@'],
                                  input: 'directfb.h',
                                  output: 'directfb_strings.h',
                                  capture: true,
