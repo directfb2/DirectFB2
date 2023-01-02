@@ -1,3 +1,114 @@
+commit 9bdd8911aed12a5b6a293aded3d3c54c27ccc7cb
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jan 2 10:33:47 2023 +0100
+
+    Meson: Use install_symlink() function instead of meson_symlink.sh script
+
+commit bf85d083d07ffca28361235c6c10caf73961776e
+Merge: d942ae0 487211f
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Dec 29 16:42:08 2022 +0100
+
+    Merge pull request #75 from caramelli/master
+    
+    Fix loop initial declarations (due to removal of -std=gnu99 option)
+
+commit 487211ffd4b4a13bc59a1b5f658908835619da28
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Dec 29 16:42:29 2022 +0100
+
+    Fix loop initial declarations (due to removal of -std=gnu99 option)
+
+commit d942ae051557c7aae03b65f4b1e14dd7ddde0223
+Merge: 1278837 36f78a5
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Dec 28 19:55:37 2022 +0100
+
+    Merge pull request #73 from fifteenhex/drmkmsrotsupport-20221227
+    
+    WorkInProgress: Allow DRM/KMS orientation to configure the rotation
+
+commit 36f78a5dca1ac9d48a341cf4b5a201a7e40a9a30
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Dec 28 19:55:51 2022 +0100
+
+    Allow DRM/KMS orientation to configure the rotation
+
+commit 76ae5f3c50fd06b94c5ca56565769b4ca71b8eb7
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Fri Nov 11 21:47:05 2022 +0900
+
+    system: drmkms: Probe for panel rotation
+    
+    On some embedded systems the LCD panel is mounted in the chassis
+    upside down. To render the image correctly it needs to be rotated
+    in userspace.
+    
+    The kernel part of DRM/KMS exposes the panel orientation via a
+    connector property. So grab the orientation for the panel from the
+    kernel and present that as the screen rotation so that the image
+    is flipped when blitted.
+
+commit 16cc14cf28dc5cfc75cb29456f4e443495e7f2a3
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Sun Feb 20 11:39:10 2022 +0900
+
+    core: layer: Get the physical rotation from the system
+    
+    For drmkms the physical orientation of the display can be
+    probed so it is possible to automatically correct for a
+    rotated display.
+    
+    If the user hasn't set the rotation in their config ask
+    the system what the rotation should be.
+
+commit 5525df479e8ced0287e7c3b325bc3c4dc7b69c13
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Sat Feb 19 11:02:57 2022 +0900
+
+    conf: Add flag for whether the rotation was configured or not.
+    
+    If the user specified a rotation the value could be 0,90,180 or 270.
+    If they didn't specify anything it will be 0. Currently it's not
+    possible to tell if they asked for 0 or it's just the default.
+    
+    If the value is 0 but the user didn't set it we should ask the
+    system what it thinks the rotation is (i.e. the panel orientation
+    from DRM/KMS). So a flag is needed to tell if the 0 came from the
+    user.
+    
+    Add a flag for whether the rotation was user set.
+
+commit 1278837fafc6d85d3a4dd316d848b5bb7dd19ec6
+Merge: 0fdf5df 7da29a8
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Tue Dec 20 13:22:23 2022 +0100
+
+    Merge pull request #71 from caramelli/master
+    
+    fusion: Install shm/pool.h header file
+
+commit 7da29a843e2a765f53c87874c7ffdc37a2312f51
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Dec 20 13:19:21 2022 +0100
+
+    fusion: Install shm/pool.h header file
+
+commit 0fdf5df3995bbcb4d2e06fd5d2b979651bc60f0c
+Merge: 7fd8c8e 5bd77be
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Dec 12 17:27:35 2022 +0100
+
+    Merge pull request #69 from caramelli/master
+    
+    Move shutdown-info parameter definition to fusion config
+
+commit 5bd77be2daf48c36a22d6fccf1f8e6970705e1d1
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Dec 12 17:27:09 2022 +0100
+
+    Update ChangeLog
+
 commit 1e4c97c588121b3c814b108a26a356d977a946a6
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Mon Dec 12 17:26:49 2022 +0100
