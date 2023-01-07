@@ -198,6 +198,7 @@ typedef struct {
       */
      DFBResult (*GetScreenRotation)( CoreScreen                   *screen,
                                      void                         *driver_data,
+                                     void                         *screen_data,
                                      int                          *ret_rotation );
 } ScreenFuncs;
 

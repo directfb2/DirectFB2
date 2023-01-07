@@ -151,9 +151,9 @@ struct __DFB_GenefxState {
 
 /**********************************************************************************************************************/
 
-void gGetDriverInfo( GraphicsDriverInfo  *info );
+void gGetDriverInfo( GraphicsDriverInfo  *driver_info );
 
-void gGetDeviceInfo( GraphicsDeviceInfo  *info );
+void gGetDeviceInfo( GraphicsDeviceInfo  *device_info );
 
 bool gAcquire      ( CardState           *state,
                      DFBAccelerationMask  accel );
