@@ -3858,33 +3858,33 @@ dfb_gfxcard_get_capabilities( CardCapabilities *ret_caps )
 }
 
 void
-dfb_gfxcard_get_device_info( GraphicsDeviceInfo *ret_info )
+dfb_gfxcard_get_device_info( GraphicsDeviceInfo *ret_device_info )
 {
      DFBGraphicsCoreShared *shared;
 
      D_ASSERT( card != NULL );
      D_ASSERT( card->shared != NULL );
 
-     D_ASSERT( ret_info != NULL );
+     D_ASSERT( ret_device_info != NULL );
 
      shared = card->shared;
 
-     *ret_info = shared->device_info;
+     *ret_device_info = shared->device_info;
 }
 
 void
-dfb_gfxcard_get_driver_info( GraphicsDriverInfo *ret_info )
+dfb_gfxcard_get_driver_info( GraphicsDriverInfo *ret_driver_info )
 {
      DFBGraphicsCoreShared *shared;
 
      D_ASSERT( card != NULL );
      D_ASSERT( card->shared != NULL );
 
-     D_ASSERT( ret_info != NULL );
+     D_ASSERT( ret_driver_info != NULL );
 
      shared = card->shared;
 
-     *ret_info = shared->driver_info;
+     *ret_driver_info = shared->driver_info;
 }
 
 int

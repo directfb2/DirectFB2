@@ -665,5 +665,5 @@ dfb_screen_get_rotation( CoreScreen *screen,
           return DFB_OK;
      }
 
-     return funcs->GetScreenRotation( screen, screen->driver_data, ret_rotation );
+     return funcs->GetScreenRotation( screen, screen->driver_data, screen->screen_data, ret_rotation );
 }

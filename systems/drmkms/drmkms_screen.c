@@ -28,8 +28,10 @@ D_DEBUG_DOMAIN( DRMKMS_Screen, "DRMKMS/Screen", "DRM/KMS Screen" );
 extern const DisplayLayerFuncs drmkmsPrimaryLayerFuncs;
 
 static const char *panel_orientation_table[] = {
-     "Normal", "Upside Down", "Left Side Up", "Right Side Up",
+     "Normal", "Upside Down", "Left Side Up", "Right Side Up"
 };
+
+/**********************************************************************************************************************/
 
 static DFBResult
 drmkmsInitScreen( CoreScreen           *screen,
@@ -602,6 +604,7 @@ drmkmsGetScreenSize( CoreScreen *screen,
 static DFBResult
 drmkmsGetScreenRotation( CoreScreen *screen,
                          void       *driver_data,
+                         void       *screen_data,
                          int        *ret_rotation )
 {
      DRMKMSData              *drmkms = driver_data;

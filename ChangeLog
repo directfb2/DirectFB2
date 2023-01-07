@@ -1,3 +1,24 @@
+commit c3742ae6cae0efa30e4ecd53c70d1c3b52c0b676
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Jan 7 08:17:23 2023 +0100
+
+    Core/Screen: Add screen_data argument for GetScreenRotation() function
+
+commit cd4172c5c38ccfd11caaa53cbc33acb7724b55b4
+Merge: bf85d08 47b5604
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Jan 2 10:47:38 2023 +0100
+
+    Merge pull request #76 from caramelli/master
+    
+    Meson: Use install_symlink() function instead of meson_symlink.sh script
+
+commit 47b5604a830d1bab9abf2c881717aee6b0c8f552
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jan 2 10:34:16 2023 +0100
+
+    Update ChangeLog
+
 commit 9bdd8911aed12a5b6a293aded3d3c54c27ccc7cb
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Mon Jan 2 10:33:47 2023 +0100

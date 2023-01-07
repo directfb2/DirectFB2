@@ -471,9 +471,9 @@ void           dfb_gfxcard_after_set_var         ( void );
 
 void           dfb_gfxcard_get_capabilities      ( CardCapabilities              *ret_caps );
 
-void           dfb_gfxcard_get_device_info       ( GraphicsDeviceInfo            *ret_info );
+void           dfb_gfxcard_get_device_info       ( GraphicsDeviceInfo            *ret_device_info );
 
-void           dfb_gfxcard_get_driver_info       ( GraphicsDriverInfo            *ret_info );
+void           dfb_gfxcard_get_driver_info       ( GraphicsDriverInfo            *ret_driver_info );
 
 int            dfb_gfxcard_reserve_memory        ( unsigned int                   size );
 

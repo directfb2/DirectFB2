@@ -9694,9 +9694,9 @@ gInit_BigEndian()
 /**********************************************************************************************************************/
 
 void
-gGetDriverInfo( GraphicsDriverInfo *info )
+gGetDriverInfo( GraphicsDriverInfo *driver_info )
 {
-     snprintf( info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH, "Software Driver" );
+     snprintf( driver_info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH, "Software Driver" );
 
 #if SIZEOF_LONG == 8
      gInit_64bit();
@@ -9713,30 +9713,30 @@ gGetDriverInfo( GraphicsDriverInfo *info )
      else {
           gInit_MMX();
 
-          snprintf( info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH, "MMX Software Driver" );
+          snprintf( driver_info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH, "MMX Software Driver" );
 
           D_INFO( "DirectFB/Genefx: MMX enabled\n" );
      }
 #endif
 
-     snprintf( info->vendor, DFB_GRAPHICS_DRIVER_INFO_VENDOR_LENGTH, "DirectFB" );
+     snprintf( driver_info->vendor, DFB_GRAPHICS_DRIVER_INFO_VENDOR_LENGTH, "DirectFB" );
 
-     info->version.major = 0;
-     info->version.minor = 7;
+     driver_info->version.major = 0;
+     driver_info->version.minor = 7;
 }
 
 void
-gGetDeviceInfo( GraphicsDeviceInfo *info )
+gGetDeviceInfo( GraphicsDeviceInfo *device_info )
 {
-     snprintf( info->name, DFB_GRAPHICS_DEVICE_INFO_NAME_LENGTH, "Software Rasterizer" );
+     snprintf( device_info->name, DFB_GRAPHICS_DEVICE_INFO_NAME_LENGTH, "Software Rasterizer" );
 
-     snprintf( info->vendor, DFB_GRAPHICS_DEVICE_INFO_VENDOR_LENGTH, use_mmx ? "MMX" : "Generic" );
+     snprintf( device_info->vendor, DFB_GRAPHICS_DEVICE_INFO_VENDOR_LENGTH, use_mmx ? "MMX" : "Generic" );
 
-     info->caps.flags    = 0;
-     info->caps.accel    = DFXL_NONE;
-     info->caps.blitting = DSBLIT_NOFX;
-     info->caps.drawing  = DSDRAW_NOFX;
-     info->caps.clip     = 0;
+     device_info->caps.flags    = 0;
+     device_info->caps.accel    = DFXL_NONE;
+     device_info->caps.blitting = DSBLIT_NOFX;
+     device_info->caps.drawing  = DSDRAW_NOFX;
+     device_info->caps.clip     = 0;
 }
 
 static bool

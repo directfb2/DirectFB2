@@ -91,7 +91,8 @@ if get_option('os') == 'linux'
     subdir('systems/drmkms')
     if get_option('default_library') == 'static'
       libdirectfb_systems += ['-ldirectfb_drmkms']
-      libdirectfb_systems_private += ['-ldrm']
+      libdirectfb_systems_private += run_command('pkg-config', '--static', '--libs', 'libdrm',
+                                                 check: true).stdout().strip()
     endif
   endif
   if get_option('fbdev')
