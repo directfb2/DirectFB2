@@ -304,9 +304,6 @@ dfb_surface_create( CoreDFB                  *core,
           if (config->flags & CSCONF_CAPS) {
                D_DEBUG_AT( Core_Surface, "  -> caps 0x%08x\n", config->caps );
 
-               if (config->caps & DSCAPS_ROTATED)
-                    D_UNIMPLEMENTED();
-
                surface->config.caps = config->caps & ~DSCAPS_ROTATED;
           }
 
@@ -901,12 +898,8 @@ dfb_surface_reconfig( CoreSurface             *surface,
      if (config->flags & CSCONF_COLORSPACE)
           new_config.colorspace = config->colorspace;
 
-     if (config->flags & CSCONF_CAPS) {
-          if (config->caps & DSCAPS_ROTATED)
-               D_UNIMPLEMENTED();
-
+     if (config->flags & CSCONF_CAPS)
           new_config.caps = config->caps & ~DSCAPS_ROTATED;
-     }
 
      if (new_config.caps & DSCAPS_SYSTEMONLY)
           surface->type = (surface->type & ~CSTF_EXTERNAL) | CSTF_INTERNAL;
