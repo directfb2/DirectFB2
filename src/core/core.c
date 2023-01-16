@@ -2104,9 +2104,9 @@ Core_Resource_CheckSurface( const CoreSurfaceConfig *config,
 {
      ICoreResourceClient *client;
 
-     D_DEBUG_AT( Core_Resource, "%s( %dx%d, %s, resource id %lu ) <- identity %lu\n", __FUNCTION__,
-                 config->size.w, config->size.h, dfb_pixelformat_name( config->format ), resource_id,
-                 Core_GetIdentity() );
+     D_DEBUG_AT( Core_Resource, "%s( %dx%d, %s, resource id %llu ) <- identity %lu\n", __FUNCTION__,
+                 config->size.w, config->size.h, dfb_pixelformat_name( config->format ),
+                 (unsigned long long) resource_id, Core_GetIdentity() );
 
      if (Core_GetIdentity() == core_dfb->fusion_id)
           return DFB_OK;

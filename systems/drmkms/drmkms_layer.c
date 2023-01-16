@@ -56,7 +56,7 @@ drmkms_page_flip_handler( int           fd,
 {
      DRMKMSLayerData *data = layer_data;
 
-     D_DEBUG_AT( DRMKMS_System, "%s()\n", __FUNCTION__ );
+     D_DEBUG_AT( DRMKMS_Layer, "%s()\n", __FUNCTION__ );
 
      direct_mutex_lock( &data->lock );
 
@@ -72,7 +72,7 @@ drmkms_page_flip_handler( int           fd,
 
      direct_mutex_unlock( &data->lock );
 
-     D_DEBUG_AT( DRMKMS_System, "%s() done\n", __FUNCTION__ );
+     D_DEBUG_AT( DRMKMS_Layer, "%s() done\n", __FUNCTION__ );
 }
 
 static void *
@@ -81,7 +81,7 @@ drmkms_buffer_thread( DirectThread *thread,
 {
      DRMKMSData *drmkms = arg;
 
-     D_DEBUG_AT( DRMKMS_System, "%s()\n", __FUNCTION__ );
+     D_DEBUG_AT( DRMKMS_Layer, "%s()\n", __FUNCTION__ );
 
      while (true)
         drmHandleEvent( drmkms->fd, &drmkms->event_context );

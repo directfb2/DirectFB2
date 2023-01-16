@@ -147,7 +147,7 @@ drmkmsInitScreen( CoreScreen           *screen,
 
                     for (j = 0; j < connector->count_modes; j++)
                          D_DEBUG_AT( DRMKMS_Screen, "    => modes[%2d] is %ux%u@%uHz\n", j,
-                                     connector->modes[j].hdisplay, connector->modes[m].vdisplay,
+                                     connector->modes[j].hdisplay, connector->modes[j].vdisplay,
                                      connector->modes[j].vrefresh );
 
                     shared->enabled_crtcs++;

@@ -354,12 +354,12 @@ dfb_surface_pools_negotiate( CoreSurfaceBuffer       *buffer,
      D_ASSERT( max_pools > 0 );
      D_ASSERT( ret_num != NULL );
 
-     D_DEBUG_AT( Core_SurfacePool, "%s( %p [%s], 0x%02x, 0x%02x, max %u )\n", __FUNCTION__,
-                 buffer, dfb_pixelformat_name( buffer->format ), accessor, access, max_pools );
-
      surface = buffer->surface;
 
      FUSION_SKIRMISH_ASSERT( &surface->lock );
+
+     D_DEBUG_AT( Core_SurfacePool, "%s( %p [%s], 0x%02x, 0x%02x, max %u )\n", __FUNCTION__,
+                 buffer, dfb_pixelformat_name( surface->config.format ), accessor, access, max_pools );
 
      D_ASSUME( accessor < CSAID_NUM );
 
@@ -757,12 +757,12 @@ dfb_surface_pool_allocate( CoreSurfacePool        *pool,
      D_MAGIC_ASSERT( buffer->surface, CoreSurface );
      D_ASSERT( ret_allocation != NULL );
 
-     D_DEBUG_AT( Core_SurfacePool, "%s( %p [%u - %s], %p )\n", __FUNCTION__,
-                 pool, pool->pool_id, pool->desc.name, buffer );
-
      surface = buffer->surface;
 
      FUSION_SKIRMISH_ASSERT( &surface->lock );
+
+     D_DEBUG_AT( Core_SurfacePool, "%s( %p [%u - %s], %p )\n", __FUNCTION__,
+                 pool, pool->pool_id, pool->desc.name, buffer );
 
      funcs = get_funcs( pool );
 
@@ -897,12 +897,12 @@ dfb_surface_pool_displace( CoreSurfacePool        *pool,
      D_MAGIC_ASSERT( buffer->surface, CoreSurface );
      D_ASSERT( ret_allocation != NULL );
 
-     D_DEBUG_AT( Core_SurfacePool, "%s( %p [%u - %s], %p )\n", __FUNCTION__,
-                 pool, pool->pool_id, pool->desc.name, buffer );
-
      surface = buffer->surface;
 
      FUSION_SKIRMISH_ASSERT( &surface->lock );
+
+     D_DEBUG_AT( Core_SurfacePool, "%s( %p [%u - %s], %p )\n", __FUNCTION__,
+                 pool, pool->pool_id, pool->desc.name, buffer );
 
      funcs = get_funcs( pool );
 
