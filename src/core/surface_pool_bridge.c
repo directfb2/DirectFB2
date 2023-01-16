@@ -363,8 +363,8 @@ dfb_surface_pool_bridges_transfer( CoreSurfaceBuffer     *buffer,
      D_ASSERT( num_rects > 0 || rects == NULL );
 
      D_DEBUG_AT( Core_SurfPoolBridge, "%s( %p, %dx%d %s, %p -> %p, %u rects )\n", __FUNCTION__,
-                 buffer, buffer->config.size.w, buffer->config.size.h, dfb_pixelformat_name( buffer->format ),
-                 from, to, num_rects );
+                 buffer, buffer->config.size.w, buffer->config.size.h,
+                 dfb_pixelformat_name( buffer->surface->config.format ), from, to, num_rects );
 
      if (!rects) {
           rect.x = rect.y = 0;
