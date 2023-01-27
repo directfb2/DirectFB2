@@ -1558,6 +1558,7 @@ dfb_surface_dump_buffer2( CoreSurface          *surface,
           case DSPF_BGR555:
           case DSPF_RGB16:
           case DSPF_RGB24:
+          case DSPF_BGR24:
           case DSPF_RGB32:
           case DSPF_YUY2:
           case DSPF_UYVY:

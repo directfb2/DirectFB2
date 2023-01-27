@@ -2009,14 +2009,13 @@ driver_get_axis_info( CoreInputDevice              *device,
           /* Check if we have an absolute axis. */
           ioctl( data->fd, EVIOCGBIT( EV_ABS, sizeof(absbit) ), absbit );
 
-          if (test_bit (axis, absbit)) {
+          if (test_bit( axis, absbit )) {
                struct input_absinfo absinfo;
 
-               if (ioctl( data->fd, EVIOCGABS( axis ), &absinfo ) == 0 &&
-                   (absinfo.minimum || absinfo.maximum)) {
-                    ret_info->flags   |= IDAIF_ABS_MIN | IDAIF_ABS_MAX;
-                    ret_info->abs_min  = absinfo.minimum;
-                    ret_info->abs_max  = absinfo.maximum;
+               if (ioctl( data->fd, EVIOCGABS( axis ), &absinfo ) == 0 && (absinfo.minimum || absinfo.maximum)) {
+                    ret_info->flags   = IDAIF_ABS_MIN | IDAIF_ABS_MAX;
+                    ret_info->abs_min = absinfo.minimum;
+                    ret_info->abs_max = absinfo.maximum;
                }
           }
      }

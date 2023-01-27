@@ -515,6 +515,7 @@ dfb_surface_buffer_dump_type_locked2( CoreSurfaceBuffer *buffer,
           case DSPF_BGR555:
           case DSPF_RGB16:
           case DSPF_RGB24:
+          case DSPF_BGR24:
           case DSPF_RGB32:
           case DSPF_YUY2:
           case DSPF_UYVY:

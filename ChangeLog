@@ -1,3 +1,54 @@
+commit 0da4139930f6d644e4001c62ad7a25aa1b4f8378
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Jan 27 18:47:05 2023 +0100
+
+    Add support for BGR24 format
+
+commit ef867c10dc63f8f734d9aa8c7f17396e9dc1838a
+Merge: b80fbc8 d14c65f
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Jan 16 14:28:25 2023 +0100
+
+    Merge pull request #80 from caramelli/master
+    
+    Meson: Fix debug buildtype
+
+commit d14c65fa1b4d7e79e1576dde682049730f316a4e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jan 16 14:21:04 2023 +0100
+
+    Meson: Fix debug buildtype
+
+commit b80fbc8cdb98839108676ae9cc24fabdec3b34b5
+Merge: 68367a4 acae2dc
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Jan 14 03:16:33 2023 +0100
+
+    Merge pull request #79 from caramelli/master
+    
+    Add check for state->source in dfb_gfxcard_state_check_acquire()
+
+commit acae2dc598e5f41397e0e69844758870ace7bd53
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Jan 14 03:15:44 2023 +0100
+
+    Core/GfxState: Add check for state->source in dfb_gfxcard_state_check_acquire()
+
+commit 68367a48c745630e3180437405ec3e2975036c78
+Merge: cd4172c 5be9975
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Jan 7 08:18:47 2023 +0100
+
+    Merge pull request #78 from caramelli/master
+    
+    Core/Screen: Add screen_data argument for GetScreenRotation() function
+
+commit 5be99757310e92e2922f10162f74ed2e51b9c789
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Jan 7 08:17:31 2023 +0100
+
+    Update ChangeLog
+
 commit c3742ae6cae0efa30e4ecd53c70d1c3b52c0b676
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Sat Jan 7 08:17:23 2023 +0100
