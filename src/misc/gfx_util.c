@@ -161,7 +161,7 @@ write_argb_span( u32         *src,
                for (i = 0; i < len; i++) {
                     u32 pixel = PIXEL_ARGB1666( src[i] >> 24, src[i] >> 16, src[i] >> 8, src[i] );
                     *d++ = pixel;
-                    *d++ = pixel >> 8;
+                    *d++ = pixel >>  8;
                     *d++ = pixel >> 16;
                }
                break;
@@ -170,7 +170,7 @@ write_argb_span( u32         *src,
                for (i = 0; i < len; i++) {
                     u32 pixel = PIXEL_ARGB6666( src[i] >> 24, src[i] >> 16, src[i] >> 8, src[i] );
                     *d++ = pixel;
-                    *d++ = pixel >> 8;
+                    *d++ = pixel >>  8;
                     *d++ = pixel >> 16;
                }
                break;
@@ -179,7 +179,7 @@ write_argb_span( u32         *src,
                for (i = 0; i < len; i++) {
                     u32 pixel = PIXEL_RGB18( src[i] >> 16, src[i] >> 8, src[i] );
                     *d++ = pixel;
-                    *d++ = pixel >> 8;
+                    *d++ = pixel >>  8;
                     *d++ = pixel >> 16;
                }
                break;
@@ -194,6 +194,20 @@ write_argb_span( u32         *src,
                     *d++ = src[i];
                     *d++ = src[i] >>  8;
                     *d++ = src[i] >> 16;
+#endif
+               }
+               break;
+
+          case DSPF_BGR24:
+               for (i = 0; i < len; i++) {
+#ifdef WORDS_BIGENDIAN
+                    *d++ = src[i];
+                    *d++ = src[i] >>  8;
+                    *d++ = src[i] >> 16;
+#else
+                    *d++ = src[i] >> 16;
+                    *d++ = src[i] >>  8;
+                    *d++ = src[i];
 #endif
                }
                break;
@@ -278,7 +292,7 @@ write_argb_span( u32         *src,
                for (i = 0; i < (len - 1); i += 2) {
                     u32 y0, u0, v0;
                     u32 y1, u1, v1;
-                    RGB_TO_YCBCR( (src[i]   >> 16) & 0xff, (src[i] >> 8)   & 0xff, src[i]   & 0xff, y0, u0, v0 );
+                    RGB_TO_YCBCR( (src[i]   >> 16) & 0xff, (src[i]   >> 8) & 0xff, src[i]   & 0xff, y0, u0, v0 );
                     RGB_TO_YCBCR( (src[i+1] >> 16) & 0xff, (src[i+1] >> 8) & 0xff, src[i+1] & 0xff, y1, u1, v1 );
                     u0 = (u0 + u1) >> 1;
                     v1 = (v0 + v1) >> 1;
@@ -819,8 +833,8 @@ scale_pixel( const int  *weights,
 
                ta = ((*q & 0xff000000) >> 24) * pixel_weights[j];
 
-               b += ta * (((*q & 0xff)) + 1);
-               g += ta * (((*q & 0xff00) >> 8) + 1);
+               b += ta * ( (*q & 0xff)            + 1);
+               g += ta * (((*q & 0xff00)   >>  8) + 1);
                r += ta * (((*q & 0xff0000) >> 16) + 1);
                a += ta;
           }
@@ -860,8 +874,8 @@ scale_line( const int  *weights,
                for (j = 0; j < n_x; j++) {
                     u32 ta = ((*q & 0xff000000) >> 24) * line_weights[j];
 
-                    b += ta * (((*q & 0xff)) + 1);
-                    g += ta * (((*q & 0xff00) >> 8) + 1);
+                    b += ta * ( (*q & 0xff)            + 1);
+                    g += ta * (((*q & 0xff00)   >>  8) + 1);
                     r += ta * (((*q & 0xff0000) >> 16) + 1);
                     a += ta;
 

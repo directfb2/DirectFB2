@@ -825,7 +825,10 @@ typedef enum {
      DSPF_NV24       = DFB_SURFACE_PIXELFORMAT( 45, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 ),
 
      /* 24 bit   YUV (8 bit Y plane followed by 16 bit Cr|Cb [7:0|7:0] plane) */
-     DSPF_NV42       = DFB_SURFACE_PIXELFORMAT( 46, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 )
+     DSPF_NV42       = DFB_SURFACE_PIXELFORMAT( 46, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 ),
+
+     /* 24 bit   BGR (3 byte, blue 8@16, green 8@8, red 8@0) */
+     DSPF_BGR24      = DFB_SURFACE_PIXELFORMAT( 47, 24, 0, 0, 0, 3, 0, 0, 0, 0, 0 )
 } DFBSurfacePixelFormat;
 
 #define DSPF_YUV420P                         DSPF_I420
@@ -833,7 +836,7 @@ typedef enum {
 #define DSPF_YUV444P                         DSPF_Y444
 
 /* Number of pixelformats defined. */
-#define DFB_NUM_PIXELFORMATS                 47
+#define DFB_NUM_PIXELFORMATS                 48
 
 /* These macros extract information about the pixel format. */
 #define DFB_PIXELFORMAT_INDEX(fmt)            ((fmt) & 0x0000007F) 
@@ -879,7 +882,8 @@ typedef enum {
       ((fmt) == DSPF_BGR555)      || \
       ((fmt) == DSPF_ARGB8565)    || \
       ((fmt) == DSPF_ABGR)        || \
-      ((fmt) == DSPF_RGBAF88871))
+      ((fmt) == DSPF_RGBAF88871)  || \
+      ((fmt) == DSPF_BGR24))
 
 #define DFB_COLOR_IS_YUV(fmt)        \
      (((fmt) == DSPF_YUY2)        || \
