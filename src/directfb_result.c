@@ -16,9 +16,9 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 */
 
-#include <dfb_types.h>
 #include <direct/result.h>
 #include <direct/util.h>
+#include <directfb.h>
 
 /**********************************************************************************************************************/
 
