@@ -15,7 +15,6 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 directfb_headers = [
-  'dfb_types.h',
   'dfiff.h',
   'dfvff.h',
   'dgiff.h',
