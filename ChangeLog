@@ -1,3 +1,24 @@
+commit 5670235d139e4395b5dba725a4cec75843c66b1e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jan 30 11:03:11 2023 +0100
+
+    Merge dfb_types.h into directfb.h
+
+commit c17a0d9a67272420afe7677d8f03e15672839546
+Merge: ef867c1 3ebe7ea
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Jan 27 18:47:57 2023 +0100
+
+    Merge pull request #81 from caramelli/master
+    
+    Add support for BGR24 format
+
+commit 3ebe7ea437f3d38adad9d4d1ee3fd9b706da08dc
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Jan 27 18:47:19 2023 +0100
+
+    Update ChangeLog
+
 commit 0da4139930f6d644e4001c62ad7a25aa1b4f8378
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Fri Jan 27 18:47:05 2023 +0100
