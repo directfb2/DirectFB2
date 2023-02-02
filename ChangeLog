@@ -1,3 +1,24 @@
+commit 5e7d9f13ef93d974947391250b8edd747777f368
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Feb 2 06:30:58 2023 +0100
+
+    DRMKMS/Screen: Get panel orientation on screen initialization
+
+commit b859a6a2f57c72432e57df198e57b3853c11891e
+Merge: c17a0d9 8396440
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Jan 30 11:03:13 2023 +0100
+
+    Merge pull request #82 from caramelli/master
+    
+    Merge dfb_types.h into directfb.h
+
+commit 8396440cc5c77e06023d5d21f197e02a0c13d052
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jan 30 11:03:26 2023 +0100
+
+    Update ChangeLog
+
 commit 5670235d139e4395b5dba725a4cec75843c66b1e
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Mon Jan 30 11:03:11 2023 +0100
