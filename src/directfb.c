@@ -20,7 +20,6 @@
 #include <direct/log.h>
 #include <direct/result.h>
 #include <direct/thread.h>
-#include <directfb.h>
 #include <directfb_version.h>
 #include <idirectfb.h>
 #include <misc/conf.h>
@@ -60,8 +59,6 @@ DirectFBInit( int   *argc,
               char **argv[] )
 {
      DFBResult ret;
-
-     D_DEBUG_AT( DirectFB_Main, "%s( %p, %p )\n", __FUNCTION__, argc, argv );
 
      ret = dfb_config_init( argc, argv );
      if (ret)
@@ -108,8 +105,7 @@ DirectFBCreate( IDirectFB **ret_interface )
      D_DEBUG_AT( DirectFB_Main, "%s( %p )\n", __FUNCTION__, ret_interface );
 
      if (!dfb_config) {
-          /* Don't use D_ERROR() here, it uses dfb_config  */
-          direct_log_printf( NULL, "(!) DirectFB/Main: DirectFBInit() has to be called before DirectFBCreate()!\n" );
+          D_ERROR( "DirectFB/Main: DirectFBInit() has to be called before DirectFBCreate()!\n" );
           return DFB_INIT;
      }
 

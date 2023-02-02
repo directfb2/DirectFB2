@@ -370,8 +370,6 @@ drmkmsPlaneInitLayer( CoreLayer                  *layer,
                       DFBDisplayLayerConfig      *config,
                       DFBColorAdjustment         *adjustment )
 {
-     DFBResult                ret;
-     int                      err;
      DRMKMSData              *drmkms = driver_data;
      DRMKMSDataShared        *shared;
      DRMKMSLayerData         *data   = layer_data;
@@ -427,13 +425,8 @@ drmkmsPlaneInitLayer( CoreLayer                  *layer,
                     data->zpos_propid = prop->prop_id;
                     D_INFO( "     zpos\n" );
 
-                    err = drmModeObjectSetProperty( drmkms->fd, data->plane->plane_id, DRM_MODE_OBJECT_PLANE,
-                                                    data->zpos_propid, data->level );
-                    if (err) {
-                         ret = errno2result( errno );
-                         D_PERROR( "DRMKMS/Layer: drmModeObjectSetProperty() failed setting zpos!\n" );
-                         return ret;
-                    }
+                    drmModeObjectSetProperty( drmkms->fd, data->plane->plane_id, DRM_MODE_OBJECT_PLANE,
+                                              data->zpos_propid, data->level );
                }
                else if (!strcmp( prop->name, "alpha" )) {
                     description->caps |= DLCAPS_OPACITY;
@@ -492,7 +485,8 @@ drmkmsPlaneSetLevel( CoreLayer *layer,
      if (level < 1 || level > shared->plane_index_count)
           return DFB_INVARG;
 
-     err = drmModeObjectSetProperty( drmkms->fd, data->plane->plane_id, DRM_MODE_OBJECT_PLANE, data->zpos_propid, level );
+     err = drmModeObjectSetProperty( drmkms->fd, data->plane->plane_id, DRM_MODE_OBJECT_PLANE,
+                                     data->zpos_propid, level );
      if (err) {
           ret = errno2result( errno );
           D_PERROR( "DRMKMS/Layer: drmModeObjectSetProperty() failed setting zpos!\n" );
