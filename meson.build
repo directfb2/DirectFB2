@@ -79,18 +79,17 @@ subdir('src')
 
 # system modules
 
-libdirectfb_systems = []
 libdirectfb_systems_private = []
 subdir('systems/dummy')
 if get_option('default_library') == 'static'
-  libdirectfb_systems += ['-L${moduledir}/systems']
-  libdirectfb_systems += ['-Wl,--whole-archive -ldirectfb_dummy']
+  libdirectfb_systems_private += ['-L${moduledir}/systems']
+  libdirectfb_systems_private += ['-Wl,--whole-archive -ldirectfb_dummy']
 endif
 if get_option('os') == 'linux'
   if get_option('drmkms')
     subdir('systems/drmkms')
     if get_option('default_library') == 'static'
-      libdirectfb_systems += ['-ldirectfb_drmkms']
+      libdirectfb_systems_private += ['-ldirectfb_drmkms']
       libdirectfb_systems_private += run_command('pkg-config', '--static', '--libs', 'libdrm',
                                                  check: true).stdout().strip()
     endif
@@ -98,31 +97,29 @@ if get_option('os') == 'linux'
   if get_option('fbdev')
     subdir('systems/fbdev')
     if get_option('default_library') == 'static'
-      libdirectfb_systems += ['-ldirectfb_fbdev']
+      libdirectfb_systems_private += ['-ldirectfb_fbdev']
     endif
   endif
 endif
 if get_option('default_library') == 'static'
-  libdirectfb_systems += ['-Wl,--no-whole-archive']
+  libdirectfb_systems_private += ['-Wl,--no-whole-archive']
 endif
 
 pkgconfig.generate(filebase: 'directfb-systems',
                    variables: 'moduledir=' + moduledir,
                    name: 'DirectFB-systems',
                    description: 'DirectFB system modules',
-                   libraries: libdirectfb_systems,
                    libraries_private: libdirectfb_systems_private)
 
 # inputdriver modules
 
-libdirectfb_inputdrivers = []
 libdirectfb_inputdrivers_private = []
 if get_option('os') == 'linux'
   if get_option('linuxinput')
     subdir('inputdrivers/linux_input')
     if get_option('default_library') == 'static'
-      libdirectfb_inputdrivers += ['-L${moduledir}/inputdrivers']
-      libdirectfb_inputdrivers += ['-Wl,--whole-archive -ldirectfb_linux_input -Wl,--no-whole-archive']
+      libdirectfb_inputdrivers_private += ['-L${moduledir}/inputdrivers']
+      libdirectfb_inputdrivers_private += ['-Wl,--whole-archive -ldirectfb_linux_input -Wl,--no-whole-archive']
     endif
   endif
 endif
@@ -131,59 +128,54 @@ pkgconfig.generate(filebase: 'directfb-inputdrivers',
                    variables: 'moduledir=' + moduledir,
                    name: 'DirectFB-inputdrivers',
                    description: 'DirectFB inputdriver modules',
-                   libraries: libdirectfb_inputdrivers,
                    libraries_private: libdirectfb_inputdrivers_private)
 
 # interface modules
 
-libdirectfb_interfaces = []
 libdirectfb_interfaces_private = []
 subdir('interfaces/ICoreResourceManager')
 if get_option('default_library') == 'static'
-  libdirectfb_interfaces += ['-L${moduledir}/interfaces/ICoreResourceManager']
-  libdirectfb_interfaces += ['-Wl,--whole-archive -licoreresourcemanager_default -Wl,--no-whole-archive']
+  libdirectfb_interfaces_private += ['-L${moduledir}/interfaces/ICoreResourceManager']
+  libdirectfb_interfaces_private += ['-Wl,--whole-archive -licoreresourcemanager_default -Wl,--no-whole-archive']
 endif
 subdir('interfaces/IDirectFBFont')
 if get_option('default_library') == 'static'
-  libdirectfb_interfaces += ['-L${moduledir}/interfaces/IDirectFBFont']
-  libdirectfb_interfaces += ['-Wl,--whole-archive -lidirectfbfont_dgiff -Wl,--no-whole-archive']
+  libdirectfb_interfaces_private += ['-L${moduledir}/interfaces/IDirectFBFont']
+  libdirectfb_interfaces_private += ['-Wl,--whole-archive -lidirectfbfont_dgiff -Wl,--no-whole-archive']
 endif
 subdir('interfaces/IDirectFBImageProvider')
 if get_option('default_library') == 'static'
-  libdirectfb_interfaces += ['-L${moduledir}/interfaces/IDirectFBImageProvider']
-  libdirectfb_interfaces += ['-Wl,--whole-archive -lidirectfbimageprovider_dfiff -Wl,--no-whole-archive']
+  libdirectfb_interfaces_private += ['-L${moduledir}/interfaces/IDirectFBImageProvider']
+  libdirectfb_interfaces_private += ['-Wl,--whole-archive -lidirectfbimageprovider_dfiff -Wl,--no-whole-archive']
 endif
 subdir('interfaces/IDirectFBVideoProvider')
 if get_option('default_library') == 'static'
-  libdirectfb_interfaces += ['-L${moduledir}/interfaces/IDirectFBVideoProvider']
-  libdirectfb_interfaces += ['-Wl,--whole-archive -lidirectfbvideoprovider_dfvff -Wl,--no-whole-archive']
+  libdirectfb_interfaces_private += ['-L${moduledir}/interfaces/IDirectFBVideoProvider']
+  libdirectfb_interfaces_private += ['-Wl,--whole-archive -lidirectfbvideoprovider_dfvff -Wl,--no-whole-archive']
 endif
 subdir('interfaces/IDirectFBWindows')
 if get_option('default_library') == 'static'
-  libdirectfb_interfaces += ['-L${moduledir}/interfaces/IDirectFBWindows']
-  libdirectfb_interfaces += ['-Wl,--whole-archive -lidirectfbwindows_default -Wl,--no-whole-archive']
+  libdirectfb_interfaces_private += ['-L${moduledir}/interfaces/IDirectFBWindows']
+  libdirectfb_interfaces_private += ['-Wl,--whole-archive -lidirectfbwindows_default -Wl,--no-whole-archive']
 endif
 
 pkgconfig.generate(filebase: 'directfb-interfaces',
                    variables: 'moduledir=' + moduledir,
                    name: 'DirectFB-interfaces',
                    description: 'DirectFB interface modules',
-                   libraries: libdirectfb_interfaces,
                    libraries_private: libdirectfb_interfaces_private)
 
 # wm modules
 
-libdirectfb_wm = []
 libdirectfb_wm_private = []
 subdir('wm/default')
 if get_option('default_library') == 'static'
-  libdirectfb_wm += ['-L${moduledir}/wm']
-  libdirectfb_wm += ['-Wl,--whole-archive -ldirectfbwm_default -Wl,--no-whole-archive']
+  libdirectfb_wm_private += ['-L${moduledir}/wm']
+  libdirectfb_wm_private += ['-Wl,--whole-archive -ldirectfbwm_default -Wl,--no-whole-archive']
 endif
 
 pkgconfig.generate(filebase: 'directfb-wm',
                    variables: 'moduledir=' + moduledir,
                    name: 'DirectFB-wm',
                    description: 'DirectFB wm modules',
-                   libraries: libdirectfb_wm,
                    libraries_private: libdirectfb_wm_private)
