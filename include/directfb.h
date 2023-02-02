@@ -107,8 +107,8 @@ D_DECLARE_INTERFACE( IDirectFBGL )
  * A boolean.
  */
 typedef enum {
-     DFB_FALSE           = 0,                  /* false */
-     DFB_TRUE            = !DFB_FALSE          /* true */
+     DFB_FALSE                             = 0,                  /* false */
+     DFB_TRUE                              = !DFB_FALSE          /* true */
 } DFBBoolean;
 
 /*
