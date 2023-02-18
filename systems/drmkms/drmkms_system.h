@@ -27,28 +27,29 @@
 /**********************************************************************************************************************/
 
 typedef struct {
-     FusionSHMPoolShared *shmpool;
+     FusionSHMPoolShared   *shmpool;
 
-     CoreSurfacePool     *pool;
+     CoreSurfacePool       *pool;
 
-     char                 device_name[256];       /* DRM/KMS device name, e.g. /dev/dri/card0 */
-     bool                 use_prime_fd;           /* DRM/KMS PRIME file descriptor enabled */
+     char                   device_name[256];       /* DRM/KMS device name, e.g. /dev/dri/card0 */
+     bool                   use_prime_fd;           /* DRM/KMS PRIME file descriptor enabled */
 
-     bool                 vt;                     /* use VT handling */
+     bool                   vt;                     /* use VT handling */
 
-     bool                 mirror_outputs;         /* enable mirror display */
-     bool                 multihead_outputs;      /* enable multi-head display */
+     bool                   mirror_outputs;         /* enable mirror display */
+     bool                   multihead_outputs;      /* enable multi-head display */
 
-     int                  enabled_crtcs;          /* CRTCs enabled (limiting to 8) */
-     drmModeModeInfo      mode[8];                /* current video mode (for each available CRTC) */
+     int                    enabled_crtcs;          /* CRTCs enabled (limiting to 8) */
+     drmModeModeInfo        mode[8];                /* current video mode (for each available CRTC) */
 
-     DFBDimension         primary_dimension[8];
-     DFBRectangle         primary_rect;
-     uint32_t             primary_fb;
+     DFBDimension           primary_dimension[8];
+     DFBRectangle           primary_rect;
+     uint32_t               primary_fb;
+     DFBSurfacePixelFormat  primary_format;
 
-     int                  layer_index_count;
-     int                  plane_index_count;
-     int                  layerplane_index_count;
+     int                    layer_index_count;
+     int                    plane_index_count;
+     int                    layerplane_index_count;
 } DRMKMSDataShared;
 
 typedef struct {
