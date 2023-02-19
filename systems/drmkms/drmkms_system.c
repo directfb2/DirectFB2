@@ -68,6 +68,8 @@ local_init( const char *device_name,
      }
 
      /* Retrieve display configuration and planes information. */
+     drmSetClientCap( drmkms->fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1 );
+
      drmkms->resources = drmModeGetResources( drmkms->fd );
      if (!drmkms->resources) {
           D_PERROR( "DRMKMS/System: Could not retrieve resources!\n" );
@@ -75,7 +77,7 @@ local_init( const char *device_name,
      }
 
      drmkms->plane_resources = drmModeGetPlaneResources( drmkms->fd );
-     if (!drmkms->plane_resources) {
+     if (!drmkms->plane_resources || !drmkms->plane_resources->count_planes) {
           D_PERROR( "DRMKMS/System: Could not retrieve plane resources!\n" );
           return DFB_INIT;
      }
