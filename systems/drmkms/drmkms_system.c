@@ -37,6 +37,21 @@ extern const DisplayLayerFuncs drmkmsPrimaryLayerFuncs;
 extern const DisplayLayerFuncs drmkmsPlaneLayerFuncs;
 extern const SurfacePoolFuncs  drmkmsSurfacePoolFuncs;
 
+struct DFBFourCCName {
+     DFBSurfacePixelFormat  format;
+     const char            *name;
+};
+
+static const struct DFBFourCCName dfb_fourcc_names[] = {
+     { DSPF_ARGB,     "AR24" },
+     { DSPF_RGB32,    "XR24" },
+     { DSPF_RGB24,    "RG24" },
+     { DSPF_RGB16,    "RG16" },
+     { DSPF_ARGB1555, "AR15" },
+     { DSPF_RGB555,   "XR15" },
+     { DSPF_A8,       "C8"   }
+};
+
 static DFBResult
 local_init( const char *device_name,
             DRMKMSData *drmkms )
@@ -53,13 +68,19 @@ local_init( const char *device_name,
      }
 
      /* Retrieve display configuration and planes information. */
+     drmSetClientCap( drmkms->fd, DRM_CLIENT_CAP_UNIVERSAL_PLANES, 1 );
+
      drmkms->resources = drmModeGetResources( drmkms->fd );
      if (!drmkms->resources) {
           D_PERROR( "DRMKMS/System: Could not retrieve resources!\n" );
           return DFB_INIT;
      }
-     else
-          drmkms->plane_resources = drmModeGetPlaneResources( drmkms->fd );
+
+     drmkms->plane_resources = drmModeGetPlaneResources( drmkms->fd );
+     if (!drmkms->plane_resources || !drmkms->plane_resources->count_planes) {
+          D_PERROR( "DRMKMS/System: Could not retrieve plane resources!\n" );
+          return DFB_INIT;
+     }
 
      D_INFO( "DRMKMS/System: Found %d connectors, %d encoders, %u planes\n",
              drmkms->resources->count_connectors, drmkms->resources->count_encoders,
@@ -77,12 +98,10 @@ local_init( const char *device_name,
 
      DFB_DISPLAYLAYER_IDS_ADD( drmkms->layer_ids[0], drmkms->layer_id_next++ );
 
-     if (drmkms->plane_resources) {
-          for (i = 0; i < drmkms->plane_resources->count_planes; i++) {
-               dfb_layers_register( screen, drmkms, &drmkmsPlaneLayerFuncs );
+     for (i = 0; i < drmkms->plane_resources->count_planes; i++) {
+          dfb_layers_register( screen, drmkms, &drmkmsPlaneLayerFuncs );
 
-               DFB_DISPLAYLAYER_IDS_ADD( drmkms->layer_ids[0], drmkms->layer_id_next++ );
-          }
+          DFB_DISPLAYLAYER_IDS_ADD( drmkms->layer_ids[0], drmkms->layer_id_next++ );
      }
 
      return DFB_OK;
@@ -122,10 +141,14 @@ system_initialize( CoreDFB  *core,
                    void    **ret_data )
 {
      DFBResult            ret;
+     int                  i;
+     uint32_t             fourcc;
+     char                 name[5];
      DRMKMSData          *drmkms;
      DRMKMSDataShared    *shared;
      FusionSHMPoolShared *pool;
      const char          *value;
+     drmModePlane        *plane;
 
      D_DEBUG_AT( DRMKMS_System, "%s()\n", __FUNCTION__ );
 
@@ -198,6 +221,35 @@ system_initialize( CoreDFB  *core,
           ret = drmkms_vt_initialize( core );
           if (ret)
                goto error;
+     }
+
+     plane = drmModeGetPlane( drmkms->fd, drmkms->plane_resources->planes[0] );
+     for (i = 0; i < plane->count_formats; i++) {
+          fourcc = plane->formats[i];
+          snprintf( name, sizeof(name), "%c%c%c%c", fourcc, fourcc >> 8, fourcc >> 16, fourcc >> 24 );
+
+          if (!strcmp( name, "AR24" )) {
+               shared->primary_format = DSPF_ARGB;
+               break;
+          }
+     }
+
+     if (i == plane->count_formats) {
+          fourcc = plane->formats[0];
+          snprintf( name, sizeof(name), "%c%c%c%c", fourcc, fourcc >> 8, fourcc >> 16, fourcc >> 24 );
+
+          for (i = 1; i < D_ARRAY_SIZE(dfb_fourcc_names); i++) {
+               if (!strcmp( name, dfb_fourcc_names[i].name )) {
+                    shared->primary_format = dfb_fourcc_names[i].format;
+                    break;
+               }
+          }
+     }
+
+     if (i == D_ARRAY_SIZE(dfb_fourcc_names)) {
+          D_ERROR( "DRMKMS/System: No supported format!\n" );
+          ret = DFB_INIT;
+          goto error;
      }
 
      *ret_data = drmkms;

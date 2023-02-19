@@ -133,7 +133,7 @@ drmkmsPrimaryInitLayer( CoreLayer                  *layer,
      config->flags       = DLCONF_WIDTH | DLCONF_HEIGHT | DLCONF_PIXELFORMAT | DLCONF_BUFFERMODE;
      config->width       = shared->mode[data->layer_index].hdisplay;
      config->height      = shared->mode[data->layer_index].vdisplay;
-     config->pixelformat = dfb_config->mode.format ?: DSPF_ARGB;
+     config->pixelformat = dfb_config->mode.format ?: shared->primary_format;
      config->buffermode  = DLBM_FRONTONLY;
 
      direct_mutex_init( &data->lock );
