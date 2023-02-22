@@ -59,22 +59,22 @@ shm_headers = [
   'shm/pool.h'
 ]
 
-build_h = configuration_data()
+build_conf = configuration_data()
 
 if get_option('multi')
   if get_option('os') == 'linux'
     if get_option('multi-kernel') and cc.has_header('linux/fusion.h')
-        build_h.set('FUSION_BUILD_KERNEL', 1)
+        build_conf.set('FUSION_BUILD_KERNEL', 1)
     else
-        build_h.set('FUSION_BUILD_KERNEL', 0)
+        build_conf.set('FUSION_BUILD_KERNEL', 0)
     endif
   endif
-  build_h.set('FUSION_MESSAGE_SIZE', get_option('message-size'))
+  build_conf.set('FUSION_MESSAGE_SIZE', get_option('message-size'))
 endif
 
-build_h.set10('FUSION_BUILD_MULTI', get_option('multi'))
+build_conf.set10('FUSION_BUILD_MULTI', get_option('multi'))
 
-configure_file(configuration: build_h,
+configure_file(configuration: build_conf,
                output: 'build.h',
                install: true,
                install_dir: join_paths(get_option('includedir'), 'directfb/fusion'))

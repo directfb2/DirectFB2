@@ -110,12 +110,12 @@ DFVFFVideo( DirectThread *thread,
             void         *arg )
 {
      DFBResult                          ret;
-     IDirectFBSurface                  *source;
-     void                              *source_ptr;
-     int                                source_pitch;
-     void                              *frame_ptr;
      long                               start_frame;
      long long                          start;
+     int                                source_pitch;
+     void                              *source_ptr;
+     IDirectFBSurface                  *source;
+     void                              *frame_ptr;
      int                                drop = 0;
      IDirectFBVideoProvider_DFVFF_data *data = arg;
 

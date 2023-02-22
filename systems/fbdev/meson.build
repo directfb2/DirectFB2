@@ -34,3 +34,10 @@ library('directfb_fbdev',
         dependencies: directfb_dep,
         install: true,
         install_dir: join_paths(moduledir, 'systems'))
+
+pkgconfig.generate(filebase: 'directfb-system-fbdev',
+                   variables: 'moduledir=' + moduledir,
+                   name: 'DirectFB-system-fbdev',
+                   description: 'FBDev system module',
+                   libraries_private: ['-L${moduledir}/systems',
+                                       '-Wl,--whole-archive -ldirectfb_fbdev -Wl,--no-whole-archive'])

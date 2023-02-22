@@ -19,3 +19,10 @@ library('icoreresourcemanager_default',
         dependencies: directfb_dep,
         install: true,
         install_dir: join_paths(moduledir, 'interfaces/ICoreResourceManager'))
+
+pkgconfig.generate(filebase: 'directfb-interface-resourcemanager_default',
+                   variables: 'moduledir=' + moduledir,
+                   name: 'DirectFB-interface-resourcemanager_default',
+                   description: 'Default resource manager',
+                   libraries_private: ['-L${moduledir}/interfaces/ICoreResourceManager',
+                                       '-Wl,--whole-archive -licoreresourcemanager_default -Wl,--no-whole-archive'])

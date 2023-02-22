@@ -84,21 +84,21 @@ os_headers = [
   'os/waitqueue.h'
 ]
 
-build_h = configuration_data()
+build_conf = configuration_data()
 
-build_h.set10('DIRECT_BUILD_DEBUG', get_option('debug'))
+build_conf.set10('DIRECT_BUILD_DEBUG', get_option('debug'))
 
 if get_option('debug')
-  build_h.set10('DIRECT_BUILD_DEBUGS', true)
+  build_conf.set10('DIRECT_BUILD_DEBUGS', true)
 else
-  build_h.set10('DIRECT_BUILD_DEBUGS', get_option('debug-support'))
+  build_conf.set10('DIRECT_BUILD_DEBUGS', get_option('debug-support'))
 endif
 
-build_h.set10('DIRECT_BUILD_DYNLOAD', get_option('default_library') == 'shared')
+build_conf.set10('DIRECT_BUILD_DYNLOAD', get_option('default_library') == 'shared')
 
-build_h.set10('DIRECT_BUILD_MEMCPY_PROBING', get_option('memcpy-probing'))
+build_conf.set10('DIRECT_BUILD_MEMCPY_PROBING', get_option('memcpy-probing'))
 
-build_h.set10('DIRECT_BUILD_SENTINELS', get_option('sentinels'))
+build_conf.set10('DIRECT_BUILD_SENTINELS', get_option('sentinels'))
 
 if get_option('os') == 'linux'
   os_linux_sources = [
@@ -119,19 +119,19 @@ if get_option('os') == 'linux'
     'os/linux/waitqueue.h'
   ]
 
-  build_h.set('DIRECT_BUILD_OS_LINUX', 1)
+  build_conf.set('DIRECT_BUILD_OS_LINUX', 1)
 else
   error('Unsupported OS')
 endif
 
-build_h.set10('DIRECT_BUILD_TEXT', get_option('text'))
+build_conf.set10('DIRECT_BUILD_TEXT', get_option('text'))
 
 if get_option('trace')
   add_global_arguments('-finstrument-functions', language: 'c')
 endif
-build_h.set10('DIRECT_BUILD_TRACE', get_option('trace'))
+build_conf.set10('DIRECT_BUILD_TRACE', get_option('trace'))
 
-configure_file(configuration: build_h,
+configure_file(configuration: build_conf,
                output: 'build.h',
                install: true,
                install_dir: join_paths(get_option('includedir'), 'directfb/direct'))

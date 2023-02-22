@@ -20,3 +20,10 @@ library('directfbwm_default',
         dependencies: directfb_dep,
         install: true,
         install_dir: join_paths(moduledir, 'wm'))
+
+pkgconfig.generate(filebase: 'directfb-wm-default',
+                   variables: 'moduledir=' + moduledir,
+                   name: 'DirectFB-wm-default',
+                   description: 'Default window manager module',
+                   libraries_private: ['-L${moduledir}/wm',
+                                       '-Wl,--whole-archive -ldirectfbwm_default -Wl,--no-whole-archive'])

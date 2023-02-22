@@ -1,3 +1,5 @@
+#!/bin/sh
+#
 #  This file is part of DirectFB.
 #
 #  This library is free software; you can redistribute it and/or
@@ -14,19 +16,21 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
-dummy_sources = [
-  'dummy.c'
-]
+mkpc() {
+if [ "`echo @PKGCONFIGDIR@/directfb-$1-*`" != "@PKGCONFIGDIR@/directfb-$1-*" ]; then
+  REQUIRES_PRIVATE=$(basename -s .pc -a @PKGCONFIGDIR@/directfb-$1-* | tr '\n' ' ' | sed 's/ $//')
+fi
 
-library('directfb_dummy',
-         dummy_sources,
-         dependencies: directfb_dep,
-         install: true,
-         install_dir: join_paths(moduledir, 'systems'))
+cat > @PKGCONFIGDIR@/directfb-$1.pc << EOF
+Name: DirectFB-$1
+Description: DirectFB $1 modules
+Version: @VERSION@
+Requires.private: $REQUIRES_PRIVATE
+EOF
+}
 
-pkgconfig.generate(filebase: 'directfb-system-dummy',
-                   variables: 'moduledir=' + moduledir,
-                   name: 'DirectFB-system-dummy',
-                   description: 'Dummy system module',
-                   libraries_private: ['-L${moduledir}/systems',
-                                       '-Wl,--whole-archive -ldirectfb_dummy -Wl,--no-whole-archive'])
+mkpc gfxdriver
+mkpc inputdriver
+mkpc interface
+mkpc system
+mkpc wm

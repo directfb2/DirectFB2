@@ -46,21 +46,21 @@ if moduledirname == ''
 endif
 moduledir = join_paths(get_option('prefix'), get_option('libdir'), moduledirname)
 
-config_h = configuration_data()
-
 cc = meson.get_compiler('c')
 
-config_h.set('SIZEOF_LONG', cc.sizeof('long'), description: 'The size of long, as computed by sizeof.')
+config_conf = configuration_data()
 
-config_h.set('WORDS_BIGENDIAN', host_machine.endian() == 'big', description: 'Byte ordering is bigendian.')
+config_conf.set('SIZEOF_LONG', cc.sizeof('long'), description: 'The size of long, as computed by sizeof.')
+
+config_conf.set('WORDS_BIGENDIAN', host_machine.endian() == 'big', description: 'Byte ordering is bigendian.')
 
 if host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
   if get_option('mmx')
-    config_h.set('USE_MMX', 1, description: 'Define to 1 if you are compiling MMX assembly support.')
+    config_conf.set('USE_MMX', 1, description: 'Define to 1 if you are compiling MMX assembly support.')
   endif
 endif
 
-configure_file(configuration: config_h, output: 'config.h')
+configure_file(configuration: config_conf, output: 'config.h')
 
 config_inc = include_directories('.')
 lib_inc = include_directories('lib')
@@ -77,105 +77,50 @@ subdir('lib/direct')
 subdir('lib/fusion')
 subdir('src')
 
-# system modules
-
-libdirectfb_systems_private = []
-subdir('systems/dummy')
-if get_option('default_library') == 'static'
-  libdirectfb_systems_private += ['-L${moduledir}/systems']
-  libdirectfb_systems_private += ['-Wl,--whole-archive -ldirectfb_dummy']
-endif
-if get_option('os') == 'linux'
-  if get_option('drmkms')
-    subdir('systems/drmkms')
-    if get_option('default_library') == 'static'
-      libdirectfb_systems_private += ['-ldirectfb_drmkms']
-      libdirectfb_systems_private += run_command('pkg-config', '--static', '--libs', 'libdrm',
-                                                 check: true).stdout().strip()
-    endif
-  endif
-  if get_option('fbdev')
-    subdir('systems/fbdev')
-    if get_option('default_library') == 'static'
-      libdirectfb_systems_private += ['-ldirectfb_fbdev']
-    endif
-  endif
-endif
-if get_option('default_library') == 'static'
-  libdirectfb_systems_private += ['-Wl,--no-whole-archive']
-endif
-
-pkgconfig.generate(filebase: 'directfb-systems',
-                   variables: 'moduledir=' + moduledir,
-                   name: 'DirectFB-systems',
-                   description: 'DirectFB system modules',
-                   libraries_private: libdirectfb_systems_private)
-
 # inputdriver modules
 
-libdirectfb_inputdrivers_private = []
 if get_option('os') == 'linux'
   if get_option('linuxinput')
     subdir('inputdrivers/linux_input')
-    if get_option('default_library') == 'static'
-      libdirectfb_inputdrivers_private += ['-L${moduledir}/inputdrivers']
-      libdirectfb_inputdrivers_private += ['-Wl,--whole-archive -ldirectfb_linux_input -Wl,--no-whole-archive']
-    endif
   endif
 endif
 
-pkgconfig.generate(filebase: 'directfb-inputdrivers',
-                   variables: 'moduledir=' + moduledir,
-                   name: 'DirectFB-inputdrivers',
-                   description: 'DirectFB inputdriver modules',
-                   libraries_private: libdirectfb_inputdrivers_private)
-
 # interface modules
 
-libdirectfb_interfaces_private = []
 subdir('interfaces/ICoreResourceManager')
-if get_option('default_library') == 'static'
-  libdirectfb_interfaces_private += ['-L${moduledir}/interfaces/ICoreResourceManager']
-  libdirectfb_interfaces_private += ['-Wl,--whole-archive -licoreresourcemanager_default -Wl,--no-whole-archive']
-endif
 subdir('interfaces/IDirectFBFont')
-if get_option('default_library') == 'static'
-  libdirectfb_interfaces_private += ['-L${moduledir}/interfaces/IDirectFBFont']
-  libdirectfb_interfaces_private += ['-Wl,--whole-archive -lidirectfbfont_dgiff -Wl,--no-whole-archive']
-endif
 subdir('interfaces/IDirectFBImageProvider')
-if get_option('default_library') == 'static'
-  libdirectfb_interfaces_private += ['-L${moduledir}/interfaces/IDirectFBImageProvider']
-  libdirectfb_interfaces_private += ['-Wl,--whole-archive -lidirectfbimageprovider_dfiff -Wl,--no-whole-archive']
-endif
 subdir('interfaces/IDirectFBVideoProvider')
-if get_option('default_library') == 'static'
-  libdirectfb_interfaces_private += ['-L${moduledir}/interfaces/IDirectFBVideoProvider']
-  libdirectfb_interfaces_private += ['-Wl,--whole-archive -lidirectfbvideoprovider_dfvff -Wl,--no-whole-archive']
-endif
 subdir('interfaces/IDirectFBWindows')
-if get_option('default_library') == 'static'
-  libdirectfb_interfaces_private += ['-L${moduledir}/interfaces/IDirectFBWindows']
-  libdirectfb_interfaces_private += ['-Wl,--whole-archive -lidirectfbwindows_default -Wl,--no-whole-archive']
-endif
 
-pkgconfig.generate(filebase: 'directfb-interfaces',
-                   variables: 'moduledir=' + moduledir,
-                   name: 'DirectFB-interfaces',
-                   description: 'DirectFB interface modules',
-                   libraries_private: libdirectfb_interfaces_private)
+# system modules
+
+subdir('systems/dummy')
+if get_option('os') == 'linux'
+  if get_option('drmkms')
+    subdir('systems/drmkms')
+  endif
+  if get_option('fbdev')
+    subdir('systems/fbdev')
+  endif
+endif
 
 # wm modules
 
-libdirectfb_wm_private = []
 subdir('wm/default')
-if get_option('default_library') == 'static'
-  libdirectfb_wm_private += ['-L${moduledir}/wm']
-  libdirectfb_wm_private += ['-Wl,--whole-archive -ldirectfbwm_default -Wl,--no-whole-archive']
-endif
 
-pkgconfig.generate(filebase: 'directfb-wm',
-                   variables: 'moduledir=' + moduledir,
-                   name: 'DirectFB-wm',
-                   description: 'DirectFB wm modules',
-                   libraries_private: libdirectfb_wm_private)
+# generate .pc files
+
+dfb_update_pkgconfig_conf = configuration_data()
+
+dfb_update_pkgconfig_conf.set('PKGCONFIGDIR', join_paths(get_option('prefix'), get_option('libdir'), 'pkgconfig'))
+
+dfb_update_pkgconfig_conf.set('VERSION', directfb_version)
+
+dfb_update_pkgconfig = configure_file(configuration: dfb_update_pkgconfig_conf,
+                                      input: 'dfb-update-pkgconfig.in',
+                                      output: 'dfb-update-pkgconfig',
+                                      install: true,
+                                      install_dir: get_option('bindir'))
+
+meson.add_install_script(dfb_update_pkgconfig, skip_if_destdir: true)
