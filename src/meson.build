@@ -162,13 +162,13 @@ else
   surface_pool_sources = 'core/local_surface_pool.c'
 endif
 
-build_h = configuration_data()
+build_conf = configuration_data()
 
-build_h.set_quoted('DIRECTFB_VERSION_VENDOR', get_option('vendor-version'))
+build_conf.set_quoted('DIRECTFB_VERSION_VENDOR', get_option('vendor-version'))
 
-build_h.set10('DFB_SMOOTH_SCALING', get_option('smooth-scaling'))
+build_conf.set10('DFB_SMOOTH_SCALING', get_option('smooth-scaling'))
 
-configure_file(configuration: build_h,
+configure_file(configuration: build_conf,
                output: 'build.h',
                install: true,
                install_dir: join_paths(get_option('includedir'), 'directfb-internal'))
@@ -198,7 +198,7 @@ pkgconfig.generate(filebase: 'directfb',
                    name: 'DirectFB',
                    description: 'Graphics and windowing library in Frame Buffer memory',
                    requires: 'direct fusion',
-                   requires_private: 'directfb-inputdrivers directfb-interfaces directfb-systems directfb-wm',
+                   requires_private: 'directfb-gfxdriver directfb-inputdriver directfb-interface directfb-system directfb-wm',
                    libraries: '-L${libdir} -ldirectfb',
                    subdirs: 'directfb')
 

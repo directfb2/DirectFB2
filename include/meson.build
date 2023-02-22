@@ -25,18 +25,22 @@ directfb_headers = [
   'directfbgl.h',
 ]
 
-directfb_version_h = configuration_data()
-directfb_version_h.set('DIRECTFB_MAJOR_VERSION', directfb_major_version)
-directfb_version_h.set('DIRECTFB_MINOR_VERSION', directfb_minor_version)
-directfb_version_h.set('DIRECTFB_MICRO_VERSION', directfb_micro_version)
-configure_file(configuration: directfb_version_h,
+directfb_version_conf = configuration_data()
+
+directfb_version_conf.set('DIRECTFB_MAJOR_VERSION', directfb_major_version)
+directfb_version_conf.set('DIRECTFB_MINOR_VERSION', directfb_minor_version)
+directfb_version_conf.set('DIRECTFB_MICRO_VERSION', directfb_micro_version)
+
+configure_file(configuration: directfb_version_conf,
                output: 'directfb_version.h',
                install: true,
                install_dir: join_paths(get_option('includedir'), 'directfb'))
 
-directfb_build_h = configuration_data()
-directfb_build_h.set('FLUXED_ARGS_BYTES', get_option('args-size'))
-configure_file(configuration: directfb_build_h,
+directfb_build_conf = configuration_data()
+
+directfb_build_conf.set('FLUXED_ARGS_BYTES', get_option('args-size'))
+
+configure_file(configuration: directfb_build_conf,
                output: 'directfb_build.h',
                install: true,
                install_dir: join_paths(get_option('includedir'), 'directfb'))

@@ -18,7 +18,7 @@
 
 #include <core/wm.h>
 
-D_DEBUG_DOMAIN( IDirectFBWindows_default, "IDirectFBWindows/Default", "Default Window Stack Implementation" );
+D_DEBUG_DOMAIN( IDirectFBWindows_default, "IDirectFBWindows/Default", "Default Windows Watcher" );
 
 static DirectResult Probe    ( void             *ctx );
 
