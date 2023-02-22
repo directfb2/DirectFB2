@@ -1,3 +1,60 @@
+commit 3e2638eb08d581d7f8bac4d34303a4859506990e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Feb 22 08:36:47 2023 +0100
+
+    Add pkg-config files per module (for static build)
+
+commit d33e3d40c20d3f50cb6e48882f670477068e3288
+Merge: be72f1f d244ae0
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Feb 19 07:07:13 2023 +0100
+
+    Merge pull request #86 from caramelli/master
+    
+    drmkms: Set default pixel format using drmModePlane formats array
+
+commit d244ae07fd84d511a82066bf0b37a648534311e5
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Feb 19 07:06:13 2023 +0100
+
+    drmkms: Ask the kernel to expose all planes to userspace, thanks to Daniel Palmer!
+
+commit c6db97e3ee85b81e7fd3ca778664b989d42db679
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Feb 18 09:59:05 2023 +0100
+
+    drmkms: Set default pixel format using drmModePlane formats array if AR24 is not supported
+
+commit be72f1f0ca0fc5a6f0b42a0bb0164dad654d875e
+Merge: e510f61 3770869
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Feb 2 20:33:51 2023 +0100
+
+    Merge pull request #84 from caramelli/master
+    
+    Use Libs.private in pkg-config files corresponding to modules
+
+commit 3770869d315e1db1a4a85001f17e767863f78969
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Feb 2 20:29:45 2023 +0100
+
+    Use Libs.private in pkg-config files corresponding to modules
+
+commit e510f613a422a88fd3b556dc2346a0f51c18e17f
+Merge: b859a6a d26374d
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Feb 2 06:37:44 2023 +0100
+
+    Merge pull request #83 from caramelli/master
+    
+    DRMKMS/Screen: Get panel orientation on screen initialization
+
+commit d26374df50878001ea591bdf72e3bfa7765e2d15
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Feb 2 06:31:18 2023 +0100
+
+    Update ChangeLog
+
 commit 5e7d9f13ef93d974947391250b8edd747777f368
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Thu Feb 2 06:30:58 2023 +0100
