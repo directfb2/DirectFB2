@@ -17,11 +17,11 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 mkpc() {
-if [ "`echo @PKGCONFIGDIR@/directfb-$1-*`" != "@PKGCONFIGDIR@/directfb-$1-*" ]; then
-  REQUIRES_PRIVATE=$(basename -s .pc -a @PKGCONFIGDIR@/directfb-$1-* | tr '\n' ' ' | sed 's/ $//')
+if [ "`echo $DESTDIR@PKGCONFIGDIR@/directfb-$1-*`" != "$DESTDIR@PKGCONFIGDIR@/directfb-$1-*" ]; then
+  REQUIRES_PRIVATE=$(basename -s .pc -a $DESTDIR@PKGCONFIGDIR@/directfb-$1-* | tr '\n' ' ' | sed 's/ $//')
 fi
 
-cat > @PKGCONFIGDIR@/directfb-$1.pc << EOF
+cat > $DESTDIR@PKGCONFIGDIR@/directfb-$1.pc << EOF
 Name: DirectFB-$1
 Description: DirectFB $1 modules
 Version: @VERSION@

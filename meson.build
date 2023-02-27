@@ -123,4 +123,4 @@ dfb_update_pkgconfig = configure_file(configuration: dfb_update_pkgconfig_conf,
                                       install: true,
                                       install_dir: get_option('bindir'))
 
-meson.add_install_script(dfb_update_pkgconfig, skip_if_destdir: true)
+meson.add_install_script(dfb_update_pkgconfig)
