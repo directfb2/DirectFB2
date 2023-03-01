@@ -29,8 +29,8 @@ D_DEBUG_DOMAIN( DirectFB_Config, "DirectFB/Config", "DirectFB Runtime Configurat
 
 /**********************************************************************************************************************/
 
-DFBConfig         *dfb_config = NULL;
-static const char *dfb_config_usage =
+DFBConfig  *dfb_config = NULL;
+const char *dfb_config_usage =
      "\n"
      " --dfb-help                      Output DirectFB usage information and exit\n"
      " --dfb:<option>[,<option>...]    Pass options to DirectFB (see below)\n"
