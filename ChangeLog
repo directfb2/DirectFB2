@@ -1,3 +1,24 @@
+commit 185a5fce4aeb8b581c0b42fc040c83c5a1b6943a
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Mar 1 03:54:58 2023 +0100
+
+    Restore global variables for DirectFB version
+
+commit d1182aeace2fbc3877266f52cf1b640235442390
+Merge: 8bea71e 70045be
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Feb 27 11:15:50 2023 +0100
+
+    Merge pull request #91 from caramelli/master
+    
+    dfb-update-pkgconfig: Add DESTDIR
+
+commit 70045be30a4414c45c806dbf0c88a894023210cd
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Feb 27 10:58:34 2023 +0100
+
+    Update ChangeLog
+
 commit 5731e6d121ec20c67aecbd2d4ededc93a2565404
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Mon Feb 27 10:58:28 2023 +0100
