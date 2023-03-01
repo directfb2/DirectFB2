@@ -140,7 +140,9 @@ typedef struct
 
 /**********************************************************************************************************************/
 
-extern DFBConfig *dfb_config;
+extern DFBConfig  *dfb_config;
+
+extern const char *dfb_config_usage;
 
 /*
  * Set indiviual option.

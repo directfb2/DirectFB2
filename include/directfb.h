@@ -190,6 +190,13 @@ typedef enum {
 /**********************************************************************************************************************/
 
 /*
+ * Dynamic version handling.
+ */
+extern const unsigned int directfb_major_version;
+extern const unsigned int directfb_minor_version;
+extern const unsigned int directfb_micro_version;
+
+/*
  * Checks for a certain DirectFB version.
  * In case of an error a message is returned describing
  * the mismatch.
@@ -199,6 +206,11 @@ const char DIRECTFB_API *DirectFBCheckVersion (
      unsigned int                            required_minor,     /* minor version */
      unsigned int                            required_micro      /* micro version */
 );
+
+/*
+ * Retrieves usage information about supported command-line flags.
+ */
+const char DIRECTFB_API *DirectFBUsageString ();
 
 /*
  * Parses the command-line and initializes some variables.

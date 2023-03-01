@@ -33,6 +33,10 @@ IDirectFB *idirectfb_singleton = NULL;
 static DirectMutex idirectfb_lock;
 static DirectOnce  idirectfb_init_once = DIRECT_ONCE_INIT();
 
+const unsigned int directfb_major_version = DIRECTFB_MAJOR_VERSION;
+const unsigned int directfb_minor_version = DIRECTFB_MINOR_VERSION;
+const unsigned int directfb_micro_version = DIRECTFB_MICRO_VERSION;
+
 /**********************************************************************************************************************/
 
 const char *
@@ -52,6 +56,12 @@ DirectFBCheckVersion( unsigned int required_major,
           return "DirectFB version too old (micro mismatch)";
 
      return NULL;
+}
+
+const char *
+DirectFBUsageString()
+{
+     return dfb_config_usage;
 }
 
 DFBResult
