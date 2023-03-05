@@ -94,6 +94,7 @@ const char *dfb_config_usage =
      "  keep-accumulators=<limit>      Free accumulators above the limit (default = 1024)\n"
      "                                 Setting -1 never frees accumulators until the state is destroyed\n"
      "  [no-]mmx                       Enable MMX assembly support (enabled by default if available)\n"
+     "  [no-]neon                      Enable NEON assembly support (enabled by default if available)\n"
      "  warn=<type[:<width>x<height>]> Print warnings on surface/window creations or surface buffer allocations\n"
      "                                 [ create-surface | create-window | allocate-buffer ]\n"
      "  [no-]surface-clear             Clear all surface buffers after creation\n"
@@ -270,6 +271,7 @@ config_allocate()
      dfb_config->keep_accumulators                     = 1024;
 
      dfb_config->mmx                                   = true;
+     dfb_config->neon                                  = true;
 
      dfb_config->surface_shmpool_size                  = 64 * 1024 * 1024;
 
@@ -1047,6 +1049,12 @@ dfb_config_set( const char *name,
      } else
      if (strcmp( name, "no-mmx" ) == 0) {
           dfb_config->mmx = false;
+     } else
+     if (strcmp( name, "neon" ) == 0) {
+          dfb_config->neon = true;
+     } else
+     if (strcmp( name, "no-neon" ) == 0) {
+          dfb_config->neon = false;
      } else
      if (strcmp( name, "warn" ) == 0 || strcmp( name, "no-warn" ) == 0) {
           DFBConfigWarnFlags flags = DCWF_ALL;
