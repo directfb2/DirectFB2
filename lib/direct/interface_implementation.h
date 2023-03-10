@@ -37,47 +37,46 @@ static DirectInterfaceFuncs interface_funcs = {
      (void*) Construct
 };
 
-#define DIRECT_INTERFACE_IMPLEMENTATION(type,impl)              \
-                                                                \
-__attribute__((constructor)) void type##_##impl##_ctor( void ); \
-__attribute__((destructor))  void type##_##impl##_dtor( void ); \
-                                                                \
-static const char *                                             \
-GetType()                                                       \
-{                                                               \
-     return #type;                                              \
-}                                                               \
-                                                                \
-static const char *                                             \
-GetImplementation()                                             \
-{                                                               \
-     return #impl;                                              \
-}                                                               \
-                                                                \
-static DirectResult                                             \
-Allocate( void **ret_interface )                                \
-{                                                               \
-     DIRECT_ALLOCATE_INTERFACE( *ret_interface, type );         \
-     return DR_OK;                                              \
-}                                                               \
-                                                                \
-static DirectResult                                             \
-Deallocate( void *interface_ptr )                               \
-{                                                               \
-     DIRECT_DEALLOCATE_INTERFACE( (IAny*) (interface_ptr) );    \
-     return DR_OK;                                              \
-}                                                               \
-                                                                \
-void                                                            \
-type##_##impl##_ctor()                                          \
-{                                                               \
-     DirectRegisterInterface( &interface_funcs );               \
-}                                                               \
-                                                                \
-void                                                            \
-type##_##impl##_dtor()                                          \
-{                                                               \
-     DirectUnregisterInterface( &interface_funcs );             \
+#define DIRECT_INTERFACE_IMPLEMENTATION(type,impl)           \
+                                                             \
+static const char *                                          \
+GetType()                                                    \
+{                                                            \
+     return #type;                                           \
+}                                                            \
+                                                             \
+static const char *                                          \
+GetImplementation()                                          \
+{                                                            \
+     return #impl;                                           \
+}                                                            \
+                                                             \
+static DirectResult                                          \
+Allocate( void **ret_interface )                             \
+{                                                            \
+     DIRECT_ALLOCATE_INTERFACE( *ret_interface, type );      \
+     return DR_OK;                                           \
+}                                                            \
+                                                             \
+static DirectResult                                          \
+Deallocate( void *interface_ptr )                            \
+{                                                            \
+     DIRECT_DEALLOCATE_INTERFACE( (IAny*) (interface_ptr) ); \
+     return DR_OK;                                           \
+}                                                            \
+                                                             \
+__attribute__((constructor))                                 \
+static void                                                  \
+type##_##impl##_ctor()                                       \
+{                                                            \
+     DirectRegisterInterface( &interface_funcs );            \
+}                                                            \
+                                                             \
+__attribute__((destructor))                                  \
+static void                                                  \
+type##_##impl##_dtor()                                       \
+{                                                            \
+     DirectUnregisterInterface( &interface_funcs );          \
 }
 
 #endif

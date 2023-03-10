@@ -28,8 +28,6 @@ DECLARE_MODULE_DIRECTORY( dfb_graphics_drivers );
 
 #define DFB_GRAPHICS_DRIVER_ABI_VERSION          35
 
-#define DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH     40
-#define DFB_GRAPHICS_DRIVER_INFO_VENDOR_LENGTH   60
 #define DFB_GRAPHICS_DRIVER_INFO_URL_LENGTH     100
 #define DFB_GRAPHICS_DRIVER_INFO_LICENSE_LENGTH  40
 
@@ -86,7 +84,6 @@ typedef struct {
 
 struct __DFB_GraphicsDeviceInfo {
      char             name[DFB_GRAPHICS_DEVICE_INFO_NAME_LENGTH];     /* Device name. */
-
      char             vendor[DFB_GRAPHICS_DEVICE_INFO_VENDOR_LENGTH]; /* Vendor of the device. */
 
      CardCapabilities caps;                                           /* Hardware acceleration capabilities. */
@@ -308,13 +305,19 @@ typedef struct {
 
      void      (*GetDriverInfo)( GraphicsDriverInfo  *driver_info );
 
-     DFBResult (*InitDriver)   ( GraphicsDeviceFuncs *funcs, void *driver_data, void *device_data, CoreDFB *core );
+     DFBResult (*InitDriver)   ( GraphicsDeviceFuncs *funcs,
+                                 void                *driver_data,
+                                 void                *device_data,
+                                 CoreDFB             *core );
 
-     DFBResult (*InitDevice)   ( GraphicsDeviceInfo *device_info, void *driver_data, void *device_data );
+     DFBResult (*InitDevice)   ( GraphicsDeviceInfo  *device_info,
+                                 void                *driver_data,
+                                 void                *device_data );
 
-     void      (*CloseDevice)  ( void *driver_data, void *device_data );
+     void      (*CloseDevice)  ( void                *driver_data,
+                                 void                *device_data );
 
-     void      (*CloseDriver)  ( void *driver_data );
+     void      (*CloseDriver)  ( void                *driver_data );
 } GraphicsDriverFuncs;
 
 typedef enum {
@@ -468,9 +471,9 @@ void           dfb_gfxcard_after_set_var         ( void );
 
 void           dfb_gfxcard_get_capabilities      ( CardCapabilities              *ret_caps );
 
-void           dfb_gfxcard_get_device_info       ( GraphicsDeviceInfo            *ret_info );
+void           dfb_gfxcard_get_device_info       ( GraphicsDeviceInfo            *ret_device_info );
 
-void           dfb_gfxcard_get_driver_info       ( GraphicsDriverInfo            *ret_info );
+void           dfb_gfxcard_get_driver_info       ( GraphicsDriverInfo            *ret_driver_info );
 
 int            dfb_gfxcard_reserve_memory        ( unsigned int                   size );
 

@@ -82,7 +82,7 @@ spaced_primes_closest( unsigned int num )
           if (primes[i] > num)
                return primes[i];
 
-     return primes[nprimes - 1];
+     return primes[nprimes-1];
 }
 
 static __inline__ FusionHashNode **
@@ -92,8 +92,8 @@ fusion_hash_lookup_node( FusionHash *hash,
      FusionHashNode **node;
 
      if (hash->key_type == HASH_STRING) {
-          unsigned int h;
-          const signed char *p = key;
+          unsigned int  h;
+          const char   *p = key;
           HASH_STR(h,p)
           node = &hash->nodes[h % hash->size];
      }
@@ -471,8 +471,8 @@ fusion_hash_resize( FusionHash *hash )
           for (node = hash->nodes[i]; node; node = next) {
                next = node->next;
                if (hash->key_type == HASH_STRING) {
-                    unsigned int h;
-                    const signed char *p = node->key;
+                    unsigned int  h;
+                    const char   *p = node->key;
                     HASH_STR(h, p)
                     hash_val = h % new_size;
                }

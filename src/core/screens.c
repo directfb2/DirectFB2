@@ -255,8 +255,8 @@ static DFBResult
 dfb_screen_core_shutdown( DFBScreenCore *data,
                           bool           emergency )
 {
-     FusionSHMPoolShared *pool;
      DFBScreenCoreShared *shared;
+     FusionSHMPoolShared *pool;
      int                  i;
 
      D_UNUSED_P( shared );

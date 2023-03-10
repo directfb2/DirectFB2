@@ -69,7 +69,7 @@ void
 direct_trap( const char *domain,
              int         sig )
 {
-     sigval_t val;
+     union sigval val;
 
      if (direct_config->delay_trap_ms) {
           D_DEBUG_AT( Direct_Trap, "Not raising signal %d from %s, waiting for %dms... attach gdb --pid=%d\n",

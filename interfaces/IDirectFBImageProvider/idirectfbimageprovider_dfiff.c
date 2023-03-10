@@ -44,6 +44,8 @@ typedef struct {
 
      void                  *ptr;                     /* pointer to raw file data (mapped) */
      int                    len;                     /* data length, i.e. file size */
+     int                    pitch;
+     bool                   premultiplied;
 
      DFBSurfaceDescription  desc;
 
@@ -112,8 +114,6 @@ static DFBResult
 IDirectFBImageProvider_DFIFF_GetImageDescription( IDirectFBImageProvider *thiz,
                                                   DFBImageDescription    *ret_desc )
 {
-     const DFIFFHeader *header;
-
      DIRECT_INTERFACE_GET_DATA( IDirectFBImageProvider_DFIFF )
 
      D_DEBUG_AT( ImageProvider_DFIFF, "%s( %p )\n", __FUNCTION__, thiz );
@@ -121,12 +121,7 @@ IDirectFBImageProvider_DFIFF_GetImageDescription( IDirectFBImageProvider *thiz,
      if (!ret_desc)
           return DFB_INVARG;
 
-     header = data->ptr;
-
-     ret_desc->caps = DICAPS_NONE;
-
-     if (DFB_PIXELFORMAT_HAS_ALPHA( header->format ))
-          ret_desc->caps |= DICAPS_ALPHACHANNEL;
+     ret_desc->caps = DFB_PIXELFORMAT_HAS_ALPHA( data->desc.pixelformat ) ? DICAPS_ALPHACHANNEL : DICAPS_NONE;
 
      return DFB_OK;
 }
@@ -138,13 +133,11 @@ IDirectFBImageProvider_DFIFF_RenderTo( IDirectFBImageProvider *thiz,
 {
      DFBResult              ret;
      IDirectFBSurface_data *dst_data;
-     const DFIFFHeader     *header;
      DFBRectangle           rect;
      DFBRectangle           clipped;
      DFBSurfaceCapabilities caps;
      DFBSurfacePixelFormat  format;
-     bool                   dfiff_premultiplied = false;
-     bool                   dest_premultiplied  = false;
+     bool                   dest_premultiplied = false;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFBImageProvider_DFIFF )
 
@@ -170,13 +163,12 @@ IDirectFBImageProvider_DFIFF_RenderTo( IDirectFBImageProvider *thiz,
 
      clipped = rect;
 
+     D_DEBUG_AT( ImageProvider_DFIFF, "  -> clip    "DFB_RECT_FORMAT"\n", DFB_RECTANGLE_VALS( &dst_data->area.current ) );
+
      if (!dfb_rectangle_intersect( &clipped, &dst_data->area.current ))
           return DFB_INVAREA;
 
-     header = data->ptr;
-
-     if (header->flags & DFIFF_FLAG_PREMULTIPLIED)
-          dfiff_premultiplied = true;
+     D_DEBUG_AT( ImageProvider_DFIFF, "  -> clipped "DFB_RECT_FORMAT"\n", DFB_RECTANGLE_VALS( &clipped ) );
 
      ret = destination->GetCapabilities( destination, &caps );
      if (ret)
@@ -189,33 +181,33 @@ IDirectFBImageProvider_DFIFF_RenderTo( IDirectFBImageProvider *thiz,
      if (ret)
           return ret;
 
-     if (DFB_RECTANGLE_EQUAL( rect, clipped )                                             &&
-         rect.w == header->width  && rect.h == header->height && format == header->format &&
-         dfiff_premultiplied == dest_premultiplied) {
-          ret = destination->Write( destination, &rect, data->ptr + sizeof(DFIFFHeader), header->pitch );
+     if (DFB_RECTANGLE_EQUAL( rect, clipped )                                                          &&
+         rect.w == data->desc.width && rect.h == data->desc.height && format == data->desc.pixelformat &&
+         data->premultiplied == dest_premultiplied) {
+          ret = destination->Write( destination, &rect, data->ptr + sizeof(DFIFFHeader), data->pitch );
           if (ret)
                return ret;
      }
      else {
-          IDirectFBSurface      *source;
-          DFBSurfaceDescription  desc;
           DFBRegion              clip = DFB_REGION_INIT_FROM_RECTANGLE( &clipped );
           DFBRegion              old_clip;
+          DFBSurfaceDescription  desc;
+          IDirectFBSurface      *source;
 
           desc = data->desc;
 
           desc.flags                 |= DSDESC_PREALLOCATED;
           desc.preallocated[0].data   = data->ptr + sizeof(DFIFFHeader);
-          desc.preallocated[0].pitch  = header->pitch;
+          desc.preallocated[0].pitch  = data->pitch;
 
           ret = data->idirectfb->CreateSurface( data->idirectfb, &desc, &source );
           if (ret)
                return ret;
 
           if (DFB_PIXELFORMAT_HAS_ALPHA( desc.pixelformat )) {
-               if (dest_premultiplied && !dfiff_premultiplied)
+               if (dest_premultiplied && !data->premultiplied)
                     destination->SetBlittingFlags( destination, DSBLIT_SRC_PREMULTIPLY );
-               else if (!dest_premultiplied && dfiff_premultiplied)
+               else if (!dest_premultiplied && data->premultiplied)
                     destination->SetBlittingFlags( destination, DSBLIT_DEMULTIPLY );
           }
 
@@ -235,7 +227,7 @@ IDirectFBImageProvider_DFIFF_RenderTo( IDirectFBImageProvider *thiz,
      }
 
      if (data->render_callback) {
-          DFBRectangle r = { 0, 0, clipped.w, clipped.h };
+          DFBRectangle r = { 0, 0, data->desc.width, data->desc.height };
 
           data->render_callback( &r, data->render_callback_context );
      }
@@ -263,6 +255,7 @@ IDirectFBImageProvider_DFIFF_SetRenderCallback( IDirectFBImageProvider *thiz,
 static DFBResult
 Probe( IDirectFBImageProvider_ProbeContext *ctx )
 {
+     /* Check the magic. */
      if (!strncmp( (const char*) ctx->header, "DFIFF", 5 ))
           return DFB_OK;
 
@@ -278,22 +271,28 @@ Construct( IDirectFBImageProvider *thiz,
      DFBResult                 ret;
      DirectFile                fd;
      DirectFileInfo            info;
-     void                     *ptr;
      const DFIFFHeader        *header;
+     void                     *ptr;
      IDirectFBDataBuffer_data *buffer_data = buffer->priv;
 
      DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBImageProvider_DFIFF )
 
      D_DEBUG_AT( ImageProvider_DFIFF, "%s( %p )\n", __FUNCTION__, thiz );
 
+     data->ref       = 1;
+     data->idirectfb = idirectfb;
+
      /* Check for valid filename. */
-     if (!buffer_data->filename)
+     if (!buffer_data->filename) {
+          DIRECT_DEALLOCATE_INTERFACE( thiz );
           return DFB_UNSUPPORTED;
+     }
 
      /* Open the file. */
      ret = direct_file_open( &fd, buffer_data->filename, O_RDONLY, 0 );
      if (ret) {
-          D_DERROR( ret, "ImageProvider/DFIFF: Failed to open '%s'!\n", buffer_data->filename );
+          D_DERROR( ret, "ImageProvider/DFIFF: Failed to open file '%s'!\n", buffer_data->filename );
+          DIRECT_DEALLOCATE_INTERFACE( thiz );
           return ret;
      }
 
@@ -315,10 +314,10 @@ Construct( IDirectFBImageProvider *thiz,
 
      header = ptr;
 
-     data->ref              = 1;
-     data->idirectfb        = idirectfb;
      data->ptr              = ptr;
      data->len              = info.size;
+     data->pitch            = header->pitch;
+     data->premultiplied    = header->flags & DFIFF_FLAG_PREMULTIPLIED ? true : false;
      data->desc.flags       = DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT;
      data->desc.width       = header->width;
      data->desc.height      = header->height;

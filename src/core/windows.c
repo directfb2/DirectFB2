@@ -491,7 +491,7 @@ dfb_window_create( CoreWindowStack             *stack,
      window->stack               = stack;
      window->config              = config;
      window->config.association  = (desc->flags & DWDESC_PARENT) ? desc->parent_id : 0;
-     window->config.cursor_flags = DWCF_NONE;
+     window->config.cursor_flags = DWCF_INVISIBLE;
      window->toplevel_id         = toplevel_id;
      window->policy              = policy;
 
@@ -1077,9 +1077,9 @@ dfb_window_set_config( CoreWindow             *window,
 
 DFBResult
 dfb_window_set_cursor_shape( CoreWindow   *window,
-                             CoreSurface  *surface,
-                             unsigned int  hot_x,
-                             unsigned int  hot_y )
+                             CoreSurface  *shape,
+                             int           hot_x,
+                             int           hot_y )
 {
      DFBResult        ret   = DFB_OK;
      CoreWindowStack *stack = window->stack;
@@ -1102,11 +1102,11 @@ dfb_window_set_cursor_shape( CoreWindow   *window,
      if (window->cursor.surface)
           dfb_surface_unlink( &window->cursor.surface );
 
-     if (surface) {
-          ret = dfb_surface_link( &window->cursor.surface, surface );
+     if (shape) {
+          ret = dfb_surface_link( &window->cursor.surface, shape );
           if (ret == DFB_OK) {
                if (window->flags & CWF_FOCUSED)
-                    dfb_windowstack_cursor_set_shape( stack, surface, hot_x, hot_y );
+                    dfb_windowstack_cursor_set_shape( stack, shape, hot_x, hot_y );
           }
      }
 

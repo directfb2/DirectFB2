@@ -16,6 +16,8 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 */
 
+#include <direct/util.h>
+
 #include "drmkms_mode.h"
 
 D_DEBUG_DOMAIN( DRMKMS_Mode, "DRMKMS/Mode", "DRM/KMS Mode" );
@@ -40,20 +42,20 @@ drmkms_modes_to_dsor_bitmask( DRMKMSData *drmkms,
 {
      int                        i, j;
      drmModeModeInfo           *mode = drmkms->connector[connector]->modes;
-     DFBScreenOutputResolution  res  = DSOR_UNKNOWN;
+     DFBScreenOutputResolution  dsor = DSOR_UNKNOWN;
 
      D_DEBUG_AT( DRMKMS_Mode, "%s()\n", __FUNCTION__ );
 
      for (i = 0; i < drmkms->connector[connector]->count_modes; i++) {
           for (j = 0; j < D_ARRAY_SIZE(xres_table); j++) {
                if (mode[i].hdisplay == xres_table[j] && mode[i].vdisplay == yres_table[j]) {
-                    res |= (1 << j);
+                    dsor |= (1 << j);
                     break;
                }
           }
      }
 
-     return res;
+     return dsor;
 }
 
 drmModeModeInfo *
@@ -93,13 +95,16 @@ drmkms_dsor_dsef_to_mode( DRMKMSData                *drmkms,
                           DFBScreenOutputResolution  dsor,
                           DFBScreenEncoderFrequency  dsef )
 {
-     int res  = D_BITn32( dsor );
-     int freq = D_BITn32( dsef );
+     unsigned int res  = D_BITn32( dsor );
+     unsigned int freq = D_BITn32( dsef );
 
      D_DEBUG_AT( DRMKMS_Mode, "%s( dsor %x, dsef %x)\n", __FUNCTION__, dsor, dsef );
 
-     if (res >= D_ARRAY_SIZE(xres_table) || freq >= D_ARRAY_SIZE(freq_table))
+     if (res == -1 || res >= D_ARRAY_SIZE(xres_table) || freq >= D_ARRAY_SIZE(freq_table))
           return NULL;
+
+     if (freq == -1)
+          freq = 0;
 
      return drmkms_find_mode( drmkms, connector, xres_table[res], yres_table[res], freq_table[freq] );
 }

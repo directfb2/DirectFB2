@@ -317,8 +317,9 @@ send_update_event( CoreWindow      *window,
      post_event( window, data, &we );
 }
 
-static int keys_compare( const void *key1,
-                         const void *key2 )
+static int
+keys_compare( const void *key1,
+              const void *key2 )
 {
      return *(const DFBInputDeviceKeySymbol*) key1 - *(const DFBInputDeviceKeySymbol*) key2;
 }
@@ -643,6 +644,16 @@ switch_focus( WMData          *wmdata,
           return;
 
      if (from) {
+          if (from->cursor.surface && !(from->config.cursor_flags & DWCF_INVISIBLE) &&
+              (!to || !to->cursor.surface || (to->cursor.surface && (to->config.cursor_flags & DWCF_INVISIBLE)))) {
+               CoreSurface *shape;
+               int          hot_x, hot_y;
+
+               dfb_layer_context_get_cursor_shape( stack->context, &shape, &hot_x, &hot_y );
+
+               dfb_windowstack_cursor_set_shape( stack, shape, hot_x, hot_y );
+          }
+
           we.type = DWET_LOSTFOCUS;
 
           post_event( from, data, &we );
@@ -661,6 +672,9 @@ switch_focus( WMData          *wmdata,
                     dfb_surface_unref( surface );
                }
           }
+
+          if (to->cursor.surface && !(to->config.cursor_flags & DWCF_INVISIBLE))
+               dfb_windowstack_cursor_set_shape( stack, to->cursor.surface, to->cursor.hot_x, to->cursor.hot_y );
 
           we.type = DWET_GOTFOCUS;
 
@@ -2467,7 +2481,7 @@ handle_wm_key( CoreWindowStack     *stack,
           case DIKS_SMALL_P:
                if (stack->cursor.set) {
                     dfb_windowstack_cursor_set_opacity( stack, 0xff );
-                    dfb_windowstack_cursor_enable( wmdata->core, stack, true );
+                    dfb_windowstack_cursor_enable( stack, true );
                }
 
                /* Ungrab pointer. */
@@ -3026,7 +3040,7 @@ wm_initialize( CoreDFB *core,
      if (ret)
           return ret;
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult
@@ -3040,7 +3054,7 @@ wm_join( CoreDFB *core,
      if (ret)
           return ret;
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult
@@ -3699,6 +3713,15 @@ wm_remove_window( CoreWindowStack *stack,
 
      remove_window( wmdata, stack, data, window, win );
 
+     if (window->cursor.surface && !(window->config.cursor_flags & DWCF_INVISIBLE)) {
+          CoreSurface *shape;
+          int          hot_x, hot_y;
+
+          dfb_layer_context_get_cursor_shape( stack->context, &shape, &hot_x, &hot_y );
+
+          dfb_windowstack_cursor_set_shape( stack, shape, hot_x, hot_y );
+     }
+
      /* Free keys list. */
      if (window->config.keys) {
           SHFREE( stack->shmpool, window->config.keys );
@@ -3837,6 +3860,23 @@ wm_set_window_config( CoreWindow             *window,
           }
 
           window->config.key_selection = config->key_selection;
+     }
+
+     if (flags & DWCONF_CURSOR_FLAGS) {
+          if ((config->cursor_flags & DWCF_INVISIBLE) && !(window->config.cursor_flags & DWCF_INVISIBLE)) {
+               CoreSurface *shape;
+               int          hot_x, hot_y;
+
+               dfb_layer_context_get_cursor_shape( window->stack->context, &shape, &hot_x, &hot_y );
+
+               dfb_windowstack_cursor_set_shape( window->stack, shape, hot_x, hot_y );
+          }
+
+          if (!(config->cursor_flags & DWCF_INVISIBLE) && (window->config.cursor_flags & DWCF_INVISIBLE))
+               dfb_windowstack_cursor_set_shape( window->stack,
+                                                 window->cursor.surface, window->cursor.hot_x, window->cursor.hot_y );
+
+          window->config.cursor_flags = config->cursor_flags;
      }
 
      /* Send notification to windows watchers. */
@@ -4131,8 +4171,8 @@ wm_update_cursor( CoreWindowStack       *stack,
 
           /* Create the cursor backing store surface. */
           ret = dfb_surface_create_simple( wmdata->core, size.w, size.h, stack->context->config.pixelformat,
-                                           stack->context->config.colorspace, caps, CSTF_SHARED | CSTF_CURSOR, 0, NULL,
-                                           &cursor_bs );
+                                           stack->context->config.colorspace, caps, CSTF_SHARED | CSTF_CURSOR, 0,
+                                           NULL, &cursor_bs );
           if (ret) {
                D_ERROR( "WM/Default: Failed to create backing store for cursor!\n" );
                return ret;

@@ -68,6 +68,9 @@ context_destructor( FusionObject *object,
 
      dfb_layer_context_lock( context );
 
+     if (context->cursor.surface)
+          dfb_surface_unlink( &context->cursor.surface );
+
      /* Destroy the window stack. */
      if (context->stack) {
           dfb_windowstack_destroy( context->stack );
@@ -264,7 +267,12 @@ dfb_layer_context_init( CoreLayerContext *context,
      context->layer_id   = shared->layer_id;
      context->config     = shared->default_config;
      context->adjustment = shared->default_adjustment;
-     context->rotation   = dfb_config->layers[dfb_layer_id_translated( layer )].rotate;
+
+     /* Get the layer rotation. */
+     if (dfb_config->layers[dfb_layer_id_translated( layer )].rotate_set)
+          context->rotation = dfb_config->layers[dfb_layer_id_translated( layer )].rotate;
+     else
+          dfb_screen_get_rotation( layer->screen, &context->rotation );
 
      /* Initialize screen location. */
      context->screen.location.x = 0.0f;
@@ -547,7 +555,7 @@ dfb_layer_context_get_primary_region( CoreLayerContext  *context,
                                       bool               create,
                                       CoreLayerRegion  **ret_region )
 {
-     DFBResult ret = DFB_OK;
+     DFBResult ret;
 
      D_DEBUG_AT( Core_LayerContext, "%s( %p, %screate )\n", __FUNCTION__, context, create ? "" : "don't " );
 
@@ -1080,7 +1088,7 @@ update_primary_region_config( CoreLayerContext           *context,
                               CoreLayerRegionConfig      *config,
                               CoreLayerRegionConfigFlags  flags )
 {
-     DFBResult ret = DFB_OK;
+     DFBResult ret;
 
      D_DEBUG_AT( Core_LayerContext, "%s( %p, %p, 0x%08x )\n", __FUNCTION__, context, config, flags );
 
@@ -1523,14 +1531,14 @@ dfb_layer_context_set_stereo_depth( CoreLayerContext *context,
      if (!funcs->SetStereoDepth)
           return DFB_UNSUPPORTED;
 
-     /* Set new adjustment. */
+     /* Set new depth. */
      ret = funcs->SetStereoDepth( layer, layer->driver_data, layer->layer_data, follow_video, z );
      if (ret)
           return ret;
 
-     /* Keep new offset info. */
+     /* Keep new depth. */
      context->follow_video = follow_video;
-     context->z = z;
+     context->z            = z;
 
      return DFB_OK;
 }
@@ -1543,11 +1551,11 @@ dfb_layer_context_get_stereo_depth( CoreLayerContext *context,
      D_DEBUG_AT( Core_LayerContext, "%s( %p, %p, %p )\n", __FUNCTION__, context, ret_follow_video, ret_z );
 
      D_MAGIC_ASSERT( context, CoreLayerContext );
-     D_ASSERT( ret_z != NULL );
      D_ASSERT( ret_follow_video != NULL );
+     D_ASSERT( ret_z != NULL );
 
      *ret_follow_video = context->follow_video;
-     *ret_z = context->z;
+     *ret_z            = context->z;
 
      return DFB_OK;
 }
@@ -1641,6 +1649,53 @@ dfb_layer_context_set_clip_regions( CoreLayerContext *context,
      return ret;
 }
 
+DFBResult
+dfb_layer_context_set_cursor_shape( CoreLayerContext *context,
+                                    CoreSurface      *shape,
+                                    int               hot_x,
+                                    int               hot_y )
+{
+     DFBResult ret;
+
+     D_DEBUG_AT( Core_LayerContext, "%s( %p, %p, %d, %d )\n", __FUNCTION__, context, shape, hot_x, hot_y );
+
+     D_MAGIC_ASSERT( context, CoreLayerContext );
+
+     context->cursor.hot_x = hot_x;
+     context->cursor.hot_y = hot_y;
+
+     if (context->cursor.surface)
+          dfb_surface_unlink( &context->cursor.surface );
+
+     if (shape) {
+          ret = dfb_surface_link( &context->cursor.surface, shape );
+          if (ret)
+               return ret;
+     }
+
+     return DFB_OK;
+}
+
+DFBResult
+dfb_layer_context_get_cursor_shape( CoreLayerContext  *context,
+                                    CoreSurface      **ret_shape,
+                                    int               *ret_hot_x,
+                                    int               *ret_hot_y )
+{
+     D_DEBUG_AT( Core_LayerContext, "%s( %p, %p, %p, %p )\n", __FUNCTION__, context, ret_shape, ret_hot_x, ret_hot_y );
+
+     D_MAGIC_ASSERT( context, CoreLayerContext );
+     D_ASSERT( ret_shape != NULL );
+     D_ASSERT( ret_hot_x != NULL );
+     D_ASSERT( ret_hot_y != NULL );
+
+     *ret_shape = context->cursor.surface;
+     *ret_hot_x   = context->cursor.hot_x;
+     *ret_hot_y   = context->cursor.hot_y;
+
+     return DFB_OK;
+}
+
 /**********************************************************************************************************************/
 
 DFBResult
@@ -1686,7 +1741,7 @@ dfb_layer_context_create_window( CoreDFB                     *core,
      stack = context->stack;
 
      if (!stack->cursor.set) {
-          ret = dfb_windowstack_cursor_enable( core, stack, true );
+          ret = dfb_windowstack_cursor_enable( stack, true );
           if (ret) {
                D_DEBUG_AT( Core_LayerContext, "  -> dfb_windowstack_cursor_enable() failed!\n" );
                dfb_layer_context_unlock( context );
@@ -1694,6 +1749,7 @@ dfb_layer_context_create_window( CoreDFB                     *core,
           }
      }
 
+     /* Create the window object. */
      ret = dfb_window_create( stack, desc, &window );
      if (ret) {
           D_DEBUG_AT( Core_LayerContext, "  -> dfb_window_create() failed!\n" );
@@ -1701,6 +1757,7 @@ dfb_layer_context_create_window( CoreDFB                     *core,
           return ret;
      }
 
+     /* Return the new window. */
      *ret_window = window;
 
      dfb_layer_context_unlock( context );

@@ -18,7 +18,7 @@
 
 #include <core/wm.h>
 
-D_DEBUG_DOMAIN( IDirectFBWindows_default, "IDirectFBWindows/Default", "Default Window Stack Implementation" );
+D_DEBUG_DOMAIN( IDirectFBWindows_default, "IDirectFBWindows/Default", "Default Windows Watcher" );
 
 static DirectResult Probe    ( void             *ctx );
 
@@ -37,7 +37,7 @@ typedef struct {
      DFBWindowsWatcher  watcher;
      void              *context;
 
-     Reaction           reactions[_CORE_WM_NUM_CHANNELS];
+     Reaction           reactions[CORE_WM_NUM_CHANNELS];
 } RegisteredWatcher;
 
 typedef struct {
@@ -63,7 +63,7 @@ typedef struct {
 #define WM_DETACH()                                                                                                 \
      do {                                                                                                           \
           int i;                                                                                                    \
-          for (i = _CORE_WM_NUM_CHANNELS - 1; i >= 0 ; i--) {                                                       \
+          for (i = CORE_WM_NUM_CHANNELS - 1; i >= 0 ; i--) {                                                       \
                if (registered->reactions[i].func)                                                                   \
                     dfb_wm_detach( data->core, &registered->reactions[i] );                                         \
           }                                                                                                         \

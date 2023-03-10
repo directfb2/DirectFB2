@@ -17,10 +17,77 @@
 */
 
 #include <core/layers.h>
+#include <direct/thread.h>
 
 #include "drmkms_system.h"
 
 D_DEBUG_DOMAIN( DRMKMS_Layer, "DRMKMS/Layer", "DRM/KMS Layer" );
+
+/**********************************************************************************************************************/
+
+typedef struct {
+     int                    layer_index;
+     int                    plane_index;
+
+     drmModePlane          *plane;
+     uint32_t               colorkey_propid;
+     uint32_t               zpos_propid;
+     uint32_t               alpha_propid;
+
+     int                    level;
+
+     CoreLayerRegionConfig *config;
+     bool                   muted;
+
+     CoreSurface           *surface;
+     int                    surfacebuffer_index;
+     bool                   flip_pending;
+
+     DirectMutex            lock;
+     DirectWaitQueue        wq_event;
+} DRMKMSLayerData;
+
+static void
+drmkms_page_flip_handler( int           fd,
+                          unsigned int  frame,
+                          unsigned int  sec,
+                          unsigned int  usec,
+                          void         *layer_data )
+{
+     DRMKMSLayerData *data = layer_data;
+
+     D_DEBUG_AT( DRMKMS_Layer, "%s()\n", __FUNCTION__ );
+
+     direct_mutex_lock( &data->lock );
+
+     if (data->flip_pending) {
+          dfb_surface_notify_display2( data->surface, data->surfacebuffer_index );
+
+          dfb_surface_unref( data->surface );
+     }
+
+     data->flip_pending = false;
+
+     direct_waitqueue_broadcast( &data->wq_event );
+
+     direct_mutex_unlock( &data->lock );
+
+     D_DEBUG_AT( DRMKMS_Layer, "%s() done\n", __FUNCTION__ );
+}
+
+static void *
+drmkms_buffer_thread( DirectThread *thread,
+                      void         *arg )
+{
+     DRMKMSData *drmkms = arg;
+
+     D_DEBUG_AT( DRMKMS_Layer, "%s()\n", __FUNCTION__ );
+
+     while (true)
+        drmHandleEvent( drmkms->fd, &drmkms->event_context );
+
+     return NULL;
+}
 
 /**********************************************************************************************************************/
 
@@ -57,7 +124,6 @@ drmkmsPrimaryInitLayer( CoreLayer                  *layer,
      /* Set type and capabilities. */
      description->type             = DLTF_GRAPHICS;
      description->caps             = DLCAPS_SURFACE;
-     description->surface_caps     = DSCAPS_NONE;
      description->surface_accessor = CSAID_LAYER0;
 
      /* Set name. */
@@ -67,12 +133,17 @@ drmkmsPrimaryInitLayer( CoreLayer                  *layer,
      config->flags       = DLCONF_WIDTH | DLCONF_HEIGHT | DLCONF_PIXELFORMAT | DLCONF_BUFFERMODE;
      config->width       = shared->mode[data->layer_index].hdisplay;
      config->height      = shared->mode[data->layer_index].vdisplay;
-     config->pixelformat = dfb_config->mode.format ?: DSPF_ARGB;
+     config->pixelformat = dfb_config->mode.format ?: shared->primary_format;
      config->buffermode  = DLBM_FRONTONLY;
 
      direct_mutex_init( &data->lock );
-
      direct_waitqueue_init( &data->wq_event );
+
+     drmkms->event_context.version           = DRM_EVENT_CONTEXT_VERSION;
+     drmkms->event_context.vblank_handler    = drmkms_page_flip_handler;
+     drmkms->event_context.page_flip_handler = drmkms_page_flip_handler;
+
+     drmkms->thread = direct_thread_create( DTT_CRITICAL, drmkms_buffer_thread, drmkms, "DRMKMS Buffer" );
 
      return DFB_OK;
 }
@@ -155,7 +226,6 @@ drmkmsPrimarySetRegion( CoreLayer                  *layer,
                err = drmModeSetCrtc( drmkms->fd, drmkms->encoder[index]->crtc_id,
                                      (uint32_t)(long) left_lock->handle, config->source.x, config->source.y,
                                      &drmkms->connector[index]->connector_id, 1, &shared->mode[index] );
-
                if (err) {
                     ret = errno2result( errno );
                     D_PERROR( "DRMKMS/Layer: "
@@ -181,16 +251,11 @@ drmkmsPrimarySetRegion( CoreLayer                  *layer,
 }
 
 static DFBResult
-drmkmsPrimaryUpdateFlipRegion( CoreLayer             *layer,
-                               void                  *driver_data,
+drmkmsPrimaryUpdateFlipRegion( void                  *driver_data,
                                void                  *layer_data,
-                               void                  *region_data,
                                CoreSurface           *surface,
                                DFBSurfaceFlipFlags    flags,
-                               const DFBRegion       *left_update,
                                CoreSurfaceBufferLock *left_lock,
-                               const DFBRegion       *right_update,
-                               CoreSurfaceBufferLock *right_lock,
                                bool                   flip )
 {
      DFBResult         ret;
@@ -228,7 +293,7 @@ drmkmsPrimaryUpdateFlipRegion( CoreLayer             *layer,
      D_DEBUG_AT( DRMKMS_Layer, "  -> calling drmModePageFlip()\n" );
 
      err = drmModePageFlip( drmkms->fd, drmkms->encoder[index]->crtc_id, (uint32_t)(long) left_lock->handle,
-                            DRM_MODE_PAGE_FLIP_EVENT, layer_data );
+                            DRM_MODE_PAGE_FLIP_EVENT, data );
      if (err) {
           ret = errno2result( errno );
           D_PERROR( "DRMKMS/Layer: drmModePageFlip() failed!\n" );
@@ -274,8 +339,7 @@ drmkmsPrimaryFlipRegion( CoreLayer             *layer,
                          const DFBRegion       *right_update,
                          CoreSurfaceBufferLock *right_lock )
 {
-     return drmkmsPrimaryUpdateFlipRegion( layer, driver_data, layer_data, region_data, surface, flags,
-                                           left_update, left_lock, right_update, right_lock, true );
+     return drmkmsPrimaryUpdateFlipRegion( driver_data, layer_data, surface, flags, left_lock, true );
 }
 
 static DFBResult
@@ -289,8 +353,7 @@ drmkmsPrimaryUpdateRegion( CoreLayer             *layer,
                            const DFBRegion       *right_update,
                            CoreSurfaceBufferLock *right_lock )
 {
-     return drmkmsPrimaryUpdateFlipRegion( layer, driver_data, layer_data, region_data, surface, DSFLIP_ONSYNC,
-                                           left_update, left_lock, right_update, right_lock, false );
+     return drmkmsPrimaryUpdateFlipRegion( driver_data, layer_data, surface, DSFLIP_ONSYNC, left_lock, false );
 }
 
 static int
@@ -307,8 +370,6 @@ drmkmsPlaneInitLayer( CoreLayer                  *layer,
                       DFBDisplayLayerConfig      *config,
                       DFBColorAdjustment         *adjustment )
 {
-     DFBResult                ret;
-     int                      err;
      DRMKMSData              *drmkms = driver_data;
      DRMKMSDataShared        *shared;
      DRMKMSLayerData         *data   = layer_data;
@@ -336,7 +397,6 @@ drmkmsPlaneInitLayer( CoreLayer                  *layer,
      /* Set type and capabilities. */
      description->type             = DLTF_GRAPHICS;
      description->caps             = DLCAPS_SURFACE | DLCAPS_SCREEN_POSITION | DLCAPS_ALPHACHANNEL;
-     description->surface_caps     = DSCAPS_NONE;
      description->surface_accessor = CSAID_LAYER0;
 
      /* Set name. */
@@ -354,6 +414,7 @@ drmkmsPlaneInitLayer( CoreLayer                  *layer,
           D_INFO( "DRMKMS/Layer: Supported properties for layer id %u\n", data->plane->plane_id );
           for (i = 0; i < props->count_props; i++) {
                prop = drmModeGetProperty( drmkms->fd, props->props[i] );
+
                if (!strcmp( prop->name, "colorkey" )) {
                     description->caps |= DLCAPS_SRC_COLORKEY;
                     data->colorkey_propid = prop->prop_id;
@@ -364,13 +425,8 @@ drmkmsPlaneInitLayer( CoreLayer                  *layer,
                     data->zpos_propid = prop->prop_id;
                     D_INFO( "     zpos\n" );
 
-                    err = drmModeObjectSetProperty( drmkms->fd, data->plane->plane_id, DRM_MODE_OBJECT_PLANE,
-                                                    data->zpos_propid, data->level );
-                    if (err) {
-                         ret = errno2result( errno );
-                         D_PERROR( "DRMKMS/Layer: drmModeObjectSetProperty() failed setting zpos!\n" );
-                         return ret;
-                    }
+                    drmModeObjectSetProperty( drmkms->fd, data->plane->plane_id, DRM_MODE_OBJECT_PLANE,
+                                              data->zpos_propid, data->level );
                }
                else if (!strcmp( prop->name, "alpha" )) {
                     description->caps |= DLCAPS_OPACITY;
@@ -429,7 +485,8 @@ drmkmsPlaneSetLevel( CoreLayer *layer,
      if (level < 1 || level > shared->plane_index_count)
           return DFB_INVARG;
 
-     err = drmModeObjectSetProperty( drmkms->fd, data->plane->plane_id, DRM_MODE_OBJECT_PLANE, data->zpos_propid, level );
+     err = drmModeObjectSetProperty( drmkms->fd, data->plane->plane_id, DRM_MODE_OBJECT_PLANE,
+                                     data->zpos_propid, level );
      if (err) {
           ret = errno2result( errno );
           D_PERROR( "DRMKMS/Layer: drmModeObjectSetProperty() failed setting zpos!\n" );
@@ -505,13 +562,13 @@ drmkmsPlaneSetRegion( CoreLayer                  *layer,
      }
 
      if ((updated & (CLRCF_SRCKEY | CLRCF_OPTIONS)) && data->colorkey_propid) {
-          uint32_t drm_colorkey = config->src_key.r << 16 | config->src_key.g << 8 | config->src_key.b;
+          uint32_t colorkey = config->src_key.r << 16 | config->src_key.g << 8 | config->src_key.b;
 
           if (config->options & DLOP_SRC_COLORKEY)
-               drm_colorkey |= 0x01000000;
+               colorkey |= 0x01000000;
 
           err = drmModeObjectSetProperty( drmkms->fd, data->plane->plane_id, DRM_MODE_OBJECT_PLANE,
-                                          data->colorkey_propid, drm_colorkey );
+                                          data->colorkey_propid, colorkey );
           if (err) {
                ret = errno2result( errno );
                D_PERROR( "DRMKMS/Layer: drmModeObjectSetProperty() failed setting colorkey\n" );
@@ -561,7 +618,6 @@ drmkmsPlaneRemoveRegion( CoreLayer *layer,
      if (!data->muted) {
           err = drmModeSetPlane( drmkms->fd, data->plane->plane_id, drmkms->encoder[0]->crtc_id, 0, 0,
                                  0, 0, 0, 0, 0, 0, 0, 0 );
-
           if (err) {
                ret = errno2result( errno );
                D_PERROR( "DRMKMS/Layer: drmModeSetPlane() failed removing plane!\n" );
@@ -573,16 +629,11 @@ drmkmsPlaneRemoveRegion( CoreLayer *layer,
 }
 
 static DFBResult
-drmkmsPlaneUpdateFlipRegion( CoreLayer             *layer,
-                             void                  *driver_data,
+drmkmsPlaneUpdateFlipRegion( void                  *driver_data,
                              void                  *layer_data,
-                             void                  *region_data,
                              CoreSurface           *surface,
                              DFBSurfaceFlipFlags    flags,
-                             const DFBRegion       *left_update,
                              CoreSurfaceBufferLock *left_lock,
-                             const DFBRegion       *right_update,
-                             CoreSurfaceBufferLock *right_lock,
                              bool                   flip )
 {
      DFBResult              ret;
@@ -615,7 +666,6 @@ drmkmsPlaneUpdateFlipRegion( CoreLayer             *layer,
                                  config->dest.x, config->dest.y, config->dest.w, config->dest.h,
                                  config->source.x << 16, config->source.y << 16,
                                  config->source.w << 16, config->source.h << 16 );
-
           if (err) {
                ret = errno2result( errno );
                D_PERROR( "DRMKMS/Layer: Failed setting plane configuration!\n" );
@@ -659,8 +709,7 @@ drmkmsPlaneFlipRegion( CoreLayer             *layer,
                        const DFBRegion       *right_update,
                        CoreSurfaceBufferLock *right_lock )
 {
-     return drmkmsPlaneUpdateFlipRegion( layer, driver_data, layer_data, region_data, surface, flags,
-                                         left_update, left_lock, right_update, right_lock, true );
+     return drmkmsPlaneUpdateFlipRegion( driver_data, layer_data, surface, flags, left_lock, true );
 }
 
 static DFBResult
@@ -674,8 +723,7 @@ drmkmsPlaneUpdateRegion( CoreLayer             *layer,
                          const DFBRegion       *right_update,
                          CoreSurfaceBufferLock *right_lock )
 {
-     return drmkmsPlaneUpdateFlipRegion( layer, driver_data, layer_data, region_data, surface, DSFLIP_ONSYNC,
-                                         left_update, left_lock, right_update, right_lock, false );
+     return drmkmsPlaneUpdateFlipRegion( driver_data, layer_data, surface, DSFLIP_ONSYNC, left_lock, false );
 }
 
 const DisplayLayerFuncs drmkmsPrimaryLayerFuncs = {
@@ -696,5 +744,5 @@ const DisplayLayerFuncs drmkmsPlaneLayerFuncs = {
      .SetRegion     = drmkmsPlaneSetRegion,
      .RemoveRegion  = drmkmsPlaneRemoveRegion,
      .FlipRegion    = drmkmsPlaneFlipRegion,
-     .UpdateRegion  = drmkmsPlaneUpdateRegion,
+     .UpdateRegion  = drmkmsPlaneUpdateRegion
 };

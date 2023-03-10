@@ -185,8 +185,8 @@ DirectUnregisterInterface( DirectInterfaceFuncs *funcs )
           D_MAGIC_ASSERT( impl, DirectInterfaceImplementation );
 
           if (impl->funcs == funcs) {
+               D_FREE( impl->filename  );
                direct_list_remove( &implementations, &impl->link );
-
                break;
           }
      }
@@ -221,14 +221,16 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
                     DirectInterfaceProbeFunc   probe,
                     void                      *probe_ctx )
 {
-     DirectResult                   ret;
      int                            n   = 0;
      int                            idx = -1;
+#if DIRECT_BUILD_DYNLOAD
+     DirectResult                   ret;
      int                            len;
      DirectDir                      dir;
      char                          *interface_dir;
      DirectEntry                    entry;
      const char                    *path;
+#endif /* DIRECT_BUILD_DYNLOAD */
      DirectInterfaceImplementation *impl;
 
      D_DEBUG_AT( Direct_Interface, "%s( %p, '%s', '%s', %p, %p )\n", __FUNCTION__,
@@ -300,6 +302,7 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
           }
      }
 
+#if DIRECT_BUILD_DYNLOAD
      /* Try to load it dynamically. */
 
      /* NULL type means we can't find plugin, so stop immediately. */
@@ -314,9 +317,9 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
 
      len = strlen( path ) + strlen( "/interfaces/" ) + strlen( type ) + 1;
      interface_dir = alloca( len );
-     snprintf( interface_dir, len, "%s%sinterfaces/%s", path, path[strlen( path ) - 1] == '/' ? "" : "/", type );
+     snprintf( interface_dir, len, "%s%sinterfaces/%s", path, path[strlen( path )-1] == '/' ? "" : "/", type );
 
-     ret = direct_dir_open ( &dir, interface_dir );
+     ret = direct_dir_open( &dir, interface_dir );
      if (ret) {
           D_DERROR( ret, "Direct/Interface: Could not open interface directory '%s'!\n", interface_dir );
           direct_mutex_unlock( &implementations_mutex );
@@ -341,15 +344,16 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
 
                /* Iterate directory. */
                while (idx >= 0 && direct_dir_read( &dir, &entry ) == DR_OK) {
-                    void *handle = NULL;
                     char  buf[PATH_MAX];
+                    int   entry_len = strlen( entry.name );
+                    void *handle    = NULL;
 
                     DirectInterfaceImplementation *old_impl = (DirectInterfaceImplementation*) implementations;
                     DirectInterfaceImplementation *test_impl;
 
-                    if (strlen( entry.name ) < 4                    ||
-                        entry.name[strlen( entry.name ) - 1] != 'o' ||
-                        entry.name[strlen( entry.name ) - 2] != 's')
+                    if (entry_len < 4                  ||
+                        entry.name[entry_len-2] != 's' ||
+                        entry.name[entry_len-1] != 'o')
                          continue;
 
                     snprintf( buf, sizeof(buf), "%s/%s", interface_dir, entry.name );
@@ -386,11 +390,9 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
 
                     if (handle) {
                          /* Check whether the dlopen'ed interface supports the required implementation. */
-                         if (!strcmp( impl->implementation,
-                                      direct_config->default_interface_implementation_names[idx] )) {
-                              if (probe_interface( impl, funcs, type,
-                                                   direct_config->default_interface_implementation_names[idx],
-                                                   probe, probe_ctx )) {
+                         if (!strcasecmp( impl->implementation,
+                                          direct_config->default_interface_implementation_names[idx] )) {
+                              if (probe_interface( impl, funcs, type, impl->implementation, probe, probe_ctx )) {
                                    if (impl->references == 1)
                                         D_INFO( "Direct/Interface: Loaded '%s' implementation of '%s'\n",
                                                 impl->implementation, impl->type );
@@ -417,15 +419,16 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
 
      /* Iterate directory. */
      while (direct_dir_read( &dir, &entry ) == DR_OK) {
-          void *handle = NULL;
           char  buf[PATH_MAX];
+          int   entry_len = strlen( entry.name );
+          void *handle    = NULL;
 
           DirectInterfaceImplementation *old_impl = (DirectInterfaceImplementation*) implementations;
           DirectInterfaceImplementation *test_impl;
 
-          if (strlen( entry.name ) < 4 ||
-              entry.name[strlen( entry.name ) - 1] != 'o' ||
-              entry.name[strlen( entry.name ) - 2] != 's')
+          if (entry_len < 4                  ||
+              entry.name[entry_len-2] != 's' ||
+              entry.name[entry_len-1] != 'o')
                continue;
 
           snprintf( buf, sizeof(buf), "%s/%s", interface_dir, entry.name );
@@ -480,6 +483,7 @@ DirectGetInterface( DirectInterfaceFuncs     **funcs,
      }
 
      direct_dir_close( &dir );
+#endif /* DIRECT_BUILD_DYNLOAD */
 
      direct_mutex_unlock( &implementations_mutex );
 

@@ -19,58 +19,37 @@
 #ifndef __DRMKMS_SYSTEM_H__
 #define __DRMKMS_SYSTEM_H__
 
-#include <core/layer_region.h>
-#include <libkms/libkms.h>
+#include <core/coretypes.h>
+#include <fusion/types.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
 /**********************************************************************************************************************/
 
 typedef struct {
-     int                    layer_index;
-     int                    plane_index;
+     FusionSHMPoolShared   *shmpool;
 
-     drmModePlane          *plane;
-     uint32_t               colorkey_propid;
-     uint32_t               zpos_propid;
-     uint32_t               alpha_propid;
+     CoreSurfacePool       *pool;
 
-     int                    level;
+     char                   device_name[256];       /* DRM/KMS device name, e.g. /dev/dri/card0 */
+     bool                   use_prime_fd;           /* DRM/KMS PRIME file descriptor enabled */
 
-     CoreLayerRegionConfig *config;
-     bool                   muted;
+     bool                   vt;                     /* use VT handling */
 
-     CoreSurface           *surface;
-     int                    surfacebuffer_index;
-     bool                   flip_pending;
+     bool                   mirror_outputs;         /* enable mirror display */
+     bool                   multihead_outputs;      /* enable multi-head display */
 
-     DirectMutex            lock;
-     DirectWaitQueue        wq_event;
-} DRMKMSLayerData;
+     int                    enabled_crtcs;          /* CRTCs enabled (limiting to 8) */
+     drmModeModeInfo        mode[8];                /* current video mode (for each available CRTC) */
 
-typedef struct {
-     FusionSHMPoolShared *shmpool;
+     DFBDimension           primary_dimension[8];
+     DFBRectangle           primary_rect;
+     uint32_t               primary_fb;
+     DFBSurfacePixelFormat  primary_format;
 
-     CoreSurfacePool     *pool;
-
-     char                 device_name[256];       /* DRM/KMS device name, e.g. /dev/dri/card0 */
-     bool                 use_prime_fd;           /* DRM/KMS PRIME file descriptor enabled */
-
-     bool                 vt;                     /* use VT handling */
-
-     bool                 mirror_outputs;         /* enable mirror display */
-     bool                 multihead_outputs;      /* enable multi-head display */
-
-     int                  enabled_crtcs;          /* CRTCs enabled (limiting to 8) */
-     drmModeModeInfo      mode[8];                /* current video mode (for each available CRTC) */
-
-     DFBDimension         primary_dimension[8];
-     DFBRectangle         primary_rect;
-     uint32_t             primary_fb;
-
-     int                  layer_index_count;
-     int                  plane_index_count;
-     int                  layerplane_index_count;
+     int                    layer_index_count;
+     int                    plane_index_count;
+     int                    layerplane_index_count;
 } DRMKMSDataShared;
 
 typedef struct {
@@ -82,13 +61,9 @@ typedef struct {
 
      drmModeRes         *resources;       /* display configuration information */
      drmModePlaneRes    *plane_resources; /* planes information */
-
-     struct kms_driver  *kms;             /* DRM/KMS memory management */
-
      drmModeConnector   *connector[8];
      drmModeEncoder     *encoder[8];
      drmModeCrtc        *crtc;
-
      DFBDisplayLayerIDs  layer_ids[8];
      DFBDisplayLayerID   layer_id_next;
 

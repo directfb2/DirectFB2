@@ -7,6 +7,8 @@ Pure C implementation
 
 No external dependency (except fluxcomp for converting .flux interface description files to .c files)
 
+Static library support for MCU targets
+
 Modularization of the source code, which now only contains:
   - libdirect / libfusion / libdirectfb core libraries
   - a generic system module and a generic input driver for supported operating systems (only Linux for now)
@@ -17,7 +19,8 @@ Modularization of the source code, which now only contains:
   - the DFVFF (DirectFB Fast Video File Format) video provider
 
 Separate packages for:
-  - additional system modules and input drivers
+  - additional system modules
+  - additional input drivers
   - additional WM modules
   - additional font/image/video providers
   - GFX drivers (hardware acceleration)

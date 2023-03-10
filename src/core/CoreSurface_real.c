@@ -430,7 +430,6 @@ ISurface_Real__DispatchUpdate( CoreSurface         *obj,
                                s64                  timestamp,
                                u32                  flip_count )
 {
-     DFBResult ret = DFB_OK;
      DFBRegion l, r;
 
      D_DEBUG_AT( DirectFB_CoreSurface, "%s( %p, timestamp %lld, flip_count %u )\n", __FUNCTION__,
@@ -459,7 +458,7 @@ ISurface_Real__DispatchUpdate( CoreSurface         *obj,
 
      dfb_surface_unlock( obj );
 
-     return ret;
+     return DFB_OK;
 }
 
 DFBResult

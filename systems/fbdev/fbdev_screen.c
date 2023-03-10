@@ -201,5 +201,5 @@ const ScreenFuncs fbdevScreenFuncs = {
      .SetPowerMode  = fbdevSetPowerMode,
      .WaitVSync     = fbdevWaitVSync,
      .GetScreenSize = fbdevGetScreenSize,
-     .GetVSyncCount = fbdevGetVSyncCount,
+     .GetVSyncCount = fbdevGetVSyncCount
 };

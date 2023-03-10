@@ -33,6 +33,9 @@ D_DEBUG_DOMAIN( Window, "IDirectFBWindow", "IDirectFBWindow Interface" );
 
 /**********************************************************************************************************************/
 
+/*
+ * private data struct of IDirectFBWindow
+ */
 typedef struct {
      int                   ref;          /* reference counter */
 
@@ -451,8 +454,12 @@ IDirectFBWindow_SetColorKey( IDirectFBWindow *thiz,
 
      if (DFB_PIXELFORMAT_IS_INDEXED( data->window->surface->config.format ))
           key = dfb_palette_search( data->window->surface->palette, r, g, b, 0x80 );
-     else
-          key = dfb_color_to_pixel( data->window->surface->config.format, r, g, b );
+     else {
+          DFBColor color = { 0, r, g, b };
+
+          key = dfb_pixel_from_color( data->window->surface->config.format, data->window->surface->config.colorspace,
+                                      &color );
+     }
 
      return CoreWindow_SetColorKey( data->window, key );
 }
@@ -539,7 +546,7 @@ IDirectFBWindow_SetCursorShape( IDirectFBWindow  *thiz,
                                 int               hot_x,
                                 int               hot_y )
 {
-     DFBPoint         hot;
+     DFBPoint         hotspot;
      CoreWindowConfig config;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFBWindow )
@@ -556,25 +563,24 @@ IDirectFBWindow_SetCursorShape( IDirectFBWindow  *thiz,
      }
 
      if (shape) {
-          IDirectFBSurface_data *shape_data;
+          IDirectFBSurface_data *shape_data = shape->priv;
 
-          shape_data = shape->priv;
           if (!shape_data)
                return DFB_DEAD;
 
           if (!shape_data->surface)
                return DFB_DESTROYED;
 
-          hot.x = hot_x;
-          hot.y = hot_y;
+          hotspot.x = hot_x;
+          hotspot.y = hot_y;
 
-          CoreWindow_SetCursorShape( data->window, shape_data->surface, &hot );
+          CoreWindow_SetCursorShape( data->window, shape_data->surface, &hotspot );
      }
      else {
-          hot.x = 0;
-          hot.y = 0;
+          hotspot.x = 0;
+          hotspot.y = 0;
 
-          CoreWindow_SetCursorShape( data->window, NULL, &hot );
+          CoreWindow_SetCursorShape( data->window, NULL, &hotspot );
      }
 
      if (shape && !(data->cursor_flags & DWCF_INVISIBLE) && (data->window->config.cursor_flags & DWCF_INVISIBLE)) {
@@ -1133,7 +1139,9 @@ IDirectFBWindow_SetProperty( IDirectFBWindow  *thiz,
           return DFB_INVARG;
 
      dfb_windowstack_lock( data->window->stack );
+
      ret = dfb_wm_set_window_property( data->window->stack, data->window, key, value, ret_old_value );
+
      dfb_windowstack_unlock( data->window->stack );
 
      return ret;
@@ -1160,7 +1168,9 @@ IDirectFBWindow_GetProperty( IDirectFBWindow  *thiz,
           return DFB_INVARG;
 
      dfb_windowstack_lock( data->window->stack );
+
      ret = dfb_wm_get_window_property( data->window->stack, data->window, key, ret_value );
+
      dfb_windowstack_unlock( data->window->stack );
 
      return ret;
@@ -1184,7 +1194,9 @@ IDirectFBWindow_RemoveProperty( IDirectFBWindow  *thiz,
           return DFB_INVARG;
 
      dfb_windowstack_lock( data->window->stack );
+
      ret = dfb_wm_remove_window_property( data->window->stack, data->window, key, ret_value );
+
      dfb_windowstack_unlock( data->window->stack );
 
      return ret;
@@ -1317,7 +1329,6 @@ IDirectFBWindow_SetCursorFlags( IDirectFBWindow      *thiz,
 
      if (!data->window->cursor.surface)
           config.cursor_flags |= DWCF_INVISIBLE;
-
 
      return CoreWindow_SetConfig( data->window, &config, NULL, 0, DWCONF_CURSOR_FLAGS );
 }
@@ -1477,6 +1488,8 @@ IDirectFBWindow_Construct( IDirectFBWindow *thiz,
                            IDirectFB       *idirectfb,
                            bool             created )
 {
+     DFBResult ret;
+
      DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBWindow )
 
      D_DEBUG_AT( Window, "%s( %p ) <- %4d,%4d-%4dx%4d\n", __FUNCTION__,
@@ -1490,7 +1503,12 @@ IDirectFBWindow_Construct( IDirectFBWindow *thiz,
      data->created      = created;
      data->cursor_flags = DWCF_INVISIBLE;
 
-     dfb_window_attach( window, IDirectFBWindow_React, data, &data->reaction );
+     ret = dfb_window_attach( window, IDirectFBWindow_React, data, &data->reaction );
+     if (ret) {
+          D_DERROR( ret, "IDirectFBWindow: Could not attach to reactor!\n" );
+          DIRECT_DEALLOCATE_INTERFACE( thiz );
+          return ret;
+     }
 
      thiz->AddRef               = IDirectFBWindow_AddRef;
      thiz->Release              = IDirectFBWindow_Release;

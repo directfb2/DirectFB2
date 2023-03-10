@@ -23,3 +23,10 @@ library('directfb_dummy',
          dependencies: directfb_dep,
          install: true,
          install_dir: join_paths(moduledir, 'systems'))
+
+pkgconfig.generate(filebase: 'directfb-system-dummy',
+                   variables: 'moduledir=' + moduledir,
+                   name: 'DirectFB-system-dummy',
+                   description: 'Dummy system module',
+                   libraries_private: ['-L${moduledir}/systems',
+                                       '-Wl,--whole-archive -ldirectfb_dummy -Wl,--no-whole-archive'])

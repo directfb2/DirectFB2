@@ -1508,6 +1508,7 @@ const char DIRECTFB_API *dfb_window_event_type_name( DFBWindowEventType    type 
 
 DFBSurfacePixelFormat DIRECTFB_API dfb_pixelformat_for_depth( int         depth );
 DFBSurfacePixelFormat DIRECTFB_API dfb_pixelformat_parse    ( const char *format );
+DFBSurfaceColorSpace  DIRECTFB_API dfb_colorspace_parse     ( const char *colorspace );
 
 #ifdef __cplusplus
 }

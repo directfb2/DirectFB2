@@ -184,7 +184,7 @@ IDirectFBPalette_CreateCopy( IDirectFBPalette  *thiz,
      if (!ret_interface)
           return DFB_INVARG;
 
-     ret = CoreDFB_CreatePalette( data->core, data->palette->num_entries, &palette );
+     ret = CoreDFB_CreatePalette( data->core, data->palette->num_entries, data->palette->colorspace, &palette );
      if (ret)
           return ret;
 
@@ -262,7 +262,14 @@ IDirectFBPalette_FindBestMatchYUV( IDirectFBPalette *thiz,
      if (!data->palette)
           return DFB_DESTROYED;
 
-     YCBCR_TO_RGB( y, u, v, r, g, b );
+     if (data->palette->colorspace == DSCS_BT601)
+          YCBCR_TO_RGB_BT601( y, u, v, r, g, b );
+     else if (data->palette->colorspace == DSCS_RGB || data->palette->colorspace == DSCS_BT709)
+          YCBCR_TO_RGB_BT709( y, u, v, r, g, b );
+     else if (data->palette->colorspace == DSCS_BT2020)
+          YCBCR_TO_RGB_BT2020( y, u, v, r, g, b );
+     else
+          r = g = b = 0;
 
      *ret_index = dfb_palette_search( data->palette, r, g, b, a );
 
@@ -274,13 +281,16 @@ IDirectFBPalette_Construct( IDirectFBPalette *thiz,
                             CorePalette      *palette,
                             CoreDFB          *core )
 {
+     DFBResult ret;
+
      DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBPalette )
 
      D_DEBUG_AT( Palette, "%s( %p )\n", __FUNCTION__, thiz );
 
-     if (dfb_palette_ref( palette )) {
+     ret = dfb_palette_ref( palette );
+     if (ret) {
           DIRECT_DEALLOCATE_INTERFACE( thiz );
-          return DFB_FAILURE;
+          return ret;
      }
 
      data->ref     = 1;

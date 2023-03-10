@@ -46,7 +46,7 @@ echo \#ifndef __DIRECTFB_STRINGS_H__
 echo \#define __DIRECTFB_STRINGS_H__
 echo
 echo \#include \<directfb.h\>
-mknames DFBSurfacePixelFormat DSPF UNKNOWN PixelFormat format  $1
+mknames DFBSurfacePixelFormat DSPF UNKNOWN PixelFormat format $1
 mknames DFBSurfacePorterDuffRule DSPD NONE PorterDuffRule rule $1
 mknames DFBSurfaceCapabilities DSCAPS NONE SurfaceCapabilities capability $1 | grep -v DSCAPS_FLIPPING | grep -v DSCAPS_ALL
 mknames DFBSurfaceColorSpace DSCS UNKNOWN ColorSpace colorspace $1

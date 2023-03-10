@@ -55,25 +55,31 @@ else
   shm_sources = 'shm/fake.c'
 endif
 
-build_h = configuration_data()
+shm_headers = [
+  'shm/pool.h'
+]
+
+build_conf = configuration_data()
 
 if get_option('multi')
   if get_option('os') == 'linux'
     if get_option('multi-kernel') and cc.has_header('linux/fusion.h')
-        build_h.set('FUSION_BUILD_KERNEL', 1)
+        build_conf.set('FUSION_BUILD_KERNEL', 1)
     else
-        build_h.set('FUSION_BUILD_KERNEL', 0)
+        build_conf.set('FUSION_BUILD_KERNEL', 0)
     endif
   endif
-  build_h.set('FUSION_MESSAGE_SIZE', get_option('message-size'))
+  build_conf.set('FUSION_MESSAGE_SIZE', get_option('message-size'))
 endif
 
-build_h.set10('FUSION_BUILD_MULTI', get_option('multi'))
+build_conf.set10('FUSION_BUILD_MULTI', get_option('multi'))
 
-configure_file(configuration: build_h,
+configure_file(configuration: build_conf,
                output: 'build.h',
                install: true,
                install_dir: join_paths(get_option('includedir'), 'directfb/fusion'))
+
+libfusion_private = ['-Wl,-u,__Fusion_init_all']
 
 libfusion = library('fusion-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
                     fusion_sources, shm_sources,
@@ -82,17 +88,19 @@ libfusion = library('fusion-@0@.@1@'.format(directfb_major_version, directfb_min
                     version: '0.@0@.0'.format(directfb_micro_version),
                     install: true)
 
-meson.add_install_script(join_paths(meson.source_root(), 'meson_symlink.sh'),
-                         'libfusion-@0@.@1@.so'.format(directfb_major_version, directfb_minor_version),
-                         join_paths(get_option('prefix'), get_option('libdir'), 'libfusion.so'))
+install_symlink('libfusion' + libsuffix,
+                pointing_to: 'libfusion-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
+                install_dir: join_paths(get_option('prefix'), get_option('libdir')))
 
 install_headers(fusion_headers, subdir: 'directfb/fusion')
+install_headers(shm_headers,    subdir: 'directfb/fusion/shm')
 
 pkgconfig.generate(filebase: 'fusion',
                    name: 'Fusion',
                    description: 'DirectFB IPC library',
-                   requires: 'direct',
+                   requires_private: 'direct',
                    libraries: '-L${libdir} -lfusion',
+                   libraries_private: libfusion_private,
                    subdirs: 'directfb')
 
 fusion_dep = declare_dependency(include_directories: lib_inc, link_with: libfusion)

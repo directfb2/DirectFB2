@@ -84,19 +84,21 @@ os_headers = [
   'os/waitqueue.h'
 ]
 
-build_h = configuration_data()
+build_conf = configuration_data()
 
-build_h.set10('DIRECT_BUILD_DEBUG', get_option('debug'))
+build_conf.set10('DIRECT_BUILD_DEBUG', get_option('debug'))
 
 if get_option('debug')
-  build_h.set10('DIRECT_BUILD_DEBUGS', true)
+  build_conf.set10('DIRECT_BUILD_DEBUGS', true)
 else
-  build_h.set10('DIRECT_BUILD_DEBUGS', get_option('debug-support'))
+  build_conf.set10('DIRECT_BUILD_DEBUGS', get_option('debug-support'))
 endif
 
-build_h.set10('DIRECT_BUILD_MEMCPY_PROBING', get_option('memcpy-probing'))
+build_conf.set10('DIRECT_BUILD_DYNLOAD', get_option('default_library') == 'shared')
 
-build_h.set10('DIRECT_BUILD_SENTINELS', get_option('sentinels'))
+build_conf.set10('DIRECT_BUILD_MEMCPY_PROBING', get_option('memcpy-probing'))
+
+build_conf.set10('DIRECT_BUILD_SENTINELS', get_option('sentinels'))
 
 if get_option('os') == 'linux'
   os_linux_sources = [
@@ -117,43 +119,60 @@ if get_option('os') == 'linux'
     'os/linux/waitqueue.h'
   ]
 
-  build_h.set('DIRECT_BUILD_OS_LINUX',  1)
+  build_conf.set('DIRECT_BUILD_OS_LINUX', 1)
 else
   error('Unsupported OS')
 endif
 
-build_h.set10('DIRECT_BUILD_TEXT', get_option('text'))
+build_conf.set10('DIRECT_BUILD_TEXT', get_option('text'))
 
 if get_option('trace')
   add_global_arguments('-finstrument-functions', language: 'c')
 endif
-build_h.set10('DIRECT_BUILD_TRACE', get_option('trace'))
+build_conf.set10('DIRECT_BUILD_TRACE', get_option('trace'))
 
-configure_file(configuration: build_h,
+configure_file(configuration: build_conf,
                output: 'build.h',
                install: true,
                install_dir: join_paths(get_option('includedir'), 'directfb/direct'))
 
+libdl_dep = []
+moduledir_def = []
+if get_option('default_library') == 'shared'
+  libdl_dep = cc.find_library('dl')
+  moduledir_def = '-DMODULEDIR="@0@"'.format(moduledir)
+endif
+
+librt_dep = []
+libdirect_private = ['-Wl,-u,__D_init_all']
+if not cc.has_function('clock_gettime')
+  librt_dep = cc.find_library('rt')
+  libdirect_private += ['-lrt']
+endif
+threads_dep = dependency('threads')
+libdirect_private += ['-pthread']
+
 libdirect = library('direct-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
                     direct_sources, os_linux_sources,
                     include_directories: [config_inc, lib_inc],
-                    c_args: ['-DMODULEDIR="@0@"'.format(moduledir)],
-                    link_args: ['-ldl', '-lpthread'],
+                    c_args: moduledir_def,
+                    dependencies: [libdl_dep, librt_dep, threads_dep],
                     version: '0.@0@.0'.format(directfb_micro_version),
                     install: true)
 
-meson.add_install_script(join_paths(meson.source_root(), 'meson_symlink.sh'),
-                         'libdirect-@0@.@1@.so'.format(directfb_major_version, directfb_minor_version),
-                         join_paths(get_option('prefix'), get_option('libdir'), 'libdirect.so'))
+install_symlink('libdirect' + libsuffix,
+                pointing_to: 'libdirect-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
+                install_dir: join_paths(get_option('prefix'), get_option('libdir')))
 
-install_headers(direct_headers, subdir: 'directfb/direct')
-install_headers(os_headers, subdir: 'directfb/direct/os')
+install_headers(direct_headers,   subdir: 'directfb/direct')
+install_headers(os_headers,       subdir: 'directfb/direct/os')
 install_headers(os_linux_headers, subdir: 'directfb/direct/os/linux')
 
 pkgconfig.generate(filebase: 'direct',
                    name: 'Direct',
                    description: 'DirectFB low-level library',
                    libraries: '-L${libdir} -ldirect',
+                   libraries_private: libdirect_private,
                    subdirs: 'directfb')
 
 direct_dep = declare_dependency(include_directories: lib_inc, link_with: libdirect)

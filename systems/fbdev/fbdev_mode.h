@@ -19,6 +19,8 @@
 #ifndef __FBDEV_MODE_H__
 #define __FBDEV_MODE_H__
 
+#include <core/layer_region.h>
+
 #include "fbdev_system.h"
 
 /**********************************************************************************************************************/

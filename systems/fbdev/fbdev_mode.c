@@ -57,7 +57,10 @@ mode_to_var( const VideoMode           *mode,
                  buffermode == DLBM_BACKSYSTEM ? "BACKSYSTEM" :
                  buffermode == DLBM_TRIPLE     ? "TRIPLE"     : "invalid!" );
 
-     /* Activate mode now. */
+     /* Start from current information. */
+     var = *ret_var;
+
+     /* Set values now. */
      var.activate = FB_ACTIVATE_NOW;
 
      /* Set timings. */
@@ -328,8 +331,7 @@ test_mode_simple( FBDevData       *fbdev,
      shared = fbdev->shared;
 
      var = shared->current_var;
-
-     ret = mode_to_var( mode, dfb_pixelformat_for_depth(mode->bpp), mode->xres, mode->yres,
+     ret = mode_to_var( mode, dfb_pixelformat_for_depth( mode->bpp ), mode->xres, mode->yres,
                         fbdev->fix->xpanstep, fbdev->fix->ypanstep, fbdev->fix->ywrapstep, 0, 0, DLBM_FRONTONLY,
                         &var );
      if (ret)

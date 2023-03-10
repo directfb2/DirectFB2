@@ -70,10 +70,11 @@ dfb_graphics_state_create( CoreDFB            *core,
 {
      CoreGraphicsState *state;
 
-     D_DEBUG_AT( Core_GraphicsState, "%s()\n", __FUNCTION__ );
-
      D_ASSERT( ret_state );
 
+     D_DEBUG_AT( Core_GraphicsState, "%s()\n", __FUNCTION__ );
+
+     /* Create the state object. */
      state = dfb_core_create_graphics_state( core );
      if (!state)
           return DFB_FUSION;
@@ -87,7 +88,7 @@ dfb_graphics_state_create( CoreDFB            *core,
 
      D_MAGIC_SET( state, CoreGraphicsState );
 
-     /* Activate object. */
+     /* Activate the object. */
      fusion_object_activate( &state->object );
 
      /* Return the new state. */

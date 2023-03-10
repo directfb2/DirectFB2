@@ -102,9 +102,9 @@ direct_log_domain_config_level( const char     *name,
      direct_log_domain_configure( name, &config );
 }
 
-#define D_LOG(d,l,...)                                                                                    \
-     do {                                                                                                 \
-          direct_log_domain_log( &(d), DIRECT_LOG_ ## l, __FUNCTION__, __FILE__, __LINE__, __VA_ARGS__ ); \
+#define D_LOG(d,l,...)                                                                                  \
+     do {                                                                                               \
+          direct_log_domain_log( &(d), DIRECT_LOG_##l, __FUNCTION__, __FILE__, __LINE__, __VA_ARGS__ ); \
      } while (0)
 
 /**********************************************************************************************************************/

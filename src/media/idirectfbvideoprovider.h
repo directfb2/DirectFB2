@@ -21,21 +21,17 @@
 
 #include <core/coretypes.h>
 
-/**********************************************************************************************************************/
-
 /*
  * probing context
  */
 typedef struct {
      unsigned char        header[64];
      const char          *filename;
-     IDirectFBDataBuffer *buffer;     /* Useful if provider needs more data for probing. */
+     IDirectFBDataBuffer *buffer;     /* useful if provider needs more data for probing */
 } IDirectFBVideoProvider_ProbeContext;
 
-/**********************************************************************************************************************/
-
 /*
- * Create (probing) the video provider.
+ * create (probing) the video provider
  */
 DFBResult IDirectFBVideoProvider_CreateFromBuffer( IDirectFBDataBuffer     *buffer,
                                                    CoreDFB                 *core,

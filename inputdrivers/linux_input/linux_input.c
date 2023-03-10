@@ -72,6 +72,16 @@ static int   device_nums[MAX_LINUX_INPUT_DEVICES] = { 0 };
 /* Number of entries in the device_names and device_nums arrays. */
 static int   num_devices = 0;
 
+#define MAX_LINUX_INPUT_EVENTS 64
+
+/* Input events filled on read. */
+struct input_event input_events[MAX_LINUX_INPUT_EVENTS];
+
+#if !defined(input_event_sec) && !defined(input_event_usec)
+#define input_event_sec  time.tv_sec
+#define input_event_usec time.tv_usec
+#endif
+
 /**********************************************************************************************************************/
 
 #define OFF(x)              ((x) % (sizeof(long) * 8))
@@ -272,9 +282,10 @@ touchpad_translate( struct touchpad_fsm_state *state,
      struct touchpad_axis *axis = NULL;
      int abs, rel;
 
-     devt->flags     = DIEF_TIMESTAMP | (touch_abs ? DIEF_AXISABS : DIEF_AXISREL);
-     devt->timestamp = levt->time;
-     devt->type      = DIET_AXISMOTION;
+     devt->flags             = DIEF_TIMESTAMP | (touch_abs ? DIEF_AXISABS : DIEF_AXISREL);
+     devt->timestamp.tv_sec  = levt->input_event_sec;
+     devt->timestamp.tv_usec = levt->input_event_usec;
+     devt->type              = DIET_AXISMOTION;
 
      switch (levt->code) {
           case ABS_X:
@@ -332,6 +343,7 @@ touchpad_fsm( struct touchpad_fsm_state *state,
               const struct input_event  *levt,
               DFBInputEvent             *devt )
 {
+     struct timeval levt_time;
      struct timeval timeout = { 0, 125000 };
 
      if (!levt) {
@@ -351,14 +363,16 @@ touchpad_fsm( struct touchpad_fsm_state *state,
           return 0;
      }
 
+     levt_time.tv_sec  = levt->input_event_sec;
+     levt_time.tv_usec = levt->input_event_usec;
+
      if ((levt->type == EV_SYN && levt->code == SYN_REPORT)         ||
          (levt->type == EV_ABS && levt->code == ABS_PRESSURE)       ||
          (levt->type == EV_ABS && levt->code == ABS_TOOL_WIDTH)     ||
          (levt->type == EV_KEY && levt->code == BTN_TOOL_FINGER)    ||
          (levt->type == EV_KEY && levt->code == BTN_TOOL_DOUBLETAP) ||
          (levt->type == EV_KEY && levt->code == BTN_TOOL_TRIPLETAP)) {
-
-          if (state->fsm_state == TOUCHPAD_FSM_DRAG_START && timeout_passed( &state->timeout, &levt->time )) {
+          if (state->fsm_state == TOUCHPAD_FSM_DRAG_START && timeout_passed( &state->timeout, &levt_time )) {
                devt->flags     = DIEF_TIMESTAMP;
                devt->timestamp = state->timeout;
                devt->type      = DIET_BUTTONRELEASE;
@@ -381,7 +395,7 @@ touchpad_fsm( struct touchpad_fsm_state *state,
           case TOUCHPAD_FSM_START:
                if (touchpad_finger_landing( levt )) {
                     state->fsm_state = TOUCHPAD_FSM_MAIN;
-                    state->timeout   = levt->time;
+                    state->timeout   = levt_time;
 
                     timeout_add( &state->timeout, &timeout );
                }
@@ -392,16 +406,16 @@ touchpad_fsm( struct touchpad_fsm_state *state,
                     return touchpad_translate( state, touch_abs, levt, devt );
                }
                else if (touchpad_finger_leaving( levt )) {
-                    if (!timeout_passed( &state->timeout, &levt->time )) {
+                    if (!timeout_passed( &state->timeout, &levt_time )) {
                          devt->flags     = DIEF_TIMESTAMP;
-                         devt->timestamp = levt->time;
+                         devt->timestamp = levt_time;
                          devt->type      = DIET_BUTTONPRESS;
                          devt->button    = DIBI_FIRST;
 
                          touchpad_fsm_init( state );
 
                          state->fsm_state = TOUCHPAD_FSM_DRAG_START;
-                         state->timeout   = levt->time;
+                         state->timeout   = levt_time;
 
                          timeout_add( &state->timeout, &timeout );
 
@@ -414,7 +428,7 @@ touchpad_fsm( struct touchpad_fsm_state *state,
                return 0;
 
           case TOUCHPAD_FSM_DRAG_START:
-               if (timeout_passed( &state->timeout, &levt->time )) {
+               if (timeout_passed( &state->timeout, &levt_time )) {
                     devt->flags     = DIEF_TIMESTAMP;
                     devt->timestamp = state->timeout;
                     devt->type      = DIET_BUTTONRELEASE;
@@ -427,7 +441,7 @@ touchpad_fsm( struct touchpad_fsm_state *state,
                else {
                     if (touchpad_finger_landing( levt )) {
                          state->fsm_state = TOUCHPAD_FSM_DRAG_MAIN;
-                         state->timeout   = levt->time;
+                         state->timeout   = levt_time;
 
                          timeout_add( &state->timeout, &timeout );
                     }
@@ -440,7 +454,7 @@ touchpad_fsm( struct touchpad_fsm_state *state,
                }
                else if (touchpad_finger_leaving( levt )) {
                     devt->flags     = DIEF_TIMESTAMP;
-                    devt->timestamp = levt->time;
+                    devt->timestamp = levt_time;
                     devt->type      = DIET_BUTTONRELEASE;
                     devt->button    = DIBI_FIRST;
 
@@ -783,8 +797,9 @@ translate_event( const LinuxInputData     *data,
                  const struct input_event *levt,
                  DFBInputEvent            *devt )
 {
-     devt->flags     = DIEF_TIMESTAMP;
-     devt->timestamp = levt->time;
+     devt->flags             = DIEF_TIMESTAMP;
+     devt->timestamp.tv_sec  = levt->input_event_sec;
+     devt->timestamp.tv_usec = levt->input_event_usec;
 
      switch (levt->type) {
           case EV_KEY:
@@ -810,14 +825,15 @@ set_led( const LinuxInputData *data,
          int                   led,
          int                   state )
 {
-     struct input_event levt = {
-          .type  = EV_LED,
-          .code  = led,
-          .value = state,
-     };
+     struct input_event levt;
      int                res;
 
      D_UNUSED_P( res );
+
+     memset( &levt, 0, sizeof(levt) );
+     levt.type  = EV_LED;
+     levt.code  = led;
+     levt.value = state;
 
      res = write( data->fd, &levt, sizeof(levt) );
 }
@@ -826,34 +842,34 @@ static void
 flush_xy( LinuxInputData *data,
           bool            last )
 {
-     DFBInputEvent evt = { .type = DIET_UNKNOWN };
+     DFBInputEvent devt = { .type = DIET_UNKNOWN };
 
      if (data->dx) {
-          evt.type    = DIET_AXISMOTION;
-          evt.flags   = DIEF_AXISREL;
-          evt.axis    = DIAI_X;
-          evt.axisrel = data->dx;
+          devt.type    = DIET_AXISMOTION;
+          devt.flags   = DIEF_AXISREL;
+          devt.axis    = DIAI_X;
+          devt.axisrel = data->dx;
 
           /* Signal immediately following event. */
           if (!last || data->dy)
-               evt.flags |= DIEF_FOLLOW;
+               devt.flags |= DIEF_FOLLOW;
 
-          dfb_input_dispatch( data->device, &evt );
+          dfb_input_dispatch( data->device, &devt );
 
           data->dx = 0;
      }
 
      if (data->dy) {
-          evt.type    = DIET_AXISMOTION;
-          evt.flags   = DIEF_AXISREL;
-          evt.axis    = DIAI_Y;
-          evt.axisrel = data->dy;
+          devt.type    = DIET_AXISMOTION;
+          devt.flags   = DIEF_AXISREL;
+          devt.axis    = DIAI_Y;
+          devt.axisrel = data->dy;
 
           /* Signal immediately following event. */
           if (!last)
-               evt.flags |= DIEF_FOLLOW;
+               devt.flags |= DIEF_FOLLOW;
 
-          dfb_input_dispatch( data->device, &evt );
+          dfb_input_dispatch( data->device, &devt );
 
           data->dy = 0;
      }
@@ -861,7 +877,7 @@ flush_xy( LinuxInputData *data,
 
 /**********************************************************************************************************************/
 
-static void*
+static void *
 devinput_event_thread( DirectThread *thread,
                        void         *arg )
 {
@@ -928,10 +944,9 @@ devinput_event_thread( DirectThread *thread,
      }
 
      while (1) {
-          DFBInputEvent      devt = { .type = DIET_UNKNOWN };
-          fd_set             set;
-          struct input_event levt[64];
-          ssize_t            len;
+          DFBInputEvent devt = { .type = DIET_UNKNOWN };
+          fd_set        set;
+          ssize_t       len;
 
           /* Get input event. */
           FD_ZERO( &set );
@@ -961,9 +976,6 @@ devinput_event_thread( DirectThread *thread,
           if (status > 0 && FD_ISSET( data->quitpipe[0], &set ))
                break;
 
-          /* Check cancel thread. */
-          direct_thread_testcancel( thread );
-
           if (status < 0)
                continue;
 
@@ -975,24 +987,21 @@ devinput_event_thread( DirectThread *thread,
                continue;
           }
 
-          len = read( data->fd, levt, sizeof(levt) );
+          len = read( data->fd, input_events, sizeof(input_events) );
           if (len < 0 && errno != EINTR)
                break;
-
-          /* Check cancel thread. */
-          direct_thread_testcancel( thread );
 
           if (len <= 0)
                continue;
 
-          for (i = 0; i < len / sizeof(levt[0]); i++) {
-               DFBInputEvent dfb_event = { .type = DIET_UNKNOWN };
+          for (i = 0; i < len / sizeof(input_events[0]); i++) {
+               DFBInputEvent evt = { .type = DIET_UNKNOWN };
 
                if (data->touchpad) {
-                    status = touchpad_fsm( &fsm_state, data->touch_abs, &levt[i], &dfb_event );
+                    status = touchpad_fsm( &fsm_state, data->touch_abs, &input_events[i], &evt );
                     if (status < 0) {
                          /* Not handled. Try the direct approach. */
-                         if (!translate_event( data, &levt[i], &dfb_event ))
+                         if (!translate_event( data, &input_events[i], &evt ))
                               continue;
                     }
                     else if (status == 0) {
@@ -1001,7 +1010,7 @@ devinput_event_thread( DirectThread *thread,
                     }
                }
                else {
-                    if (!translate_event( data, &levt[i], &dfb_event ))
+                    if (!translate_event( data, &input_events[i], &evt ))
                          continue;
                }
 
@@ -1025,7 +1034,7 @@ devinput_event_thread( DirectThread *thread,
                     devt.flags = DIEF_NONE;
                }
 
-               devt = dfb_event;
+               devt = evt;
 
                if (D_FLAGS_IS_SET( devt.flags, DIEF_AXISREL ) &&
                    devt.type == DIET_AXISMOTION               &&
@@ -1070,7 +1079,7 @@ devinput_event_thread( DirectThread *thread,
 
 static void
 get_device_info( int              fd,
-                 InputDeviceInfo *info,
+                 InputDeviceInfo *device_info,
                  bool            *touchpad )
 {
      int             i;
@@ -1087,13 +1096,15 @@ get_device_info( int              fd,
 
      D_DEBUG_AT( Linux_Input, "%s()\n", __FUNCTION__ );
 
-     /* Get device name. */
-     ioctl( fd, EVIOCGNAME( DFB_INPUT_DEVICE_DESC_NAME_LENGTH - 1 ), info->desc.name );
+     device_info->desc.caps = 0;
 
-     D_DEBUG_AT( Linux_Input, "  -> name '%s'\n", info->desc.name );
+     /* Get device name. */
+     ioctl( fd, EVIOCGNAME( DFB_INPUT_DEVICE_DESC_NAME_LENGTH - 1 ), device_info->desc.name );
+
+     D_DEBUG_AT( Linux_Input, "  -> name '%s'\n", device_info->desc.name );
 
      /* Set device vendor. */
-     snprintf( info->desc.vendor, DFB_INPUT_DEVICE_DESC_VENDOR_LENGTH, "Linux" );
+     snprintf( device_info->desc.vendor, DFB_INPUT_DEVICE_DESC_VENDOR_LENGTH, "Linux" );
 
      /* Get event type bits. */
      ioctl( fd, EVIOCGBIT( 0, sizeof(evbit) ), evbit );
@@ -1107,7 +1118,7 @@ get_device_info( int              fd,
                if (test_bit( i, keybit ))
                     num_keys++;
 
-          /* This might be a keyboard with just cursor keys (typically on front panels), handle as remote control */
+          /* This might be a keyboard with just cursor keys (typically on front panels), handle as remote control. */
           if (!num_keys)
                for (i = KEY_HOME; i <= KEY_PAGEDOWN; i++)
                     if (test_bit( i, keybit ))
@@ -1122,7 +1133,7 @@ get_device_info( int              fd,
                     num_buttons++;
 
           if (num_keys || num_ext_keys)
-               info->desc.caps |= DICAPS_KEYS;
+               device_info->desc.caps |= DICAPS_KEYS;
      }
 
      if (test_bit( EV_REL, evbit )) {
@@ -1155,63 +1166,75 @@ get_device_info( int              fd,
      else
           *touchpad = false;
 
+     device_info->desc.type = DIDTF_NONE;
+
      /* Mouse, Touchscreen or Joystick */
      if ((test_bit( EV_KEY, evbit ) && (test_bit( BTN_TOUCH, keybit ) || test_bit( BTN_TOOL_FINGER, keybit ))) ||
          ((num_rels >= 2 && num_buttons) || (num_abs == 2 && num_buttons == 1)))
-          info->desc.type |= DIDTF_MOUSE;
+          device_info->desc.type |= DIDTF_MOUSE;
      else if (num_abs && num_buttons)
-          info->desc.type |= DIDTF_JOYSTICK;
+          device_info->desc.type |= DIDTF_JOYSTICK;
 
      /* Keyboard */
      if (num_keys > 20) {
-          info->desc.type |= DIDTF_KEYBOARD;
+          device_info->desc.type |= DIDTF_KEYBOARD;
 
-          info->desc.min_keycode = 0;
-          info->desc.max_keycode = 127;
+          device_info->desc.min_keycode = 0;
+          device_info->desc.max_keycode = 127;
      }
+     else
+          device_info->desc.min_keycode = device_info->desc.max_keycode = 0;
 
      /* Remote Control */
      if (num_ext_keys) {
-          info->desc.type |= DIDTF_REMOTE;
+          device_info->desc.type |= DIDTF_REMOTE;
      }
 
      /* Buttons */
      if (num_buttons) {
-          info->desc.caps       |= DICAPS_BUTTONS;
-          info->desc.max_button  = DIBI_FIRST + num_buttons - 1;
+          device_info->desc.caps       |= DICAPS_BUTTONS;
+          device_info->desc.max_button  = DIBI_FIRST + num_buttons - 1;
      }
+     else
+          device_info->desc.max_button = 0;
 
      /* Axes */
      if (num_rels || num_abs) {
-          info->desc.caps     |= DICAPS_AXES;
-          info->desc.max_axis  = DIAI_FIRST + MAX( num_rels, num_abs ) - 1;
+          device_info->desc.caps     |= DICAPS_AXES;
+          device_info->desc.max_axis  = DIAI_FIRST + MAX( num_rels, num_abs ) - 1;
      }
-
-     /* Primary input device. */
-     if (info->desc.type & DIDTF_KEYBOARD)
-          info->prefered_id = DIDID_KEYBOARD;
-     else if (info->desc.type & DIDTF_REMOTE)
-          info->prefered_id = DIDID_REMOTE;
-     else if (info->desc.type & DIDTF_JOYSTICK)
-          info->prefered_id = DIDID_JOYSTICK;
-     else if (info->desc.type & DIDTF_MOUSE)
-          info->prefered_id = DIDID_MOUSE;
      else
-          info->prefered_id = DIDID_ANY;
+          device_info->desc.max_axis = 0;
+
+     /* Primary input device */
+     if (device_info->desc.type & DIDTF_KEYBOARD)
+          device_info->prefered_id = DIDID_KEYBOARD;
+     else if (device_info->desc.type & DIDTF_REMOTE)
+          device_info->prefered_id = DIDID_REMOTE;
+     else if (device_info->desc.type & DIDTF_JOYSTICK)
+          device_info->prefered_id = DIDID_JOYSTICK;
+     else if (device_info->desc.type & DIDTF_MOUSE)
+          device_info->prefered_id = DIDID_MOUSE;
+     else
+          device_info->prefered_id = DIDID_ANY;
 
      /* Get VID and PID information. */
      ioctl( fd, EVIOCGID, &devinfo );
 
-     info->desc.vendor_id  = devinfo.vendor;
-     info->desc.product_id = devinfo.product;
+     device_info->desc.vendor_id  = devinfo.vendor;
+     device_info->desc.product_id = devinfo.product;
 
-     D_DEBUG_AT( Linux_Input, "  -> ids %d/%d\n", info->desc.vendor_id, info->desc.product_id );
+     D_DEBUG_AT( Linux_Input, "  -> ids %d/%d\n", device_info->desc.vendor_id, device_info->desc.product_id );
 }
 
 static bool
 check_device( const char *device )
 {
      int err, fd;
+     InputDeviceInfo device_info;
+     bool            touchpad;
+     bool            linux_input_grab;
+     bool            linux_input_ir_only;
 
      D_DEBUG_AT( Linux_Input, "%s( '%s' )\n", __FUNCTION__, device );
 
@@ -1221,52 +1244,43 @@ check_device( const char *device )
           D_DEBUG_AT( Linux_Input, "  -> open failed!\n" );
           return false;
      }
-     else {
-          InputDeviceInfo info;
-          bool            touchpad;
-          bool            linux_input_grab;
-          bool            linux_input_ir_only;
 
-          /* Grab device. */
-          if (direct_config_has_name( "linux-input-grab" ) && !direct_config_has_name( "no-linux-input-grab" ))
-               linux_input_grab = true;
-          else
-               linux_input_grab = false;
+     /* Grab device. */
+     if (direct_config_has_name( "linux-input-grab" ) && !direct_config_has_name( "no-linux-input-grab" ))
+          linux_input_grab = true;
+     else
+          linux_input_grab = false;
 
-          /* Ignore non-IR device. */
-          if (direct_config_has_name( "linux-input-ir-only" ) && !direct_config_has_name( "no-linux-input-ir-only" ))
-               linux_input_ir_only = true;
-          else
-               linux_input_ir_only = false;
+     /* Ignore non-IR device. */
+     if (direct_config_has_name( "linux-input-ir-only" ) && !direct_config_has_name( "no-linux-input-ir-only" ))
+          linux_input_ir_only = true;
+     else
+          linux_input_ir_only = false;
 
-          if (linux_input_grab) {
-               err = ioctl( fd, EVIOCGRAB, 1 );
-               if (err) {
-                    D_PERROR( "Input/Linux: Could not grab device!\n" );
-                    close( fd );
-                    return false;
-               }
+     if (linux_input_grab) {
+          err = ioctl( fd, EVIOCGRAB, 1 );
+          if (err) {
+               D_PERROR( "Input/Linux: Could not grab device!\n" );
+               close( fd );
+               return false;
           }
-
-          memset( &info, 0, sizeof(InputDeviceInfo) );
-
-          get_device_info( fd, &info, &touchpad );
-
-          if (linux_input_grab)
-               ioctl( fd, EVIOCGRAB, 0 );
-
-          close( fd );
-
-          if (!info.desc.caps) {
-              D_DEBUG_AT( Linux_Input, "  -> no caps!\n" );
-              return false;
-          }
-
-          if (!linux_input_ir_only || (info.desc.type & DIDTF_REMOTE))
-               return true;
      }
 
-     D_DEBUG_AT( Linux_Input, "  -> returning false!\n" );
+     /* Get device information. */
+     get_device_info( fd, &device_info, &touchpad );
+
+     if (linux_input_grab)
+          ioctl( fd, EVIOCGRAB, 0 );
+
+     close( fd );
+
+     if (!device_info.desc.caps) {
+         D_DEBUG_AT( Linux_Input, "  -> no caps!\n" );
+         return false;
+     }
+
+     if (!linux_input_ir_only || (device_info.desc.type & DIDTF_REMOTE))
+          return true;
 
      return false;
 }
@@ -1281,6 +1295,17 @@ driver_get_available()
      int           i;
      char         *skipdev;
      char          buf[32];
+
+     if (num_devices) {
+          for (i = 0; i < num_devices; i++) {
+               D_FREE( device_names[i] );
+               device_names[i] = NULL;
+          }
+
+          num_devices = 0;
+
+          return 0;
+     }
 
      /* Use the devices specified in the configuration. */
      if ((value = direct_config_get_value( "linux-input-devices" ))) {
@@ -1334,19 +1359,19 @@ driver_get_available()
 }
 
 static void
-driver_get_info( InputDriverInfo *info )
+driver_get_info( InputDriverInfo *driver_info )
 {
-     info->version.major = 0;
-     info->version.minor = 1;
+     driver_info->version.major = 0;
+     driver_info->version.minor = 1;
 
-     snprintf( info->name,   DFB_INPUT_DRIVER_INFO_NAME_LENGTH,   "Linux Input" );
-     snprintf( info->vendor, DFB_INPUT_DRIVER_INFO_VENDOR_LENGTH, "DirectFB" );
+     snprintf( driver_info->name,   DFB_INPUT_DRIVER_INFO_NAME_LENGTH,   "Linux Input" );
+     snprintf( driver_info->vendor, DFB_INPUT_DRIVER_INFO_VENDOR_LENGTH, "DirectFB" );
 }
 
 static DFBResult
 driver_open_device( CoreInputDevice  *device,
                     unsigned int      number,
-                    InputDeviceInfo  *info,
+                    InputDeviceInfo  *device_info,
                     void            **driver_data )
 {
      LinuxInputData *data;
@@ -1380,7 +1405,7 @@ driver_open_device( CoreInputDevice  *device,
      }
 
      /* Fill device information. */
-     get_device_info( fd, info, &touchpad );
+     get_device_info( fd, device_info, &touchpad );
 
      /* Allocate and fill private data. */
      data = D_CALLOC( 1, sizeof(LinuxInputData) );
@@ -1395,7 +1420,7 @@ driver_open_device( CoreInputDevice  *device,
      data->index    = number;
      data->fd       = fd;
      data->grab     = linux_input_grab;
-     data->has_keys = (info->desc.caps & DICAPS_KEYS) != 0;
+     data->has_keys = (device_info->desc.caps & DICAPS_KEYS) != 0;
 
      /* Check if the device has LEDs. */
      err = ioctl( fd, EVIOCGBIT( EV_LED, sizeof(ledbit) ), ledbit );
@@ -1416,8 +1441,8 @@ driver_open_device( CoreInputDevice  *device,
 
           /* Turn off LEDs. */
           set_led( data, LED_SCROLLL, 0 );
-          set_led( data, LED_NUML, 0 );
-          set_led( data, LED_CAPSL, 0 );
+          set_led( data, LED_NUML,    0 );
+          set_led( data, LED_CAPSL,   0 );
      }
 
      data->touchpad = touchpad;
@@ -1429,7 +1454,7 @@ driver_open_device( CoreInputDevice  *device,
 
      data->sensitivity = 0x100;
 
-     if (info->desc.min_keycode >= 0 && info->desc.max_keycode >= info->desc.min_keycode) {
+     if (device_info->desc.min_keycode >= 0 && device_info->desc.max_keycode > device_info->desc.min_keycode) {
           data->vt_fd = open( "/dev/tty0", O_RDWR | O_NOCTTY );
 
           if (data->vt_fd < 0)
@@ -1439,7 +1464,7 @@ driver_open_device( CoreInputDevice  *device,
      /* Open a pipe to awake the devinput event thread when we want to quit. */
      err = pipe( data->quitpipe );
      if (err < 0) {
-          D_PERROR( "DirectFB/linux_input: Could not open quit pipe!" );
+          D_PERROR( "Input/Linux: Could not open quit pipe!" );
           goto error;
      }
 
@@ -1558,8 +1583,8 @@ driver_close_device( void *driver_data )
      /* Restore LEDs state. */
      if (data->has_leds) {
           set_led( data, LED_SCROLLL, test_bit( LED_SCROLLL, data->led_state ) );
-          set_led( data, LED_NUML, test_bit( LED_NUML, data->led_state ) );
-          set_led( data, LED_CAPSL, test_bit( LED_CAPSL, data->led_state ) );
+          set_led( data, LED_NUML,    test_bit( LED_NUML,    data->led_state ) );
+          set_led( data, LED_CAPSL,   test_bit( LED_CAPSL,   data->led_state ) );
      }
 
      if (data->grab)
@@ -1574,7 +1599,7 @@ driver_close_device( void *driver_data )
 }
 
 /**********************************************************************************************************************
- ********************************* Input Driver functions *************************************************************
+ ********************************* Hot-plug functions *****************************************************************
  **********************************************************************************************************************/
 
 typedef struct {
@@ -1645,7 +1670,7 @@ unregister_device_node( int  event_num,
 
      D_ASSERT( index != NULL );
 
-     for (i = 0; i < MAX_LINUX_INPUT_DEVICES; i++) {
+     for (i = 0; i < num_devices; i++) {
           if (device_nums[i] == event_num) {
                device_nums[i] = MAX_LINUX_INPUT_DEVICES;
                num_devices--;
@@ -1685,7 +1710,8 @@ devinput_hotplug_thread( DirectThread *thread,
      sock_addr.sun_family = AF_UNIX;
      strncpy( &sock_addr.sun_path[1], "/org/kernel/udev/monitor", sizeof(sock_addr.sun_path) - 1 );
 
-     status = bind(socket_fd, &sock_addr, sizeof(sock_addr.sun_family) + 1 + strlen( &sock_addr.sun_path[1] ));
+     status = bind( socket_fd, (struct sockaddr*) &sock_addr,
+                    sizeof(sock_addr.sun_family) + 1 + strlen( &sock_addr.sun_path[1] ) );
      if (status < 0)
           goto error;
 
@@ -1712,18 +1738,12 @@ devinput_hotplug_thread( DirectThread *thread,
           if (FD_ISSET( hotplug_quitpipe[0], &set ))
                break;
 
-          /* Check cancel thread. */
-          direct_thread_testcancel( thread );
-
           if (FD_ISSET( socket_fd, &set )) {
                len = recv( socket_fd, udev_event, sizeof(udev_event), 0 );
                if (len <= 0) {
                     D_DEBUG_AT( Linux_Input, "Error receiving uevent message\n" );
                     continue;
                }
-
-               /* Check cancel thread. */
-               direct_thread_testcancel( thread );
           }
 
           /* Analyze udev event. */
@@ -1798,11 +1818,6 @@ error:
 
      return NULL;
 }
-
-/**********************************************************************************************************************
- ********************************* Set configuration function *********************************************************
- **********************************************************************************************************************/
-
 
 static DFBResult
 driver_suspend()
@@ -1994,14 +2009,13 @@ driver_get_axis_info( CoreInputDevice              *device,
           /* Check if we have an absolute axis. */
           ioctl( data->fd, EVIOCGBIT( EV_ABS, sizeof(absbit) ), absbit );
 
-          if (test_bit (axis, absbit)) {
+          if (test_bit( axis, absbit )) {
                struct input_absinfo absinfo;
 
-               if (ioctl( data->fd, EVIOCGABS( axis ), &absinfo ) == 0 &&
-                   (absinfo.minimum || absinfo.maximum)) {
-                    ret_info->flags   |= DIAIF_ABS_MIN | DIAIF_ABS_MAX;
-                    ret_info->abs_min  = absinfo.minimum;
-                    ret_info->abs_max  = absinfo.maximum;
+               if (ioctl( data->fd, EVIOCGABS( axis ), &absinfo ) == 0 && (absinfo.minimum || absinfo.maximum)) {
+                    ret_info->flags   = IDAIF_ABS_MIN | IDAIF_ABS_MAX;
+                    ret_info->abs_min = absinfo.minimum;
+                    ret_info->abs_max = absinfo.maximum;
                }
           }
      }

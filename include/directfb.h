@@ -23,7 +23,6 @@
 extern "C" {
 #endif
 
-#include <dfb_types.h>
 #include <direct/interface.h>
 #include <directfb_build.h>
 #include <directfb_keyboard.h>
@@ -102,6 +101,101 @@ D_DECLARE_INTERFACE( IDirectFBGL )
 
 /**********************************************************************************************************************/
 
+#define DIRECTFB_API
+
+/*
+ * A boolean.
+ */
+typedef enum {
+     DFB_FALSE                             = 0,                  /* false */
+     DFB_TRUE                              = !DFB_FALSE          /* true */
+} DFBBoolean;
+
+/*
+ * Return code of all interface methods and most functions.
+ *
+ * Whenever a method has to return any information, it is done
+ * via output parameters.
+ */
+typedef enum {
+     /*
+      * Aliases for backward compatibility and uniform look in
+      * DirectFB code.
+      */
+     DFB_OK                                = DR_OK,              /* No error occurred. */
+     DFB_FAILURE                           = DR_FAILURE,         /* A general or unknown error occurred. */
+     DFB_INIT                              = DR_INIT,            /* A general initialization error occurred. */
+     DFB_BUG                               = DR_BUG,             /* Internal bug or inconsistency has been detected. */
+     DFB_DEAD                              = DR_DEAD,            /* Interface has a zero reference counter (available in
+                                                                    debug mode). */
+     DFB_UNSUPPORTED                       = DR_UNSUPPORTED,     /* The requested operation or an argument is
+                                                                    (currently) not supported. */
+     DFB_UNIMPLEMENTED                     = DR_UNIMPLEMENTED,   /* The requested operation is not implemented, yet. */
+     DFB_ACCESSDENIED                      = DR_ACCESSDENIED,    /* Access to the resource is denied. */
+     DFB_INVAREA                           = DR_INVAREA,         /* An invalid area has been specified or detected. */
+     DFB_INVARG                            = DR_INVARG,          /* An invalid argument has been specified. */
+     DFB_NOSYSTEMMEMORY                    = DR_NOLOCALMEMORY,   /* There's not enough system memory. */
+     DFB_NOSHAREDMEMORY                    = DR_NOSHAREDMEMORY,  /* There's not enough shared memory. */
+     DFB_LOCKED                            = DR_LOCKED,          /* The resource is (already) locked. */
+     DFB_BUFFEREMPTY                       = DR_BUFFEREMPTY,     /* The buffer is empty. */
+     DFB_FILENOTFOUND                      = DR_FILENOTFOUND,    /* The specified file has not been found. */
+     DFB_IO                                = DR_IO,              /* A general I/O error occurred. */
+     DFB_BUSY                              = DR_BUSY,            /* The resource or device is busy. */
+     DFB_NOIMPL                            = DR_NOIMPL,          /* No implementation for this interface or content type
+                                                                    has been found. */
+     DFB_TIMEOUT                           = DR_TIMEOUT,         /* The operation timed out. */
+     DFB_THIZNULL                          = DR_THIZNULL,        /* 'thiz' pointer is NULL. */
+     DFB_IDNOTFOUND                        = DR_IDNOTFOUND,      /* No resource has been found by the specified id. */
+     DFB_DESTROYED                         = DR_DESTROYED,       /* The requested object has been destroyed. */
+     DFB_FUSION                            = DR_FUSION,          /* Internal fusion error detected, most likely related
+                                                                    to IPC resources. */
+     DFB_BUFFERTOOLARGE                    = DR_BUFFERTOOLARGE,  /* Buffer is too large. */
+     DFB_INTERRUPTED                       = DR_INTERRUPTED,     /* The operation has been interrupted. */
+     DFB_NOCONTEXT                         = DR_NOCONTEXT,       /* No context available. */
+     DFB_TEMPUNAVAIL                       = DR_TEMPUNAVAIL,     /* Temporarily unavailable. */
+     DFB_LIMITEXCEEDED                     = DR_LIMITEXCEEDED,   /* Attempted to exceed limit, i.e. any kind of maximum
+                                                                    size, count etc. */
+     DFB_NOSUCHMETHOD                      = DR_NOSUCHMETHOD,    /* Requested method is not known. */
+     DFB_NOSUCHINSTANCE                    = DR_NOSUCHINSTANCE,  /* Requested instance is not known. */
+     DFB_ITEMNOTFOUND                      = DR_ITEMNOTFOUND,    /* No such item found. */
+     DFB_VERSIONMISMATCH                   = DR_VERSIONMISMATCH, /* Some versions didn't match. */
+     DFB_EOF                               = DR_EOF,             /* Reached end of file. */
+     DFB_SUSPENDED                         = DR_SUSPENDED,       /* The requested object is suspended. */
+     DFB_INCOMPLETE                        = DR_INCOMPLETE,      /* The operation has been executed, but not
+                                                                    completely. */
+     DFB_NOCORE                            = DR_NOCORE,          /* Core part not available. */
+
+     /*
+      * DirectFB specific result codes starting at this offset.
+      */
+     DFB__RESULT_BASE                      = D_RESULT_TYPE_CODE_BASE( 'D','F','B','1' ),
+
+     DFB_NOVIDEOMEMORY,                                          /* There's not enough video memory. */
+     DFB_MISSINGFONT,                                            /* No font has been set. */
+     DFB_MISSINGIMAGE,                                           /* No image has been set. */
+     DFB_NOALLOCATION,                                           /* No allocation. */
+     DFB_NOBUFFER,                                               /* No buffer. */
+
+     DFB__RESULT_END
+} DFBResult;
+
+/*
+ * Return value of callback function of enumerations.
+ */
+typedef enum {
+     DFENUM_OK                             = 0,                  /* Proceed with enumeration. */
+     DFENUM_CANCEL                         = 1                   /* Cancel enumeration. */
+} DFBEnumerationResult;
+
+/**********************************************************************************************************************/
+
+/*
+ * Dynamic version handling.
+ */
+extern const unsigned int directfb_major_version;
+extern const unsigned int directfb_minor_version;
+extern const unsigned int directfb_micro_version;
+
 /*
  * Checks for a certain DirectFB version.
  * In case of an error a message is returned describing
@@ -114,13 +208,18 @@ const char DIRECTFB_API *DirectFBCheckVersion (
 );
 
 /*
+ * Retrieves usage information about supported command-line flags.
+ */
+const char DIRECTFB_API *DirectFBUsageString ();
+
+/*
  * Parses the command-line and initializes some variables.
  * You absolutely need to call this before doing anything else.
  * Removes all options used by DirectFB from argv.
  */
 DFBResult  DIRECTFB_API  DirectFBInit (
      int                                    *argc,               /* pointer to main()'s argc */
-     char                                 *(*argv[])             /* pointer to main()'s argv */
+     char                                  **argv[]              /* pointer to main()'s argv */
 );
 
 /*
@@ -418,8 +517,6 @@ typedef unsigned int DFBWindowID;
 #define DTEID_UTF8                           0x00000000          /* UTF-8 */
 #define DTEID_OTHER                          0x00000001          /* Other */
 
-/**********************************************************************************************************************/
-
 /*************
  * IDirectFB *
  *************/
@@ -561,8 +658,10 @@ typedef struct {
      DFBSurfaceBlittingFlags                 blitting_flags;     /* Supported blitting flags */
      DFBSurfaceDrawingFlags                  drawing_flags;      /* Supported drawing flags */
      unsigned int                            video_memory;       /* Amount of video memory in bytes */
+
      char name[DFB_GRAPHICS_DEVICE_DESC_NAME_LENGTH];            /* Device/Chipset name */
      char vendor[DFB_GRAPHICS_DEVICE_DESC_VENDOR_LENGTH];        /* Device vendor */
+
      DFBGraphicsDriverInfo                   driver;             /* Device driver information */
 } DFBGraphicsDeviceDescription;
 
@@ -646,7 +745,7 @@ typedef enum {
 } DFBSurfaceCapabilities;
 
 /*
- * Encodes format constants in the following way (bit 31 - 0):
+ * Encodes pixel format constants in the following way (bit 31 - 0):
  *
  * lkjj:hhgg | gfff:eeed | cccc:bbbb | baaa:aaaa
  *
@@ -684,149 +783,168 @@ typedef enum {
  */
 typedef enum {
      /* unknown or unspecified format */
-     DSPF_UNKNOWN   = 0x00000000,
+     DSPF_UNKNOWN    = 0x00000000,
 
      /* 16 bit  ARGB (2 byte, alpha 1@15, red 5@10, green 5@5, blue 5@0) */
-     DSPF_ARGB1555  = DFB_SURFACE_PIXELFORMAT(  0, 15, 1, 1, 0, 2, 0, 0, 0, 0, 0 ),
+     DSPF_ARGB1555   = DFB_SURFACE_PIXELFORMAT(  0, 15, 1, 1, 0, 2, 0, 0, 0, 0, 0 ),
 
      /* 16 bit   RGB (2 byte, red 5@11, green 6@5, blue 5@0) */
-     DSPF_RGB16     = DFB_SURFACE_PIXELFORMAT(  1, 16, 0, 0, 0, 2, 0, 0, 0, 0, 0 ),
+     DSPF_RGB16      = DFB_SURFACE_PIXELFORMAT(  1, 16, 0, 0, 0, 2, 0, 0, 0, 0, 0 ),
 
      /* 24 bit   RGB (3 byte, red 8@16, green 8@8, blue 8@0) */
-     DSPF_RGB24     = DFB_SURFACE_PIXELFORMAT(  2, 24, 0, 0, 0, 3, 0, 0, 0, 0, 0 ),
+     DSPF_RGB24      = DFB_SURFACE_PIXELFORMAT(  2, 24, 0, 0, 0, 3, 0, 0, 0, 0, 0 ),
 
      /* 24 bit   RGB (4 byte, nothing@24, red 8@16, green 8@8, blue 8@0) */
-     DSPF_RGB32     = DFB_SURFACE_PIXELFORMAT(  3, 24, 0, 0, 0, 4, 0, 0, 0, 0, 0 ),
+     DSPF_RGB32      = DFB_SURFACE_PIXELFORMAT(  3, 24, 0, 0, 0, 4, 0, 0, 0, 0, 0 ),
 
      /* 32 bit  ARGB (4 byte, alpha 8@24, red 8@16, green 8@8, blue 8@0) */
-     DSPF_ARGB      = DFB_SURFACE_PIXELFORMAT(  4, 24, 8, 1, 0, 4, 0, 0, 0, 0, 0 ),
+     DSPF_ARGB       = DFB_SURFACE_PIXELFORMAT(  4, 24, 8, 1, 0, 4, 0, 0, 0, 0, 0 ),
 
      /*  8 bit alpha (1 byte, alpha 8@0), e.g. anti-aliased glyphs */
-     DSPF_A8        = DFB_SURFACE_PIXELFORMAT(  5,  0, 8, 1, 0, 1, 0, 0, 0, 0, 0 ),
+     DSPF_A8         = DFB_SURFACE_PIXELFORMAT(  5,  0, 8, 1, 0, 1, 0, 0, 0, 0, 0 ),
 
      /* 16 bit   YUV (4 byte/ 2 pixel, macropixel contains CbYCrY [31:0]) */
-     DSPF_YUY2      = DFB_SURFACE_PIXELFORMAT(  6, 16, 0, 0, 0, 2, 0, 0, 0, 0, 0 ),
+     DSPF_YUY2       = DFB_SURFACE_PIXELFORMAT(  6, 16, 0, 0, 0, 2, 0, 0, 0, 0, 0 ),
 
      /*  8 bit   RGB (1 byte, red 3@5, green 3@2, blue 2@0) */
-     DSPF_RGB332    = DFB_SURFACE_PIXELFORMAT(  7,  8, 0, 0, 0, 1, 0, 0, 0, 0, 0 ),
+     DSPF_RGB332     = DFB_SURFACE_PIXELFORMAT(  7,  8, 0, 0, 0, 1, 0, 0, 0, 0, 0 ),
 
      /* 16 bit   YUV (4 byte/ 2 pixel, macropixel contains YCbYCr [31:0]) */
-     DSPF_UYVY      = DFB_SURFACE_PIXELFORMAT(  8, 16, 0, 0, 0, 2, 0, 0, 0, 0, 0 ),
+     DSPF_UYVY       = DFB_SURFACE_PIXELFORMAT(  8, 16, 0, 0, 0, 2, 0, 0, 0, 0, 0 ),
 
      /* 12 bit   YUV (8 bit Y plane followed by quarter-size 8 bit U/V planes) */
-     DSPF_I420      = DFB_SURFACE_PIXELFORMAT(  9, 12, 0, 0, 0, 1, 0, 2, 0, 0, 0 ),
+     DSPF_I420       = DFB_SURFACE_PIXELFORMAT(  9, 12, 0, 0, 0, 1, 0, 2, 0, 0, 0 ),
 
      /* 12 bit   YUV (8 bit Y plane followed by quarter-size 8 bit V/U planes) */
-     DSPF_YV12      = DFB_SURFACE_PIXELFORMAT( 10, 12, 0, 0, 0, 1, 0, 2, 0, 0, 0 ),
+     DSPF_YV12       = DFB_SURFACE_PIXELFORMAT( 10, 12, 0, 0, 0, 1, 0, 2, 0, 0, 0 ),
 
      /*  8 bit   LUT (8 bit color and alpha lookup from palette) */
-     DSPF_LUT8      = DFB_SURFACE_PIXELFORMAT( 11,  8, 0, 1, 0, 1, 0, 0, 0, 1, 0 ),
+     DSPF_LUT8       = DFB_SURFACE_PIXELFORMAT( 11,  8, 0, 1, 0, 1, 0, 0, 0, 1, 0 ),
 
      /*  8 bit  ALUT (1 byte, alpha 4@4, color lookup 4@0) */
-     DSPF_ALUT44    = DFB_SURFACE_PIXELFORMAT( 12,  4, 4, 1, 0, 1, 0, 0, 0, 1, 0 ),
+     DSPF_ALUT44     = DFB_SURFACE_PIXELFORMAT( 12,  4, 4, 1, 0, 1, 0, 0, 0, 1, 0 ),
 
      /* 32 bit  ARGB (4 byte, inv. alpha 8@24, red 8@16, green 8@8, blue 8@0) */
-     DSPF_AiRGB     = DFB_SURFACE_PIXELFORMAT( 13, 24, 8, 1, 0, 4, 0, 0, 0, 0, 1 ),
+     DSPF_AiRGB      = DFB_SURFACE_PIXELFORMAT( 13, 24, 8, 1, 0, 4, 0, 0, 0, 0, 1 ),
 
      /*  1 bit alpha (1 byte/ 8 pixel, most significant bit used first) */
-     DSPF_A1        = DFB_SURFACE_PIXELFORMAT( 14,  0, 1, 1, 1, 0, 7, 0, 0, 0, 0 ),
+     DSPF_A1         = DFB_SURFACE_PIXELFORMAT( 14,  0, 1, 1, 1, 0, 7, 0, 0, 0, 0 ),
 
      /* 12 bit   YUV (8 bit Y plane followed by quarter-size 16 bit Cb|Cr [7:0|7:0] plane) */
-     DSPF_NV12      = DFB_SURFACE_PIXELFORMAT( 15, 12, 0, 0, 0, 1, 0, 2, 0, 0, 0 ),
+     DSPF_NV12       = DFB_SURFACE_PIXELFORMAT( 15, 12, 0, 0, 0, 1, 0, 2, 0, 0, 0 ),
 
      /* 16 bit   YUV (8 bit Y plane followed by half-size 16 bit Cb|Cr [7:0|7:0] plane) */
-     DSPF_NV16      = DFB_SURFACE_PIXELFORMAT( 16, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 ),
+     DSPF_NV16       = DFB_SURFACE_PIXELFORMAT( 16, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 ),
 
      /* 16 bit  ARGB (2 byte, alpha 2@14, red 5@9, green 5@4, blue 4@0) */
-     DSPF_ARGB2554  = DFB_SURFACE_PIXELFORMAT( 17, 14, 2, 1, 0, 2, 0, 0, 0, 0, 0 ),
+     DSPF_ARGB2554   = DFB_SURFACE_PIXELFORMAT( 17, 14, 2, 1, 0, 2, 0, 0, 0, 0, 0 ),
 
      /* 16 bit  ARGB (2 byte, alpha 4@12, red 4@8, green 4@4, blue 4@0) */
-     DSPF_ARGB4444  = DFB_SURFACE_PIXELFORMAT( 18, 12, 4, 1, 0, 2, 0, 0, 0, 0, 0 ),
+     DSPF_ARGB4444   = DFB_SURFACE_PIXELFORMAT( 18, 12, 4, 1, 0, 2, 0, 0, 0, 0, 0 ),
 
      /* 16 bit  RGBA (2 byte, red 4@12, green 4@8, blue 4@4, alpha 4@0) */
-     DSPF_RGBA4444  = DFB_SURFACE_PIXELFORMAT( 19, 12, 4, 1, 0, 2, 0, 0, 0, 0, 0 ),
+     DSPF_RGBA4444   = DFB_SURFACE_PIXELFORMAT( 19, 12, 4, 1, 0, 2, 0, 0, 0, 0, 0 ),
 
      /* 12 bit   YUV (8 bit Y plane followed by quarter-size 16 bit Cr|Cb [7:0|7:0] plane) */
-     DSPF_NV21      = DFB_SURFACE_PIXELFORMAT( 20, 12, 0, 0, 0, 1, 0, 2, 0, 0, 0 ),
+     DSPF_NV21       = DFB_SURFACE_PIXELFORMAT( 20, 12, 0, 0, 0, 1, 0, 2, 0, 0, 0 ),
 
      /* 32 bit  AYUV (4 byte, alpha 8@24, Y 8@16, Cb 8@8, Cr 8@0) */
-     DSPF_AYUV      = DFB_SURFACE_PIXELFORMAT( 21, 24, 8, 1, 0, 4, 0, 0, 0, 0, 0 ),
+     DSPF_AYUV       = DFB_SURFACE_PIXELFORMAT( 21, 24, 8, 1, 0, 4, 0, 0, 0, 0, 0 ),
 
      /*  4 bit alpha (1 byte/ 2 pixel, more significant nibble used first) */
-     DSPF_A4        = DFB_SURFACE_PIXELFORMAT( 22,  0, 4, 1, 4, 0, 1, 0, 0, 0, 0 ),
+     DSPF_A4         = DFB_SURFACE_PIXELFORMAT( 22,  0, 4, 1, 4, 0, 1, 0, 0, 0, 0 ),
 
-     /*  1 bit alpha (3 byte/  alpha 1@18, red 6@12, green 6@6, blue 6@0) */
-     DSPF_ARGB1666  = DFB_SURFACE_PIXELFORMAT( 23, 18, 1, 1, 0, 3, 0, 0, 0, 0, 0 ),
+     /*  1 bit alpha (3 byte, alpha 1@18, red 6@12, green 6@6, blue 6@0) */
+     DSPF_ARGB1666   = DFB_SURFACE_PIXELFORMAT( 23, 18, 1, 1, 0, 3, 0, 0, 0, 0, 0 ),
 
-     /*  6 bit alpha (3 byte/  alpha 6@18, red 6@12, green 6@6, blue 6@0) */
-     DSPF_ARGB6666  = DFB_SURFACE_PIXELFORMAT( 24, 18, 6, 1, 0, 3, 0, 0, 0, 0, 0 ),
+     /*  6 bit alpha (3 byte, alpha 6@18, red 6@12, green 6@6, blue 6@0) */
+     DSPF_ARGB6666   = DFB_SURFACE_PIXELFORMAT( 24, 18, 6, 1, 0, 3, 0, 0, 0, 0, 0 ),
 
-     /*  6 bit   RGB (3 byte/   red 6@12, green 6@6, blue 6@0) */
-     DSPF_RGB18     = DFB_SURFACE_PIXELFORMAT( 25, 18, 0, 0, 0, 3, 0, 0, 0, 0, 0 ),
+     /* 24 bit   RGB (3 byte, nothing @18, red 6@12, green 6@6, blue 6@0) */
+     DSPF_RGB18      = DFB_SURFACE_PIXELFORMAT( 25, 18, 0, 0, 0, 3, 0, 0, 0, 0, 0 ),
 
      /*  2 bit   LUT (1 byte/ 4 pixel, 2 bit color and alpha lookup from palette) */
-     DSPF_LUT2      = DFB_SURFACE_PIXELFORMAT( 26,  2, 0, 1, 2, 0, 3, 0, 0, 1, 0 ),
+     DSPF_LUT2       = DFB_SURFACE_PIXELFORMAT( 26,  2, 0, 1, 2, 0, 3, 0, 0, 1, 0 ),
 
      /* 16 bit   RGB (2 byte, nothing @12, red 4@8, green 4@4, blue 4@0) */
-     DSPF_RGB444    = DFB_SURFACE_PIXELFORMAT( 27, 12, 0, 0, 0, 2, 0, 0, 0, 0, 0 ),
+     DSPF_RGB444     = DFB_SURFACE_PIXELFORMAT( 27, 12, 0, 0, 0, 2, 0, 0, 0, 0, 0 ),
 
      /* 16 bit   RGB (2 byte, nothing @15, red 5@10, green 5@5, blue 5@0) */
-     DSPF_RGB555    = DFB_SURFACE_PIXELFORMAT( 28, 15, 0, 0, 0, 2, 0, 0, 0, 0, 0 ),
+     DSPF_RGB555     = DFB_SURFACE_PIXELFORMAT( 28, 15, 0, 0, 0, 2, 0, 0, 0, 0, 0 ),
 
      /* 16 bit   BGR (2 byte, nothing @15, blue 5@10, green 5@5, red 5@0) */
-     DSPF_BGR555    = DFB_SURFACE_PIXELFORMAT( 29, 15, 0, 0, 0, 2, 0, 0, 0, 0, 0 ),
+     DSPF_BGR555     = DFB_SURFACE_PIXELFORMAT( 29, 15, 0, 0, 0, 2, 0, 0, 0, 0, 0 ),
 
      /* 16 bit  RGBA (2 byte, red 5@11, green 5@6, blue 5@1, alpha 1@0) */
-     DSPF_RGBA5551  = DFB_SURFACE_PIXELFORMAT( 30, 15, 1, 1, 0, 2, 0, 0, 0, 0, 0 ),
+     DSPF_RGBA5551   = DFB_SURFACE_PIXELFORMAT( 30, 15, 1, 1, 0, 2, 0, 0, 0, 0, 0 ),
 
      /* 24 bit   YUV (8 bit Y plane followed by 8 bit U/V planes) */
-     DSPF_YUV444P   = DFB_SURFACE_PIXELFORMAT( 31, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 ),
+     DSPF_Y444       = DFB_SURFACE_PIXELFORMAT( 31, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 ),
 
      /* 24 bit  ARGB (3 byte, alpha 8@16, red 5@11, green 6@5, blue 5@0) */
-     DSPF_ARGB8565  = DFB_SURFACE_PIXELFORMAT( 32, 16, 8, 1, 0, 3, 0, 0, 0, 0, 0 ),
+     DSPF_ARGB8565   = DFB_SURFACE_PIXELFORMAT( 32, 16, 8, 1, 0, 3, 0, 0, 0, 0, 0 ),
 
      /* 32 bit  AVYU (4 byte, alpha 8@24, Cr 8@16, Y 8@8, Cb 8@0) */
-     DSPF_AVYU      = DFB_SURFACE_PIXELFORMAT( 33, 24, 8, 1, 0, 4, 0, 0, 0, 0, 0 ),
+     DSPF_AVYU       = DFB_SURFACE_PIXELFORMAT( 33, 24, 8, 1, 0, 4, 0, 0, 0, 0, 0 ),
 
      /* 24 bit   VYU (3 byte, Cr 8@16, Y 8@8, Cb 8@0) */
-     DSPF_VYU       = DFB_SURFACE_PIXELFORMAT( 34, 24, 0, 0, 0, 3, 0, 0, 0, 0, 0 ),
+     DSPF_VYU        = DFB_SURFACE_PIXELFORMAT( 34, 24, 0, 0, 0, 3, 0, 0, 0, 0, 0 ),
 
-     /*  1 bit alpha (1 byte/ 8 pixel, LEAST significant bit used first) */
-     DSPF_A1_LSB    = DFB_SURFACE_PIXELFORMAT( 35,  0, 1, 1, 1, 0, 7, 0, 0, 0, 0 ),
+     /*  1 bit alpha (1 byte/ 8 pixel, least significant bit used first) */
+     DSPF_A1_LSB     = DFB_SURFACE_PIXELFORMAT( 35,  0, 1, 1, 1, 0, 7, 0, 0, 0, 0 ),
 
      /* 16 bit   YUV (8 bit Y plane followed by half-size 8 bit V/U planes) */
-     DSPF_YV16      = DFB_SURFACE_PIXELFORMAT( 36, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 ),
+     DSPF_YV16       = DFB_SURFACE_PIXELFORMAT( 36, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 ),
 
      /* 32 bit  ABGR (4 byte, alpha 8@24, blue 8@16, green 8@8, red 8@0) */
-     DSPF_ABGR      = DFB_SURFACE_PIXELFORMAT( 37, 24, 8, 1, 0, 4, 0, 0, 0, 0, 0 ),
+     DSPF_ABGR       = DFB_SURFACE_PIXELFORMAT( 37, 24, 8, 1, 0, 4, 0, 0, 0, 0, 0 ),
 
      /* 32 bit RGBAF (4 byte, red 8@24, green 8@16, blue 8@8, alpha 7@1, flash 1@0 */
      DSPF_RGBAF88871 = DFB_SURFACE_PIXELFORMAT( 38, 24, 7, 1, 0, 4, 0, 0, 0, 0, 0 ),
 
      /*  4 bit   LUT (1 byte/ 2 pixel, 4 bit color and alpha lookup from palette) */
-     DSPF_LUT4      = DFB_SURFACE_PIXELFORMAT( 39,  4, 0, 1, 4, 0, 1, 0, 0, 1, 0 ),
+     DSPF_LUT4       = DFB_SURFACE_PIXELFORMAT( 39,  4, 0, 1, 4, 0, 1, 0, 0, 1, 0 ),
 
      /* 16 bit   LUT (1 byte alpha and 8 bit color lookup from palette) */
-     DSPF_ALUT8     = DFB_SURFACE_PIXELFORMAT( 40,  8, 8, 1, 0, 2, 0, 0, 0, 1, 0 ),
+     DSPF_ALUT8      = DFB_SURFACE_PIXELFORMAT( 40,  8, 8, 1, 0, 2, 0, 0, 0, 1, 0 ),
 
      /*  1 bit   LUT (1 byte/ 8 pixel, 1 bit color and alpha lookup from palette) */
-     DSPF_LUT1      = DFB_SURFACE_PIXELFORMAT( 41,  1, 0, 1, 1, 0, 7, 0, 0, 1, 0 ),
+     DSPF_LUT1       = DFB_SURFACE_PIXELFORMAT( 41,  1, 0, 1, 1, 0, 7, 0, 0, 1, 0 ),
 
      /* 16 bit   YUV (8 bit Y plane followed by half-size 16 bit Cr|Cb [7:0|7:0] plane) */
-     DSPF_NV61      = DFB_SURFACE_PIXELFORMAT( 42, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 )
+     DSPF_NV61       = DFB_SURFACE_PIXELFORMAT( 42, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 ),
+
+     /* 16 bit   YUV (8 bit Y plane followed by half-size 8 bit U/V planes) */
+     DSPF_Y42B       = DFB_SURFACE_PIXELFORMAT( 43, 16, 0, 0, 0, 1, 0, 0, 1, 0, 0 ),
+
+     /* 24 bit   YUV (8 bit Y plane followed by 8 bit V/U planes) */
+     DSPF_YV24       = DFB_SURFACE_PIXELFORMAT( 44, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 ),
+
+     /* 24 bit   YUV (8 bit Y plane followed by 16 bit Cb|Cr [7:0|7:0] plane) */
+     DSPF_NV24       = DFB_SURFACE_PIXELFORMAT( 45, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 ),
+
+     /* 24 bit   YUV (8 bit Y plane followed by 16 bit Cr|Cb [7:0|7:0] plane) */
+     DSPF_NV42       = DFB_SURFACE_PIXELFORMAT( 46, 24, 0, 0, 0, 1, 0, 0, 2, 0, 0 ),
+
+     /* 24 bit   BGR (3 byte, blue 8@16, green 8@8, red 8@0) */
+     DSPF_BGR24      = DFB_SURFACE_PIXELFORMAT( 47, 24, 0, 0, 0, 3, 0, 0, 0, 0, 0 )
 } DFBSurfacePixelFormat;
 
+#define DSPF_YUV420P                         DSPF_I420
+#define DSPF_YUV422P                         DSPF_Y42B
+#define DSPF_YUV444P                         DSPF_Y444
+
 /* Number of pixelformats defined. */
-#define DFB_NUM_PIXELFORMATS                 43
+#define DFB_NUM_PIXELFORMATS                 48
 
 /* These macros extract information about the pixel format. */
-#define DFB_PIXELFORMAT_INDEX(fmt)           (((fmt) & 0x0000007F)      )
+#define DFB_PIXELFORMAT_INDEX(fmt)            ((fmt) & 0x0000007F)
 
-#define DFB_COLOR_BITS_PER_PIXEL(fmt)        (((fmt) & 0x00000F80) >>  7)
+#define DFB_COLOR_BITS_PER_PIXEL(fmt)        (((fmt) & 0x00000F80) >> 7)
 
 #define DFB_ALPHA_BITS_PER_PIXEL(fmt)        (((fmt) & 0x0000F000) >> 12)
 
-#define DFB_PIXELFORMAT_HAS_ALPHA(fmt)       (((fmt) & 0x00010000) !=  0)
+#define DFB_PIXELFORMAT_HAS_ALPHA(fmt)       (((fmt) & 0x00010000) != 0)
 
 #define DFB_BITS_PER_PIXEL(fmt)              (((fmt) & 0x007E0000) >> 17)
 
@@ -838,11 +956,11 @@ typedef enum {
 
 #define DFB_PLANE_MULTIPLY(fmt,height)       ((((((fmt) & 0x3C000000) >> 26) + 4) * (height)) >> 2)
 
-#define DFB_PIXELFORMAT_IS_INDEXED(fmt)      (((fmt) & 0x40000000) !=  0)
+#define DFB_PIXELFORMAT_IS_INDEXED(fmt)      (((fmt) & 0x40000000) != 0)
 
-#define DFB_PLANAR_PIXELFORMAT(fmt)          (((fmt) & 0x3C000000) !=  0)
+#define DFB_PLANAR_PIXELFORMAT(fmt)          (((fmt) & 0x3C000000) != 0)
 
-#define DFB_PIXELFORMAT_INV_ALPHA(fmt)       (((fmt) & 0x80000000) !=  0)
+#define DFB_PIXELFORMAT_INV_ALPHA(fmt)       (((fmt) & 0x80000000) != 0)
 
 #define DFB_COLOR_IS_RGB(fmt)        \
      (((fmt) == DSPF_ARGB1555)    || \
@@ -863,7 +981,8 @@ typedef enum {
       ((fmt) == DSPF_BGR555)      || \
       ((fmt) == DSPF_ARGB8565)    || \
       ((fmt) == DSPF_ABGR)        || \
-      ((fmt) == DSPF_RGBAF88871))
+      ((fmt) == DSPF_RGBAF88871)  || \
+      ((fmt) == DSPF_BGR24))
 
 #define DFB_COLOR_IS_YUV(fmt)        \
      (((fmt) == DSPF_YUY2)        || \
@@ -874,11 +993,15 @@ typedef enum {
       ((fmt) == DSPF_NV16)        || \
       ((fmt) == DSPF_NV21)        || \
       ((fmt) == DSPF_AYUV)        || \
-      ((fmt) == DSPF_YUV444P)     || \
+      ((fmt) == DSPF_Y444)        || \
       ((fmt) == DSPF_AVYU)        || \
       ((fmt) == DSPF_VYU)         || \
       ((fmt) == DSPF_YV16)        || \
-      ((fmt) == DSPF_NV61))
+      ((fmt) == DSPF_NV61)        || \
+      ((fmt) == DSPF_Y42B)        || \
+      ((fmt) == DSPF_YV24)        || \
+      ((fmt) == DSPF_NV24)        || \
+      ((fmt) == DSPF_NV42))
 
 /*
  * Hint flags for optimized allocation, format selection etc.
@@ -948,8 +1071,9 @@ typedef struct {
 typedef enum {
      DPDESC_CAPS                           = 0x00000001,         /* Specify palette capabilities. */
      DPDESC_SIZE                           = 0x00000002,         /* Specify number of entries. */
-     DPDESC_ENTRIES                        = 0x00000004          /* Initialize the palette with the
+     DPDESC_ENTRIES                        = 0x00000004,         /* Initialize the palette with the
                                                                     entries specified in the description. */
+     DPDESC_COLORSPACE                     = 0x00000008          /* Specify palette color space. */
 } DFBPaletteDescriptionFlags;
 
 /*
@@ -968,6 +1092,7 @@ typedef struct {
      DFBPaletteCapabilities                  caps;               /* Palette capabilities. */
      unsigned int                            size;               /* Number of entries. */
      const DFBColor                         *entries;            /* Preset palette entries. */
+     DFBSurfaceColorSpace                    colorspace;         /* Palette color space. */
 } DFBPaletteDescription;
 
 /*
@@ -994,7 +1119,9 @@ typedef enum {
  */
 typedef struct {
      DFBScreenCapabilities                   caps;               /* Capability flags of the screen. */
+
      char name[DFB_SCREEN_DESC_NAME_LENGTH];                     /* Rough description. */
+
      int                                     mixers;             /* Number of mixers available. */
      int                                     encoders;           /* Number of display encoders available. */
      int                                     outputs;            /* Number of output connectors available. */
@@ -1079,7 +1206,9 @@ typedef enum {
 typedef struct {
      DFBDisplayLayerTypeFlags                type;               /* Classification of the display layer. */
      DFBDisplayLayerCapabilities             caps;               /* Capability flags of the display layer. */
+
      char name[DFB_DISPLAY_LAYER_DESC_NAME_LENGTH];              /* Display layer name. */
+
      int                                     level;              /* Default level. */
      int                                     regions;            /* Number of concurrent regions supported:
                                                                       -1 = unlimited,
@@ -1160,8 +1289,10 @@ typedef struct {
                                                                     between hardware keys is made */
      DFBInputDeviceAxisIdentifier            max_axis;           /* highest axis identifier */
      DFBInputDeviceButtonIdentifier          max_button;         /* highest button identifier */
+
      char name[DFB_INPUT_DEVICE_DESC_NAME_LENGTH];               /* device name */
      char vendor[DFB_INPUT_DEVICE_DESC_VENDOR_LENGTH];           /* device vendor */
+
      int                                     vendor_id;          /* vendor ID */
      int                                     product_id;         /* product ID */
 } DFBInputDeviceDescription;
@@ -1706,6 +1837,14 @@ D_DEFINE_INTERFACE( IDirectFB,
           DFBSurfaceID                       surface_id,
           IDirectFBSurface                 **ret_interface
      );
+
+     /*
+      * Get surface pixel format suitable for fonts.
+      */
+     DFBResult (*GetFontSurfaceFormat) (
+          IDirectFB                         *thiz,
+          DFBSurfacePixelFormat             *ret_fontformat
+     );
 )
 
 /*******************
@@ -1749,6 +1888,7 @@ typedef struct {
                                                                     in sub mode. */
      DFBDisplayLayerIDs                      sub_layers;         /* Layers available for sub mode
                                                                     with layer selection. */
+
      char name[DFB_SCREEN_MIXER_DESC_NAME_LENGTH];               /* Mixer name. */
 } DFBScreenMixerDescription;
 
@@ -1846,6 +1986,7 @@ typedef enum {
      DSETV_NTSC_M_JPN                      = 0x00000200,         /* NTSC_JPN support */
      DSETV_DIGITAL                         = 0x00000400,         /* TV standards from the digital domain */
      DSETV_NTSC_443                        = 0x00000800,         /* NTSC with 4.43MHz colour carrier */
+
      DSETV_ALL                             = 0x00000FFF          /* All TV Standards */
 } DFBScreenEncoderTVStandards;
 
@@ -1861,7 +2002,8 @@ typedef enum {
      DSOS_RGB                              = 0x00000008,         /* R/G/B signal */
      DSOS_YCBCR                            = 0x00000010,         /* Y/Cb/Cr signal */
      DSOS_HDMI                             = 0x00000020,         /* HDMI signal */
-     DSOS_656                              = 0x00000040          /* 656 Digital output signal */
+     DSOS_656                              = 0x00000040,         /* 656 Digital output signal */
+     DSOS_DSI                              = 0x00000080          /* DSI signal */
 } DFBScreenOutputSignals;
 
 /*
@@ -1877,7 +2019,8 @@ typedef enum {
      DSOC_SCART2                           = 0x00000010,         /* 2nd SCART connector */
      DSOC_COMPONENT                        = 0x00000020,         /* Component video connector */
      DSOC_HDMI                             = 0x00000040,         /* HDMI connector */
-     DSOC_656                              = 0x00000080          /* DVO connector */
+     DSOC_656                              = 0x00000080,         /* DVO connector */
+     DSOC_DSI                              = 0x00000100          /* DSI connector */
 } DFBScreenOutputConnectors;
 
 /*
@@ -1909,6 +2052,7 @@ typedef enum {
     DSOR_2560_1600                         = 0x00100000,         /* 2650x1600 Resolution */
     DSOR_3840_2160                         = 0x00200000,         /* 3840x2160 Resolution */
     DSOR_4096_2160                         = 0x00400000,         /* 4096x2160 Resolution */
+
     DSOR_ALL                               = 0x004FFFFF          /* All Resolutions */
 } DFBScreenOutputResolution;
 
@@ -1941,7 +2085,8 @@ typedef enum {
                                                                     width single frame, left on left half of frame.
                                                                     The packed frame is output on each vsync.
                                                                     Requires HDMI v1.4a. */
-     DSEPF_ALL                             = 0x0000001f
+
+     DSEPF_ALL                             = 0x0000001F          /* All of these. */
 } DFBScreenEncoderPictureFraming;
 
 /*
@@ -1954,7 +2099,7 @@ typedef enum {
     DFB_ASPECT_RATIO_e16x9                 = 0x00000002          /* 16x9 */
 } DFBDisplayAspectRatio;
 
-#define DFB_SCREEN_ENCODER_DESC_NAME_LENGTH    24
+#define DFB_SCREEN_ENCODER_DESC_NAME_LENGTH  24
 
 /*
  * Description of a display encoder.
@@ -1966,7 +2111,9 @@ typedef struct {
      DFBScreenOutputSignals                  out_signals;        /* Supported output signals. */
      DFBScreenOutputConnectors               all_connectors;     /* Supported output connectors */
      DFBScreenOutputResolution               all_resolutions;    /* Supported Resolutions. */
+
      char name[DFB_SCREEN_ENCODER_DESC_NAME_LENGTH];             /* Encoder name. */
+
      DFBScreenEncoderPictureFraming          all_framing;        /* Supported HDMI signaling modes. */
      DFBDisplayAspectRatio                   all_aspect_ratio;   /* Supported display aspect ratios. */
 } DFBScreenEncoderDescription;
@@ -2363,7 +2510,7 @@ typedef enum {
      DDLSCAPS_ALL                          = 0x00000001          /* All of these. */
 } DFBDisplayLayerSourceCaps;
 
-#define DFB_DISPLAY_LAYER_SOURCE_DESC_NAME_LENGTH    24
+#define DFB_DISPLAY_LAYER_SOURCE_DESC_NAME_LENGTH 24
 
 /*
  * Description of a display layer source.
@@ -3055,6 +3202,8 @@ D_DEFINE_INTERFACE( IDirectFBDisplayLayer,
 
      /*
       * Set the cursor shape and the hotspot.
+      *
+      * Passing NULL will restore the default cursor shape.
       */
      DFBResult (*SetCursorShape) (
           IDirectFBDisplayLayer             *thiz,
@@ -3090,7 +3239,7 @@ D_DEFINE_INTERFACE( IDirectFBDisplayLayer,
      /*
       * Switch the layer context.
       *
-      * Switches to the shared context unless 'exclusive'is
+      * Switches to the shared context unless 'exclusive' is
       * DFB_TRUE and the cooperative level of this interface is
       * DLSCL_EXCLUSIVE.
       */
@@ -4698,28 +4847,30 @@ typedef enum {
  * Specifies whether a button is currently pressed.
  */
 typedef enum {
-     DIBS_UP             = 0x00000000,                           /* button is not pressed */
-     DIBS_DOWN           = 0x00000001                            /* button is pressed */
+     DIBS_UP                               = 0x00000000,         /* button is not pressed */
+     DIBS_DOWN                             = 0x00000001          /* button is pressed */
 } DFBInputDeviceButtonState;
 
 /*
  * Input device configuration flags.
  */
 typedef enum {
-     DIDCONF_NONE        = 0x00000000,                           /* None of these. */
+     DIDCONF_NONE                          = 0x00000000,         /* None of these. */
 
-     DIDCONF_SENSITIVITY = 0x00000001,                           /* Set sensitivity. */
+     DIDCONF_SENSITIVITY                   = 0x00000001,         /* Set sensitivity. */
+     DIDCONF_MAX_SLOTS                     = 0x00000002,         /* Set the number of possible touch contacts. */
 
-     DIDCONF_ALL         = 0x00000001                            /* All of these. */
+     DIDCONF_ALL                           = 0x00000003          /* All of these. */
 } DFBInputDeviceConfigFlags;
 
 /*
  * Input device configuration.
  */
 typedef struct {
-     DFBInputDeviceConfigFlags     flags;                        /* Validation of fields. */
+     DFBInputDeviceConfigFlags               flags;              /* Validation of fields. */
 
-     int                           sensitivity;                  /* Sensitivity value for X/Y axes */
+     int                                     sensitivity;        /* Sensitivity value for X/Y axes. */
+     int                                     max_slots;          /* Maximum mumber of possible touch contacts. */
 } DFBInputDeviceConfig;
 
 /*
@@ -4981,6 +5132,7 @@ typedef struct {
      int                                     axisrel;            /* relative mouse/joystick movement */
      int                                     min;                /* minimum possible value */
      int                                     max;                /* maximum possible value */
+     int                                     slot_id;            /* touch contact */
 } DFBInputEvent;
 
 /*
@@ -5425,7 +5577,7 @@ typedef enum {
      DWCF_TRAPPED                          = 0x00000008,         /* Pointer is clipped against the window boundaries. */
      DWCF_FIXED                            = 0x00000010,         /* Pointer does not move at all, but still may send
                                                                     relative motion. */
-     DWCF_INVISIBLE                        = 0x00000020,         /* Cursor opacity is zero. */
+     DWCF_INVISIBLE                        = 0x00000020,         /* Window cursor is not visible. */
 
      DWCF_ALL                              = 0x0000003F          /* All of these. */
 } DFBWindowCursorFlags;
@@ -6565,7 +6717,7 @@ typedef enum {
      DVCAPS_HUE                            = 0x00000040,         /* supports hue adjustment */
      DVCAPS_SATURATION                     = 0x00000080,         /* supports saturation adjustment */
      DVCAPS_INTERACTIVE                    = 0x00000100,         /* supports sending an input or window event */
-     DVCAPS_VOLUME                         = 0x00000200,         /* supports volume adjustment */
+     DVCAPS_VOLUME                         = 0x00000200          /* supports volume adjustment */
 } DFBVideoProviderCapabilities;
 
 /*
@@ -6579,15 +6731,10 @@ typedef enum {
 } DFBStreamCapabilities;
 
 #define DFB_STREAM_DESC_ENCODING_LENGTH       30
-
 #define DFB_STREAM_DESC_TITLE_LENGTH         255
-
 #define DFB_STREAM_DESC_AUTHOR_LENGTH        255
-
 #define DFB_STREAM_DESC_ALBUM_LENGTH         255
-
 #define DFB_STREAM_DESC_GENRE_LENGTH          32
-
 #define DFB_STREAM_DESC_COMMENT_LENGTH       255
 
 /*
@@ -6595,8 +6742,10 @@ typedef enum {
  */
 typedef struct {
      DFBStreamCapabilities                   caps;               /* capabilities */
+
      struct {
           char encoding[DFB_STREAM_DESC_ENCODING_LENGTH];        /* encoding (e.g. "h264") */
+
           double                             framerate;          /* number of frames per second */
           double                             aspect;             /* frame aspect ratio */
           int                                bitrate;            /* amount of bits per second */
@@ -6604,16 +6753,21 @@ typedef struct {
           int                                width;              /* width as reported by sequence header */
           int                                height;             /* height as reported by sequence header */
      } video;                                                    /* struct containing encoding properties for video */
+
      struct {
           char encoding[DFB_STREAM_DESC_ENCODING_LENGTH];        /* encoding (e.g. "aac") */
+
           int                                samplerate;         /* number of samples per second */
           int                                channels;           /* number of channels per sample */
           int                                bitrate;            /* amount of bits per second */
      } audio;                                                    /* struct containing encoding properties for audio */
+
      char title[DFB_STREAM_DESC_TITLE_LENGTH];                   /* title */
      char author[DFB_STREAM_DESC_AUTHOR_LENGTH];                 /* author */
      char album[DFB_STREAM_DESC_ALBUM_LENGTH];                   /* album */
+
      short                                   year;               /* year */
+
      char genre[DFB_STREAM_DESC_GENRE_LENGTH];                   /* genre */
      char comment[DFB_STREAM_DESC_COMMENT_LENGTH];               /* comment */
 } DFBStreamDescription;
@@ -6637,7 +6791,7 @@ typedef enum {
      DVPLAY_NOFX                           = 0x00000000,         /* normal playback */
      DVPLAY_REWIND                         = 0x00000001,         /* reverse playback */
      DVPLAY_LOOPING                        = 0x00000002          /* automatically restart playback when end-of-stream is
-                                                                    reached. */
+                                                                    reached */
 } DFBVideoProviderPlaybackFlags;
 
 /*

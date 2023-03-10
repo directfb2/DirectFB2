@@ -16,4 +16,21 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
-ln -sf ${1:?} $DESTDIR${2:?}
+mkpc() {
+if [ "`echo $DESTDIR@PKGCONFIGDIR@/directfb-$1-*`" != "$DESTDIR@PKGCONFIGDIR@/directfb-$1-*" ]; then
+  REQUIRES_PRIVATE=$(basename -s .pc -a $DESTDIR@PKGCONFIGDIR@/directfb-$1-* | tr '\n' ' ' | sed 's/ $//')
+fi
+
+cat > $DESTDIR@PKGCONFIGDIR@/directfb-$1.pc << EOF
+Name: DirectFB-$1
+Description: DirectFB $1 modules
+Version: @VERSION@
+Requires.private: $REQUIRES_PRIVATE
+EOF
+}
+
+mkpc gfxdriver
+mkpc inputdriver
+mkpc interface
+mkpc system
+mkpc wm

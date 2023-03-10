@@ -271,6 +271,7 @@ dfb_surface_create( CoreDFB                  *core,
 
      D_DEBUG_AT( Core_Surface, "%s( %p, %p, %p )\n", __FUNCTION__, core, config, ret_surface );
 
+     /* Create the surface object. */
      surface = dfb_core_create_surface( core );
      if (!surface)
           return DFB_FUSION;
@@ -302,9 +303,6 @@ dfb_surface_create( CoreDFB                  *core,
 
           if (config->flags & CSCONF_CAPS) {
                D_DEBUG_AT( Core_Surface, "  -> caps 0x%08x\n", config->caps );
-
-               if (config->caps & DSCAPS_ROTATED)
-                    D_UNIMPLEMENTED();
 
                surface->config.caps = config->caps & ~DSCAPS_ROTATED;
           }
@@ -426,7 +424,7 @@ dfb_surface_create( CoreDFB                  *core,
 
      CoreSurface_Init_Dispatch( core, surface, &surface->call );
 
-     /* Activate object. */
+     /* Activate the object. */
      fusion_object_activate( &surface->object );
 
      if (dfb_config->surface_clear)
@@ -511,7 +509,8 @@ dfb_surface_init_palette( CoreDFB     *core,
 
      D_DEBUG_AT( Core_Surface, "%s( %p, %p )\n", __FUNCTION__, core, surface );
 
-     ret = dfb_palette_create( core, 1 << DFB_COLOR_BITS_PER_PIXEL( surface->config.format ), &palette );
+     ret = dfb_palette_create( core, 1 << DFB_COLOR_BITS_PER_PIXEL( surface->config.format ),
+                               surface->config.colorspace, &palette );
      if (ret) {
           D_DERROR( ret, "Core/Surface: Error creating palette!\n" );
           return ret;
@@ -899,12 +898,8 @@ dfb_surface_reconfig( CoreSurface             *surface,
      if (config->flags & CSCONF_COLORSPACE)
           new_config.colorspace = config->colorspace;
 
-     if (config->flags & CSCONF_CAPS) {
-          if (config->caps & DSCAPS_ROTATED)
-               D_UNIMPLEMENTED();
-
+     if (config->flags & CSCONF_CAPS)
           new_config.caps = config->caps & ~DSCAPS_ROTATED;
-     }
 
      if (new_config.caps & DSCAPS_SYSTEMONLY)
           surface->type = (surface->type & ~CSTF_EXTERNAL) | CSTF_INTERNAL;
@@ -1522,7 +1517,7 @@ dfb_surface_dump_buffer2( CoreSurface          *surface,
      }
 
      /* Check pixel format. */
-     switch (lock.buffer->format) {
+     switch (lock.buffer->config.format) {
           case DSPF_LUT8:
                palette = surface->palette;
 
@@ -1558,25 +1553,34 @@ dfb_surface_dump_buffer2( CoreSurface          *surface,
                /* fall through */
 
           case DSPF_RGB332:
-          case DSPF_RGB16:
-          case DSPF_RGB24:
-          case DSPF_RGB32:
-          case DSPF_YUY2:
-          case DSPF_UYVY:
-          case DSPF_NV16:
-          case DSPF_NV61:
-          case DSPF_YV16:
           case DSPF_RGB444:
           case DSPF_RGB555:
           case DSPF_BGR555:
-          case DSPF_YUV444P:
+          case DSPF_RGB16:
+          case DSPF_RGB24:
+          case DSPF_BGR24:
+          case DSPF_RGB32:
+          case DSPF_YUY2:
+          case DSPF_UYVY:
           case DSPF_VYU:
+          case DSPF_I420:
+          case DSPF_YV12:
+          case DSPF_NV12:
+          case DSPF_NV21:
+          case DSPF_Y42B:
+          case DSPF_YV16:
+          case DSPF_NV16:
+          case DSPF_NV61:
+          case DSPF_Y444:
+          case DSPF_YV24:
+          case DSPF_NV24:
+          case DSPF_NV42:
                rgb = true;
                break;
 
           default:
                D_ERROR( "Core/Surface: Surface dump for format '%s' is not implemented!\n",
-                        dfb_pixelformat_name( lock.buffer->format ) );
+                        dfb_pixelformat_name( lock.buffer->config.format ) );
                dfb_surface_buffer_unlock( &lock );
                return DFB_UNSUPPORTED;
      }
@@ -1675,9 +1679,9 @@ dfb_surface_dump_buffer2( CoreSurface          *surface,
 
           /* Write color buffer to pixmap file. */
           if (rgb) {
-               u8 buf_p[surface->config.size.w * 3];
+               u8 buf_p[surface->config.size.w*3];
 
-               if (lock.buffer->format == DSPF_LUT8) {
+               if (lock.buffer->config.format == DSPF_LUT8) {
                     for (n = 0, n3 = 0; n < surface->config.size.w; n++, n3 += 3) {
                          buf_p[n3+0] = palette->entries[src8[n]].r;
                          buf_p[n3+1] = palette->entries[src8[n]].g;
@@ -1685,7 +1689,7 @@ dfb_surface_dump_buffer2( CoreSurface          *surface,
                     }
                }
                else
-                    dfb_convert_to_rgb24( lock.buffer->format,
+                    dfb_convert_to_rgb24( lock.buffer->config.format, lock.buffer->config.colorspace,
                                           srces[0], pitches[0], srces[1], pitches[1], srces[2], pitches[2],
                                           surface->config.size.h, buf_p,
                                           surface->config.size.w * 3, surface->config.size.w, 1 );
@@ -1697,12 +1701,12 @@ dfb_surface_dump_buffer2( CoreSurface          *surface,
           if (alpha) {
                u8 buf_g[surface->config.size.w];
 
-               if (lock.buffer->format == DSPF_LUT8) {
+               if (lock.buffer->config.format == DSPF_LUT8) {
                     for (n = 0; n < surface->config.size.w; n++)
                          buf_g[n] = palette->entries[src8[n]].a;
                }
                else
-                    dfb_convert_to_a8( lock.buffer->format, srces[0], pitches[0], surface->config.size.h, buf_g,
+                    dfb_convert_to_a8( lock.buffer->config.format, srces[0], pitches[0], surface->config.size.h, buf_g,
                                        surface->config.size.w, surface->config.size.w, 1 );
 
                direct_file_write( &fd_g, buf_g, surface->config.size.w, &bytes );

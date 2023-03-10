@@ -98,6 +98,7 @@ dfb_surface_buffer_create( CoreDFB                 *core,
 
      D_DEBUG_AT( Core_SurfBuffer, "%s( %s )\n", __FUNCTION__, dfb_pixelformat_name( surface->config.format ) );
 
+     /* Create the buffer object. */
      buffer = dfb_core_create_surface_buffer( core );
      if (!buffer)
           return DFB_FUSION;
@@ -107,32 +108,31 @@ dfb_surface_buffer_create( CoreDFB                 *core,
 
      buffer->surface     = surface;
      buffer->flags       = flags;
-     buffer->format      = surface->config.format;
      buffer->config      = surface->config;
      buffer->type        = surface->type;
      buffer->resource_id = surface->resource_id;
      buffer->index       = index;
 
-     if (surface->config.caps & DSCAPS_VIDEOONLY)
+     if (buffer->config.caps & DSCAPS_VIDEOONLY)
           buffer->policy = CSP_VIDEOONLY;
-     else if (surface->config.caps & DSCAPS_SYSTEMONLY)
+     else if (buffer->config.caps & DSCAPS_SYSTEMONLY)
           buffer->policy = CSP_SYSTEMONLY;
      else
           buffer->policy = CSP_VIDEOLOW;
 
-     fusion_vector_init( &buffer->allocs, 2, surface->shmpool );
+     fusion_vector_init( &buffer->allocs, 2, buffer->surface->shmpool );
 
-     fusion_object_set_lock( &buffer->object, &surface->lock );
+     fusion_object_set_lock( &buffer->object, &buffer->surface->lock );
 
      fusion_ref_add_permissions( &buffer->object.ref, 0, FUSION_REF_PERMIT_REF_UNREF_LOCAL );
 
      D_MAGIC_SET( buffer, CoreSurfaceBuffer );
 
-     if (surface->type & CSTF_PREALLOCATED) {
+     if (buffer->type & CSTF_PREALLOCATED) {
           CoreSurfacePool       *pool;
           CoreSurfaceAllocation *allocation;
 
-          ret = dfb_surface_pools_lookup( surface->config.preallocated_pool_id, &pool );
+          ret = dfb_surface_pools_lookup( buffer->config.preallocated_pool_id, &pool );
           if (ret) {
                fusion_object_destroy( &buffer->object );
                return ret;
@@ -147,7 +147,7 @@ dfb_surface_buffer_create( CoreDFB                 *core,
           dfb_surface_allocation_update( allocation, CSAF_WRITE );
      }
 
-     /* Activate object. */
+     /* Activate the object. */
      fusion_object_activate( &buffer->object );
 
      /* Return the new buffer. */
@@ -205,7 +205,6 @@ dfb_surface_buffer_find_allocation( CoreSurfaceBuffer      *buffer,
                                     bool                    lock )
 {
      int                    i;
-     CoreSurface           *surface;
      CoreSurfaceAllocation *allocation;
      CoreSurfaceAllocation *uptodate = NULL;
      CoreSurfaceAllocation *outdated = NULL;
@@ -215,14 +214,12 @@ dfb_surface_buffer_find_allocation( CoreSurfaceBuffer      *buffer,
 
      D_DEBUG_AT( Core_SurfBuffer, "%s( %p )\n", __FUNCTION__, buffer );
 
-     surface = buffer->surface;
-
-     FUSION_SKIRMISH_ASSERT( &surface->lock );
+     FUSION_SKIRMISH_ASSERT( &buffer->surface->lock );
 
      /* For preallocated surfaces, when the client specified DSCAPS_STATIC_ALLOC, it is forced to always get the same
         preallocated buffer again on each lock. */
      if (buffer->type & CSTF_PREALLOCATED && buffer->config.caps & DSCAPS_STATIC_ALLOC) {
-          if (surface->object.identity == Core_GetIdentity()) {
+          if (buffer->surface->object.identity == Core_GetIdentity()) {
                D_DEBUG_AT( Core_SurfBuffer, "  -> DSCAPS_STATIC_ALLOC, returning preallocated buffer\n" );
 
                D_ASSERT( buffer->allocs.count > 0 );
@@ -244,16 +241,15 @@ dfb_surface_buffer_find_allocation( CoreSurfaceBuffer      *buffer,
                if (!(allocation->access[accessor] & CSAF_SHARED)) {
                     D_DEBUG_AT( Core_SurfBuffer,
                                 "  -> non-shared preallocated buffer, surface identity %lu, core identity %lu\n",
-                                surface->object.identity, Core_GetIdentity() );
+                                buffer->surface->object.identity, Core_GetIdentity() );
 
                     /* If this is a non-shared preallocated allocation and the lock is not for the creator, we need to
                        skip it and possibly allocate/update in a different pool. */
-                    if (surface->object.identity != Core_GetIdentity())
+                    if (buffer->surface->object.identity != Core_GetIdentity())
                          continue;
                }
           }
-
-          if (Core_GetIdentity() != FUSION_ID_MASTER && !(allocation->access[accessor] & CSAF_SHARED)) {
+          else if (Core_GetIdentity() != FUSION_ID_MASTER && !(allocation->access[accessor] & CSAF_SHARED)) {
                D_DEBUG_AT( Core_SurfBuffer, "    -> refusing allocation for slave from non-shared pool!\n" );
                continue;
           }
@@ -285,19 +281,14 @@ dfb_surface_buffer_find_allocation_key( CoreSurfaceBuffer *buffer,
                                         const char        *key )
 {
      int                    i;
-     CoreSurface           *surface;
      CoreSurfaceAllocation *allocation;
-
-     D_UNUSED_P( surface );
 
      D_MAGIC_ASSERT( buffer, CoreSurfaceBuffer );
      D_MAGIC_ASSERT( buffer->surface, CoreSurface );
 
      D_DEBUG_AT( Core_SurfBuffer, "%s( %p )\n", __FUNCTION__, buffer );
 
-     surface = buffer->surface;
-
-     FUSION_SKIRMISH_ASSERT( &surface->lock );
+     FUSION_SKIRMISH_ASSERT( &buffer->surface->lock );
 
      fusion_vector_foreach (allocation, i, buffer->allocs) {
           CORE_SURFACE_ALLOCATION_ASSERT( allocation );
@@ -316,7 +307,6 @@ dfb_surface_buffer_lock( CoreSurfaceBuffer      *buffer,
                          CoreSurfaceBufferLock  *lock )
 {
      DFBResult              ret;
-     CoreSurface           *surface;
      CoreSurfaceAllocation *allocation;
 
      D_MAGIC_ASSERT( buffer, CoreSurfaceBuffer );
@@ -327,23 +317,21 @@ dfb_surface_buffer_lock( CoreSurfaceBuffer      *buffer,
 
      D_DEBUG_AT( Core_SurfBuffer, "%s( %p )\n", __FUNCTION__, lock );
 
-     surface = buffer->surface;
+     FUSION_SKIRMISH_ASSERT( &buffer->surface->lock );
 
-     FUSION_SKIRMISH_ASSERT( &surface->lock );
-
-     D_ASSUME( accessor < _CSAID_NUM );
+     D_ASSUME( accessor < CSAID_NUM );
 
      if (accessor >= CSAID_ANY) {
           D_UNIMPLEMENTED();
           return DFB_UNIMPLEMENTED;
      }
 
-     if (accessor < 0 || accessor >= _CSAID_NUM)
+     if (accessor < 0 || accessor >= CSAID_NUM)
           return DFB_INVARG;
 
      if (direct_log_domain_check( &Core_SurfBuffer )) {
           D_DEBUG_AT( Core_SurfBuffer, "%s( %p, 0x%02x, %p ) <- %dx%d %s [%d]\n", __FUNCTION__, buffer, access, lock,
-                      surface->config.size.w, surface->config.size.h, dfb_pixelformat_name( buffer->format ),
+                      buffer->config.size.w, buffer->config.size.h, dfb_pixelformat_name( buffer->config.format ),
                       dfb_surface_buffer_index(buffer) );
 
           switch (accessor) {
@@ -389,7 +377,7 @@ dfb_surface_buffer_lock( CoreSurfaceBuffer      *buffer,
      D_DEBUG_AT( Core_SurfBuffer, "  -> calling PreLockBuffer( %p )...\n", buffer );
 
      /* Run all code that modifies shared memory in master process. */
-     ret = CoreSurface_PreLockBuffer( surface, buffer, accessor, access, &allocation );
+     ret = CoreSurface_PreLockBuffer( buffer->surface, buffer, accessor, access, &allocation );
      if (ret)
           return ret;
 
@@ -478,7 +466,6 @@ dfb_surface_buffer_dump_type_locked2( CoreSurfaceBuffer *buffer,
      bool         alpha = false;
      char         rgb_ext[4];
      size_t       bytes;
-     CoreSurface *surface;
      CorePalette *palette = NULL;
      DirectFile   fd_p, fd_g;
 
@@ -488,13 +475,11 @@ dfb_surface_buffer_dump_type_locked2( CoreSurfaceBuffer *buffer,
 
      D_DEBUG_AT( Core_SurfBuffer, "%s( %p, %p, %p )\n", __FUNCTION__, buffer, directory, prefix );
 
-     surface = buffer->surface;
-
      /* Check pixel format. */
-     switch (buffer->format) {
+     switch (buffer->config.format) {
           case DSPF_LUT8:
           case DSPF_ALUT8:
-               palette = surface->palette;
+               palette = buffer->surface->palette;
 
                if (!palette) {
                     D_BUG( "no palette" );
@@ -525,25 +510,34 @@ dfb_surface_buffer_dump_type_locked2( CoreSurfaceBuffer *buffer,
                /* fall through */
 
           case DSPF_RGB332:
-          case DSPF_RGB16:
-          case DSPF_RGB24:
-          case DSPF_RGB32:
-          case DSPF_YUY2:
-          case DSPF_UYVY:
-          case DSPF_NV16:
-          case DSPF_NV61:
-          case DSPF_YV16:
           case DSPF_RGB444:
           case DSPF_RGB555:
           case DSPF_BGR555:
-          case DSPF_YUV444P:
+          case DSPF_RGB16:
+          case DSPF_RGB24:
+          case DSPF_BGR24:
+          case DSPF_RGB32:
+          case DSPF_YUY2:
+          case DSPF_UYVY:
           case DSPF_VYU:
+          case DSPF_I420:
+          case DSPF_YV12:
+          case DSPF_NV12:
+          case DSPF_NV21:
+          case DSPF_Y42B:
+          case DSPF_YV16:
+          case DSPF_NV16:
+          case DSPF_NV61:
+          case DSPF_Y444:
+          case DSPF_YV24:
+          case DSPF_NV24:
+          case DSPF_NV42:
                rgb = true;
                break;
 
           default:
                D_ERROR( "Core/SurfBuffer: Surface dump for format '%s' is not implemented!\n",
-                        dfb_pixelformat_name( buffer->format ) );
+                        dfb_pixelformat_name( buffer->config.format ) );
                return DFB_UNSUPPORTED;
      }
 
@@ -616,19 +610,19 @@ dfb_surface_buffer_dump_type_locked2( CoreSurfaceBuffer *buffer,
      if (!raw) {
           if (rgb) {
                /* Write the pixmap header. */
-               snprintf( head, sizeof(head), "P6\n%d %d\n255\n", surface->config.size.w, surface->config.size.h );
+               snprintf( head, sizeof(head), "P6\n%d %d\n255\n", buffer->config.size.w, buffer->config.size.h );
                direct_file_write( &fd_p, head, strlen( head ), &bytes );
           }
 
           /* Write the graymap header. */
           if (alpha) {
-               snprintf( head, sizeof(head), "P5\n%d %d\n255\n", surface->config.size.w, surface->config.size.h );
+               snprintf( head, sizeof(head), "P5\n%d %d\n255\n", buffer->config.size.w, buffer->config.size.h );
                direct_file_write( &fd_g, head, strlen( head ), &bytes );
           }
      }
 
      /* Write the pixmap (and graymap) data. */
-     for (i = 0; i < surface->config.size.h; i++) {
+     for (i = 0; i < buffer->config.size.h; i++) {
           int n3;
 
           /* Prepare one row. */
@@ -636,16 +630,16 @@ dfb_surface_buffer_dump_type_locked2( CoreSurfaceBuffer *buffer,
           int  pitches[3] = { 0, 0, 0 };
           u8  *src8;
 
-          dfb_surface_get_data_offsets( &surface->config, addr, pitch, 0, i, 3, srces, pitches );
+          dfb_surface_get_data_offsets( &buffer->config, addr, pitch, 0, i, 3, srces, pitches );
           src8 = srces[0];
 
           /* Write color buffer to pixmap file. */
           if (rgb) {
                if (raw) {
-                    u8 buf_p[surface->config.size.w * 4];
+                    u8 buf_p[buffer->config.size.w*4];
 
-                    if (buffer->format == DSPF_LUT8) {
-                         for (n = 0, n3 = 0; n < surface->config.size.w; n++, n3 += 4) {
+                    if (buffer->config.format == DSPF_LUT8) {
+                         for (n = 0, n3 = 0; n < buffer->config.size.w; n++, n3 += 4) {
                               buf_p[n3+0] = palette->entries[src8[n]].r;
                               buf_p[n3+1] = palette->entries[src8[n]].g;
                               buf_p[n3+2] = palette->entries[src8[n]].b;
@@ -653,46 +647,46 @@ dfb_surface_buffer_dump_type_locked2( CoreSurfaceBuffer *buffer,
                          }
                     }
                     else
-                         dfb_convert_to_argb( buffer->format,
+                         dfb_convert_to_argb( buffer->config.format, buffer->config.colorspace,
                                               srces[0], pitches[0], srces[1], pitches[1], srces[2], pitches[2],
-                                              surface->config.size.h, (u32*) (&buf_p[0]),
-                                              surface->config.size.w * 4, surface->config.size.w, 1 );
+                                              buffer->config.size.h, (u32*) (&buf_p[0]),
+                                              buffer->config.size.w * 4, buffer->config.size.w, 1 );
 
-                    direct_file_write( &fd_p, buf_p, surface->config.size.w * 4, &bytes );
+                    direct_file_write( &fd_p, buf_p, buffer->config.size.w * 4, &bytes );
                }
                else {
-                    u8 buf_p[surface->config.size.w * 3];
+                    u8 buf_p[buffer->config.size.w*3];
 
-                    if (buffer->format == DSPF_LUT8) {
-                         for (n = 0, n3 = 0; n < surface->config.size.w; n++, n3 += 3) {
+                    if (buffer->config.format == DSPF_LUT8) {
+                         for (n = 0, n3 = 0; n < buffer->config.size.w; n++, n3 += 3) {
                               buf_p[n3+0] = palette->entries[src8[n]].r;
                               buf_p[n3+1] = palette->entries[src8[n]].g;
                               buf_p[n3+2] = palette->entries[src8[n]].b;
                          }
                     }
                     else
-                         dfb_convert_to_rgb24( buffer->format,
+                         dfb_convert_to_rgb24( buffer->config.format, buffer->config.colorspace,
                                                srces[0], pitches[0], srces[1], pitches[1], srces[2], pitches[2],
-                                               surface->config.size.h, buf_p,
-                                               surface->config.size.w * 3, surface->config.size.w, 1 );
+                                               buffer->config.size.h, buf_p,
+                                               buffer->config.size.w * 3, buffer->config.size.w, 1 );
 
-                    direct_file_write( &fd_p, buf_p, surface->config.size.w * 3, &bytes );
+                    direct_file_write( &fd_p, buf_p, buffer->config.size.w * 3, &bytes );
                }
           }
 
           /* Write alpha buffer to graymap file. */
           if (alpha && !raw) {
-               u8 buf_g[surface->config.size.w];
+               u8 buf_g[buffer->config.size.w];
 
-               if (buffer->format == DSPF_LUT8) {
-                    for (n = 0; n < surface->config.size.w; n++)
+               if (buffer->config.format == DSPF_LUT8) {
+                    for (n = 0; n < buffer->config.size.w; n++)
                          buf_g[n] = palette->entries[src8[n]].a;
                }
                else
-                    dfb_convert_to_a8( buffer->format, srces[0], pitches[0], surface->config.size.h, buf_g,
-                                       surface->config.size.w, surface->config.size.w, 1 );
+                    dfb_convert_to_a8( buffer->config.format, srces[0], pitches[0], buffer->config.size.h, buf_g,
+                                       buffer->config.size.w, buffer->config.size.w, 1 );
 
-               direct_file_write( &fd_g, buf_g, surface->config.size.w, &bytes );
+               direct_file_write( &fd_g, buf_g, buffer->config.size.w, &bytes );
           }
      }
 

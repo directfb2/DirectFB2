@@ -24,8 +24,8 @@
 /**********************************************************************************************************************/
 
 DirectResult
-direct_dir_get_current( char       *buf,
-                        size_t      length )
+direct_dir_get_current( char   *buf,
+                        size_t  length )
 {
      D_ASSERT( buf != NULL );
 
@@ -80,18 +80,16 @@ DirectResult
 direct_dir_read( DirectDir   *dir,
                  DirectEntry *entry )
 {
-     struct dirent  tmp;
-     struct dirent *_entry;
+     struct dirent *ent;
 
      D_ASSERT( dir != NULL );
+     D_ASSERT( entry != NULL );
 
-     if (readdir_r( dir->dir, &tmp, &_entry ) < 0)
-          return errno2result( errno );
-
-     if (!_entry)
-          return DR_ITEMNOTFOUND;
+     ent = readdir( dir->dir );
+     if (!ent)
+          return errno ? errno2result( errno ) : DR_ITEMNOTFOUND;
      else
-          strcpy( entry->name, _entry->d_name );
+          strcpy( entry->name, ent->d_name );
 
      return DR_OK;
 }

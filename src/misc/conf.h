@@ -46,6 +46,7 @@ typedef struct {
      bool                                palette_set;
 
      int                                 rotate;
+     bool                                rotate_set;
 } DFBConfigLayer;
 
 typedef enum {
@@ -70,7 +71,6 @@ typedef struct
      bool                        core_sighandler;
      bool                        ownership_check;
      bool                        deinit_check;
-     bool                        shutdown_info;
      char                       *resource_manager;
      int                         session;
      long long                   screen_frame_interval;
@@ -141,19 +141,21 @@ typedef struct
 
 /**********************************************************************************************************************/
 
-extern DFBConfig *dfb_config;
+extern DFBConfig  *dfb_config;
+
+extern const char *dfb_config_usage;
 
 /*
  * Set indiviual option.
  */
-DFBResult dfb_config_set   ( const char *name,
-                             const char *value );
+DFBResult dfb_config_set   ( const char  *name,
+                             const char  *value );
 
 /*
  * Allocate config struct, fill with defaults and parse command line options for overrides.
  */
-DFBResult dfb_config_init  ( int          *argc,
-                             char       *(*argv[]) );
+DFBResult dfb_config_init  ( int         *argc,
+                             char       **argv[] );
 
 /*
  * Free config struct.

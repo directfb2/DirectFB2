@@ -963,6 +963,7 @@ IDirectFBFont_CreateFromBuffer( IDirectFBDataBuffer       *buffer,
      /* Construct the interface. */
      ret = funcs->Construct( iface, core, &ctx, desc );
      if (ret) {
+          DIRECT_DEALLOCATE_INTERFACE( iface );
           unmap_or_free( &ctx );
           return ret;
      }

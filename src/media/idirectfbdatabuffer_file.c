@@ -95,7 +95,9 @@ IDirectFBDataBuffer_File_SeekTo( IDirectFBDataBuffer *thiz,
           return DFB_UNSUPPORTED;
 
      direct_mutex_lock( &data->mutex );
+
      ret = direct_stream_seek( data->stream, offset );
+
      direct_mutex_unlock( &data->mutex );
 
      return ret;
@@ -144,7 +146,9 @@ IDirectFBDataBuffer_File_WaitForData( IDirectFBDataBuffer *thiz,
      D_DEBUG_AT( DataBuffer, "%s( %p )\n", __FUNCTION__, thiz );
 
      direct_mutex_lock( &data->mutex );
+
      ret = direct_stream_wait( data->stream, length, NULL );
+
      direct_mutex_unlock( &data->mutex );
 
      return ret;
@@ -209,7 +213,9 @@ IDirectFBDataBuffer_File_GetData( IDirectFBDataBuffer *thiz,
           return DFB_INVARG;
 
      direct_mutex_lock( &data->mutex );
+
      ret = direct_stream_read( data->stream, length, ret_data_ptr, ret_read );
+
      direct_mutex_unlock( &data->mutex );
 
      return ret;
@@ -232,7 +238,9 @@ IDirectFBDataBuffer_File_PeekData( IDirectFBDataBuffer *thiz,
           return DFB_INVARG;
 
      direct_mutex_lock( &data->mutex );
+
      ret = direct_stream_peek( data->stream, length, offset, ret_data_ptr, ret_read );
+
      direct_mutex_unlock( &data->mutex );
 
      return ret;
@@ -272,12 +280,11 @@ IDirectFBDataBuffer_File_Construct( IDirectFBDataBuffer *thiz,
 
      D_DEBUG_AT( DataBuffer, "%s( %p )\n", __FUNCTION__, thiz );
 
-     ret = IDirectFBDataBuffer_Construct( thiz, filename, NULL, 0, core, idirectfb );
-     if (ret)
-          return ret;
+     IDirectFBDataBuffer_Construct( thiz, filename, NULL, 0, core, idirectfb );
 
      ret = direct_stream_create( filename, &data->stream );
      if (ret) {
+          D_DERROR( ret, "IDirectFBDataBufferF: Failed to create stream '%s'!\n", filename );
           DIRECT_DEALLOCATE_INTERFACE( thiz );
           return ret;
      }

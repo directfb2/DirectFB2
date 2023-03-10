@@ -27,19 +27,38 @@ D_DEBUG_DOMAIN( DRMKMS_Screen, "DRMKMS/Screen", "DRM/KMS Screen" );
 
 extern const DisplayLayerFuncs drmkmsPrimaryLayerFuncs;
 
+typedef struct {
+     int rotation;
+} DRMKMSScreenData;
+
+static const char *panel_orientation_table[] = {
+     "Normal", "Upside Down", "Left Side Up", "Right Side Up"
+};
+
+/**********************************************************************************************************************/
+
+static int
+drmkmsScreenDataSize()
+{
+     return sizeof(DRMKMSScreenData);
+}
+
 static DFBResult
 drmkmsInitScreen( CoreScreen           *screen,
                   void                 *driver_data,
                   void                 *screen_data,
                   DFBScreenDescription *description )
 {
-     DRMKMSData       *drmkms    = driver_data;
-     DRMKMSDataShared *shared;
-     drmModeRes       *resources;
-     drmModeConnector *connector = NULL;
-     drmModeEncoder   *encoder   = NULL;
-     drmModeModeInfo  *mode;
-     int               i, m;
+     DRMKMSData              *drmkms    = driver_data;
+     DRMKMSDataShared        *shared;
+     DRMKMSScreenData        *data      = screen_data;
+     drmModeRes              *resources;
+     drmModeConnector        *connector = NULL;
+     drmModeEncoder          *encoder   = NULL;
+     drmModeModeInfo         *mode;
+     drmModeObjectProperties *props;
+     drmModePropertyRes      *prop;
+     int                      busy, i, j, k;
 
      D_DEBUG_AT( DRMKMS_Screen, "%s()\n", __FUNCTION__ );
 
@@ -63,28 +82,86 @@ drmkmsInitScreen( CoreScreen           *screen,
                continue;
 
           if (connector->count_modes > 0) {
+               D_DEBUG_AT( DRMKMS_Screen, "  -> found connector %u\n", connector->connector_id );
+
                if (connector->encoder_id) {
-                    D_DEBUG_AT( DRMKMS_Screen, "  -> connector %u is bound to encoder %u\n",
-                                connector->connector_id, connector->encoder_id );
+                    D_DEBUG_AT( DRMKMS_Screen, "  -> connector is bound to encoder %u\n", connector->encoder_id );
 
                     encoder = drmModeGetEncoder( drmkms->fd, connector->encoder_id );
                     if (!encoder)
                          continue;
                }
+               else {
+                    D_DEBUG_AT( DRMKMS_Screen, "  -> searching for appropriate encoder\n" );
 
-               if (encoder->crtc_id) {
-                    D_DEBUG_AT( DRMKMS_Screen, "  -> encoder %u is bound to ctrc %u\n",
-                                connector->encoder_id, encoder->crtc_id );
+                    for (j = 0; j < resources->count_encoders; j++) {
+                         encoder = drmModeGetEncoder( drmkms->fd, resources->encoders[j] );
+                         if (!encoder)
+                              continue;
+
+                         busy = 0;
+
+                         for (k = 0; k < shared->enabled_crtcs; k++) {
+                              if (drmkms->encoder[k]->encoder_id == encoder->encoder_id) {
+                                   D_DEBUG_AT( DRMKMS_Screen, "  -> encoder %u is already in use by connector %u\n",
+                                               encoder->encoder_id, drmkms->connector[k]->connector_id );
+                                   busy = 1;
+                              }
+                         }
+
+                         if (busy)
+                              continue;
+
+                         D_DEBUG_AT( DRMKMS_Screen, "  -> found encoder %u\n", encoder->encoder_id );
+                         break;
+                    }
+               }
+
+               if (encoder) {
+                    if (encoder->crtc_id) {
+                         D_DEBUG_AT( DRMKMS_Screen, "  -> encoder is bound to crtc %u\n", encoder->crtc_id );
+                    }
+                    else {
+                         D_DEBUG_AT( DRMKMS_Screen, "  -> searching for appropriate crtc\n" );
+
+                         for (j = 0; j < resources->count_crtcs; j++) {
+                              if (!(encoder->possible_crtcs & (1 << j)))
+                                   continue;
+
+                              busy = 0;
+
+                              for (k = 0; k < shared->enabled_crtcs; k++) {
+                                   if (drmkms->encoder[k]->crtc_id == resources->crtcs[j]) {
+                                        D_DEBUG_AT( DRMKMS_Screen, "  -> crtc %u is already in use by encoder %u\n",
+                                                    resources->crtcs[j], drmkms->encoder[k]->encoder_id );
+                                        busy = 1;
+                                   }
+                              }
+
+                              if (busy)
+                                   continue;
+
+                              encoder->crtc_id = resources->crtcs[j];
+
+                              D_DEBUG_AT( DRMKMS_Screen, "  -> found crtc %u\n", encoder->crtc_id );
+                              break;
+                         }
+
+                         if (!encoder->crtc_id) {
+                              D_DEBUG_AT( DRMKMS_Screen, "  -> cannot find crtc for encoder %u\n", encoder->encoder_id );
+                              break;
+                         }
+                    }
 
                     drmkms->connector[shared->enabled_crtcs] = connector;
                     drmkms->encoder[shared->enabled_crtcs]   = encoder;
 
                     shared->mode[shared->enabled_crtcs] = connector->modes[0];
 
-                    for (m = 0; m < connector->count_modes; m++)
-                         D_DEBUG_AT( DRMKMS_Screen, "    => mode[%2d] is %ux%u@%uHz\n", m,
-                                     connector->modes[m].hdisplay, connector->modes[m].vdisplay,
-                                     connector->modes[m].vrefresh );
+                    for (j = 0; j < connector->count_modes; j++)
+                         D_DEBUG_AT( DRMKMS_Screen, "    => modes[%2d] is %ux%u@%uHz\n", j,
+                                     connector->modes[j].hdisplay, connector->modes[j].vdisplay,
+                                     connector->modes[j].vrefresh );
 
                     shared->enabled_crtcs++;
 
@@ -118,6 +195,37 @@ drmkmsInitScreen( CoreScreen           *screen,
 
      D_INFO( "DRMKMS/Screen: Default mode is %ux%u (%d modes in total)\n",
              shared->mode[0].hdisplay, shared->mode[0].vdisplay, drmkms->connector[0]->count_modes );
+
+     /* Get panel orientation. */
+     data->rotation = 0;
+
+     props = drmModeObjectGetProperties( drmkms->fd, drmkms->connector[0]->connector_id, DRM_MODE_OBJECT_CONNECTOR );
+     if (props) {
+          for (i = 0; i < props->count_props; i++) {
+               prop = drmModeGetProperty( drmkms->fd, props->props[i] );
+
+               if (!strcmp( prop->name, "panel orientation" )) {
+                    D_ASSUME( props->prop_values[i] >= 0 && props->prop_values[i] <= 3 );
+
+                    for (i = 0; i < prop->count_enums; i++) {
+                         if (!strcmp( panel_orientation_table[props->prop_values[i]], "Upside Down" ))
+                              data->rotation = 180;
+                         else if (!strcmp( panel_orientation_table[props->prop_values[i]], "Left Side Up" ))
+                              data->rotation = 270;
+                         else if (!strcmp( panel_orientation_table[props->prop_values[i]], "Right Side Up" ))
+                              data->rotation = 90;
+                    }
+
+                    D_INFO( "DRMKMS/Screen: Using %s panel orientation (rotation = %d)\n",
+                            panel_orientation_table[props->prop_values[i]], data->rotation );
+                    break;
+               }
+
+               drmModeFreeProperty( prop );
+          }
+
+          drmModeFreeObjectProperties( props );
+     }
 
      return DFB_OK;
 }
@@ -251,6 +359,10 @@ drmkmsInitOutput( CoreScreen                 *screen,
                case DRM_MODE_CONNECTOR_HDMIB:
                     description->all_connectors = DSOC_HDMI;
                     description->all_signals    = DSOS_HDMI;
+                    break;
+               case DRM_MODE_CONNECTOR_DSI:
+                    description->all_connectors = DSOC_DSI;
+                    description->all_signals    = DSOS_DSI;
                     break;
                default:
                     description->all_connectors = DSOC_UNKNOWN;
@@ -391,7 +503,7 @@ drmkmsSetEncoderConfig( CoreScreen                   *screen,
                                 &drmkms->connector[encoder]->connector_id, 1, mode );
           if (err) {
                ret = errno2result( errno );
-               D_PERROR( "DRMKMS/Layer: "
+               D_PERROR( "DRMKMS/Screen: "
                          "drmModeSetCrtc( crtc_id %u, fb_id %u, xy %d,%d, connector_id %u, mode %ux%u@%uHz )"
                          " failed for encoder %d!\n", drmkms->encoder[encoder]->crtc_id,
                          shared->primary_fb, shared->primary_rect.x, shared->primary_rect.y,
@@ -495,7 +607,7 @@ drmkmsSetOutputConfig( CoreScreen                  *screen,
                                 &drmkms->connector[output]->connector_id, 1, mode );
           if (err) {
                ret = errno2result( errno );
-               D_PERROR( "DRMKMS/Layer: "
+               D_PERROR( "DRMKMS/Screen: "
                          "drmModeSetCrtc( crtc_id %u, fb_id %u, xy %d,%d, connector_id %u, mode %ux%u@%uHz )"
                          " failed for output %d!\n", drmkms->encoder[output]->crtc_id,
                          shared->primary_fb, shared->primary_rect.x, shared->primary_rect.y,
@@ -520,6 +632,8 @@ drmkmsGetScreenSize( CoreScreen *screen,
      DRMKMSData       *drmkms = driver_data;
      DRMKMSDataShared *shared;
 
+     D_DEBUG_AT( DRMKMS_Screen, "%s()\n", __FUNCTION__ );
+
      D_ASSERT( drmkms != NULL );
      D_ASSERT( drmkms->shared != NULL );
 
@@ -531,7 +645,25 @@ drmkmsGetScreenSize( CoreScreen *screen,
      return DFB_OK;
 }
 
+static DFBResult
+drmkmsGetScreenRotation( CoreScreen *screen,
+                         void       *driver_data,
+                         void       *screen_data,
+                         int        *ret_rotation )
+{
+     DRMKMSScreenData *data = screen_data;
+
+     D_DEBUG_AT( DRMKMS_Screen, "%s()\n", __FUNCTION__ );
+
+     D_ASSERT( data != NULL );
+
+     *ret_rotation = data->rotation;
+
+     return DFB_OK;
+}
+
 const ScreenFuncs drmkmsScreenFuncs = {
+     .ScreenDataSize    = drmkmsScreenDataSize,
      .InitScreen        = drmkmsInitScreen,
      .InitMixer         = drmkmsInitMixer,
      .InitEncoder       = drmkmsInitEncoder,
@@ -543,4 +675,5 @@ const ScreenFuncs drmkmsScreenFuncs = {
      .TestOutputConfig  = drmkmsTestOutputConfig,
      .SetOutputConfig   = drmkmsSetOutputConfig,
      .GetScreenSize     = drmkmsGetScreenSize,
+     .GetScreenRotation = drmkmsGetScreenRotation
 };

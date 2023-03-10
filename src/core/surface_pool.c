@@ -354,21 +354,21 @@ dfb_surface_pools_negotiate( CoreSurfaceBuffer       *buffer,
      D_ASSERT( max_pools > 0 );
      D_ASSERT( ret_num != NULL );
 
-     D_DEBUG_AT( Core_SurfacePool, "%s( %p [%s], 0x%02x, 0x%02x, max %u )\n", __FUNCTION__,
-                 buffer, dfb_pixelformat_name( buffer->format ), accessor, access, max_pools );
-
      surface = buffer->surface;
 
      FUSION_SKIRMISH_ASSERT( &surface->lock );
 
-     D_ASSUME( accessor < _CSAID_NUM );
+     D_DEBUG_AT( Core_SurfacePool, "%s( %p [%s], 0x%02x, 0x%02x, max %u )\n", __FUNCTION__,
+                 buffer, dfb_pixelformat_name( surface->config.format ), accessor, access, max_pools );
+
+     D_ASSUME( accessor < CSAID_NUM );
 
      if (accessor >= CSAID_ANY) {
           D_UNIMPLEMENTED();
           return DFB_UNIMPLEMENTED;
      }
 
-     if (accessor < 0 || accessor >= _CSAID_NUM)
+     if (accessor < 0 || accessor >= CSAID_NUM)
           return DFB_INVARG;
 
      type = surface->type & ~(CSTF_INTERNAL | CSTF_EXTERNAL);
@@ -567,14 +567,14 @@ dfb_surface_pools_allocate( CoreSurfaceBuffer       *buffer,
                  (surface->type & CSTF_EXTERNAL)     ? " EXTERNAL"     : "",
                  (surface->type & CSTF_PREALLOCATED) ? " PREALLOCATED" : "" );
 
-     D_ASSUME( accessor < _CSAID_NUM );
+     D_ASSUME( accessor < CSAID_NUM );
 
      if (accessor >= CSAID_ANY) {
           D_UNIMPLEMENTED();
           return DFB_UNIMPLEMENTED;
      }
 
-     if (accessor < 0 || accessor >= _CSAID_NUM)
+     if (accessor < 0 || accessor >= CSAID_NUM)
           return DFB_INVARG;
 
      /* Build a list of possible pools being free or out of memory. */
@@ -757,12 +757,12 @@ dfb_surface_pool_allocate( CoreSurfacePool        *pool,
      D_MAGIC_ASSERT( buffer->surface, CoreSurface );
      D_ASSERT( ret_allocation != NULL );
 
-     D_DEBUG_AT( Core_SurfacePool, "%s( %p [%u - %s], %p )\n", __FUNCTION__,
-                 pool, pool->pool_id, pool->desc.name, buffer );
-
      surface = buffer->surface;
 
      FUSION_SKIRMISH_ASSERT( &surface->lock );
+
+     D_DEBUG_AT( Core_SurfacePool, "%s( %p [%u - %s], %p )\n", __FUNCTION__,
+                 pool, pool->pool_id, pool->desc.name, buffer );
 
      funcs = get_funcs( pool );
 
@@ -779,7 +779,7 @@ dfb_surface_pool_allocate( CoreSurfacePool        *pool,
          dfb_config->warn.allocate_buffer.min_size.w <= surface->config.size.w &&
          dfb_config->warn.allocate_buffer.min_size.h <= surface->config.size.h)
           D_WARN( "allocate-buffer %4dx%4d %6s, surface-caps 0x%08x, key '%s'",
-                  surface->config.size.w, surface->config.size.h, dfb_pixelformat_name( buffer->format ),
+                  surface->config.size.w, surface->config.size.h, dfb_pixelformat_name( buffer->config.format ),
                   surface->config.caps, key ?: "(none)" );
 
      if (key) {
@@ -897,12 +897,12 @@ dfb_surface_pool_displace( CoreSurfacePool        *pool,
      D_MAGIC_ASSERT( buffer->surface, CoreSurface );
      D_ASSERT( ret_allocation != NULL );
 
-     D_DEBUG_AT( Core_SurfacePool, "%s( %p [%u - %s], %p )\n", __FUNCTION__,
-                 pool, pool->pool_id, pool->desc.name, buffer );
-
      surface = buffer->surface;
 
      FUSION_SKIRMISH_ASSERT( &surface->lock );
+
+     D_DEBUG_AT( Core_SurfacePool, "%s( %p [%u - %s], %p )\n", __FUNCTION__,
+                 pool, pool->pool_id, pool->desc.name, buffer );
 
      funcs = get_funcs( pool );
 

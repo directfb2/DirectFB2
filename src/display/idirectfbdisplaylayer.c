@@ -919,7 +919,7 @@ IDirectFBDisplayLayer_GetCursorPosition( IDirectFBDisplayLayer *thiz,
      if (ret_y)
           *ret_y = point.y;
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult
@@ -970,15 +970,11 @@ IDirectFBDisplayLayer_SetCursorShape( IDirectFBDisplayLayer *thiz,
                                       int                    hot_x,
                                       int                    hot_y )
 {
-     DFBPoint               hotspot = { hot_x, hot_y };
-     IDirectFBSurface_data *shape_data;
+     DFBPoint hotspot;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFBDisplayLayer )
 
      D_DEBUG_AT( Layer, "%s( %p )\n", __FUNCTION__, thiz );
-
-     if (!shape)
-          return DFB_INVARG;
 
      if (data->level == DLSCL_SHARED)
           return DFB_ACCESSDENIED;
@@ -986,13 +982,30 @@ IDirectFBDisplayLayer_SetCursorShape( IDirectFBDisplayLayer *thiz,
      if (!data->stack)
           return DFB_OK;
 
-     shape_data = shape->priv;
+     if (shape) {
+          IDirectFBSurface_data *shape_data = shape->priv;
 
-     if (hot_x < 0                                    || hot_y < 0 ||
-         hot_x >= shape_data->surface->config.size.w  || hot_y >= shape_data->surface->config.size.h)
-          return DFB_INVARG;
+          if (!shape_data)
+               return DFB_DEAD;
 
-     return CoreWindowStack_CursorSetShape( data->stack, shape_data->surface, &hotspot );
+          if (!shape_data->surface)
+               return DFB_DESTROYED;
+
+          if (hot_x < 0                                    || hot_y < 0 ||
+              hot_x >= shape_data->surface->config.size.w  || hot_y >= shape_data->surface->config.size.h)
+               return DFB_INVARG;
+
+          hotspot.x = hot_x;
+          hotspot.y = hot_y;
+
+          return CoreWindowStack_CursorSetShape( data->stack, shape_data->surface, &hotspot );
+     }
+     else {
+          hotspot.x = 0;
+          hotspot.y = 0;
+
+          return CoreWindowStack_CursorSetShape( data->stack, NULL, &hotspot );
+     }
 }
 
 static DFBResult

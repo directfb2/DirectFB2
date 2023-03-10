@@ -34,9 +34,6 @@ typedef struct {
 
      int                         axis[DIAI_LAST+1];              /* position of all axes */
      DFBInputDeviceKeyState      keystates[DIKI_NUMBER_OF_KEYS]; /* state of all keys */
-     DFBInputDeviceModifierMask  modifiers;                      /* bitmask reflecting the state of the modifier keys */
-     DFBInputDeviceLockState     locks;                          /* bitmask reflecting the state of the key locks */
-     DFBInputDeviceButtonMask    buttonmask;                     /* bitmask reflecting the state of the buttons */
 
      DFBInputDeviceDescription   desc;                           /* device description */
 
@@ -382,13 +379,6 @@ IDirectFBInputDevice_React( const void *msg_data,
 
      D_DEBUG_AT( InputDevice, "%s( %p, %p ) <- type %06x\n", __FUNCTION__, evt, data, evt->type );
 
-     if (evt->flags & DIEF_MODIFIERS)
-          data->modifiers = evt->modifiers;
-     if (evt->flags & DIEF_LOCKS)
-          data->locks = evt->locks;
-     if (evt->flags & DIEF_BUTTONS)
-          data->buttonmask = evt->buttons;
-
      switch (evt->type) {
           case DIET_KEYPRESS:
                index = evt->key_id - DFB_KEY( IDENTIFIER, 0 );
@@ -420,6 +410,8 @@ DFBResult
 IDirectFBInputDevice_Construct( IDirectFBInputDevice *thiz,
                                 CoreInputDevice      *device )
 {
+     DFBResult ret;
+
      DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBInputDevice )
 
      D_DEBUG_AT( InputDevice, "%s( %p )\n", __FUNCTION__, thiz );
@@ -429,7 +421,12 @@ IDirectFBInputDevice_Construct( IDirectFBInputDevice *thiz,
 
      dfb_input_device_description( device, &data->desc );
 
-     dfb_input_attach( data->device, IDirectFBInputDevice_React, data, &data->reaction );
+     ret = dfb_input_attach( data->device, IDirectFBInputDevice_React, data, &data->reaction );
+     if (ret) {
+          D_DERROR( ret, "IDirectFBInputDevice: Could not attach to reactor!\n" );
+          DIRECT_DEALLOCATE_INTERFACE( thiz );
+          return ret;
+     }
 
      thiz->AddRef            = IDirectFBInputDevice_AddRef;
      thiz->Release           = IDirectFBInputDevice_Release;

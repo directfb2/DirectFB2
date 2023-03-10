@@ -69,6 +69,12 @@ struct __DFB_CoreLayerContext {
      FusionSHMPoolShared        *shmpool;      /* Shared memory pool. */
 
      FusionCall                  call;         /* dispatch */
+
+     struct {
+          int                    hot_x;        /* x position of cursor hot spot */
+          int                    hot_y;        /* y position of cursor hot spot */
+          CoreSurface           *surface;      /* cursor shape surface */
+     } cursor;
 };
 
 /**********************************************************************************************************************/
@@ -181,7 +187,7 @@ DFBResult         dfb_layer_context_set_stereo_depth   ( CoreLayerContext       
                                                          int                           z );
 
 DFBResult         dfb_layer_context_get_stereo_depth   ( CoreLayerContext             *context,
-                                                         bool                         *follow_video,
+                                                         bool                         *ret_follow_video,
                                                          int                          *ret_z );
 
 DFBResult         dfb_layer_context_set_field_parity   ( CoreLayerContext             *context,
@@ -191,6 +197,16 @@ DFBResult         dfb_layer_context_set_clip_regions   ( CoreLayerContext       
                                                          const DFBRegion              *regions,
                                                          int                           num_regions,
                                                          DFBBoolean                    positive );
+
+DFBResult         dfb_layer_context_set_cursor_shape   ( CoreLayerContext             *context,
+                                                         CoreSurface                  *shape,
+                                                         int                           hot_x,
+                                                         int                           hot_y );
+
+DFBResult         dfb_layer_context_get_cursor_shape   ( CoreLayerContext             *context,
+                                                         CoreSurface                 **ret_shape,
+                                                         int                          *ret_hot_x,
+                                                         int                          *ret_hot_y );
 
 /*
  * Window control.

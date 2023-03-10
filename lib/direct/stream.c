@@ -510,7 +510,7 @@ net_open( DirectStream *stream,
           const char   *filename,
           int           proto )
 {
-     DirectResult    ret  = DR_OK;
+     DirectResult    ret;
      int             sock = (proto == IPPROTO_TCP) ? SOCK_STREAM : SOCK_DGRAM;
      struct addrinfo hints;
      char            port[16];
@@ -546,7 +546,7 @@ net_open( DirectStream *stream,
      stream->peek   = net_peek;
      stream->read   = net_read;
 
-     return ret;
+     return DR_OK;
 }
 
 /**********************************************************************************************************************/
@@ -987,13 +987,24 @@ pipe_read( DirectStream *stream,
 }
 
 static DirectResult
+file_wait( DirectStream   *stream,
+           unsigned int    length,
+           struct timeval *timeout )
+{
+     if (stream->offset >= stream->length)
+          return DR_EOF;
+
+     return DR_OK;
+}
+
+static DirectResult
 file_peek( DirectStream *stream,
            unsigned int  length,
            int           offset,
            void         *buf,
            unsigned int *read_out )
 {
-     DirectResult ret = DR_OK;
+     DirectResult ret;
      size_t      size;
 
      ret = direct_file_seek( &stream->file, offset );
@@ -1011,7 +1022,7 @@ file_peek( DirectStream *stream,
      if (read_out)
           *read_out = size;
 
-     return ret;
+     return DR_OK;
 }
 
 static DirectResult
@@ -1078,6 +1089,7 @@ file_open( DirectStream *stream,
           }
 
           stream->length = info.size;
+          stream->wait   = file_wait;
           stream->peek   = file_peek;
           stream->read   = file_read;
           stream->seek   = file_seek;
@@ -1139,7 +1151,7 @@ direct_stream_create( const char    *filename,
      return DR_OK;
 }
 
-DirectStream*
+DirectStream *
 direct_stream_dup( DirectStream *stream )
 {
      D_MAGIC_ASSERT( stream, DirectStream );

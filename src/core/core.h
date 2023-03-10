@@ -136,171 +136,171 @@ extern CoreDFB        *core_dfb;
 /*
  * Core initialization and deinitialization.
  */
-DFBResult              dfb_core_create                   ( CoreDFB       **ret_core );
+DFBResult              dfb_core_create                   ( CoreDFB                   **ret_core );
 
-DFBResult              dfb_core_destroy                  ( CoreDFB        *core,
-                                                           bool            emergency );
+DFBResult              dfb_core_destroy                  ( CoreDFB                    *core,
+                                                           bool                        emergency );
 
-void                  *dfb_core_get_part                 ( CoreDFB        *core,
-                                                           CorePartID      part_id );
+void                  *dfb_core_get_part                 ( CoreDFB                    *core,
+                                                           CorePartID                  part_id );
 
-DFBResult              dfb_core_initialize               ( CoreDFB        *core );
+DFBResult              dfb_core_initialize               ( CoreDFB                    *core );
 
 /*
  * Object creation.
  */
-CoreGraphicsState     *dfb_core_create_graphics_state    ( CoreDFB                *core );
-CoreLayerContext      *dfb_core_create_layer_context     ( CoreDFB                *core );
-CoreLayerRegion       *dfb_core_create_layer_region      ( CoreDFB                *core );
-CorePalette           *dfb_core_create_palette           ( CoreDFB                *core );
-CoreSurface           *dfb_core_create_surface           ( CoreDFB                *core );
-CoreSurfaceAllocation *dfb_core_create_surface_allocation( CoreDFB                *core );
-CoreSurfaceBuffer     *dfb_core_create_surface_buffer    ( CoreDFB                *core );
-CoreSurfaceClient     *dfb_core_create_surface_client    ( CoreDFB                *core );
-CoreWindow            *dfb_core_create_window            ( CoreDFB                *core );
+CoreGraphicsState     *dfb_core_create_graphics_state    ( CoreDFB                    *core );
+CoreLayerContext      *dfb_core_create_layer_context     ( CoreDFB                    *core );
+CoreLayerRegion       *dfb_core_create_layer_region      ( CoreDFB                    *core );
+CorePalette           *dfb_core_create_palette           ( CoreDFB                    *core );
+CoreSurface           *dfb_core_create_surface           ( CoreDFB                    *core );
+CoreSurfaceAllocation *dfb_core_create_surface_allocation( CoreDFB                    *core );
+CoreSurfaceBuffer     *dfb_core_create_surface_buffer    ( CoreDFB                    *core );
+CoreSurfaceClient     *dfb_core_create_surface_client    ( CoreDFB                    *core );
+CoreWindow            *dfb_core_create_window            ( CoreDFB                    *core );
 
 /*
  * Object accessor.
  */
-DFBResult              dfb_core_get_graphics_state       ( CoreDFB                *core,
-                                                           u32                     object_id,
-                                                           CoreGraphicsState     **ret_state );
+DFBResult              dfb_core_get_graphics_state       ( CoreDFB                    *core,
+                                                           u32                         object_id,
+                                                           CoreGraphicsState         **ret_state );
 
-DFBResult              dfb_core_get_layer_context        ( CoreDFB                *core,
-                                                           u32                     object_id,
-                                                           CoreLayerContext      **ret_context );
+DFBResult              dfb_core_get_layer_context        ( CoreDFB                    *core,
+                                                           u32                         object_id,
+                                                           CoreLayerContext          **ret_context );
 
-DFBResult              dfb_core_get_layer_region         ( CoreDFB                *core,
-                                                           u32                     object_id,
-                                                           CoreLayerRegion       **ret_region );
+DFBResult              dfb_core_get_layer_region         ( CoreDFB                    *core,
+                                                           u32                         object_id,
+                                                           CoreLayerRegion           **ret_region );
 
-DFBResult              dfb_core_get_palette              ( CoreDFB                *core,
-                                                           u32                     object_id,
-                                                           CorePalette           **ret_palette );
+DFBResult              dfb_core_get_palette              ( CoreDFB                    *core,
+                                                           u32                         object_id,
+                                                           CorePalette               **ret_palette );
 
-DFBResult              dfb_core_get_surface              ( CoreDFB                *core,
-                                                           u32                     object_id,
-                                                           CoreSurface           **ret_surface );
+DFBResult              dfb_core_get_surface              ( CoreDFB                    *core,
+                                                           u32                         object_id,
+                                                           CoreSurface               **ret_surface );
 
-DFBResult              dfb_core_get_surface_allocation   ( CoreDFB                *core,
-                                                           u32                     object_id,
-                                                           CoreSurfaceAllocation **ret_allocation );
+DFBResult              dfb_core_get_surface_allocation   ( CoreDFB                    *core,
+                                                           u32                         object_id,
+                                                           CoreSurfaceAllocation     **ret_allocation );
 
-DFBResult              dfb_core_get_surface_buffer       ( CoreDFB                *core,
-                                                           u32                     object_id,
-                                                           CoreSurfaceBuffer     **ret_surface );
+DFBResult              dfb_core_get_surface_buffer       ( CoreDFB                    *core,
+                                                           u32                         object_id,
+                                                           CoreSurfaceBuffer         **ret_surface );
 
-DFBResult              dfb_core_get_surface_client       ( CoreDFB               *core,
-                                                           u32                    object_id,
-                                                           CoreSurfaceClient    **ret_client );
+DFBResult              dfb_core_get_surface_client       ( CoreDFB                    *core,
+                                                           u32                         object_id,
+                                                           CoreSurfaceClient         **ret_client );
 
-DFBResult              dfb_core_get_window               ( CoreDFB               *core,
-                                                           u32                    object_id,
-                                                           CoreWindow           **ret_window );
+DFBResult              dfb_core_get_window               ( CoreDFB                    *core,
+                                                           u32                         object_id,
+                                                           CoreWindow                **ret_window );
 
 /*
- * Debug.
+ * Object enumeration.
  */
-DirectResult           dfb_core_enum_graphics_states     ( CoreDFB                *core,
-                                                           FusionObjectCallback    callback,
-                                                           void                   *ctx );
+DirectResult           dfb_core_enum_graphics_states     ( CoreDFB                    *core,
+                                                           FusionObjectCallback        callback,
+                                                           void                       *ctx );
 
-DirectResult           dfb_core_enum_layer_contexts      ( CoreDFB                *core,
-                                                           FusionObjectCallback    callback,
-                                                           void                   *ctx );
+DirectResult           dfb_core_enum_layer_contexts      ( CoreDFB                    *core,
+                                                           FusionObjectCallback        callback,
+                                                           void                       *ctx );
 
-DirectResult           dfb_core_enum_layer_regions       ( CoreDFB                *core,
-                                                           FusionObjectCallback    callback,
-                                                           void                   *ctx );
+DirectResult           dfb_core_enum_layer_regions       ( CoreDFB                    *core,
+                                                           FusionObjectCallback        callback,
+                                                           void                       *ctx );
 
-DirectResult           dfb_core_enum_palettes            ( CoreDFB                *core,
-                                                           FusionObjectCallback    callback,
-                                                           void                   *ctx );
+DirectResult           dfb_core_enum_palettes            ( CoreDFB                    *core,
+                                                           FusionObjectCallback        callback,
+                                                           void                       *ctx );
 
-DirectResult           dfb_core_enum_surfaces            ( CoreDFB                *core,
-                                                           FusionObjectCallback    callback,
-                                                           void                   *ctx );
+DirectResult           dfb_core_enum_surfaces            ( CoreDFB                    *core,
+                                                           FusionObjectCallback        callback,
+                                                           void                       *ctx );
 
-DirectResult           dfb_core_enum_surface_allocations ( CoreDFB                *core,
-                                                           FusionObjectCallback    callback,
-                                                           void                   *ctx );
+DirectResult           dfb_core_enum_surface_allocations ( CoreDFB                    *core,
+                                                           FusionObjectCallback        callback,
+                                                           void                       *ctx );
 
-DirectResult           dfb_core_enum_surface_buffers     ( CoreDFB                *core,
-                                                           FusionObjectCallback    callback,
-                                                           void                   *ctx );
+DirectResult           dfb_core_enum_surface_buffers     ( CoreDFB                    *core,
+                                                           FusionObjectCallback        callback,
+                                                           void                       *ctx );
 
-DirectResult           dfb_core_enum_surface_clients     ( CoreDFB                *core,
-                                                           FusionObjectCallback    callback,
-                                                           void                   *ctx );
+DirectResult           dfb_core_enum_surface_clients     ( CoreDFB                    *core,
+                                                           FusionObjectCallback        callback,
+                                                           void                       *ctx );
 
-DirectResult           dfb_core_enum_windows             ( CoreDFB                *core,
-                                                           FusionObjectCallback    callback,
-                                                           void                   *ctx );
+DirectResult           dfb_core_enum_windows             ( CoreDFB                    *core,
+                                                           FusionObjectCallback        callback,
+                                                           void                       *ctx );
 
 /*
  * Arena shared fields.
  */
-DirectResult           core_arena_add_shared_field       ( CoreDFB     *core,
-                                                           const char  *name,
-                                                           void        *data );
+DirectResult           core_arena_add_shared_field       ( CoreDFB                    *core,
+                                                           const char                 *name,
+                                                           void                       *data );
 
-DirectResult           core_arena_get_shared_field       ( CoreDFB     *core,
-                                                           const char  *name,
-                                                           void       **data );
+DirectResult           core_arena_get_shared_field       ( CoreDFB                    *core,
+                                                           const char                 *name,
+                                                           void                      **data );
 
 /*
  * Returns true if the calling process is the master fusionee.
  */
-bool                   dfb_core_is_master                ( CoreDFB *core );
+bool                   dfb_core_is_master                ( CoreDFB                    *core );
 
 /*
  * Allows other (blocking) fusionees to enter the DirectFB session.
  */
-void                   dfb_core_activate                 ( CoreDFB *core );
+void                   dfb_core_activate                 ( CoreDFB                    *core );
 
 /*
  * Returns the core's fusion world.
  */
-FusionWorld           *dfb_core_world                    ( CoreDFB *core );
+FusionWorld           *dfb_core_world                    ( CoreDFB                    *core );
 
 /*
  * Returns the shared memory pool of the core.
  */
-FusionSHMPoolShared   *dfb_core_shmpool                  ( CoreDFB *core );
+FusionSHMPoolShared   *dfb_core_shmpool                  ( CoreDFB                    *core );
 
 /*
  * Returns the shared memory pool for raw data, e.g. surface buffers.
  */
-FusionSHMPoolShared   *dfb_core_shmpool_data             ( CoreDFB *core );
+FusionSHMPoolShared   *dfb_core_shmpool_data             ( CoreDFB                    *core );
 
 /*
  * Suspends all core parts, stopping input threads, closing devices...
  */
-DFBResult              dfb_core_suspend                  ( CoreDFB *core );
+DFBResult              dfb_core_suspend                  ( CoreDFB                    *core );
 
 /*
  * Resumes all core parts, reopening devices, starting input threads...
  */
-DFBResult              dfb_core_resume                   ( CoreDFB *core );
+DFBResult              dfb_core_resume                   ( CoreDFB                    *core );
 
 /*
  * Adds a function to the cleanup stack that is called during deinitialization.
  */
-CoreCleanup           *dfb_core_cleanup_add              ( CoreDFB         *core,
-                                                           CoreCleanupFunc  func,
-                                                           void            *data,
-                                                           bool             emergency );
+CoreCleanup           *dfb_core_cleanup_add              ( CoreDFB                    *core,
+                                                           CoreCleanupFunc             func,
+                                                           void                       *data,
+                                                           bool                        emergency );
 
 /*
  * Removes a function from the cleanup stack.
  */
-void                   dfb_core_cleanup_remove           ( CoreDFB     *core,
-                                                           CoreCleanup *cleanup );
+void                   dfb_core_cleanup_remove           ( CoreDFB                    *core,
+                                                           CoreCleanup                *cleanup );
 
 /*
  * Returns the font manager of the core.
  */
-CoreFontManager        *dfb_core_font_manager            ( CoreDFB *core );
+CoreFontManager        *dfb_core_font_manager            ( CoreDFB                    *core );
 
 /*
  * Memory permissions management.
@@ -334,7 +334,7 @@ CoreTLS               *Core_GetTLS                       ( void );
  * Identity management, incoming dispatch pushes ID of caller.
  */
 
-void                   Core_PushIdentity                 ( FusionID caller );
+void                   Core_PushIdentity                 ( FusionID                    caller );
 
 void                   Core_PopIdentity                  ( void );
 
@@ -353,31 +353,31 @@ int                    Core_GetCalling                   ( void );
  * Resource management.
  */
 
-DFBResult              Core_Resource_CheckSurface        ( const CoreSurfaceConfig *config,
-                                                           u64                      resource_id );
+DFBResult              Core_Resource_CheckSurface        ( const CoreSurfaceConfig    *config,
+                                                           u64                         resource_id );
 
-DFBResult              Core_Resource_CheckSurfaceUpdate  ( CoreSurface             *surface,
-                                                           const CoreSurfaceConfig *config );
+DFBResult              Core_Resource_CheckSurfaceUpdate  ( CoreSurface                *surface,
+                                                           const CoreSurfaceConfig    *config );
 
-DFBResult              Core_Resource_AddSurface          ( CoreSurface             *surface );
+DFBResult              Core_Resource_AddSurface          ( CoreSurface                *surface );
 
-DFBResult              Core_Resource_RemoveSurface       ( CoreSurface             *surface );
+DFBResult              Core_Resource_RemoveSurface       ( CoreSurface                *surface );
 
-DFBResult              Core_Resource_UpdateSurface       ( CoreSurface             *surface,
-                                                           const CoreSurfaceConfig *config );
+DFBResult              Core_Resource_UpdateSurface       ( CoreSurface                *surface,
+                                                           const CoreSurfaceConfig    *config );
 
 /*
  * Client instance management.
  */
 
-DFBResult              Core_Resource_AddIdentity         ( FusionID identity,
-                                                           u32      slave_call );
+DFBResult              Core_Resource_AddIdentity         ( FusionID                    identity,
+                                                           u32                         slave_call );
 
-void                   Core_Resource_DisposeIdentity     ( FusionID identity );
+void                   Core_Resource_DisposeIdentity     ( FusionID                    identity );
 
-ICoreResourceClient   *Core_Resource_GetClient           ( FusionID identity );
+ICoreResourceClient   *Core_Resource_GetClient           ( FusionID                    identity );
 
-CoreSlave             *Core_Resource_GetSlave            ( FusionID identity );
+CoreSlave             *Core_Resource_GetSlave            ( FusionID                    identity );
 
 /*
  * Runs a call on the Fusion dispatch thread.

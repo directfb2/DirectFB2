@@ -28,7 +28,7 @@
 
 D_DEBUG_DOMAIN( Core_WM, "Core/WM", "DirectFB Core WM" );
 
-DEFINE_MODULE_DIRECTORY( dfb_core_wm_modules, "wm", DFB_CORE_WM_ABI_VERSION );
+DEFINE_MODULE_DIRECTORY( dfb_wm_modules, "wm", DFB_CORE_WM_ABI_VERSION );
 
 /**********************************************************************************************************************/
 
@@ -72,9 +72,9 @@ load_module( const char *name )
 
      D_ASSERT( wm_local != NULL );
 
-     direct_modules_explore_directory( &dfb_core_wm_modules );
+     direct_modules_explore_directory( &dfb_wm_modules );
 
-     direct_list_foreach (module, dfb_core_wm_modules.entries) {
+     direct_list_foreach (module, dfb_wm_modules.entries) {
           const CoreWMFuncs *funcs;
 
           funcs = direct_module_ref( module );
@@ -142,9 +142,8 @@ dfb_wm_core_initialize( CoreDFB         *core,
      /* Query module information. */
      funcs->GetWMInfo( &wm_shared->info );
 
-     D_INFO( "DirectFB/Core/WM: %s %d.%d (%s)\n",
-             wm_shared->info.name, wm_shared->info.version.major,
-             wm_shared->info.version.minor, wm_shared->info.vendor );
+     D_INFO( "DirectFB/Core/WM: %s %d.%d (%s)\n", wm_shared->info.name,
+             wm_shared->info.version.major, wm_shared->info.version.minor, wm_shared->info.vendor );
 
      /* Store module name in shared memory. */
      wm_shared->name = SHSTRDUP( wm_shared->shmpool, wm_local->module->name );
@@ -310,6 +309,12 @@ dfb_wm_core_shutdown( DFBWMCore *data,
 
      /* Unload the module. */
      direct_module_unref( wm_local->module );
+
+#if !FUSION_BUILD_MULTI
+     fusion_reactor_free( wm_shared->reactor );
+#endif /* FUSION_BUILD_MULTI */
+
+     fusion_reactor_free( wm_shared->reactor );
 
      /* Deallocate local window manager data. */
      if (wm_local->data)

@@ -73,7 +73,7 @@ spaced_primes_closest( unsigned int num )
      for (i = 0; i < nprimes; i++)
           if (primes[i] > num)
                return primes[i];
-     return primes[nprimes - 1];
+     return primes[nprimes-1];
 }
 
 #define DIRECT_HASH_MIN_SIZE 11

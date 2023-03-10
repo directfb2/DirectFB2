@@ -175,7 +175,7 @@ direct_find_best_memcpy()
 
           for (iter = 0; iter < ITERS; iter++)
                for (j = 0; j < 500; j++)
-                    memcpy_method[i].function( buf1 + j*BUFSIZE, buf2 + j*BUFSIZE, BUFSIZE );
+                    memcpy_method[i].function( buf1 + j * BUFSIZE, buf2 + j * BUFSIZE, BUFSIZE );
 
           t = direct_clock_get_time( DIRECT_CLOCK_MONOTONIC ) - t;
           memcpy_method[i].time = t;

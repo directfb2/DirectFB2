@@ -1,3 +1,1220 @@
+commit 185a5fce4aeb8b581c0b42fc040c83c5a1b6943a
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Mar 1 03:54:58 2023 +0100
+
+    Restore global variables for DirectFB version
+
+commit d1182aeace2fbc3877266f52cf1b640235442390
+Merge: 8bea71e 70045be
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Feb 27 11:15:50 2023 +0100
+
+    Merge pull request #91 from caramelli/master
+    
+    dfb-update-pkgconfig: Add DESTDIR
+
+commit 70045be30a4414c45c806dbf0c88a894023210cd
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Feb 27 10:58:34 2023 +0100
+
+    Update ChangeLog
+
+commit 5731e6d121ec20c67aecbd2d4ededc93a2565404
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Feb 27 10:58:28 2023 +0100
+
+    dfb-update-pkgconfig: Add DESTDIR
+
+commit 8bea71e1e5e0fe185a264b66a40bc83291fe5f06
+Merge: d33e3d4 e1a7adf
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Feb 22 08:44:07 2023 +0100
+
+    Merge pull request #88 from caramelli/master
+    
+    Add pkg-config files per module (for static build)
+
+commit e1a7adf6e1b0107f930cfa3a5e98647a556b8715
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Feb 22 08:37:07 2023 +0100
+
+    Update ChangeLog
+
+commit 3e2638eb08d581d7f8bac4d34303a4859506990e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Feb 22 08:36:47 2023 +0100
+
+    Add pkg-config files per module (for static build)
+
+commit d33e3d40c20d3f50cb6e48882f670477068e3288
+Merge: be72f1f d244ae0
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Feb 19 07:07:13 2023 +0100
+
+    Merge pull request #86 from caramelli/master
+    
+    drmkms: Set default pixel format using drmModePlane formats array
+
+commit d244ae07fd84d511a82066bf0b37a648534311e5
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Feb 19 07:06:13 2023 +0100
+
+    drmkms: Ask the kernel to expose all planes to userspace, thanks to Daniel Palmer!
+
+commit c6db97e3ee85b81e7fd3ca778664b989d42db679
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Feb 18 09:59:05 2023 +0100
+
+    drmkms: Set default pixel format using drmModePlane formats array if AR24 is not supported
+
+commit be72f1f0ca0fc5a6f0b42a0bb0164dad654d875e
+Merge: e510f61 3770869
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Feb 2 20:33:51 2023 +0100
+
+    Merge pull request #84 from caramelli/master
+    
+    Use Libs.private in pkg-config files corresponding to modules
+
+commit 3770869d315e1db1a4a85001f17e767863f78969
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Feb 2 20:29:45 2023 +0100
+
+    Use Libs.private in pkg-config files corresponding to modules
+
+commit e510f613a422a88fd3b556dc2346a0f51c18e17f
+Merge: b859a6a d26374d
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Feb 2 06:37:44 2023 +0100
+
+    Merge pull request #83 from caramelli/master
+    
+    DRMKMS/Screen: Get panel orientation on screen initialization
+
+commit d26374df50878001ea591bdf72e3bfa7765e2d15
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Feb 2 06:31:18 2023 +0100
+
+    Update ChangeLog
+
+commit 5e7d9f13ef93d974947391250b8edd747777f368
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Feb 2 06:30:58 2023 +0100
+
+    DRMKMS/Screen: Get panel orientation on screen initialization
+
+commit b859a6a2f57c72432e57df198e57b3853c11891e
+Merge: c17a0d9 8396440
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Jan 30 11:03:13 2023 +0100
+
+    Merge pull request #82 from caramelli/master
+    
+    Merge dfb_types.h into directfb.h
+
+commit 8396440cc5c77e06023d5d21f197e02a0c13d052
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jan 30 11:03:26 2023 +0100
+
+    Update ChangeLog
+
+commit 5670235d139e4395b5dba725a4cec75843c66b1e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jan 30 11:03:11 2023 +0100
+
+    Merge dfb_types.h into directfb.h
+
+commit c17a0d9a67272420afe7677d8f03e15672839546
+Merge: ef867c1 3ebe7ea
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Jan 27 18:47:57 2023 +0100
+
+    Merge pull request #81 from caramelli/master
+    
+    Add support for BGR24 format
+
+commit 3ebe7ea437f3d38adad9d4d1ee3fd9b706da08dc
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Jan 27 18:47:19 2023 +0100
+
+    Update ChangeLog
+
+commit 0da4139930f6d644e4001c62ad7a25aa1b4f8378
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Jan 27 18:47:05 2023 +0100
+
+    Add support for BGR24 format
+
+commit ef867c10dc63f8f734d9aa8c7f17396e9dc1838a
+Merge: b80fbc8 d14c65f
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Jan 16 14:28:25 2023 +0100
+
+    Merge pull request #80 from caramelli/master
+    
+    Meson: Fix debug buildtype
+
+commit d14c65fa1b4d7e79e1576dde682049730f316a4e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jan 16 14:21:04 2023 +0100
+
+    Meson: Fix debug buildtype
+
+commit b80fbc8cdb98839108676ae9cc24fabdec3b34b5
+Merge: 68367a4 acae2dc
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Jan 14 03:16:33 2023 +0100
+
+    Merge pull request #79 from caramelli/master
+    
+    Add check for state->source in dfb_gfxcard_state_check_acquire()
+
+commit acae2dc598e5f41397e0e69844758870ace7bd53
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Jan 14 03:15:44 2023 +0100
+
+    Core/GfxState: Add check for state->source in dfb_gfxcard_state_check_acquire()
+
+commit 68367a48c745630e3180437405ec3e2975036c78
+Merge: cd4172c 5be9975
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Jan 7 08:18:47 2023 +0100
+
+    Merge pull request #78 from caramelli/master
+    
+    Core/Screen: Add screen_data argument for GetScreenRotation() function
+
+commit 5be99757310e92e2922f10162f74ed2e51b9c789
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Jan 7 08:17:31 2023 +0100
+
+    Update ChangeLog
+
+commit c3742ae6cae0efa30e4ecd53c70d1c3b52c0b676
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Jan 7 08:17:23 2023 +0100
+
+    Core/Screen: Add screen_data argument for GetScreenRotation() function
+
+commit cd4172c5c38ccfd11caaa53cbc33acb7724b55b4
+Merge: bf85d08 47b5604
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Jan 2 10:47:38 2023 +0100
+
+    Merge pull request #76 from caramelli/master
+    
+    Meson: Use install_symlink() function instead of meson_symlink.sh script
+
+commit 47b5604a830d1bab9abf2c881717aee6b0c8f552
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jan 2 10:34:16 2023 +0100
+
+    Update ChangeLog
+
+commit 9bdd8911aed12a5b6a293aded3d3c54c27ccc7cb
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jan 2 10:33:47 2023 +0100
+
+    Meson: Use install_symlink() function instead of meson_symlink.sh script
+
+commit bf85d083d07ffca28361235c6c10caf73961776e
+Merge: d942ae0 487211f
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Dec 29 16:42:08 2022 +0100
+
+    Merge pull request #75 from caramelli/master
+    
+    Fix loop initial declarations (due to removal of -std=gnu99 option)
+
+commit 487211ffd4b4a13bc59a1b5f658908835619da28
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Dec 29 16:42:29 2022 +0100
+
+    Fix loop initial declarations (due to removal of -std=gnu99 option)
+
+commit d942ae051557c7aae03b65f4b1e14dd7ddde0223
+Merge: 1278837 36f78a5
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Dec 28 19:55:37 2022 +0100
+
+    Merge pull request #73 from fifteenhex/drmkmsrotsupport-20221227
+    
+    WorkInProgress: Allow DRM/KMS orientation to configure the rotation
+
+commit 36f78a5dca1ac9d48a341cf4b5a201a7e40a9a30
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Dec 28 19:55:51 2022 +0100
+
+    Allow DRM/KMS orientation to configure the rotation
+
+commit 76ae5f3c50fd06b94c5ca56565769b4ca71b8eb7
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Fri Nov 11 21:47:05 2022 +0900
+
+    system: drmkms: Probe for panel rotation
+    
+    On some embedded systems the LCD panel is mounted in the chassis
+    upside down. To render the image correctly it needs to be rotated
+    in userspace.
+    
+    The kernel part of DRM/KMS exposes the panel orientation via a
+    connector property. So grab the orientation for the panel from the
+    kernel and present that as the screen rotation so that the image
+    is flipped when blitted.
+
+commit 16cc14cf28dc5cfc75cb29456f4e443495e7f2a3
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Sun Feb 20 11:39:10 2022 +0900
+
+    core: layer: Get the physical rotation from the system
+    
+    For drmkms the physical orientation of the display can be
+    probed so it is possible to automatically correct for a
+    rotated display.
+    
+    If the user hasn't set the rotation in their config ask
+    the system what the rotation should be.
+
+commit 5525df479e8ced0287e7c3b325bc3c4dc7b69c13
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Sat Feb 19 11:02:57 2022 +0900
+
+    conf: Add flag for whether the rotation was configured or not.
+    
+    If the user specified a rotation the value could be 0,90,180 or 270.
+    If they didn't specify anything it will be 0. Currently it's not
+    possible to tell if they asked for 0 or it's just the default.
+    
+    If the value is 0 but the user didn't set it we should ask the
+    system what it thinks the rotation is (i.e. the panel orientation
+    from DRM/KMS). So a flag is needed to tell if the 0 came from the
+    user.
+    
+    Add a flag for whether the rotation was user set.
+
+commit 1278837fafc6d85d3a4dd316d848b5bb7dd19ec6
+Merge: 0fdf5df 7da29a8
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Tue Dec 20 13:22:23 2022 +0100
+
+    Merge pull request #71 from caramelli/master
+    
+    fusion: Install shm/pool.h header file
+
+commit 7da29a843e2a765f53c87874c7ffdc37a2312f51
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Dec 20 13:19:21 2022 +0100
+
+    fusion: Install shm/pool.h header file
+
+commit 0fdf5df3995bbcb4d2e06fd5d2b979651bc60f0c
+Merge: 7fd8c8e 5bd77be
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Dec 12 17:27:35 2022 +0100
+
+    Merge pull request #69 from caramelli/master
+    
+    Move shutdown-info parameter definition to fusion config
+
+commit 5bd77be2daf48c36a22d6fccf1f8e6970705e1d1
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Dec 12 17:27:09 2022 +0100
+
+    Update ChangeLog
+
+commit 1e4c97c588121b3c814b108a26a356d977a946a6
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Dec 12 17:26:49 2022 +0100
+
+    Move shutdown-info parameter definition to fusion config
+
+commit 7fd8c8ef0492711667e668a73c2cc336636a97b4
+Merge: 96a680d 4388a63
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Dec 3 08:07:36 2022 +0100
+
+    Merge pull request #68 from caramelli/master
+    
+    Move tools to DirectFB2-tools repository (for static library support)
+
+commit 4388a633a043f34f3b12fdb6aa329d4ea800c45a
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Dec 3 07:25:42 2022 +0100
+
+    Update ChangeLog
+
+commit 5ff1a698b3d5607c089b50910fa73138f98e4ec9
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Dec 3 07:25:11 2022 +0100
+
+    Move tools to DirectFB2-tools repository (for static library support)
+
+commit 96a680da988cf3466f5106b943bc9739b2199fa9
+Merge: 2519295 4db5565
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Nov 30 17:59:49 2022 +0100
+
+    Merge pull request #67 from caramelli/master
+    
+    Add DIRECT_DEALLOCATE_INTERFACE() calls on error
+
+commit 4db5565d6ec9e5c5c06fe528bf111209bf11a112
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Nov 30 17:52:13 2022 +0100
+
+    Add DIRECT_DEALLOCATE_INTERFACE() calls on error
+
+commit 2519295bc91765c1fc036d6ee206f163f7509c37
+Merge: ab42607 896141d
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Nov 19 10:33:09 2022 +0100
+
+    Merge pull request #65 from caramelli/master
+    
+    IDirectFBSurface: Set flip_func to control the triggering of the actual Flip
+
+commit 896141dcd2ccb610c6aedad904dc1602ba9289f4
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Nov 19 10:33:03 2022 +0100
+
+    Update ChangeLog
+
+commit 64471d3ce80ff3f948e02d809c51247a50e058ca
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Nov 19 10:32:50 2022 +0100
+
+    IDirectFBSurface: Set flip_func to control the triggering of the actual Flip
+
+commit ab426077fe6c9dbfa8b0dfe95b7789d15172a159
+Merge: 1989def ee6ffd6
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Nov 14 12:20:31 2022 +0100
+
+    Merge pull request #64 from caramelli/master
+    
+    drmkms: Unused PoolData
+
+commit ee6ffd6e8ff0d09cd886e7abbcc2dc26a0c06873
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Nov 14 12:00:12 2022 +0100
+
+    drmkms: Unused PoolData
+
+commit 1989def37e4768782f98f57ba60be5f4b9d53f69
+Merge: e2814bb 3310069
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Nov 10 12:11:25 2022 +0100
+
+    Merge pull request #63 from caramelli/master
+    
+    tools: Add dfiffinfo
+
+commit 331006993b9d711fe88e74a82013e1debbddcb90
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Nov 10 11:41:08 2022 +0100
+
+    Update ChangeLog
+
+commit 27d02177ae28cec5f8ea1e9afff402298c83d9f7
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Nov 10 11:40:56 2022 +0100
+
+    tools: Add dfiffinfo
+
+commit e2814bb5c8b21072896026c3d8c318e4697ac4db
+Merge: 634b1a2 b781bc9
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Nov 7 21:17:53 2022 +0100
+
+    Merge pull request #62 from caramelli/master
+    
+    IDirectFB: Add GetFontSurfaceFormat()
+
+commit b781bc98cbf1587a1a14110416750c6cc39d99c9
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Nov 7 19:57:32 2022 +0100
+
+    Update ChangeLog
+
+commit 76fa4a7639c60fbddaf295fdef0aa97079128fe7
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Nov 7 19:57:00 2022 +0100
+
+    IDirectFB: Add GetFontSurfaceFormat()
+
+commit 634b1a25488bc8a64b7026416712ebf99f66b91f
+Merge: ae9393d 54efecd
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Oct 27 03:46:51 2022 +0200
+
+    Merge pull request #60 from caramelli/master
+    
+    Core/Main: Call fusion_hash_set_autofree()
+
+commit 54efecd8acae0e6828f75c7ea8b1e2f128e2919d
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Oct 27 03:38:15 2022 +0200
+
+    Update ChangeLog
+
+commit fb7411f36a7bbc0af99089a9dc179fffe30b0c29
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Oct 27 03:38:00 2022 +0200
+
+    Core/Main: Call fusion_hash_set_autofree()
+
+commit ae9393d2d756a7a6907da5ec481e2b3e4e91efb0
+Merge: 85ee588 0659ed2
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Oct 26 10:33:49 2022 +0200
+
+    Merge pull request #59 from caramelli/master
+    
+    Fusion: Fix memory leak and destroy event_dispatcher_thread on exit
+
+commit 0659ed23c1d3bd86e06b70cdc1680d1c1e8de88e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Oct 26 09:51:13 2022 +0200
+
+    Fusion: Fix memory leak and destroy event_dispatcher_thread on exit
+
+commit 85ee588f636d4836bdf7c1d0db47b74d4ec3827d
+Merge: 3e0a706 d2a158a
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Oct 24 18:50:13 2022 +0200
+
+    Merge pull request #58 from caramelli/master
+    
+    Add musl libc compatibility
+
+commit d2a158a3a89910e99f50e6ff8f073a457dcfcea0
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Oct 24 18:46:49 2022 +0200
+
+    Add musl libc compatibility
+
+commit 3e0a706978538a2e2050a2745edb6ad0c30ad39c
+Merge: 651ac43 cb3fb64
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Oct 22 15:59:59 2022 +0200
+
+    Merge pull request #56 from caramelli/master
+    
+    Input/Linux: Uninitialised value was created by a stack allocation
+
+commit cb3fb6487b6b8e5b66a9c1cb7a08673d50d49cc4
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Oct 22 15:59:16 2022 +0200
+
+    Input/Linux: Uninitialised value was created by a stack allocation
+
+commit 651ac43bbb8daf812b410a66736a0ce457b00498
+Merge: 3392959 857032f
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Oct 17 17:57:33 2022 +0200
+
+    Merge pull request #55 from caramelli/master
+    
+    Meson: Add the boolean check kwarg to the run_command() call
+
+commit 857032f9a16800f352cead58a1958965231c5ff7
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Oct 17 17:47:12 2022 +0200
+
+    Meson: Add the boolean check kwarg to the run_command() call
+
+commit 339295980e9a0eeda55641dd35691942512bc70b
+Merge: 9a2d1bf 00c3612
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Oct 8 02:45:31 2022 +0200
+
+    Merge pull request #54 from caramelli/master
+    
+    Add support for static libraries (MCU targets)
+
+commit 00c361275f506b798f06ff0979b6fa0ec89e1a80
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Oct 8 02:45:07 2022 +0200
+
+    Update ChangeLog
+
+commit 821cffd5f7102eaa5bf75da1190e0670293e50a9
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Oct 8 02:44:17 2022 +0200
+
+    Add support for static libraries (MCU targets)
+
+commit 9a2d1bf1beb2c8d8c8bf1ca5154a19acffe2f4f8
+Merge: 1989eb1 c61ab74
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Sep 29 17:49:11 2022 +0200
+
+    Merge pull request #53 from caramelli/master
+    
+    Add support for BT.2020 conversion
+
+commit c61ab74f402dab12de791a69d40fe8cae2a399bc
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Sep 29 17:49:33 2022 +0200
+
+    Update ChangeLog
+
+commit 9328df9ddd34e097606b47776a94b73c947fb417
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Sep 29 17:49:25 2022 +0200
+
+    Add support for BT.2020 conversion
+
+commit 1989eb1c12b329cb618c3c7669d6bfc29f9480d9
+Merge: 4b49dda 0bd4a4f
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Sep 28 21:38:41 2022 +0200
+
+    Merge pull request #52 from caramelli/master
+    
+    Direct/Interface: Ignore character case for 'default-interface-implementation' option
+
+commit 0bd4a4f14ba57a27cfbd2767eaa1329405aaa574
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Sep 28 21:08:59 2022 +0200
+
+    Update ChangeLog
+
+commit a31867801de215e6f92c0fbaf1f192d454784846
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Sep 28 21:08:37 2022 +0200
+
+    Direct/Interface: Ignore character case for 'default-interface-implementation' option
+
+commit 4b49dda3e337774f04ff77773afadcb409610f94
+Merge: 4260493 e613839
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Sep 24 11:36:15 2022 +0200
+
+    Merge pull request #51 from caramelli/master
+    
+    Add dfb_colorspace_parse()
+
+commit e613839786d0e9e48828f50bd1a3e06e887f4ac1
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Sep 24 11:24:38 2022 +0200
+
+    Update ChangeLog
+
+commit 58b530ab60abe2fe5b7ba32a7f9fa9fc80d5efdb
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Sep 24 11:24:08 2022 +0200
+
+    Add dfb_colorspace_parse()
+
+commit 4260493757d59f0fe750fa6ade2397247bcf1dce
+Merge: 002b6f3 9de9d06
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Sep 16 08:57:22 2022 +0200
+
+    Merge pull request #50 from caramelli/master
+    
+    Direct/Stream: Add file_wait()
+
+commit 9de9d06d1a7f58ab5eb468373cb10a3dba566f93
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Sep 16 08:24:15 2022 +0200
+
+    Update ChangeLog
+
+commit 1694795f34e698b7544f86d688fcec6613666ab4
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Sep 16 08:24:03 2022 +0200
+
+    Direct/Stream: Add file_wait()
+
+commit 002b6f331a2b202359d601fc4c3425b7e9307449
+Merge: ad438fc fc9ce01
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Sep 15 10:11:30 2022 +0200
+
+    Merge pull request #49 from caramelli/master
+    
+    Add support for BT.709 conversion
+
+commit fc9ce013b85b514843a6962140ab668a55d4af70
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Sep 15 10:11:17 2022 +0200
+
+    Update ChangeLog
+
+commit 0d188b62f3519fcdd1ee100bc992414d60dfaff6
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Sep 15 10:11:04 2022 +0200
+
+    Add support for BT.709 conversion
+
+commit ad438fce3601e86658e72e4f795bec187014ef4f
+Merge: 4bfa300 46ee720
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Sep 7 12:55:18 2022 +0200
+
+    Merge pull request #48 from caramelli/master
+    
+    Add support for NV24 and NV42 video format
+
+commit 46ee7207cf3678fea84f2ea96dbc58842069b5fc
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Sep 7 12:45:53 2022 +0200
+
+    Update ChangeLog
+
+commit ccd58c3e9c96f964a01f9c4937381c6ce6cad54c
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Sep 7 12:45:35 2022 +0200
+
+    Add support for NV24 and NV42 video format
+
+commit 4bfa300a8f25334d29815cca44d594382b7b2c2e
+Merge: 0c0a38c 16623ff
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Sep 5 11:21:07 2022 +0200
+
+    Merge pull request #47 from caramelli/master
+    
+    Font/DGIFF: return DFB_INVARG if height not set in font description
+
+commit 16623ff93089d404505d9279d3247c27a0611a0c
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Sep 5 11:16:18 2022 +0200
+
+    Update ChangeLog
+
+commit 80f94b0867308ce373a1c4ffd2dbc33d300adf34
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Sep 5 11:16:03 2022 +0200
+
+    Font/DGIFF: return DFB_INVARG if height not set in font description
+
+commit 0c0a38cd0dc67a8fb254b1ca7ff4913222d038b8
+Merge: 0b9984b 396d28e
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Sep 1 09:00:50 2022 +0200
+
+    Merge pull request #46 from caramelli/master
+    
+    Add support for YVU 4:4:4 planar format
+
+commit 396d28e145e0f205718861e4d4ee5376319d80dc
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Sep 1 08:58:36 2022 +0200
+
+    Update ChangeLog
+
+commit badf1d0b52ea7e6d39070dcd68c968dd0ed9f5fa
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Sep 1 08:58:29 2022 +0200
+
+    Add support for YVU 4:4:4 planar format
+
+commit 0b9984b5d680d48422badff6f36f3439c806d3f4
+Merge: eb7ab25 dea029a
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Aug 24 13:38:14 2022 +0200
+
+    Merge pull request #45 from caramelli/master
+    
+    Add support for YUV 4:2:2 planar format
+
+commit dea029adcb4daf103956aa73ebd32c57db400596
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Aug 24 13:08:55 2022 +0200
+
+    Update ChangeLog
+
+commit a7bcf7475493700e166f44ed5307105eabc0676e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Aug 24 13:04:37 2022 +0200
+
+    Add support for YUV 4:2:2 planar format
+
+commit eb7ab25c193f90743553e6e09724756723348038
+Merge: c750bb9 1d99b8a
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Aug 21 11:09:20 2022 +0200
+
+    Merge pull request #44 from caramelli/master
+    
+    drmkms: Remove libkms dependency
+
+commit 1d99b8a946dfbb4ed6011380448738a78fb49272
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Aug 21 10:56:22 2022 +0200
+
+    Update ChangeLog
+
+commit 958aab760292281eff4ca41d3de11a8581fa45ef
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Aug 21 10:08:11 2022 +0200
+
+    drmkms: Remove libkms dependency
+
+commit c750bb98c76191e8149e501db3d408175983d30a
+Merge: 33c7613 2690e4b
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Aug 14 09:11:37 2022 +0200
+
+    Merge pull request #43 from caramelli/master
+    
+    Core_Resource_AddIdentity(): if (call_owner != fusion_id), return DFB_FAILURE
+
+commit 2690e4bfcca798b6f183a07cbe038b4b4f105c34
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Aug 14 09:10:10 2022 +0200
+
+    Core_Resource_AddIdentity(): if (call_owner != fusion_id), return DFB_FAILURE
+
+commit 33c7613704c0055019d6085dbddcd5b972fb1c9f
+Merge: e629f8b 402acc7
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Aug 11 07:16:42 2022 +0200
+
+    Merge pull request #41 from caramelli/master
+    
+    Core/LayerContext: Add dfb_layer_context_set_cursor_shape() and dfb_layer_context_get_cursor_shape()
+
+commit 402acc7c68497321ad732d4c8594df63bb7f30e2
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Aug 11 07:10:26 2022 +0200
+
+    Update ChangeLog
+
+commit 5c309b21c5094d540f3835d37ee17f3dff8cfe68
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Aug 11 07:10:17 2022 +0200
+
+    Core/LayerContext: Add dfb_layer_context_set_cursor_shape() and dfb_layer_context_get_cursor_shape()
+
+commit e629f8baefc649b0488846992ffea1f9b442676b
+Merge: 61ceb79 462e44a
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Tue Aug 9 03:55:00 2022 +0200
+
+    Merge pull request #40 from caramelli/master
+    
+    IDirectFBWindow: by default the cursor surface is not set => cursor_flags = DWCF_INVISIBLE
+
+commit 462e44a28259d2ca2947142486cf5ce51cde2ed5
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Aug 9 03:10:42 2022 +0200
+
+    Update ChangeLog
+
+commit db66ecd667499014531a3a553c1c5d93acc9b414
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Aug 9 03:09:24 2022 +0200
+
+    IDirectFBWindow: by default the cursor surface is not set => cursor_flags = DWCF_INVISIBLE
+
+commit 61ceb79564a81905c5521018892c5816e9d9a4af
+Merge: 4a08b68 5dab035
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Aug 5 09:28:21 2022 +0200
+
+    Merge pull request #39 from caramelli/master
+    
+    IDirectFBDisplayLayer: SetCursorShape() accept NULL for shape to restore default cursor
+
+commit 5dab03540a293328363f6484a0170d37468cffcd
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Aug 5 09:27:45 2022 +0200
+
+    Update ChangeLog
+
+commit b603d612311b99c55ef94d732b5048e74dc1dde8
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Aug 5 09:27:37 2022 +0200
+
+    IDirectFBDisplayLayer: SetCursorShape() accept NULL for shape to restore default cursor
+
+commit 4a08b6867fb69a5850bda36f3362591dbe632f8a
+Merge: 0377501 04f63f2
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Aug 4 16:43:22 2022 +0200
+
+    Merge pull request #38 from caramelli/master
+    
+    Core/WindowStack: unused CoreDFB object in dfb_windowstack_cursor_enable()
+
+commit 04f63f29661b63385fff8f4b5dad010b7f74a674
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Aug 4 16:11:48 2022 +0200
+
+    Update ChangeLog
+
+commit 2c23979f3e978567fbc210af941d943fd91d3d6c
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Aug 4 16:10:24 2022 +0200
+
+    Core/WindowStack: unused CoreDFB object in dfb_windowstack_cursor_enable()
+
+commit 0377501c0eb71f6d96342b57a63bfe41b6d8e663
+Merge: 39c7500 1d5a410
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Jul 17 11:45:10 2022 +0200
+
+    Merge pull request #37 from caramelli/master
+    
+    IDirectFBInputDevice: unused buttonmask, locks, modifiers...
+
+commit 1d5a4109ce66101ca6d3e55c1fde2b23ec69dde8
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Jul 17 11:43:12 2022 +0200
+
+    IDirectFBInputDevice: unused buttonmask, locks, modifiers...
+
+commit 39c75006b18de38e845ffbec66856ddc18c23136
+Merge: 7c956f6 e2c1690
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Jun 26 07:49:54 2022 +0200
+
+    Merge pull request #36 from caramelli/master
+    
+    WM/Default: Set the shape of the cursor bound to a window
+
+commit e2c16907872af39a4ce53c4bce1318d563772caa
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Jun 26 07:42:30 2022 +0200
+
+    WM/Default: Set the shape of the cursor bound to a window
+
+commit 7c956f69fc624616e3f3a4b0e95dc82bf865cb79
+Merge: 23cf9e4 508fc28
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Jun 24 18:45:11 2022 +0200
+
+    Merge pull request #35 from caramelli/master
+    
+    Restore dfb_clip_edges() as a public function
+
+commit 508fc2822a14b43ae660beb4a209e9a24f6ecc64
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Jun 24 18:43:14 2022 +0200
+
+    Restore dfb_clip_edges() as a public function
+
+commit 23cf9e4e0016c6ff0cb2c3edf0b8a77857a827d0
+Merge: 45da19c fafb9ad
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Jun 2 15:12:22 2022 +0200
+
+    Merge pull request #33 from caramelli/master
+    
+    Add DSI to DFBScreenEncoderDescription
+
+commit fafb9adbc80b5dae6ca0e92f29002d1ff46e643d
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Jun 2 15:08:30 2022 +0200
+
+    Update ChangeLog
+
+commit 9439817cec072630c900eaf4dfbebfea82634c10
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Jun 2 15:08:23 2022 +0200
+
+    Add DSI to DFBScreenEncoderDescription
+
+commit 45da19c04a67004f0228ad59b68b7975ca821dc9
+Merge: e019fbd f91877e
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Jun 1 12:41:38 2022 +0200
+
+    Merge pull request #32 from caramelli/master
+    
+    Add support for multi-touch input device
+
+commit f91877ed968907248c64e06aa9e9640bc0c3a4e2
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Jun 1 11:41:15 2022 +0200
+
+    Update ChangeLog
+
+commit 6d8293dc6d4684e77c9aef4bae2898354b85dd23
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Jun 1 11:40:36 2022 +0200
+
+    Add support for multi-touch input device
+
+commit e019fbd1be6683f608d861472e7f43caaede6a3b
+Merge: 2537495 bbf1c7b
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat May 14 12:28:55 2022 +0200
+
+    Merge pull request #31 from caramelli/master
+    
+    Core/Layers: Increase the maximum number of layers
+
+commit bbf1c7b4adb4b87f31675efbb6676e9bdd1ceb26
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat May 14 12:27:36 2022 +0200
+
+    Update ChangeLog
+
+commit 7b7443a96e050fcf62bf0f8c2ebedd0aba81c4b3
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat May 14 12:27:23 2022 +0200
+
+    Core/Layers: Increase the maximum number of layers
+
+commit 2537495e4fc014168b9249dd367e6d954327aea3
+Merge: 00aeac6 b7e82e1
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed May 11 09:56:46 2022 +0200
+
+    Merge pull request #30 from caramelli/master
+    
+    Fix issue with preallocated surfaces when application is slave
+
+commit b7e82e1ae52992b7207b1ef6ac8326253ac42b75
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed May 11 09:55:25 2022 +0200
+
+    Update ChangeLog
+
+commit 6e0a7e205fafe9f8b409e57b28f8390d05ed2945
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed May 11 09:55:01 2022 +0200
+
+    Fix issue with preallocated surfaces when application is slave
+
+commit 00aeac631fca9a206270740ad166349b321feb90
+Merge: 98d4278 c75e202
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Tue May 3 17:31:49 2022 +0200
+
+    Merge pull request #29 from caramelli/master
+    
+    DFVFF: Add missing DIRECT_DEALLOCATE_INTERFACE( thiz )
+
+commit c75e20207b9044f671c45829ce1ebd76b9fee790
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue May 3 17:30:29 2022 +0200
+
+    Update ChangeLog
+
+commit 92f23cc01a45183d7022c97fbc2c66baea0b748a
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue May 3 17:30:02 2022 +0200
+
+    DFVFF: Add missing DIRECT_DEALLOCATE_INTERFACE( thiz )
+
+commit 98d4278476ccaa7a787721cec30e503c23f84bf2
+Merge: 35a7c6b 291ace5
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun May 1 09:31:40 2022 +0200
+
+    Merge pull request #28 from caramelli/master
+    
+    Fix uninitialised byte(s)
+
+commit 291ace5a7fa6f0dc67ed37683513044331702be1
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun May 1 09:30:52 2022 +0200
+
+    Fix uninitialised byte(s)
+
+commit 35a7c6ba5300582218d323eca562ffc7d5537335
+Merge: 19049c5 5d32b0b
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Apr 30 14:25:32 2022 +0200
+
+    Merge pull request #27 from caramelli/master
+    
+    drmkms: Management of connectors not bound to an encoder
+
+commit 5d32b0b88a0bd0be7d29d851ebffb48db31dccb1
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Apr 30 14:23:36 2022 +0200
+
+    drmkms: Management of connectors not bound to an encoder
+
+commit 19049c5d29210551d8626d30c307ce140573db30
+Merge: 1f2a613 34b8225
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Apr 29 18:41:00 2022 +0200
+
+    Merge pull request #26 from caramelli/master
+    
+    Add -lrt for compatibility with old glibc
+
+commit 34b8225b7c75074a87c50adef1ceb4a29a384fee
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Apr 29 18:37:46 2022 +0200
+
+    Add -lrt for compatibility with old glibc
+
+commit 1f2a613206dc1ddd7ed301f79468d5b3397ea11f
+Merge: d90c877 724b2f2
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Apr 28 18:14:17 2022 +0200
+
+    Merge pull request #25 from caramelli/master
+    
+    Fix palette index check in InitLayers()
+
+commit 724b2f259d5871485ec12aee5a5977303317c560
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Apr 28 18:12:00 2022 +0200
+
+    Fix palette index check in InitLayers()
+
+commit d90c8770e1b844fcd4698592a2281b5a749ddce7
+Merge: 6b74bc4 3a428e9
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Apr 28 14:18:15 2022 +0200
+
+    Merge pull request #24 from caramelli/master
+    
+    readdir_r() is deprecated
+
+commit 3a428e985c2320b989921b1d5b0aaa846d8fe04f
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Apr 28 14:18:22 2022 +0200
+
+    readdir_r() is deprecated
+
+commit 6b74bc443cdcc1c1127581bbc1b02ed1fec16bf7
+Merge: 9d0781a 0505492
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Mar 30 19:13:40 2022 +0200
+
+    Merge pull request #22 from caramelli/master
+    
+    Fix SYSCONFDIR
+
+commit 0505492baf1b3abb4b2e08c07118a3c1d5161ec5
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Mar 30 19:09:28 2022 +0200
+
+    Update ChangeLog
+
+commit 7ac237d1be6517acbc97b03dc85aa775e12dd484
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Mar 30 19:08:00 2022 +0200
+
+    Fix SYSCONFDIR
+
+commit 9d0781a02e700e09bc7e7ae5fa4ffa1050950e28
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Feb 28 20:00:45 2022 +0100
+
+    build: Fix issues with build order and directfb_strings
+
+commit 9406153d9dc1cdda12146afdd63e3fd0330b587b
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Sun Feb 27 12:56:12 2022 +0900
+
+    build: Fix issues with build order and directfb_strings
+    
+    The header generated by directfb_strings is used in other places.
+    If the build is done in parallel and directfb_strings hasn't completed
+    yet the build will fail.
+    
+    Add directfb_strings as an input to the places that need it so that
+    it always happens before it's needed.
+
+commit 30e3ebe19e9b94a9fedba565fa2b55de30f98cbc
+Merge: c3aa9c0 9f6b8f4
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Feb 14 11:13:38 2022 +0100
+
+    Merge pull request #17 from fifteenhex/valgrindfixes_20220214
+    
+    core: core: Fix use after free when calling fusion_shm_pool_destroy()
+
+commit 9f6b8f45d2ac4bb6dcd15c3d0d6db1fe356aea4d
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Mon Feb 14 18:06:15 2022 +0900
+
+    core: core: Fix use after free when calling fusion_shm_pool_destroy()
+    
+    fusion_shm_pool_destory() is called with shared->shmpool as it's
+    second argument but shared has just been freed in the in previous
+    line.
+    
+    Pull shared->shmpool out into a local variable and use that instead.
+
+commit c3aa9c056209349dee935d69f2ca9b593687bcea
+Merge: 1209d65 c51e925
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Feb 13 22:50:06 2022 +0100
+
+    Merge pull request #16 from fifteenhex/valgrind_fixes_20220213
+    
+    Valgrind fixes 20220213
+
+commit c51e9255f05f599a2b5e8a0b2c62beeebdee8d56
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Sat Feb 12 22:55:32 2022 +0900
+
+    input: linux: Initialise input event in set_led()
+    
+    Not all the fields in the struct are initialised so the
+    struct should be allocated with initialisation.
+
+commit bf5d6d23050bb15d3d81a50d86b128d1de54e70f
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Sat Feb 12 21:08:47 2022 +0900
+
+    system: drmkms: vt: Initialise vt_mode struct.
+    
+    Not all of the fields in vt_mode struct are filled so we will
+    be passing uninitilised data unless we ask for it to be zero initialised.
+
+commit 1209d657c2534c6175477177cf3ef5fdb0c33634
+Merge: b3e66e4 75d2237
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Feb 11 14:14:32 2022 +0100
+
+    Merge pull request #14 from fifteenhex/valgrind_fixes
+    
+    Valgrind splat fixes
+
+commit 75d2237fccf638ece90919e3aba393a701f4ebc0
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Fri Feb 11 11:28:09 2022 +0900
+
+    libdirect: signals: Use mark/sweep to free signal handlers
+    
+    Valgrind is complaining a lot about handlers being accessed after
+    they have been freed. To make this easier to debug refactor freeing
+    the actually memory into a single location and change the remove
+    function to just mark the handler as dead.
+
+commit 270cd1b150e71d8d3d8f82c676db8915fdcc9cf5
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Fri Feb 11 10:38:44 2022 +0900
+
+    libdirect: os: linux: thread: Fix passing of null pointer to prctl
+    
+    prctl(PR_GET_NAME, arg2, ...) expects a pointer to a 16 byte buffer
+    in arg2. Currently the code is checking if thread->name is null
+    and then calling prctl(PR_GET_NAME, thread->name, ...) if it is.
+    This results in a null pointer always being passed to prctl().
+    
+    Put a 16 byte buffer on the stack, pass that to prctl() if thread->name
+    is null, then copy the result into thread->name.
+
+commit b3e66e4b8b78d443d9920f12b385e5c580f56570
+Merge: ef3583f ff02c1f
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Feb 9 08:00:35 2022 +0100
+
+    Merge pull request #12 from caramelli/master
+    
+    Add support for NV61
+
+commit ff02c1f7058a84d99c612fafdff7b02e83474e3f
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Feb 9 07:57:36 2022 +0100
+
+    Update ChangeLog
+
 commit f6358663a118e8f3bf04c4a87442fd22e58efd5a
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Wed Feb 9 07:57:14 2022 +0100
@@ -29,7 +1246,7 @@ Date:   Tue Feb 8 14:51:50 2022 +0100
     Declare CorePart variables with extern
 
 commit c1df2aa105be7f24b99b205c92f31147c7ea9681
-Merge: 5ec744bbf 4f95de7d7
+Merge: 5ec744b 4f95de7
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Wed Feb 2 10:00:21 2022 +0100
 
@@ -50,7 +1267,7 @@ Date:   Wed Feb 2 09:59:07 2022 +0100
     Add pixel format conversion functions
 
 commit 5ec744bbfaad38838051d41bad95d8159ebee93e
-Merge: dcfa6e8bd 47be2bd01
+Merge: dcfa6e8 47be2bd
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Wed Feb 2 09:37:26 2022 +0100
 
@@ -77,7 +1294,7 @@ Date:   Tue Jan 18 21:56:00 2022 +0100
     DirectFB2 at FOSDEM 2022
 
 commit cefad0b1bbda67ae2414e99c140c8234e96c366f
-Merge: e8e8bfcc7 1de2c28a2
+Merge: e8e8bfc 1de2c28
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Tue Jan 18 21:53:06 2022 +0100
 
@@ -98,7 +1315,7 @@ Date:   Tue Jan 18 21:44:42 2022 +0100
     DFVFF: Restart from the beginning after stopping
 
 commit e8e8bfcc7bdbffbbcc74e5ca55e50cf2fa8933b9
-Merge: 33e96c5c8 84697e114
+Merge: 33e96c5 84697e1
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Tue Jan 11 06:28:27 2022 +0100
 
@@ -119,7 +1336,7 @@ Date:   Tue Jan 11 06:23:41 2022 +0100
     DFVFF: no interlaced support
 
 commit 33e96c5c8030c1b37448bd43ea115f082cf056a8
-Merge: ac69e7974 5a49ce419
+Merge: ac69e79 5a49ce4
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Mon Jan 10 09:51:26 2022 +0100
 
@@ -140,7 +1357,7 @@ Date:   Mon Jan 10 09:38:34 2022 +0100
     Restore DirectFBGL interface version
 
 commit ac69e79742b633ef553da667a6d68308d7dedd89
-Merge: 39e204404 99a41095b
+Merge: 39e2044 99a4109
 Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
 Date:   Mon Dec 6 15:45:17 2021 +0100
 

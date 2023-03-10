@@ -2014,7 +2014,8 @@ fusion_fork_handler_child()
                     if (!world->dispatch_loop)
                          raise( SIGTRAP );
 
-               }    break;
+                    break;
+               }
           }
      }
 }
@@ -3257,8 +3258,16 @@ event_dispatcher_loop( DirectThread *thread,
 
           if (world->dispatch_stop) {
                D_DEBUG_AT( Fusion_Main_Dispatch, "  -> ignoring (dispatch_stop)\n" );
+
+               FusionEventDispatcherBuffer *next;
+
+               direct_list_foreach_safe (buf, next, world->event_dispatcher_buffers) {
+                    D_MAGIC_CLEAR( buf );
+                    D_FREE( buf );
+               }
+
                direct_mutex_unlock( &world->event_dispatcher_mutex );
-               return NULL;
+               break;
           }
           else {
                direct_mutex_unlock( &world->event_dispatcher_mutex );
@@ -3676,10 +3685,16 @@ fusion_exit( FusionWorld *world,
      direct_waitqueue_signal( &world->event_dispatcher_call_cond );
      direct_waitqueue_signal( &world->event_dispatcher_cond );
 
+     direct_thread_join( world->event_dispatcher_thread );
+
+     direct_thread_destroy( world->event_dispatcher_thread );
+
      direct_mutex_deinit( &world->event_dispatcher_mutex );
      direct_waitqueue_deinit( &world->event_dispatcher_cond );
      direct_mutex_deinit( &world->event_dispatcher_call_mutex );
      direct_waitqueue_deinit( &world->event_dispatcher_call_cond );
+
+     fusion_skirmish_destroy( &world->shared->arenas_lock );
 
      D_MAGIC_CLEAR( world->shared );
 

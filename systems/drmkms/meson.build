@@ -14,14 +14,12 @@
 #  License along with this library; if not, write to the Free Software
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
-drmkms_dep = [dependency('libdrm', required: false), dependency('libkms', required: false)]
+drmkms_dep = dependency('libdrm', required: false)
 
-foreach dep : drmkms_dep
-  if not dep.found()
-    warning('Building without DRM/KMS support.')
-    subdir_done()
-  endif
-endforeach
+if not drmkms_dep.found()
+  warning('Building without DRM/KMS support.')
+  subdir_done()
+endif
 
 drmkms_sources = [
   'drmkms_layer.c',
@@ -37,3 +35,11 @@ library('directfb_drmkms',
         dependencies: [directfb_dep, drmkms_dep],
         install: true,
         install_dir: join_paths(moduledir, 'systems'))
+
+pkgconfig.generate(filebase: 'directfb-system-drmkms',
+                   variables: 'moduledir=' + moduledir,
+                   name: 'DirectFB-system-drmkms',
+                   description: 'DRM/KMS system module',
+                   requires_private: 'libdrm',
+                   libraries_private: ['-L${moduledir}/systems',
+                                       '-Wl,--whole-archive -ldirectfb_drmkms -Wl,--no-whole-archive'])

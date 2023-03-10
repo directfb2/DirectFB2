@@ -58,6 +58,49 @@ D_DEBUG_DOMAIN( DirectFB, "IDirectFB", "IDirectFB Interface" );
 
 /**********************************************************************************************************************/
 
+/*
+ * private data struct of IDirectFB
+ */
+typedef struct {
+     int                         ref;            /* reference counter */
+
+     CoreDFB                    *core;           /* the core object */
+
+     DFBCooperativeLevel         level;          /* current cooperative level */
+
+     CoreLayer                  *layer;          /* primary display layer */
+     CoreLayerContext           *context;        /* shared context of primary layer */
+     CoreWindowStack            *stack;          /* window stack of primary layer */
+
+     struct {
+          int                    width;
+          int                    height;
+          DFBSurfacePixelFormat  format;
+          DFBSurfaceColorSpace   colorspace;
+
+          CoreWindow            *window;
+          Reaction               reaction;
+          bool                   focused;
+
+          CoreLayerContext      *context;
+          DFBWindowOptions       window_options;
+     } primary;
+
+     bool                        app_focus;
+
+     struct {
+          CoreLayer             *layer;
+          CoreLayerContext      *context;
+          CoreLayerRegion       *region;
+          CoreSurface           *surface;
+          CorePalette           *palette;
+     } layers[MAX_LAYERS];
+
+     bool                        init_done;
+     DirectMutex                 init_lock;
+     DirectWaitQueue             init_wq;
+} IDirectFB_data;
+
 typedef struct {
      DFBScreenCallback  callback;
      void              *callback_ctx;
@@ -346,9 +389,9 @@ IDirectFB_SetVideoMode( IDirectFB *thiz,
                         int        bpp )
 {
      DFBResult             ret;
+     DFBDisplayLayerConfig config;
      DFBSurfacePixelFormat format;
      DFBSurfaceColorSpace  colorspace;
-     DFBDisplayLayerConfig config;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -510,16 +553,16 @@ IDirectFB_CreateSurface( IDirectFB                    *thiz,
                          const DFBSurfaceDescription  *desc,
                          IDirectFBSurface            **ret_interface )
 {
-     IDirectFBSurface       *iface;
      DFBResult               ret;
-     int                     width = 256;
-     int                     height = 256;
+     DFBDisplayLayerConfig   config;
      DFBSurfacePixelFormat   format;
      DFBSurfaceColorSpace    colorspace;
-     DFBSurfaceCapabilities  caps = DSCAPS_NONE;
-     CoreSurface            *surface = NULL;
+     CoreSurface            *surface;
+     IDirectFBSurface       *iface;
      unsigned long           resource_id = 0;
-     DFBDisplayLayerConfig   config;
+     int                     width       = 256;
+     int                     height      = 256;
+     DFBSurfaceCapabilities  caps        = DSCAPS_NONE;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -629,6 +672,8 @@ IDirectFB_CreateSurface( IDirectFB                    *thiz,
           case DSPF_AVYU:
           case DSPF_AiRGB:
           case DSPF_I420:
+          case DSPF_Y42B:
+          case DSPF_Y444:
           case DSPF_LUT1:
           case DSPF_LUT2:
           case DSPF_LUT8:
@@ -636,22 +681,25 @@ IDirectFB_CreateSurface( IDirectFB                    *thiz,
           case DSPF_RGB16:
           case DSPF_RGB18:
           case DSPF_RGB24:
+          case DSPF_BGR24:
           case DSPF_RGB32:
           case DSPF_RGB332:
           case DSPF_UYVY:
           case DSPF_YUY2:
           case DSPF_YV12:
           case DSPF_YV16:
+          case DSPF_YV24:
           case DSPF_NV12:
           case DSPF_NV21:
           case DSPF_NV16:
           case DSPF_NV61:
+          case DSPF_NV24:
+          case DSPF_NV42:
           case DSPF_VYU:
           case DSPF_RGB444:
           case DSPF_RGB555:
           case DSPF_BGR555:
           case DSPF_RGBAF88871:
-          case DSPF_YUV444P:
                break;
 
           default:
@@ -1020,10 +1068,11 @@ IDirectFB_CreatePalette( IDirectFB                    *thiz,
                          const DFBPaletteDescription  *desc,
                          IDirectFBPalette            **ret_interface )
 {
-     DFBResult         ret;
-     IDirectFBPalette *iface;
-     unsigned int      size    = 256;
-     CorePalette      *palette = NULL;
+     DFBResult             ret;
+     CorePalette          *palette;
+     IDirectFBPalette     *iface;
+     unsigned int          size       = 256;
+     DFBSurfaceColorSpace  colorspace = DSCS_RGB;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1039,7 +1088,11 @@ IDirectFB_CreatePalette( IDirectFB                    *thiz,
           size = desc->size;
      }
 
-     ret = CoreDFB_CreatePalette( data->core, size, &palette );
+     if (desc && desc->flags & DPDESC_COLORSPACE) {
+          colorspace = desc->colorspace;
+     }
+
+     ret = CoreDFB_CreatePalette( data->core, size, colorspace, &palette );
      if (ret)
           return ret;
 
@@ -1087,8 +1140,8 @@ IDirectFB_GetScreen( IDirectFB        *thiz,
                      DFBScreenID       screen_id,
                      IDirectFBScreen **ret_interface )
 {
+     GetScreen_Context  context;
      IDirectFBScreen   *iface;
-     GetScreen_Context context;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1139,8 +1192,8 @@ IDirectFB_GetDisplayLayer( IDirectFB              *thiz,
                            DFBDisplayLayerID       layer_id,
                            IDirectFBDisplayLayer **ret_interface )
 {
+     GetDisplayLayer_Context  context;
      IDirectFBDisplayLayer   *iface;
-     GetDisplayLayer_Context context;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1193,8 +1246,8 @@ IDirectFB_GetInputDevice( IDirectFB             *thiz,
                           DFBInputDeviceID       device_id,
                           IDirectFBInputDevice **ret_interface )
 {
+     GetInputDevice_Context  context;
      IDirectFBInputDevice   *iface;
-     GetInputDevice_Context context;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1295,8 +1348,8 @@ IDirectFB_CreateInputEventBuffer( IDirectFB                   *thiz,
                                   IDirectFBEventBuffer       **ret_interface )
 {
      DFBResult                  ret;
-     IDirectFBEventBuffer      *iface;
      CreateEventBuffer_Context  context;
+     IDirectFBEventBuffer      *iface;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1347,9 +1400,9 @@ IDirectFB_CreateImageProvider( IDirectFB               *thiz,
                                const char              *filename,
                                IDirectFBImageProvider **ret_interface )
 {
-     DFBResult                 ret;
-     IDirectFBDataBuffer      *buffer;
-     IDirectFBImageProvider   *iface;
+     DFBResult               ret;
+     IDirectFBDataBuffer    *buffer;
+     IDirectFBImageProvider *iface;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1383,9 +1436,9 @@ IDirectFB_CreateVideoProvider( IDirectFB               *thiz,
                                const char              *filename,
                                IDirectFBVideoProvider **ret_interface )
 {
-     DFBResult                 ret;
-     IDirectFBDataBuffer      *buffer;
-     IDirectFBVideoProvider   *iface;
+     DFBResult               ret;
+     IDirectFBDataBuffer    *buffer;
+     IDirectFBVideoProvider *iface;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1420,41 +1473,32 @@ IDirectFB_CreateFont( IDirectFB                 *thiz,
                       const DFBFontDescription  *desc,
                       IDirectFBFont            **ret_interface )
 {
-     DFBResult                 ret;
-     IDirectFBDataBuffer      *buffer;
-     IDirectFBFont            *iface;
+     DFBResult            ret;
+     IDirectFBDataBuffer *buffer;
+     IDirectFBFont       *iface;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
      D_DEBUG_AT( DirectFB, "%s( %p, '%s' )\n", __FUNCTION__, thiz, filename );
 
      /* Check arguments. */
-     if (!ret_interface)
+     if (!ret_interface || !filename || !desc)
           return DFB_INVARG;
 
-     if (desc) {
-          if ((desc->flags & DFDESC_HEIGHT) && desc->height < 1) {
-               D_DEBUG_AT( DirectFB, "  -> invalid height %d\n", desc->height );
-               return DFB_INVARG;
-          }
-
-          if ((desc->flags & DFDESC_WIDTH) && desc->width < 1) {
-               D_DEBUG_AT( DirectFB, "  -> invalid width %d\n", desc->width );
-               return DFB_INVARG;
-          }
+     ret = direct_access( filename, R_OK );
+     if (ret) {
+          D_DEBUG_AT( DirectFB, "  -> cannot access '%s'\n", filename );
+          return ret;
      }
 
-     if (filename) {
-          if (!desc) {
-               D_DEBUG_AT( DirectFB, "  -> missing description\n" );
-               return DFB_INVARG;
-          }
+     if ((desc->flags & DFDESC_HEIGHT) && desc->height < 1) {
+          D_DEBUG_AT( DirectFB, "  -> invalid height %d\n", desc->height );
+          return DFB_INVARG;
+     }
 
-          ret = direct_access( filename, R_OK );
-          if (ret) {
-               D_DEBUG_AT( DirectFB, "  -> cannot access '%s'\n", filename );
-               return ret;
-          }
+     if ((desc->flags & DFDESC_WIDTH) && desc->width < 1) {
+          D_DEBUG_AT( DirectFB, "  -> invalid width %d\n", desc->width );
+          return DFB_INVARG;
      }
 
      /* Create a data buffer. */
@@ -1556,10 +1600,10 @@ IDirectFB_GetClipboardData( IDirectFB     *thiz,
                             unsigned int  *ret_size )
 {
      DFBResult ret;
-     char      tmp_mime_type[MAX_CLIPBOARD_MIME_TYPE_SIZE];
-     u32       tmp_mime_type_size;
-     char      tmp_data[MAX_CLIPBOARD_DATA_SIZE];
-     u32       tmp_data_size;
+     char      mime_type[MAX_CLIPBOARD_MIME_TYPE_SIZE];
+     u32       mime_type_size;
+     char      clip_data[MAX_CLIPBOARD_DATA_SIZE];
+     u32       size;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFB )
 
@@ -1568,23 +1612,23 @@ IDirectFB_GetClipboardData( IDirectFB     *thiz,
      if (!ret_mime_type && !data && !ret_size)
           return DFB_INVARG;
 
-     ret = CoreDFB_ClipboardGet( data->core, tmp_mime_type, &tmp_mime_type_size, tmp_data, &tmp_data_size );
+     ret = CoreDFB_ClipboardGet( data->core, mime_type, &mime_type_size, clip_data, &size );
      if (ret)
           return ret;
 
-     *ret_mime_type = strdup( tmp_mime_type );
+     *ret_mime_type = D_STRDUP( mime_type );
      if (!*ret_mime_type)
           return D_OOM();
 
-     *ret_clip_data = malloc( tmp_data_size );
+     *ret_clip_data = D_MALLOC( size );
      if (!*ret_clip_data) {
           free( *ret_mime_type );
           return D_OOM();
      }
 
-     direct_memcpy( *ret_clip_data, tmp_data, tmp_data_size );
+     direct_memcpy( *ret_clip_data, clip_data, size );
 
-     *ret_size = tmp_data_size;
+     *ret_size = size;
 
      return DFB_OK;
 }
@@ -1610,7 +1654,7 @@ IDirectFB_GetClipboardTimeStamp( IDirectFB      *thiz,
      ret_timestamp->tv_sec  = ts / 1000000;
      ret_timestamp->tv_usec = ts % 1000000;
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult
@@ -1720,6 +1764,22 @@ IDirectFB_GetSurface( IDirectFB         *thiz,
      return ret;
 }
 
+static DFBResult
+IDirectFB_GetFontSurfaceFormat( IDirectFB             *thiz,
+                                DFBSurfacePixelFormat *ret_fontformat )
+{
+     DIRECT_INTERFACE_GET_DATA( IDirectFB )
+
+     D_DEBUG_AT( DirectFB, "%s( %p )\n", __FUNCTION__, thiz );
+
+     if (!ret_fontformat)
+          return DFB_INVARG;
+
+     *ret_fontformat = dfb_config->font_format;
+
+     return DFB_OK;
+}
+
 static void
 LoadBackgroundImage( IDirectFB       *dfb,
                      CoreWindowStack *stack,
@@ -1783,7 +1843,7 @@ InitLayerPalette( IDirectFB_data  *data,
      DFBResult    ret;
      CorePalette *palette;
 
-     ret = dfb_palette_create( data->core, 256, &palette );
+     ret = dfb_palette_create( data->core, 256, surface->config.colorspace, &palette );
      if (ret) {
           D_DERROR( ret, "IDirectFB: Could not create palette!\n" );
           return ret;
@@ -1903,7 +1963,7 @@ InitLayers( IDirectFB *thiz )
                if (conf->palette_set)
                     InitLayerPalette( data, conf, data->layers[i].surface, &data->layers[i].palette );
 
-               if (conf->src_key_index >= 0 && conf->src_key_index < D_ARRAY_SIZE(conf->palette)) {
+               if (conf->src_key_index >= 0 && conf->src_key_index < 256) {
                     conf->src_key.r = conf->palette[conf->src_key_index].r;
                     conf->src_key.g = conf->palette[conf->src_key_index].g;
                     conf->src_key.b = conf->palette[conf->src_key_index].b;
@@ -2058,6 +2118,7 @@ IDirectFB_Construct( IDirectFB *thiz )
      thiz->WaitForSync            = IDirectFB_WaitForSync;
      thiz->GetInterface           = IDirectFB_GetInterface;
      thiz->GetSurface             = IDirectFB_GetSurface;
+     thiz->GetFontSurfaceFormat   = IDirectFB_GetFontSurfaceFormat;
 
      direct_mutex_init( &data->init_lock );
      direct_waitqueue_init( &data->init_wq );

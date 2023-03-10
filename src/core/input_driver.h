@@ -25,11 +25,11 @@
 
 static int                   driver_get_available    ( void );
 
-static void                  driver_get_info         ( InputDriverInfo               *info );
+static void                  driver_get_info         ( InputDriverInfo               *driver_info );
 
 static DFBResult             driver_open_device      ( CoreInputDevice               *device,
                                                        unsigned int                   number,
-                                                       InputDeviceInfo               *info,
+                                                       InputDeviceInfo               *device_info,
                                                        void                         **driver_data );
 
 static DFBResult             driver_get_keymap_entry ( CoreInputDevice               *device,
@@ -108,7 +108,7 @@ stop_hotplug()
 }
 #endif
 
-static const InputDriverFuncs driver_funcs = {
+static const InputDriverFuncs inputdriver_funcs = {
      .GetAvailable     = driver_get_available,
      .GetDriverInfo    = driver_get_info,
      .OpenDevice       = driver_open_device,
@@ -124,28 +124,28 @@ static const InputDriverFuncs driver_funcs = {
      .GetAxisInfo      = driver_get_axis_info,
 #endif
 #ifdef DFB_INPUTDRIVER_HAS_SET_CONFIGURATION
-     .SetConfiguration = driver_set_configuration,
+     .SetConfiguration = driver_set_configuration
 #endif
 };
 
-#define DFB_INPUT_DRIVER(shortname)                                    \
-__attribute__((constructor)) void directfb_##shortname##_ctor( void ); \
-__attribute__((destructor))  void directfb_##shortname##_dtor( void ); \
-                                                                       \
-void                                                                   \
-directfb_##shortname##_ctor()                                          \
-{                                                                      \
-     direct_modules_register( &dfb_input_modules,                      \
-                              DFB_INPUT_DRIVER_ABI_VERSION,            \
-                              #shortname,                              \
-                              &driver_funcs );                         \
-}                                                                      \
-                                                                       \
-void                                                                   \
-directfb_##shortname##_dtor()                                          \
-{                                                                      \
-     direct_modules_unregister( &dfb_input_modules,                    \
-                                #shortname );                          \
+#define DFB_INPUT_DRIVER(shortname)                         \
+                                                            \
+__attribute__((constructor))                                \
+static void                                                 \
+directfb_##shortname##_ctor()                               \
+{                                                           \
+     direct_modules_register( &dfb_input_drivers,           \
+                              DFB_INPUT_DRIVER_ABI_VERSION, \
+                              #shortname,                   \
+                              &inputdriver_funcs );         \
+}                                                           \
+                                                            \
+__attribute__((destructor))                                 \
+static void                                                 \
+directfb_##shortname##_dtor()                               \
+{                                                           \
+     direct_modules_unregister( &dfb_input_drivers,         \
+                                #shortname );               \
 }
 
 #endif

@@ -598,7 +598,7 @@ direct_config_set( const char *name,
      } else
      if (strcmp( name, "default-interface-implementation" ) == 0) {
           if (value) {
-               char  itype[0xff];
+               char  itype[255];
                char *iname = 0;
                int   n     = 0;
 
@@ -610,7 +610,9 @@ direct_config_set( const char *name,
                     D_REALLOC( direct_config->default_interface_implementation_types, sizeof(char*) * (n + 2) );
                direct_config->default_interface_implementation_names =
                     D_REALLOC( direct_config->default_interface_implementation_names, sizeof(char*) * (n + 2) );
+
                iname = strstr( value, "/" );
+
                if (!iname) {
                     D_ERROR( "Direct/Config: '%s': No interface/implementation specified!\n", name );
                     return DR_INVARG;

@@ -80,16 +80,18 @@ dfb_palette_pool_create( const FusionWorld *world )
 /**********************************************************************************************************************/
 
 DFBResult
-dfb_palette_create( CoreDFB       *core,
-                    unsigned int   size,
-                    CorePalette  **ret_palette )
+dfb_palette_create( CoreDFB               *core,
+                    unsigned int           size,
+                    DFBSurfaceColorSpace   colorspace,
+                    CorePalette          **ret_palette )
 {
      CorePalette *palette;
 
-     D_DEBUG_AT( Core_Palette, "%s( %u )\n", __FUNCTION__, size );
-
      D_ASSERT( ret_palette );
 
+     D_DEBUG_AT( Core_Palette, "%s( %u )\n", __FUNCTION__, size );
+
+     /* Create the palette object. */
      palette = dfb_core_create_palette( core );
      if (!palette)
           return DFB_FUSION;
@@ -112,12 +114,13 @@ dfb_palette_create( CoreDFB       *core,
      }
 
      palette->num_entries = size;
+     palette->colorspace  = colorspace;
 
      CorePalette_Init_Dispatch( core, palette, &palette->call );
 
      D_MAGIC_SET( palette, CorePalette );
 
-     /* Activate object. */
+     /* Activate the object. */
      fusion_object_activate( &palette->object );
 
      /* Return the new palette. */

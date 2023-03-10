@@ -53,8 +53,6 @@ struct __DFB_CoreSurfaceBuffer {
 
      CoreSurfaceBufferFlags  flags;       /* Configuration and state flags. */
 
-     DFBSurfacePixelFormat   format;      /* Pixel format of buffer data. */
-
      FusionVector            allocs;      /* Allocations within surface pools. */
 
      CoreSurfaceConfig       config;      /* Configuration of its surface at the time of the buffer creation */

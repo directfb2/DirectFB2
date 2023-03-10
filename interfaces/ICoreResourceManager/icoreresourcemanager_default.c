@@ -104,9 +104,9 @@ ICoreResourceClient_CheckSurface( ICoreResourceClient     *thiz,
 
      D_DEBUG_AT( ICoreResourceClient_default, "%s( %p [%lu] )\n", __FUNCTION__, thiz, data->identity );
 
-     D_DEBUG_AT( ICoreResourceClient_default, "  -> %dx%d %s %uk at %uk, resource id %lu\n",
+     D_DEBUG_AT( ICoreResourceClient_default, "  -> %dx%d %s %uk at %uk, resource id %llu\n",
                  config->size.w, config->size.h, dfb_pixelformat_name( config->format ),
-                 surface_mem( config ) / 1024, data->surface_mem / 1024, resource_id );
+                 surface_mem( config ) / 1024, data->surface_mem / 1024, (unsigned long long) resource_id );
 
      return DFB_OK;
 }

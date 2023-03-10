@@ -29,8 +29,8 @@ D_DEBUG_DOMAIN( DirectFB_Config, "DirectFB/Config", "DirectFB Runtime Configurat
 
 /**********************************************************************************************************************/
 
-DFBConfig         *dfb_config = NULL;
-static const char *dfb_config_usage =
+DFBConfig  *dfb_config = NULL;
+const char *dfb_config_usage =
      "\n"
      " --dfb-help                      Output DirectFB usage information and exit\n"
      " --dfb:<option>[,<option>...]    Pass options to DirectFB (see below)\n"
@@ -48,9 +48,9 @@ static const char *dfb_config_usage =
      "  [no-]core-sighandler           Enable core signal handler, for emergency shutdowns (default enabled)\n"
      "  [no-]ownership-check           Check privileges when calling GetSurface() or GetWindow() (default enabled)\n"
      "  [no-]deinit-check              Check if all allocated resources have been released on exit (default enabled)\n"
-     "  [no-]shutdown-info             Dump objects from all pools if some objects remain alive\n"
      "  resource-manager=<impl>        Specify a resource manager implementation\n"
-     "  session=<num>                  Select the multi app world which is joined (starting with 0) or created (-1)\n"
+     "  session=<num>                  Select the multi application world which is joined or created\n"
+     "                                 -1 forces the creation of a new world using the lowest unused session number\n"
      "  screen-frame-interval=<us>     Screen refresh interval used if not defined by the encoder (default = 16666)\n"
      "  [no-]primary-only              Tell application only about the primary layer\n"
      "  primary-id=<surface-id>        Set ID of primary surface to use\n"
@@ -244,9 +244,9 @@ config_allocate()
 
      dfb_config = D_CALLOC( 1, sizeof(DFBConfig) );
 
-     if (direct_access( "/dev/dri/card0", O_RDWR ) == DR_OK)
+     if (direct_access( "/dev/dri/card0", W_OK ) == DR_OK)
           dfb_config->system                           = D_STRDUP( "drmkms" );
-     else if (direct_access( "/dev/fb0", O_RDWR ) == DR_OK)
+     else if (direct_access( "/dev/fb0", W_OK ) == DR_OK)
           dfb_config->system                           = D_STRDUP( "fbdev" );
 
      dfb_config->banner                                = true;
@@ -290,11 +290,11 @@ config_allocate()
 static DFBResult
 config_read( const char *filename )
 {
-     DFBResult   ret = DFB_OK;
+     DFBResult   ret;
      DirectFile  f;
      char        line[400];
-     char       *slash = 0;
-     char       *cwd   = 0;
+     char       *slash = NULL;
+     char       *cwd   = NULL;
 
      config_allocate();
 
@@ -304,7 +304,8 @@ config_read( const char *filename )
      if (ret) {
           D_DEBUG_AT( DirectFB_Config, "Unable to open config file '%s'!\n", filename );
           return DFB_IO;
-     } else {
+     }
+     else {
           D_DEBUG_AT( DirectFB_Config, "Parsing config file '%s'\n", filename );
      }
 
@@ -464,12 +465,6 @@ dfb_config_set( const char *name,
      } else
      if (strcmp( name, "no-deinit-check" ) == 0) {
           dfb_config->deinit_check = false;
-     } else
-     if (strcmp( name, "shutdown-info" ) == 0) {
-          dfb_config->shutdown_info = true;
-     } else
-     if (strcmp( name, "no-shutdown-info" ) == 0) {
-          dfb_config->shutdown_info = false;
      } else
      if (strcmp( name, "resource-manager" ) == 0) {
           if (value) {
@@ -928,7 +923,8 @@ dfb_config_set( const char *name,
                     return DFB_INVARG;
                }
 
-               conf->rotate = rotate;
+               conf->rotate     = rotate;
+               conf->rotate_set = true;
           }
           else {
                D_ERROR( "DirectFB/Config: '%s': No value specified!\n", name );
@@ -1415,11 +1411,10 @@ dfb_config_set( const char *name,
 }
 
 DFBResult
-dfb_config_init( int    *argc,
-                 char *(*argv[]) )
+dfb_config_init( int   *argc,
+                 char **argv[] )
 {
      DFBResult  ret;
-     int        i;
      char      *home = direct_getenv( "HOME" );
      char      *prog = NULL;
      char      *session;
@@ -1523,6 +1518,8 @@ dfb_config_init( int    *argc,
 
      /* Read settings from command line. */
      if (argc && argv) {
+          int i;
+
           for (i = 1; i < *argc; i++) {
                if (strcmp( (*argv)[i], "--dfb-help" ) == 0) {
                     print_config_usage();

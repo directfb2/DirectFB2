@@ -23,15 +23,17 @@
 
 /**********************************************************************************************************************/
 
-static void           system_get_info             ( CoreSystemInfo *info );
+static void           system_get_info             ( CoreSystemInfo   *info );
 
-static DFBResult      system_initialize           ( CoreDFB *core, void **ret_data );
+static DFBResult      system_initialize           ( CoreDFB          *core,
+                                                    void            **ret_data );
 
-static DFBResult      system_join                 ( CoreDFB *core, void **ret_data );
+static DFBResult      system_join                 ( CoreDFB          *core,
+                                                    void            **ret_data );
 
-static DFBResult      system_shutdown             ( bool emergency );
+static DFBResult      system_shutdown             ( bool              emergency );
 
-static DFBResult      system_leave                ( bool emergency );
+static DFBResult      system_leave                ( bool              emergency );
 
 static DFBResult      system_suspend              ( void );
 
@@ -43,23 +45,29 @@ static VideoMode     *system_get_current_mode     ( void );
 
 static DFBResult      system_thread_init          ( void );
 
-static bool           system_input_filter         ( CoreInputDevice *device, DFBInputEvent *event );
+static bool           system_input_filter         ( CoreInputDevice  *device,
+                                                    DFBInputEvent    *event );
 
-static volatile void *system_map_mmio             ( unsigned int offset, int length );
+static volatile void *system_map_mmio             ( unsigned int      offset,
+                                                    int               length );
 
-static void           system_unmap_mmio           ( volatile void  *addr, int length );
+static void           system_unmap_mmio           ( volatile void    *addr,
+                                                    int               length );
 
 static int            system_get_accelerator      ( void );
 
-static unsigned long  system_video_memory_physical( unsigned int offset );
+static unsigned long  system_video_memory_physical( unsigned int      offset );
 
-static void          *system_video_memory_virtual ( unsigned int offset );
+static void          *system_video_memory_virtual ( unsigned int      offset );
 
 static unsigned int   system_videoram_length      ( void );
 
-static void           system_get_busid            ( int *ret_bus, int *ret_dev, int *ret_func );
+static void           system_get_busid            ( int              *ret_bus,
+                                                    int              *ret_dev,
+                                                    int              *ret_func );
 
-static void           system_get_deviceid         ( unsigned int *ret_vendor_id, unsigned int *ret_device_id );
+static void           system_get_deviceid         ( unsigned int     *ret_vendor_id,
+                                                    unsigned int     *ret_device_id );
 
 static CoreSystemFuncs system_funcs = {
      .GetSystemInfo       = system_get_info,
@@ -80,19 +88,19 @@ static CoreSystemFuncs system_funcs = {
      .VideoMemoryVirtual  = system_video_memory_virtual,
      .VideoRamLength      = system_videoram_length,
      .GetBusID            = system_get_busid,
-     .GetDeviceID         = system_get_deviceid,
+     .GetDeviceID         = system_get_deviceid
 };
 
-#define DFB_CORE_SYSTEM(shortname)                                     \
-__attribute__((constructor)) void directfb_##shortname##_ctor( void ); \
-                                                                       \
-void                                                                   \
-directfb_##shortname##_ctor()                                          \
-{                                                                      \
-     direct_modules_register( &dfb_core_systems,                       \
-                              DFB_CORE_SYSTEM_ABI_VERSION,             \
-                              #shortname,                              \
-                              &system_funcs );                         \
+#define DFB_CORE_SYSTEM(shortname)                         \
+                                                           \
+__attribute__((constructor))                               \
+static void                                                \
+directfb_##shortname##_ctor()                              \
+{                                                          \
+     direct_modules_register( &dfb_core_systems,           \
+                              DFB_CORE_SYSTEM_ABI_VERSION, \
+                              #shortname,                  \
+                              &system_funcs );             \
 }
 
 #endif

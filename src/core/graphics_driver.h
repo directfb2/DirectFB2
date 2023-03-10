@@ -25,17 +25,23 @@
 
 static int       driver_probe       ( void );
 
-static void      driver_get_info    ( GraphicsDriverInfo *info );
+static void      driver_get_info    ( GraphicsDriverInfo  *driver_info );
 
-static DFBResult driver_init_driver ( GraphicsDeviceFuncs *funcs, void *driver_data, void *device_data, CoreDFB *core );
+static DFBResult driver_init_driver ( GraphicsDeviceFuncs *funcs,
+                                      void                *driver_data,
+                                      void                *device_data,
+                                      CoreDFB             *core );
 
-static DFBResult driver_init_device ( GraphicsDeviceInfo *device_info, void *driver_data, void *device_data );
+static DFBResult driver_init_device ( GraphicsDeviceInfo  *device_info,
+                                      void                *driver_data,
+                                      void                *device_data );
 
-static void      driver_close_device( void *driver_data, void *device_data );
+static void      driver_close_device( void                *driver_data,
+                                      void                *device_data );
 
-static void      driver_close_driver( void *driver_data );
+static void      driver_close_driver( void                *driver_data );
 
-static GraphicsDriverFuncs driver_funcs = {
+static GraphicsDriverFuncs gfxdriver_funcs = {
      .Probe         = driver_probe,
      .GetDriverInfo = driver_get_info,
      .InitDriver    = driver_init_driver,
@@ -44,24 +50,24 @@ static GraphicsDriverFuncs driver_funcs = {
      .CloseDriver   = driver_close_driver
 };
 
-#define DFB_GRAPHICS_DRIVER(shortname)                                 \
-__attribute__((constructor)) void directfb_##shortname##_ctor( void ); \
-__attribute__((destructor))  void directfb_##shortname##_dtor( void ); \
-                                                                       \
-void                                                                   \
-directfb_##shortname##_ctor()                                          \
-{                                                                      \
-     direct_modules_register( &dfb_graphics_drivers,                   \
-                              DFB_GRAPHICS_DRIVER_ABI_VERSION,         \
-                              #shortname,                              \
-                              &driver_funcs );                         \
-}                                                                      \
-                                                                       \
-void                                                                   \
-directfb_##shortname##_dtor()                                          \
-{                                                                      \
-     direct_modules_unregister( &dfb_graphics_drivers,                 \
-                                #shortname );                          \
+#define DFB_GRAPHICS_DRIVER(shortname)                         \
+                                                               \
+__attribute__((constructor))                                   \
+static void                                                    \
+directfb_##shortname##_ctor()                                  \
+{                                                              \
+     direct_modules_register( &dfb_graphics_drivers,           \
+                              DFB_GRAPHICS_DRIVER_ABI_VERSION, \
+                              #shortname,                      \
+                              &gfxdriver_funcs );              \
+}                                                              \
+                                                               \
+__attribute__((destructor))                                    \
+static void                                                    \
+directfb_##shortname##_dtor()                                  \
+{                                                              \
+     direct_modules_unregister( &dfb_graphics_drivers,         \
+                                #shortname );                  \
 }
 
 #endif

@@ -213,12 +213,7 @@ vt_init_switching()
      }
 
      if (vt->switching) {
-          struct vt_mode   vtm = {
-               .mode   = VT_PROCESS,
-               .waitv  = 0,
-               .relsig = SIG_SWITCH_FROM,
-               .acqsig = SIG_SWITCH_TO,
-          };
+          struct vt_mode   vtm;
           struct sigaction sig_tty;
 
           memset( &sig_tty, 0, sizeof(sig_tty) );
@@ -243,6 +238,11 @@ vt_init_switching()
                close( vt->fd );
                return DFB_INIT;
           }
+
+          memset( &vtm, 0, sizeof(vtm) );
+          vtm.mode   = VT_PROCESS;
+          vtm.relsig = SIG_SWITCH_FROM;
+          vtm.acqsig = SIG_SWITCH_TO;
 
           if (ioctl( vt->fd, VT_SETMODE, &vtm ) < 0) {
                D_PERROR( "DRMKMS/VT: VT_SETMODE failed!\n" );
@@ -302,7 +302,7 @@ vt_start_flushing()
 }
 
 DFBResult
-vt_initialize( CoreDFB *core )
+drmkms_vt_initialize( CoreDFB *core )
 {
      DFBResult       ret;
      struct vt_stat  vs;
@@ -454,7 +454,7 @@ vt_stop_flushing()
 }
 
 DFBResult
-vt_shutdown( bool emergency )
+drmkms_vt_shutdown( bool emergency )
 {
      const char blankon_str[]  = "\033[9;10]";
      const char cursoron_str[] = "\033[?0;0;0c";
@@ -532,8 +532,8 @@ vt_shutdown( bool emergency )
 }
 
 bool
-vt_switch_num( int num,
-               bool key_pressed )
+drmkms_vt_switch_num( int  num,
+                      bool key_pressed )
 {
      D_DEBUG_AT( VT, "%s( %d )\n", __FUNCTION__, num );
 

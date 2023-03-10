@@ -24,7 +24,7 @@
 #include <directfb_windows.h>
 #include <fusion/reactor.h>
 
-DECLARE_MODULE_DIRECTORY( dfb_core_wm_modules );
+DECLARE_MODULE_DIRECTORY( dfb_wm_modules );
 
 /**********************************************************************************************************************/
 
@@ -263,8 +263,7 @@ typedef enum {
      CORE_WM_WINDOW_STATE   = 0x00000004,
      CORE_WM_WINDOW_RESTACK = 0x00000005,
      CORE_WM_WINDOW_FOCUS   = 0x00000006,
-
-     _CORE_WM_NUM_CHANNELS  = 0x00000007
+     CORE_WM_NUM_CHANNELS   = 0x00000007
 } CoreWMChannels;
 
 typedef struct {

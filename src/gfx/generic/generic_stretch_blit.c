@@ -222,7 +222,7 @@ static const StretchFunctionTable *stretch_tables[DFB_NUM_PIXELFORMATS] = {
      [DFB_PIXELFORMAT_INDEX(DSPF_RGB555)]     = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_BGR555)]     = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_RGBA5551)]   = NULL,
-     [DFB_PIXELFORMAT_INDEX(DSPF_YUV444P)]    = NULL,
+     [DFB_PIXELFORMAT_INDEX(DSPF_Y444)]       = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_ARGB8565)]   = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_RGBAF88871)] = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_AVYU)]       = NULL,
@@ -230,6 +230,11 @@ static const StretchFunctionTable *stretch_tables[DFB_NUM_PIXELFORMATS] = {
      [DFB_PIXELFORMAT_INDEX(DSPF_A1_LSB)]     = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_YV16)]       = NULL,
      [DFB_PIXELFORMAT_INDEX(DSPF_NV61)]       = NULL,
+     [DFB_PIXELFORMAT_INDEX(DSPF_Y42B)]       = NULL,
+     [DFB_PIXELFORMAT_INDEX(DSPF_YV24)]       = NULL,
+     [DFB_PIXELFORMAT_INDEX(DSPF_NV24)]       = NULL,
+     [DFB_PIXELFORMAT_INDEX(DSPF_NV42)]       = NULL,
+     [DFB_PIXELFORMAT_INDEX(DSPF_BGR24)]      = NULL,
 };
 
 /**********************************************************************************************************************/
@@ -587,7 +592,7 @@ stretch_hvx( CardState    *state,
                else {
                     const DFBColor *color = &entries[state->src_colorkey % gfxs->Blut->num_entries];
 
-                    ctx.key = dfb_color_to_pixel( gfxs->dst_format, color->r, color->g, color->b );
+                    ctx.key = dfb_pixel_from_color( gfxs->dst_format, state->destination->config.colorspace, color );
                }
           }
      }
@@ -597,20 +602,20 @@ stretch_hvx( CardState    *state,
           if (state->blittingflags & DSBLIT_SRC_COLORKEY) {
                DFBColor color;
 
-               dfb_pixel_to_color( gfxs->src_format, state->src_colorkey, &color );
+               dfb_pixel_to_color( gfxs->src_format, state->source->config.colorspace, state->src_colorkey, &color );
 
-               ctx.key = dfb_color_to_pixel( gfxs->dst_format, color.r, color.g, color.b );
+               ctx.key = dfb_pixel_from_color( gfxs->dst_format, state->destination->config.colorspace, &color );
           }
      }
 
      if (state->blittingflags & DSBLIT_COLORKEY_PROTECT) {
           if (DFB_PIXELFORMAT_IS_INDEXED( gfxs->dst_format ))
                ctx.protect = state->colorkey.index;
-          else
-               ctx.protect = dfb_color_to_pixel( gfxs->dst_format,
-                                                 state->colorkey.r,
-                                                 state->colorkey.g,
-                                                 state->colorkey.b );
+          else {
+               DFBColor color = { 0, state->colorkey.r, state->colorkey.g, state->colorkey.b };
+
+               ctx.protect = dfb_pixel_from_color( gfxs->dst_format, state->destination->config.colorspace, &color );
+          }
      }
 
      dst = gfxs->dst_org[0] + drect->y * gfxs->dst_pitch + DFB_BYTES_PER_LINE( gfxs->dst_format, drect->x );

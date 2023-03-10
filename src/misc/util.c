@@ -24,8 +24,8 @@ D_DEBUG_DOMAIN( DirectFB_Updates, "DirectFB/Updates", "DirectFB Updates" );
 
 /**********************************************************************************************************************/
 
-const DirectFBPixelFormatNames(dfb_pixelformat_names)
-const DirectFBColorSpaceNames (dfb_colorspace_names)
+static const DirectFBPixelFormatNames(dfb_pixelformat_names)
+static const DirectFBColorSpaceNames(dfb_colorspace_names)
 
 /**********************************************************************************************************************/
 
@@ -331,7 +331,7 @@ dfb_updates_add( DFBUpdates      *updates,
           dfb_region_region_union( &updates->bounding, region );
 
           D_DEBUG_AT( DirectFB_Updates, "  -> added as      [%d] %4d,%4d-%4dx%4d\n", updates->num_regions - 1,
-                      DFB_RECTANGLE_VALS_FROM_REGION( &updates->regions[updates->num_regions - 1] ) );
+                      DFB_RECTANGLE_VALS_FROM_REGION( &updates->regions[updates->num_regions-1] ) );
      }
 }
 
@@ -608,4 +608,17 @@ dfb_pixelformat_parse( const char *format )
      }
 
      return DSPF_UNKNOWN;
+}
+
+DFBSurfaceColorSpace
+dfb_colorspace_parse( const char *colorspace )
+{
+     int i;
+
+     for (i = 0; dfb_colorspace_names[i].colorspace != DSCS_UNKNOWN; i++) {
+          if (!strcasecmp( colorspace, dfb_colorspace_names[i].name ))
+               return dfb_colorspace_names[i].colorspace;
+     }
+
+     return DSCS_UNKNOWN;
 }

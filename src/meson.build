@@ -92,7 +92,7 @@ directfb_sources = [
   'media/idirectfbimageprovider.c',
   'media/idirectfbvideoprovider.c',
   'misc/conf.c',
-  'misc/util.c',
+  'misc/util.c', directfb_strings,
   'misc/gfx_util.c',
   'windows/idirectfbwindow.c'
 ]
@@ -162,13 +162,13 @@ else
   surface_pool_sources = 'core/local_surface_pool.c'
 endif
 
-build_h = configuration_data()
+build_conf = configuration_data()
 
-build_h.set_quoted('DIRECTFB_VERSION_VENDOR', get_option('vendor-version'))
+build_conf.set_quoted('DIRECTFB_VERSION_VENDOR', get_option('vendor-version'))
 
-build_h.set10('DFB_SMOOTH_SCALING', get_option('smooth-scaling'))
+build_conf.set10('DFB_SMOOTH_SCALING', get_option('smooth-scaling'))
 
-configure_file(configuration: build_h,
+configure_file(configuration: build_conf,
                output: 'build.h',
                install: true,
                install_dir: join_paths(get_option('includedir'), 'directfb-internal'))
@@ -176,36 +176,37 @@ configure_file(configuration: build_h,
 libdirectfb = library('directfb-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
                       directfb_sources, flux_sources, surface_pool_sources,
                       include_directories: [config_inc, directfb_inc],
-                      c_args: ['-DBUILDTIME="' + run_command('date', '-u', '+%Y-%m-%d %H:%M').stdout().strip() + '"',
-                               '-DSYSCONFDIR="/dfb/etc"'],
+                      c_args: ['-DBUILDTIME="'  + run_command('date', '-u', '+%Y-%m-%d %H:%M',
+                                                              check: true).stdout().strip()                  + '"',
+                               '-DSYSCONFDIR="' + join_paths(get_option('prefix'), get_option('sysconfdir')) + '"'],
                       dependencies: [direct_dep, fusion_dep],
                       version: '0.@0@.0'.format(directfb_micro_version),
                       install: true)
 
-meson.add_install_script(join_paths(meson.source_root(), 'meson_symlink.sh'),
-                         'libdirectfb-@0@.@1@.so'.format(directfb_major_version, directfb_minor_version),
-                         join_paths(get_option('prefix'), get_option('libdir'), 'libdirectfb.so'))
+install_symlink('libdirectfb' + libsuffix,
+                pointing_to: 'libdirectfb-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
+                install_dir: join_paths(get_option('prefix'), get_option('libdir')))
 
-install_headers('idirectfb.h', subdir: 'directfb-internal')
-install_headers(core_headers, subdir: 'directfb-internal/core')
+install_headers('idirectfb.h',   subdir: 'directfb-internal')
+install_headers(core_headers,    subdir: 'directfb-internal/core')
 install_headers(display_headers, subdir: 'directfb-internal/display')
-install_headers(gfx_headers, subdir: 'directfb-internal/gfx')
-install_headers(media_headers, subdir: 'directfb-internal/media')
-install_headers(misc_headers, subdir: 'directfb-internal/misc')
+install_headers(gfx_headers,     subdir: 'directfb-internal/gfx')
+install_headers(media_headers,   subdir: 'directfb-internal/media')
+install_headers(misc_headers,    subdir: 'directfb-internal/misc')
 
 pkgconfig.generate(filebase: 'directfb',
                    name: 'DirectFB',
                    description: 'Graphics and windowing library in Frame Buffer memory',
                    requires: 'direct fusion',
+                   requires_private: 'directfb-gfxdriver directfb-inputdriver directfb-interface directfb-system directfb-wm',
                    libraries: '-L${libdir} -ldirectfb',
                    subdirs: 'directfb')
 
 pkgconfig.generate(filebase: 'directfb-internal',
                    variables: ['moduledirname=' + moduledirname, 'moduledir=' + moduledir],
-                   name: 'DirectFB-Internal',
+                   name: 'DirectFB-internal',
                    description: 'DirectFB internal module infrastructure',
                    requires: 'directfb',
-                   extra_cflags: '-D_GNU_SOURCE',
                    subdirs: 'directfb-internal')
 
 directfb_dep = declare_dependency(include_directories: directfb_inc, link_with: [libdirectfb, libdirect, libfusion])

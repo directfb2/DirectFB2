@@ -29,7 +29,7 @@
 #include "fbdev_system.h"
 #include "fbdev_vt.h"
 
-D_DEBUG_DOMAIN( FBDev_System, "FBDev/System", "FBDev System" );
+D_DEBUG_DOMAIN( FBDev_System, "FBDev/System", "FBDev System Module" );
 
 DFB_CORE_SYSTEM( fbdev )
 
@@ -167,14 +167,14 @@ fbdev_ioctl_call_handler( int           caller,
      shared = fbdev->shared;
 
      if (shared->vt && call_arg == FBIOPUT_VSCREENINFO)
-          vt_set_graphics_mode( true );
+          fbdev_vt_set_graphics_mode( true );
 
      erno = ioctl( fbdev->fd, call_arg, call_ptr );
      if (erno < 0)
           erno = errno;
 
      if (shared->vt && call_arg == FBIOPUT_VSCREENINFO)
-          vt_set_graphics_mode( false );
+          fbdev_vt_set_graphics_mode( false );
 
      *ret_val = erno;
 
@@ -283,7 +283,8 @@ local_deinit( FBDevData *fbdev )
      if (fbdev->addr)
           munmap( fbdev->addr, fbdev->fix->smem_len );
 
-     D_FREE( fbdev->fix );
+     if (fbdev->fix)
+          D_FREE( fbdev->fix );
 
      if (fbdev->fd != -1)
           close( fbdev->fd );
@@ -371,14 +372,14 @@ system_initialize( CoreDFB  *core,
           goto error;
 
      if (shared->vt) {
-          ret = vt_initialize( core, fbdev->fd );
+          ret = fbdev_vt_initialize( core, fbdev->fd );
           if (ret)
                goto error;
      }
 
      if (ioctl( fbdev->fd, FBIOGET_VSCREENINFO, &shared->orig_var ) < 0) {
-          ret = DFB_INIT;
           D_PERROR( "FBDev/System: Could not get variable screen information!\n" );
+          ret = DFB_INIT;
           goto error;
      }
 
@@ -386,8 +387,8 @@ system_initialize( CoreDFB  *core,
      shared->current_var.accel_flags = 0;
 
      if (ioctl( fbdev->fd, FBIOPUT_VSCREENINFO, &shared->current_var ) < 0) {
-          ret = DFB_INIT;
           D_PERROR( "FBDev/System: Could not disable console acceleration!\n" );
+          ret = DFB_INIT;
           goto error;
      }
 
@@ -473,7 +474,7 @@ error:
           ioctl( fbdev->fd, FBIOPUT_VSCREENINFO, &shared->orig_var );
 
      if (shared->vt)
-          vt_shutdown( false, fbdev->fd );
+          fbdev_vt_shutdown( false, fbdev->fd );
 
      local_deinit( fbdev );
 
@@ -568,7 +569,7 @@ system_shutdown( bool emergency )
      ioctl( fbdev->fd, FBIOPUT_VSCREENINFO, &shared->orig_var );
 
      if (shared->vt)
-          vt_shutdown( emergency, fbdev->fd );
+          fbdev_vt_shutdown( emergency, fbdev->fd );
 
      local_deinit( fbdev );
 
@@ -662,7 +663,7 @@ system_input_filter( CoreInputDevice *device,
      if (shared->vt) {
           if (DFB_KEY_TYPE( event->key_symbol ) == DIKT_FUNCTION && event->modifiers == (DIMM_CONTROL | DIMM_ALT) &&
               (event->type == DIET_KEYPRESS || event->type == DIET_KEYRELEASE))
-               return vt_switch_num( event->key_symbol - DIKS_F1 + 1, event->type == DIET_KEYPRESS );
+               return fbdev_vt_switch_num( event->key_symbol - DIKS_F1 + 1, event->type == DIET_KEYPRESS );
      }
 
      return false;
@@ -721,7 +722,7 @@ system_get_accelerator()
      D_ASSERT( fbdev != NULL );
 
      /* Accelerator ID selecting the graphics driver. */
-     accel = direct_config_get_int_value("accelerator");
+     accel = direct_config_get_int_value( "accelerator" );
      if (accel)
           return accel;
 

@@ -626,7 +626,7 @@ static DFBResult
 IDirectFBSurface_GetFramebufferOffset( IDirectFBSurface *thiz,
                                        int              *offset )
 {
-     DIRECT_INTERFACE_GET_DATA(IDirectFBSurface)
+     DIRECT_INTERFACE_GET_DATA( IDirectFBSurface )
 
      D_DEBUG_AT( Surface, "%s( %p )\n", __FUNCTION__, thiz );
 
@@ -690,6 +690,9 @@ IDirectFBSurface_Flip( IDirectFBSurface    *thiz,
      if (!data->area.current.w || !data->area.current.h ||
          (region && (region->x1 > region->x2 || region->y1 > region->y2)))
           return DFB_INVAREA;
+
+     if (data->flip_func)
+          return data->flip_func( data->flip_func_ctx );
 
      IDirectFBSurface_StopAll( data );
 
@@ -1226,8 +1229,12 @@ IDirectFBSurface_SetSrcColorKey( IDirectFBSurface *thiz,
 
      if (DFB_PIXELFORMAT_IS_INDEXED( data->surface->config.format ))
           data->src_key.value = dfb_palette_search( data->surface->palette, r, g, b, 0x80 );
-     else
-          data->src_key.value = dfb_color_to_pixel( data->surface->config.format, r, g, b );
+     else {
+          DFBColor color = { 0, r, g, b };
+
+          data->src_key.value = dfb_pixel_from_color( data->surface->config.format, data->surface->config.colorspace,
+                                                      &color );
+     }
 
      return DFB_OK;
 }
@@ -1279,8 +1286,12 @@ IDirectFBSurface_SetDstColorKey( IDirectFBSurface *thiz,
 
      if (DFB_PIXELFORMAT_IS_INDEXED( data->surface->config.format ))
           data->dst_key.value = dfb_palette_search( data->surface->palette, r, g, b, 0x80 );
-     else
-          data->dst_key.value = dfb_color_to_pixel( data->surface->config.format, r, g, b );
+     else {
+          DFBColor color = { 0, r, g, b };
+
+          data->dst_key.value = dfb_pixel_from_color( data->surface->config.format, data->surface->config.colorspace,
+                                                      &color );
+     }
 
      dfb_state_set_dst_colorkey( &data->state, data->dst_key.value );
 
@@ -1366,8 +1377,8 @@ IDirectFBSurface_Blit( IDirectFBSurface   *thiz,
           return DFB_INVAREA;
 
      if (source_rect) {
-          D_DEBUG_AT( Surface, "  -> [%2d] %4d,%4d-%4dx%4d <- %4d,%4d\n",
-                      0, dx, dy, source_rect->w, source_rect->h, source_rect->x, source_rect->y );
+          D_DEBUG_AT( Surface, "  -> [%2d] %4d,%4d-%4dx%4d <- %4d,%4d\n", 0,
+                      dx, dy, source_rect->w, source_rect->h, source_rect->x, source_rect->y );
 
           if (source_rect->w < 1 || source_rect->h < 1)
                return DFB_OK;
@@ -1455,8 +1466,8 @@ IDirectFBSurface_TileBlit( IDirectFBSurface   *thiz,
           return DFB_INVAREA;
 
      if (source_rect) {
-          D_DEBUG_AT( Surface, "  -> [%2d] %4d,%4d-%4dx%4d <- %4d,%4d\n",
-                      0, dx, dy, source_rect->w, source_rect->h, source_rect->x, source_rect->y );
+          D_DEBUG_AT( Surface, "  -> [%2d] %4d,%4d-%4dx%4d <- %4d,%4d\n", 0,
+                      dx, dy, source_rect->w, source_rect->h, source_rect->x, source_rect->y );
 
           if (source_rect->w < 1 || source_rect->h < 1)
                return DFB_OK;
@@ -3578,9 +3589,13 @@ IDirectFBSurface_Allocate( IDirectFBSurface            *thiz,
      else
           ret = DFB_NOSYSTEMMEMORY;
 
-     dfb_surface_allocation_unref( allocation );
+     if (ret)
+          goto out;
 
      *ret_interface = iface;
+
+out:
+     dfb_surface_allocation_unref( allocation );
 
      return ret;
 }
@@ -3614,9 +3629,13 @@ IDirectFBSurface_GetAllocation( IDirectFBSurface            *thiz,
      else
           ret = DFB_NOSYSTEMMEMORY;
 
-     dfb_surface_allocation_unref( allocation );
+     if (ret)
+          goto out;
 
      *ret_interface = iface;
+
+out:
+     dfb_surface_allocation_unref( allocation );
 
      return ret;
 }
@@ -3801,9 +3820,10 @@ IDirectFBSurface_Construct( IDirectFBSurface       *thiz,
 
      D_DEBUG_AT( Surface, "%s( %p )\n", __FUNCTION__, thiz );
 
-     if (dfb_surface_ref( surface )) {
+     ret = dfb_surface_ref( surface );
+     if (ret) {
           DIRECT_DEALLOCATE_INTERFACE( thiz );
-          return DFB_FAILURE;
+          return ret;
      }
 
      data->ref                = 1;
@@ -3827,11 +3847,17 @@ IDirectFBSurface_Construct( IDirectFBSurface       *thiz,
           }
 
           parent_data = parent->priv;
-          if (!parent_data)
+          if (!parent_data) {
+               dfb_surface_unref( surface );
+               DIRECT_DEALLOCATE_INTERFACE( thiz );
                return DFB_DEAD;
+          }
 
-          if (!parent_data)
+          if (!parent_data) {
+               dfb_surface_unref( surface );
+               DIRECT_DEALLOCATE_INTERFACE( thiz );
                return DFB_DESTROYED;
+          }
 
           direct_mutex_lock( &parent_data->children_lock );
 
@@ -3888,13 +3914,26 @@ IDirectFBSurface_Construct( IDirectFBSurface       *thiz,
      data->state.modified = SMF_ALL;
 
      ret = CoreGraphicsStateClient_Init( &data->state_client, &data->state );
-     if (ret)
+     if (ret) {
+          dfb_state_destroy( &data->state );
+          if (parent)
+               parent->Release( parent );
+          dfb_surface_unref( surface );
+          DIRECT_DEALLOCATE_INTERFACE( thiz );
           return ret;
+     }
 
      if (data->surface->config.flags & CSCONF_PREALLOCATED) {
           ret = register_prealloc( data );
-          if (ret)
+          if (ret) {
+               CoreGraphicsStateClient_Deinit( &data->state_client );
+               dfb_state_destroy( &data->state );
+               if (parent)
+                    parent->Release( parent );
+               dfb_surface_unref( surface );
+               DIRECT_DEALLOCATE_INTERFACE( thiz );
                return ret;
+          }
      }
 
      dfb_surface_attach( surface, IDirectFBSurface_React, thiz, &data->reaction );

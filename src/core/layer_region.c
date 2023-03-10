@@ -144,10 +144,10 @@ dfb_layer_region_create( CoreLayerContext  *context,
      CoreLayerShared *shared;
      CoreLayerRegion *region;
 
-     D_DEBUG_AT( Core_LayerRegion, "%s()\n", __FUNCTION__ );
-
      D_ASSERT( context != NULL );
      D_ASSERT( ret_region != NULL );
+
+     D_DEBUG_AT( Core_LayerRegion, "%s()\n", __FUNCTION__ );
 
      layer = dfb_layer_at( context->layer_id );
 
@@ -156,7 +156,7 @@ dfb_layer_region_create( CoreLayerContext  *context,
 
      shared = layer->shared;
 
-     /* Create the object. */
+     /* Create the region object. */
      region = dfb_core_create_layer_region( layer->core );
      if (!region)
           return DFB_FUSION;
@@ -1276,7 +1276,7 @@ region_buffer_lock( CoreLayerRegion       *region,
                     CoreSurfaceBufferLock *left_buffer_lock,
                     CoreSurfaceBufferLock *right_buffer_lock )
 {
-     DFBResult          ret = DFB_OK;
+     DFBResult          ret;
      CoreSurfaceBuffer *buffer;
      bool               stereo;
 
@@ -1335,7 +1335,7 @@ region_buffer_lock( CoreLayerRegion       *region,
 
      Core_PopIdentity();
 
-     return ret;
+     return DFB_OK;
 }
 
 DFBResult

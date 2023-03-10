@@ -75,7 +75,7 @@ IDirectFBSurface_Window_Flip( IDirectFBSurface    *thiz,
                               const DFBRegion     *region,
                               DFBSurfaceFlipFlags  flags )
 {
-     DFBResult ret = DFB_OK;
+     DFBResult ret;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFBSurface_Window )
 
@@ -88,10 +88,10 @@ IDirectFBSurface_Window_Flip( IDirectFBSurface    *thiz,
      if (!data->window->config.opacity && data->base.caps & DSCAPS_PRIMARY) {
           CoreWindowConfig config = { .opacity = 0xff };
 
-          ret = CoreWindow_SetConfig( data->window, &config, NULL, 0, DWCONF_OPACITY );
+          return CoreWindow_SetConfig( data->window, &config, NULL, 0, DWCONF_OPACITY );
      }
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult
@@ -113,10 +113,10 @@ IDirectFBSurface_Window_FlipStereo( IDirectFBSurface    *thiz,
      if (!data->window->config.opacity && data->base.caps & DSCAPS_PRIMARY) {
           CoreWindowConfig config = { .opacity = 0xff };
 
-          ret = CoreWindow_SetConfig( data->window, &config, NULL, 0, DWCONF_OPACITY );
+          return CoreWindow_SetConfig( data->window, &config, NULL, 0, DWCONF_OPACITY );
      }
 
-     return ret;
+     return DFB_OK;
 }
 
 static DFBResult
@@ -247,12 +247,16 @@ IDirectFBSurface_Window_Construct( IDirectFBSurface       *thiz,
      D_MAGIC_ASSERT( window, CoreWindow );
 
      ret = CoreWindow_GetInsets( window, &insets );
-     if (ret)
+     if (ret) {
+          DIRECT_DEALLOCATE_INTERFACE( thiz );
           return ret;
+     }
 
      ret = CoreWindow_GetSurface( window, &surface );
-     if (ret)
+     if (ret) {
+          DIRECT_DEALLOCATE_INTERFACE( thiz );
           return ret;
+     }
 
      ret = IDirectFBSurface_Construct( thiz, parent, wanted, granted, &insets, surface, caps, core, dfb );
 
@@ -261,9 +265,10 @@ IDirectFBSurface_Window_Construct( IDirectFBSurface       *thiz,
      if (ret)
           return ret;
 
-     if (dfb_window_ref( window )) {
+     ret = dfb_window_ref( window );
+     if (ret) {
           IDirectFBSurface_Destruct( thiz );
-          return DFB_FAILURE;
+          return ret;
      }
 
      data->window = window;

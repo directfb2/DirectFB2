@@ -15,14 +15,22 @@
 #  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 
 project('DirectFB2', 'c',
-         version: '2.0.0',
-         meson_version: '>= 0.50',
-         default_options: ['buildtype=release', 'c_std=gnu99'])
+        version: '2.0.0',
+        meson_version: '>= 0.61',
+        default_options: 'buildtype=release')
 
 directfb_version = meson.project_version()
 directfb_major_version = directfb_version.split('.')[0].to_int()
 directfb_minor_version = directfb_version.split('.')[1].to_int()
 directfb_micro_version = directfb_version.split('.')[2].to_int()
+
+if get_option('default_library') == 'both'
+  error('''Choose library type between 'shared' or 'static'.''')
+elif get_option('default_library') == 'shared'
+  libsuffix = '.so'
+else
+  libsuffix = '.a'
+endif
 
 moduledirname = get_option('moduledirname')
 if moduledirname == ''
@@ -68,16 +76,33 @@ add_global_arguments('-D_GNU_SOURCE', language: 'c')
 
 pkgconfig = import('pkgconfig')
 
+# core libraries
+
 subdir('include')
 subdir('lib/direct')
 subdir('lib/fusion')
 subdir('src')
 
+# inputdriver modules
+
 if get_option('os') == 'linux'
   if get_option('linuxinput')
     subdir('inputdrivers/linux_input')
   endif
+endif
 
+# interface modules
+
+subdir('interfaces/ICoreResourceManager')
+subdir('interfaces/IDirectFBFont')
+subdir('interfaces/IDirectFBImageProvider')
+subdir('interfaces/IDirectFBVideoProvider')
+subdir('interfaces/IDirectFBWindows')
+
+# system modules
+
+subdir('systems/dummy')
+if get_option('os') == 'linux'
   if get_option('drmkms')
     subdir('systems/drmkms')
   endif
@@ -86,14 +111,22 @@ if get_option('os') == 'linux'
   endif
 endif
 
-subdir('systems/dummy')
-
-subdir('interfaces/ICoreResourceManager')
-subdir('interfaces/IDirectFBFont')
-subdir('interfaces/IDirectFBImageProvider')
-subdir('interfaces/IDirectFBVideoProvider')
-subdir('interfaces/IDirectFBWindows')
+# wm modules
 
 subdir('wm/default')
 
-subdir('tools')
+# generate .pc files
+
+dfb_update_pkgconfig_conf = configuration_data()
+
+dfb_update_pkgconfig_conf.set('PKGCONFIGDIR', join_paths(get_option('prefix'), get_option('libdir'), 'pkgconfig'))
+
+dfb_update_pkgconfig_conf.set('VERSION', directfb_version)
+
+dfb_update_pkgconfig = configure_file(configuration: dfb_update_pkgconfig_conf,
+                                      input: 'dfb-update-pkgconfig.in',
+                                      output: 'dfb-update-pkgconfig',
+                                      install: true,
+                                      install_dir: get_option('bindir'))
+
+meson.add_install_script(dfb_update_pkgconfig)
