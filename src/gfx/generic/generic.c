@@ -5911,7 +5911,7 @@ Bop_argb_blend_alphachannel_src_invsrc_Aop_rgb16( GenefxState *gfxs )
           case 0:                                                                                                     \
                break;                                                                                                 \
           case 0x3f:                                                                                                  \
-               d = ARGB_TO_RGB16( s );                                                                               \
+               d = ARGB_TO_RGB16( s );                                                                                \
                break;                                                                                                 \
           default:                                                                                                    \
                d = (((((((s >> 8) & 0xf800) | ((s >> 3) & 0x001f)) - (d & 0xf81f)) * ((s >> 26) + 1) +                \
@@ -8823,12 +8823,12 @@ gInit_MMX()
 {
      use_mmx = 1;
 
-/********************************* Xacc_blend *********************************/
+/********************************* Xacc_blend *************************************/
      Xacc_blend[DSBF_SRCALPHA-1]    = Xacc_blend_srcalpha_MMX;
      Xacc_blend[DSBF_INVSRCALPHA-1] = Xacc_blend_invsrcalpha_MMX;
-/********************************* Dacc_modulation ****************************/
-     Dacc_modulation[DSBLIT_BLEND_ALPHACHANNEL | DSBLIT_BLEND_COLORALPHA | DSBLIT_COLORIZE] = Dacc_modulate_argb_MMX;
-/********************************* Misc accumulator operations ****************/
+/********************************* Dacc_modulation ********************************/
+     Dacc_modulation[DSBLIT_COLORIZE | DSBLIT_BLEND_ALPHACHANNEL | DSBLIT_BLEND_COLORALPHA] = Dacc_modulate_argb_MMX;
+/********************************* Misc accumulator operations ********************/
      SCacc_add_to_Dacc = SCacc_add_to_Dacc_MMX;
      Sacc_add_to_Dacc  = Sacc_add_to_Dacc_MMX;
 }
@@ -8848,27 +8848,25 @@ static void
 gInit_NEON()
 {
      use_neon = 1;
-/********************************* Sop_PFI_to_Dacc ****************************/
+
+/********************************* Sop_PFI_to_Dacc ********************************/
      Sop_PFI_to_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_RGB16)] = Sop_rgb16_to_Dacc_NEON;
-     Sop_PFI_to_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_ARGB )] = Sop_argb_to_Dacc_NEON;
-/********************************* Sacc_to_Aop_PFI ****************************/
+     Sop_PFI_to_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_ARGB)]  = Sop_argb_to_Dacc_NEON;
+/********************************* Sacc_to_Aop_PFI ********************************/
      Sacc_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_RGB16)] = Sacc_to_Aop_rgb16_NEON;
-/********************************* misc accumulator operations ****************/
-     SCacc_add_to_Dacc = SCacc_add_to_Dacc_NEON;
-     Sacc_add_to_Dacc = Sacc_add_to_Dacc_NEON;
-/********************************* Xacc_blend *********************************/
+/********************************* Bop_argb_blend_alphachannel_src_invsrc_Aop_PFI */
+     Bop_argb_blend_alphachannel_src_invsrc_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_RGB16)] =
+          Bop_argb_blend_alphachannel_src_invsrc_Aop_rgb16_NEON;
+/********************************* Xacc_blend *************************************/
+     Xacc_blend[DSBF_SRCALPHA-1]    = Xacc_blend_srcalpha_NEON;
      Xacc_blend[DSBF_INVSRCALPHA-1] = Xacc_blend_invsrcalpha_NEON;
-     Xacc_blend[DSBF_SRCALPHA-1] = Xacc_blend_srcalpha_NEON;
-/********************************* Dacc_modulation ****************************/
-     Dacc_modulation[DSBLIT_BLEND_ALPHACHANNEL |
-                     DSBLIT_BLEND_COLORALPHA |
-                     DSBLIT_COLORIZE] = Dacc_modulate_argb_NEON;
-     Dacc_modulation[DSBLIT_COLORIZE] = Dacc_modulate_rgb_NEON;
-     Dacc_modulation[DSBLIT_COLORIZE |
-                     DSBLIT_BLEND_ALPHACHANNEL] = Dacc_modulate_rgb_NEON;
-/********************************* Bopp blend alphachannel ********************/
-     Bop_argb_blend_alphachannel_src_invsrc_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_RGB16)] \
-                     = Bop_argb_blend_alphachannel_src_invsrc_Aop_rgb16_NEON;
+/********************************* Dacc_modulation ********************************/
+     Dacc_modulation[DSBLIT_COLORIZE]                                                       = Dacc_modulate_rgb_NEON;
+     Dacc_modulation[DSBLIT_COLORIZE | DSBLIT_BLEND_ALPHACHANNEL]                           = Dacc_modulate_rgb_NEON;
+     Dacc_modulation[DSBLIT_COLORIZE | DSBLIT_BLEND_ALPHACHANNEL | DSBLIT_BLEND_COLORALPHA] = Dacc_modulate_argb_NEON;
+/********************************* Misc accumulator operations ********************/
+     SCacc_add_to_Dacc = SCacc_add_to_Dacc_NEON;
+     Sacc_add_to_Dacc  = Sacc_add_to_Dacc_NEON;
 }
 
 #endif
@@ -8883,23 +8881,23 @@ gInit_NEON()
 static void
 gInit_64bit()
 {
-/********************************* Cop_to_Aop_PFI ********************************/
+/********************************* Cop_to_Aop_PFI *********************************/
      Cop_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_RGB32)] = Cop_to_Aop_32_64;
      Cop_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_ARGB)]  = Cop_to_Aop_32_64;
      Cop_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_AiRGB)] = Cop_to_Aop_32_64;
-/********************************* Bop_PFI_toK_Aop_PFI ***************************/
+/********************************* Bop_PFI_toK_Aop_PFI ****************************/
      Bop_PFI_toK_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_RGB32)] = Bop_rgb32_toK_Aop_64;
      Bop_PFI_toK_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_ARGB)]  = Bop_rgb32_toK_Aop_64;
      Bop_PFI_toK_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_AiRGB)] = Bop_rgb32_toK_Aop_64;
-/********************************* Bop_PFI_Kto_Aop_PFI ***************************/
+/********************************* Bop_PFI_Kto_Aop_PFI ****************************/
      Bop_PFI_Kto_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_RGB32)] = Bop_rgb32_Kto_Aop_64;
      Bop_PFI_Kto_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_ARGB)]  = Bop_rgb32_Kto_Aop_64;
      Bop_PFI_Kto_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_AiRGB)] = Bop_rgb32_Kto_Aop_64;
-/********************************* Bop_PFI_Sto_Aop_PFI ***************************/
+/********************************* Bop_PFI_Sto_Aop_PFI ****************************/
      Bop_PFI_Sto_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_RGB32)] = Bop_32_Sto_Aop_64;
      Bop_PFI_Sto_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_ARGB)]  = Bop_32_Sto_Aop_64;
      Bop_PFI_Sto_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_AiRGB)] = Bop_32_Sto_Aop_64;
-/********************************* Misc accumulator operations *******************/
+/********************************* Misc accumulator operations ********************/
      Dacc_xor = Dacc_xor_64;
 }
 
@@ -8945,9 +8943,9 @@ gInit_BigEndian()
 /**********************************************************************************************************************/
 
 void
-gGetDriverInfo( GraphicsDriverInfo *info )
+gGetDriverInfo( GraphicsDriverInfo *driver_info )
 {
-     snprintf( info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH, "Software Driver" );
+     snprintf( driver_info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH, "Software Driver" );
 
 #if SIZEOF_LONG == 8
      gInit_64bit();
@@ -8964,7 +8962,7 @@ gGetDriverInfo( GraphicsDriverInfo *info )
      else {
           gInit_MMX();
 
-          snprintf( info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH, "MMX Software Driver" );
+          snprintf( driver_info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH, "MMX Software Driver" );
 
           D_INFO( "DirectFB/Genefx: MMX enabled\n" );
      }
@@ -8977,30 +8975,30 @@ gGetDriverInfo( GraphicsDriverInfo *info )
      else {
           gInit_NEON();
 
-          snprintf( info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH, "NEON Software Driver" );
+          snprintf( driver_info->name, DFB_GRAPHICS_DRIVER_INFO_NAME_LENGTH, "NEON Software Driver" );
 
           D_INFO( "DirectFB/Genefx: NEON enabled\n" );
      }
 #endif
 
-     snprintf( info->vendor, DFB_GRAPHICS_DRIVER_INFO_VENDOR_LENGTH, "DirectFB" );
+     snprintf( driver_info->vendor, DFB_GRAPHICS_DRIVER_INFO_VENDOR_LENGTH, "DirectFB" );
 
-     info->version.major = 0;
-     info->version.minor = 7;
+     driver_info->version.major = 0;
+     driver_info->version.minor = 7;
 }
 
 void
-gGetDeviceInfo( GraphicsDeviceInfo *info )
+gGetDeviceInfo( GraphicsDeviceInfo *device_info )
 {
-     snprintf( info->name, DFB_GRAPHICS_DEVICE_INFO_NAME_LENGTH, "Software Rasterizer" );
+     snprintf( device_info->name, DFB_GRAPHICS_DEVICE_INFO_NAME_LENGTH, "Software Rasterizer" );
 
-     snprintf( info->vendor, DFB_GRAPHICS_DEVICE_INFO_VENDOR_LENGTH, use_mmx ? "MMX" : "Generic" );
+     snprintf( device_info->vendor, DFB_GRAPHICS_DEVICE_INFO_VENDOR_LENGTH, use_mmx ? "MMX" : "Generic" );
 
-     info->caps.flags    = 0;
-     info->caps.accel    = DFXL_NONE;
-     info->caps.drawing  = DSDRAW_NOFX;
-     info->caps.blitting = DSBLIT_NOFX;
-     info->caps.clip     = 0;
+     device_info->caps.flags    = 0;
+     device_info->caps.accel    = DFXL_NONE;
+     device_info->caps.blitting = DSBLIT_NOFX;
+     device_info->caps.drawing  = DSDRAW_NOFX;
+     device_info->caps.clip     = 0;
 }
 
 static bool

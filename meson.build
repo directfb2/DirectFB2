@@ -38,27 +38,27 @@ if moduledirname == ''
 endif
 moduledir = join_paths(get_option('prefix'), get_option('libdir'), moduledirname)
 
-config_h = configuration_data()
-
 cc = meson.get_compiler('c')
 
-config_h.set('SIZEOF_LONG', cc.sizeof('long'), description: 'The size of long, as computed by sizeof.')
+config_conf = configuration_data()
 
-config_h.set('WORDS_BIGENDIAN', host_machine.endian() == 'big', description: 'Byte ordering is bigendian.')
+config_conf.set('SIZEOF_LONG', cc.sizeof('long'), description: 'The size of long, as computed by sizeof.')
+
+config_conf.set('WORDS_BIGENDIAN', host_machine.endian() == 'big', description: 'Byte ordering is bigendian.')
 
 if host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
   if get_option('mmx')
-    config_h.set('USE_MMX', 1, description: 'Define to 1 if you are compiling MMX assembly support.')
+    config_conf.set('USE_MMX', 1, description: 'Define to 1 if you are compiling MMX assembly support.')
   endif
 endif
 
 if host_machine.cpu_family() == 'arm' or host_machine.cpu_family() == 'aarch64'
   if get_option('neon')
-    config_h.set('USE_NEON', 1, description: 'Define to 1 if you are compiling NEON assembly support.')
+    config_conf.set('USE_NEON', 1, description: 'Define to 1 if you are compiling NEON assembly support.')
   endif
 endif
 
-configure_file(configuration: config_h, output: 'config.h')
+configure_file(configuration: config_conf, output: 'config.h')
 
 config_inc = include_directories('.')
 lib_inc = include_directories('lib')
