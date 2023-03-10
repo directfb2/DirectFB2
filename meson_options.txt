@@ -49,6 +49,10 @@ option('mmx',
        type: 'boolean',
        description: 'MMX assembly support')
 
+option('neon',
+       type: 'boolean',
+       description: 'NEON assembly support')
+
 option('moduledirname',
        type: 'string',
        description: 'DirectFB module directory name')
