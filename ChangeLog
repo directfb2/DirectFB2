@@ -1,3 +1,46 @@
+commit 318c33fbf2244b876b8067b2e3ac4f4aa62e5bfd
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Mar 12 10:40:29 2023 +0100
+
+    VideoProvider/DFVFF: Add support for speed multiplier below and over 1.0
+
+commit 1b87ca61d16b46a06960c1fd29428316bc87a547
+Merge: ac4f10c bf501d7
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Mar 10 16:31:56 2023 +0100
+
+    Merge pull request #18 from fifteenhex/gfx_neon_20220217
+    
+    Genefx: Add NEON assembly support
+
+commit bf501d779dad8ecf038e6f8ffb7377e489bca318
+Merge: 2cea303 ac4f10c
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Mar 10 16:31:14 2023 +0100
+
+    Merge branch 'master' into gfx_neon_20220217
+
+commit 2cea3031d8078fc64ee6ea7b34c9fdc36488a8a2
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Mar 10 16:10:53 2023 +0100
+
+    Merge ARM NEON optimization
+
+commit ac4f10ca5dcb9fb8c848fcde26a19d88cc8afd25
+Merge: d1182ae f87bad2
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Mar 1 03:55:09 2023 +0100
+
+    Merge pull request #92 from caramelli/master
+    
+    Restore global variables for DirectFB version
+
+commit f87bad231f8c6239a9ce7eb8a9b9ea6897553c1c
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Mar 1 03:55:03 2023 +0100
+
+    Update ChangeLog
+
 commit 185a5fce4aeb8b581c0b42fc040c83c5a1b6943a
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Wed Mar 1 03:54:58 2023 +0100
@@ -1117,6 +1160,20 @@ Date:   Sun Feb 27 12:56:12 2022 +0900
     
     Add directfb_strings as an input to the places that need it so that
     it always happens before it's needed.
+
+commit 4d1418f50f039cd18363fe58a6b75393eca93316
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Thu Feb 17 22:25:42 2022 +0900
+
+    gfx: generic: Add NEON assembly support
+    
+    At some point Linaro added NEON assembly for generic
+    graphics. It looks like it never got upstreamed.
+    
+    This pulls in their assembly and wires it in the
+    same way MMX assembly is.
+    
+    Link: https://blueprints.launchpad.net/linaro-multimedia-project/+spec/engr-multimedia-directfb-neon-optimization
 
 commit 30e3ebe19e9b94a9fedba565fa2b55de30f98cbc
 Merge: c3aa9c0 9f6b8f4
