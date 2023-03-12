@@ -978,7 +978,7 @@ IDirectFBEventBuffer_WindowReact( const void *msg_data,
                if (!window->window)
                     continue;
 
-               if ( window->window->id == evt->window_id) {
+               if (window->window->id == evt->window_id) {
                     dfb_window_unref( window->window );
                     window->window = NULL;
                }

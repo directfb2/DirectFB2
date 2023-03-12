@@ -136,7 +136,7 @@ IDirectFBImageProvider_DFIFF_RenderTo( IDirectFBImageProvider *thiz,
      DFBRectangle           rect;
      DFBRectangle           clipped;
      DFBSurfaceCapabilities caps;
-     DFBSurfacePixelFormat  format;
+     DFBSurfacePixelFormat  pixelformat;
      bool                   dest_premultiplied = false;
 
      DIRECT_INTERFACE_GET_DATA( IDirectFBImageProvider_DFIFF )
@@ -177,12 +177,12 @@ IDirectFBImageProvider_DFIFF_RenderTo( IDirectFBImageProvider *thiz,
      if (caps & DSCAPS_PREMULTIPLIED)
           dest_premultiplied = true;
 
-     ret = destination->GetPixelFormat( destination, &format );
+     ret = destination->GetPixelFormat( destination, &pixelformat );
      if (ret)
           return ret;
 
-     if (DFB_RECTANGLE_EQUAL( rect, clipped )                                                          &&
-         rect.w == data->desc.width && rect.h == data->desc.height && format == data->desc.pixelformat &&
+     if (DFB_RECTANGLE_EQUAL( rect, clipped ) &&
+         rect.w == data->desc.width && rect.h == data->desc.height && pixelformat == data->desc.pixelformat &&
          data->premultiplied == dest_premultiplied) {
           ret = destination->Write( destination, &rect, data->ptr + sizeof(DFIFFHeader), data->pitch );
           if (ret)

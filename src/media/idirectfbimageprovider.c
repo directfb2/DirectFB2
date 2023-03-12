@@ -62,7 +62,7 @@ IDirectFBImageProvider_GetImageDescription( IDirectFBImageProvider *thiz,
 static DFBResult
 IDirectFBImageProvider_RenderTo( IDirectFBImageProvider *thiz,
                                  IDirectFBSurface       *destination,
-                                 const DFBRectangle     *destination_rect )
+                                 const DFBRectangle     *dest_rect )
 {
      return DFB_UNIMPLEMENTED;
 }
