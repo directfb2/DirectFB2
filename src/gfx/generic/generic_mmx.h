@@ -77,7 +77,8 @@ Xacc_blend_srcalpha_MMX( GenefxState *gfxs )
           : /* no outputs */
           : "D" (gfxs->Yacc), "c" (gfxs->length), "S" (gfxs->Sacc),
             "m" (*ones), "m" (*zeros), "m" (gfxs->color), "r" (gfxs->Xacc)
-          : "%st", "memory");
+          : "%st", "memory"
+     );
 }
 
 static void
@@ -143,7 +144,8 @@ Xacc_blend_invsrcalpha_MMX( GenefxState *gfxs )
           : /* no outputs */
           : "D" (gfxs->Yacc), "c" (gfxs->length), "S" (gfxs->Sacc),
             "m" (*ones), "m" (*zeros), "m" (gfxs->color), "r" (gfxs->Xacc)
-          : "%st", "memory");
+          : "%st", "memory"
+     );
 }
 
 static void
@@ -167,7 +169,8 @@ Dacc_modulate_argb_MMX( GenefxState *gfxs )
           "emms"
           : /* no outputs */
           : "D" (gfxs->Dacc), "c" (gfxs->length), "m" (gfxs->Cacc)
-          : "%st", "memory");
+          : "%st", "memory"
+     );
 }
 
 static void
@@ -186,7 +189,8 @@ SCacc_add_to_Dacc_MMX( GenefxState *gfxs )
           "emms"
           : /* no outputs */
           : "D" (gfxs->Dacc), "c" (gfxs->length), "m" (gfxs->SCacc)
-          : "%st", "memory");
+          : "%st", "memory"
+     );
 }
 
 static void
@@ -206,5 +210,6 @@ Sacc_add_to_Dacc_MMX( GenefxState *gfxs )
           "emms"
           : /* no outputs */
           : "D" (gfxs->Dacc), "c" (gfxs->length), "S" (gfxs->Sacc)
-          : "%st", "memory");
+          : "%st", "memory"
+     );
 }

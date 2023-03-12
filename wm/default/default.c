@@ -2830,7 +2830,7 @@ handle_wheel( CoreWindowStack *stack,
 
      if (window) {
           if (data->wm_level) {
-               int opacity = window->config.opacity + dz*7;
+               int opacity = window->config.opacity + dz * 7;
 
                if (opacity < 1)
                     opacity = 1;

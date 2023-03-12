@@ -52,12 +52,12 @@ Sop_PFI_OP_Dacc(to)( GenefxState *gfxs )
      if (Ostep != 1) {
           w++;
           while (--w) {
-              u16 s = *S;
+               u16 s = *S;
 
-              EXPAND( *D, s );
+               EXPAND( *D, s );
 
-              S += Ostep;
-              ++D;
+               S += Ostep;
+               ++D;
           }
 
           return;
@@ -261,11 +261,11 @@ Sacc_OP_Aop_PFI(to)( GenefxState *gfxs )
      if (Dstep != 1) {
           w++;
           while (--w) {
-              if (!(S->RGB.a & 0xf000))
-                   *D = PIXEL( *S );
+               if (!(S->RGB.a & 0xf000))
+                    *D = PIXEL( *S );
 
-              ++S;
-              D += Dstep;
+               ++S;
+               D += Dstep;
           }
 
           return;
@@ -348,13 +348,13 @@ Sacc_OP_Aop_PFI(Sto)( GenefxState *gfxs )
      if (Dstep != 1) {
          w++;
          while (--w) {
-              GenefxAccumulator *S0 = &S[i>>16];
+               GenefxAccumulator *S0 = &S[i>>16];
 
-              if (!(S0->RGB.a & 0xf000))
-                   *D = PIXEL( *S0 );
+               if (!(S0->RGB.a & 0xf000))
+                    *D = PIXEL( *S0 );
 
-              D += Dstep;
-              i += SperD;
+               D += Dstep;
+               i += SperD;
          }
 
          return;

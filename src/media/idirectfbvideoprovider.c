@@ -74,7 +74,7 @@ IDirectFBVideoProvider_GetStreamDescription( IDirectFBVideoProvider *thiz,
 static DFBResult
 IDirectFBVideoProvider_PlayTo( IDirectFBVideoProvider *thiz,
                                IDirectFBSurface       *destination,
-                               const DFBRectangle     *destination_rect,
+                               const DFBRectangle     *dest_rect,
                                DVFrameCallback         callback,
                                void                   *ctx )
 {
@@ -255,7 +255,7 @@ IDirectFBVideoProvider_GetBufferThresholds( IDirectFBVideoProvider *thiz,
 static DFBResult
 IDirectFBVideoProvider_SetDestination( IDirectFBVideoProvider *thiz,
                                        IDirectFBSurface       *destination,
-                                       const DFBRectangle     *destination_rect )
+                                       const DFBRectangle     *dest_rect )
 {
      return DFB_UNIMPLEMENTED;
 }

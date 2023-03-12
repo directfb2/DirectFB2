@@ -327,7 +327,7 @@ IDirectFBSurface_Layer_Construct( IDirectFBSurface       *thiz,
      DFBResult    ret;
      CoreSurface *surface;
 
-     DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBSurface_Layer );
+     DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBSurface_Layer )
 
      D_DEBUG_AT( Surface, "%s( %p )\n", __FUNCTION__, thiz );
 

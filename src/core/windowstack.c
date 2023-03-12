@@ -80,7 +80,7 @@ stack_containers_remove( CoreWindowStack *stack )
      direct_mutex_lock( &stack_containers_lock );
 
      direct_list_foreach_safe (container, next, stack_containers) {
-          if ( stack == container->ctx) {
+          if (stack == container->ctx) {
                direct_list_remove( &stack_containers, &container->link );
                D_FREE( container );
           }

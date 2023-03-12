@@ -110,10 +110,8 @@ DFVFFVideo( DirectThread *thread,
             void         *arg )
 {
      DFBResult                          ret;
-     long                               start_frame;
-     long long                          start;
-     int                                source_pitch;
-     void                              *source_ptr;
+     int                                pitch;
+     void                              *ptr;
      IDirectFBSurface                  *source;
      void                              *frame_ptr;
      int                                drop = 0;
@@ -123,14 +121,18 @@ DFVFFVideo( DirectThread *thread,
      if (ret)
           return NULL;
 
-     frame_ptr = data->ptr + sizeof(DFVFFHeader);
+     source->Lock( source, DSLF_WRITE, &ptr, &pitch );
+     source->Unlock( source );
 
-     start_frame = 0;
-     start = direct_clock_get_abs_millis();
+     frame_ptr = data->ptr + sizeof(DFVFFHeader);
 
      dispatch_event( data, DVPET_STARTED );
 
      while (data->status != DVSTATE_STOP) {
+          long long time;
+
+          time = direct_clock_get_abs_micros();
+
           direct_mutex_lock( &data->lock );
 
           if (drop) {
@@ -148,18 +150,13 @@ DFVFFVideo( DirectThread *thread,
                if (data->seeked) {
                     frame_ptr = data->ptr + sizeof(DFVFFHeader) + data->frame * data->frame_size;
 
-                    start_frame = data->frame;
-                    start = direct_clock_get_abs_millis();
-
                     if (data->status == DVSTATE_FINISHED)
                          data->status = DVSTATE_PLAY;
 
                     data->seeked = false;
                }
 
-               source->Lock( source, DSLF_WRITE, &source_ptr, &source_pitch );
-               direct_memcpy( source_ptr, frame_ptr, data->frame_size );
-               source->Unlock( source );
+               direct_memcpy( ptr, frame_ptr, data->frame_size );
 
                data->dest->StretchBlit( data->dest, source, NULL, &data->rect );
 
@@ -174,24 +171,20 @@ DFVFFVideo( DirectThread *thread,
                     direct_mutex_unlock( &data->lock );
                     continue;
                }
-
-               start_frame = data->frame + 1;
-               start = direct_clock_get_abs_millis();
           }
           else {
-               double rate  = data->rate / 1000.0;
-               long   delay = direct_clock_get_abs_millis() - start;
-               long   frame = delay * rate + start_frame;
+               long duration, delay;
 
-               if ( data->frame < frame ) {
-                    drop = frame - data->frame;
+               duration = 1000000 / (data->rate * data->speed);
+
+               delay = direct_clock_get_abs_micros() - time;
+               if (delay > duration) {
+                    drop = delay / duration;
                     direct_mutex_unlock( &data->lock );
                     continue;
                }
 
-               delay = (data->frame - start_frame + 1) / rate - delay;
-
-               direct_waitqueue_wait_timeout( &data->cond, &data->lock, delay * 1000 );
+               direct_waitqueue_wait_timeout( &data->cond, &data->lock, duration - delay );
 
                if (data->seeked) {
                     direct_mutex_unlock( &data->lock );
@@ -206,9 +199,6 @@ DFVFFVideo( DirectThread *thread,
                     data->frame = 0;
 
                     frame_ptr = data->ptr + sizeof(DFVFFHeader);
-
-                    start_frame = 0;
-                    start = direct_clock_get_abs_millis();
                }
                else {
                     data->status = DVSTATE_FINISHED;
@@ -449,7 +439,7 @@ IDirectFBVideoProvider_DFVFF_SeekTo( IDirectFBVideoProvider *thiz,
 
      direct_mutex_unlock( &data->lock );
 
-     return DFB_UNSUPPORTED;
+     return DFB_OK;
 }
 
 static DFBResult
@@ -512,7 +502,7 @@ IDirectFBVideoProvider_DFVFF_SetSpeed( IDirectFBVideoProvider *thiz,
 
      D_DEBUG_AT( VideoProvider_DFVFF, "%s( %p )\n", __FUNCTION__, thiz );
 
-     if (multiplier != 0.0 && multiplier != 1.0)
+     if (multiplier < 0.0 || multiplier > 64.0)
           return DFB_UNSUPPORTED;
 
      if (multiplier == data->speed)
@@ -520,8 +510,8 @@ IDirectFBVideoProvider_DFVFF_SetSpeed( IDirectFBVideoProvider *thiz,
 
      direct_mutex_lock( &data->lock );
 
-     if (multiplier && data->status != DVSTATE_FINISHED)
-        direct_waitqueue_signal( &data->cond );
+     if (multiplier > data->speed && data->status != DVSTATE_FINISHED)
+          direct_waitqueue_signal( &data->cond );
 
      data->speed = multiplier;
 

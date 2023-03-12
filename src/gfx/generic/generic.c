@@ -8833,9 +8833,9 @@ static void
 Xacc_blend_srcalphasat( GenefxState *gfxs )
 {
      int                w = gfxs->length + 1;
+     GenefxAccumulator *D = gfxs->Dacc;
      GenefxAccumulator *X = gfxs->Xacc;
      GenefxAccumulator *Y = gfxs->Yacc;
-     GenefxAccumulator *D = gfxs->Dacc;
 
      if (gfxs->Sacc) {
           GenefxAccumulator *S = gfxs->Sacc;
@@ -9256,15 +9256,15 @@ static GenefxFunc Dacc_premultiply = Dacc_premultiply_C;
 static void
 Dacc_premultiply_color_alpha_C( GenefxState *gfxs )
 {
-     int                w  = gfxs->length + 1;
-     GenefxAccumulator *D  = gfxs->Dacc;
-     u16                Ca = gfxs->Cacc.RGB.a;
+     int                w    = gfxs->length + 1;
+     GenefxAccumulator *D    = gfxs->Dacc;
+     GenefxAccumulator  Cacc = gfxs->Cacc;
 
      while (--w) {
           if (!(D->RGB.a & 0xf000)) {
-               D->RGB.r = (Ca * D->RGB.r) >> 8;
-               D->RGB.g = (Ca * D->RGB.g) >> 8;
-               D->RGB.b = (Ca * D->RGB.b) >> 8;
+               D->RGB.r = (Cacc.RGB.a * D->RGB.r) >> 8;
+               D->RGB.g = (Cacc.RGB.a * D->RGB.g) >> 8;
+               D->RGB.b = (Cacc.RGB.a * D->RGB.b) >> 8;
           }
 
           ++D;
@@ -9714,8 +9714,6 @@ Bop_rgb32_to_Aop_rgb16_LE( GenefxState *gfxs )
 
 /**********************************************************************************************************************/
 
-static int use_mmx = 0;
-
 #ifdef USE_MMX
 
 #include "generic_mmx.h"
@@ -9726,8 +9724,6 @@ static int use_mmx = 0;
 static void
 gInit_MMX()
 {
-     use_mmx = 1;
-
 /********************************* Xacc_blend *************************************/
      Xacc_blend[DSBF_SRCALPHA-1]    = Xacc_blend_srcalpha_MMX;
      Xacc_blend[DSBF_INVSRCALPHA-1] = Xacc_blend_invsrcalpha_MMX;
@@ -9740,8 +9736,6 @@ gInit_MMX()
 
 #endif
 
-static int use_neon = 0;
-
 #ifdef USE_NEON
 
 #include "generic_neon.h"
@@ -9752,8 +9746,6 @@ static int use_neon = 0;
 static void
 gInit_NEON()
 {
-     use_neon = 1;
-
 /********************************* Sop_PFI_to_Dacc ********************************/
      Sop_PFI_to_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_RGB16)] = Sop_rgb16_to_Dacc_NEON;
      Sop_PFI_to_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_ARGB)]  = Sop_argb_to_Dacc_NEON;
@@ -9816,35 +9808,35 @@ gInit_64bit()
 static void
 gInit_BigEndian()
 {
-/********************************* Cop_to_Aop_PFI ********************************/
+/********************************* Cop_to_Aop_PFI *********************************/
      Cop_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV12)] = Cop_to_Aop_nv21;
      Cop_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV16)] = Cop_to_Aop_nv61;
      Cop_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV24)] = Cop_to_Aop_nv42;
      Cop_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV21)] = Cop_to_Aop_nv12;
      Cop_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV61)] = Cop_to_Aop_nv16;
      Cop_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV42)] = Cop_to_Aop_nv24;
-/********************************* Sop_PFI_to_Dacc *******************************/
+/********************************* Sop_PFI_to_Dacc ********************************/
      Sop_PFI_to_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_NV12)] = Sop_nv21_to_Dacc;
      Sop_PFI_to_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_NV16)] = Sop_nv21_to_Dacc;
      Sop_PFI_to_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_NV24)] = Sop_nv42_to_Dacc;
      Sop_PFI_to_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_NV21)] = Sop_nv12_to_Dacc;
      Sop_PFI_to_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_NV61)] = Sop_nv12_to_Dacc;
      Sop_PFI_to_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_NV42)] = Sop_nv24_to_Dacc;
-/********************************* Sop_PFI_Sto_Dacc ******************************/
+/********************************* Sop_PFI_Sto_Dacc *******************************/
      Sop_PFI_Sto_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_NV12)] = Sop_nv21_Sto_Dacc;
      Sop_PFI_Sto_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_NV16)] = Sop_nv21_Sto_Dacc;
      Sop_PFI_Sto_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_NV24)] = Sop_nv42_Sto_Dacc;
      Sop_PFI_Sto_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_NV21)] = Sop_nv12_Sto_Dacc;
      Sop_PFI_Sto_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_NV61)] = Sop_nv12_Sto_Dacc;
      Sop_PFI_Sto_Dacc[DFB_PIXELFORMAT_INDEX(DSPF_NV42)] = Sop_nv24_Sto_Dacc;
-/********************************* Sacc_to_Aop_PFI *******************************/
+/********************************* Sacc_to_Aop_PFI ********************************/
      Sacc_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV12)] = Sacc_to_Aop_nv21;
      Sacc_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV16)] = Sacc_to_Aop_nv61;
      Sacc_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV24)] = Sacc_to_Aop_nv42;
      Sacc_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV21)] = Sacc_to_Aop_nv12;
      Sacc_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV61)] = Sacc_to_Aop_nv16;
      Sacc_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV42)] = Sacc_to_Aop_nv24;
-/********************************* Sacc_Sto_Aop_PFI ******************************/
+/********************************* Sacc_Sto_Aop_PFI *******************************/
      Sacc_Sto_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV12)] = Sacc_Sto_Aop_nv21;
      Sacc_Sto_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV16)] = Sacc_Sto_Aop_nv61;
      Sacc_Sto_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_NV24)] = Sacc_Sto_Aop_nv42;
@@ -9907,7 +9899,7 @@ gGetDeviceInfo( GraphicsDeviceInfo *device_info )
 {
      snprintf( device_info->name, DFB_GRAPHICS_DEVICE_INFO_NAME_LENGTH, "Software Rasterizer" );
 
-     snprintf( device_info->vendor, DFB_GRAPHICS_DEVICE_INFO_VENDOR_LENGTH, use_mmx ? "MMX" : "Generic" );
+     snprintf( device_info->vendor, DFB_GRAPHICS_DEVICE_INFO_VENDOR_LENGTH, "Genefx" );
 
      device_info->caps.flags    = 0;
      device_info->caps.accel    = DFXL_NONE;
