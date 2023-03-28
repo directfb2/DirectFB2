@@ -79,7 +79,7 @@ configure_file(configuration: build_conf,
                install: true,
                install_dir: join_paths(get_option('includedir'), 'directfb/fusion'))
 
-libfusion_private = ['-Wl,-u,__Fusion_init_all']
+libfusion_private = '-Wl,-u,__Fusion_init_all'
 
 libfusion = library('fusion-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
                     fusion_sources, shm_sources,

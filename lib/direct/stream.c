@@ -1005,7 +1005,7 @@ file_peek( DirectStream *stream,
            unsigned int *read_out )
 {
      DirectResult ret;
-     size_t      size;
+     size_t       size;
 
      ret = direct_file_seek( &stream->file, offset );
      if (ret)
@@ -1015,7 +1015,7 @@ file_peek( DirectStream *stream,
      if (ret)
           return ret;
 
-     ret = direct_file_seek( &stream->file, - offset - size );
+     ret = direct_file_seek( &stream->file, -offset - (off_t) size );
      if (ret)
           return ret;
 

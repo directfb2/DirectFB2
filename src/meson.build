@@ -200,6 +200,7 @@ pkgconfig.generate(filebase: 'directfb',
                    requires: 'direct fusion',
                    requires_private: 'directfb-gfxdriver directfb-inputdriver directfb-interface directfb-system directfb-wm',
                    libraries: '-L${libdir} -ldirectfb',
+                   libraries_private: '-Wl,-u,__DFB_init_all',
                    subdirs: 'directfb')
 
 pkgconfig.generate(filebase: 'directfb-internal',
