@@ -118,7 +118,6 @@ drmkmsPrimaryInitLayer( CoreLayer                  *layer,
      shared = drmkms->shared;
 
      /* Initialize the layer data. */
-     shared->layerplane_index_count++;
      data->layer_index = shared->layer_index_count++;
 
      /* Set type and capabilities. */
@@ -386,9 +385,8 @@ drmkmsPlaneInitLayer( CoreLayer                  *layer,
      shared = drmkms->shared;
 
      /* Initialize the layer data. */
-     shared->layerplane_index_count++;
-     data->plane_index = shared->plane_index_count++;
-     data->level       = shared->layerplane_index_count;
+     data->plane_index = ++shared->plane_index_count;
+     data->level       = data->plane_index;
      data->plane       = drmModeGetPlane( drmkms->fd, drmkms->plane_resources->planes[data->plane_index] );
 
      D_DEBUG_AT( DRMKMS_Layer, "  -> getting plane with index %d\n", data->plane_index );
@@ -590,7 +588,7 @@ drmkmsPlaneSetRegion( CoreLayer                  *layer,
           }
           else if (data->alpha_propid) {
                err = drmModeObjectSetProperty( drmkms->fd, data->plane->plane_id, DRM_MODE_OBJECT_PLANE,
-                                               data->alpha_propid, config->opacity );
+                                               data->alpha_propid, (65535 * config->opacity + 127) / 255 );
                if (err) {
                     ret = errno2result( errno );
                     D_PERROR( "DRMKMS/Layer: drmModeObjectSetProperty() failed setting alpha!\n" );
@@ -644,6 +642,9 @@ drmkmsPlaneUpdateFlipRegion( void                  *driver_data,
      drmVBlank              vbl;
 
      D_DEBUG_AT( DRMKMS_Layer, "%s()\n", __FUNCTION__ );
+
+     if (!config->dest.w || !config->dest.h)
+          return DFB_INVARG;
 
      direct_mutex_lock( &data->lock );
 

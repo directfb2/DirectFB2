@@ -49,7 +49,6 @@ typedef struct {
 
      int                    layer_index_count;
      int                    plane_index_count;
-     int                    layerplane_index_count;
 } DRMKMSDataShared;
 
 typedef struct {
