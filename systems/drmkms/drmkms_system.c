@@ -98,7 +98,7 @@ local_init( const char *device_name,
 
      DFB_DISPLAYLAYER_IDS_ADD( drmkms->layer_ids[0], drmkms->layer_id_next++ );
 
-     for (i = 0; i < drmkms->plane_resources->count_planes; i++) {
+     for (i = 1; i < drmkms->plane_resources->count_planes; i++) {
           dfb_layers_register( screen, drmkms, &drmkmsPlaneLayerFuncs );
 
           DFB_DISPLAYLAYER_IDS_ADD( drmkms->layer_ids[0], drmkms->layer_id_next++ );
