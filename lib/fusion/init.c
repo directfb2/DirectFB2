@@ -40,7 +40,7 @@ static Func deinit_funcs[] = {
 
 /**********************************************************************************************************************/
 
-__attribute__((constructor))
+__dfb_constructor__
 void
 __Fusion_init_all()
 {
@@ -52,7 +52,7 @@ __Fusion_init_all()
           init_funcs[i]();
 }
 
-__attribute__((destructor))
+__dfb_destructor__
 void
 __Fusion_deinit_all()
 {

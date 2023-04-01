@@ -19,11 +19,23 @@
 #ifndef __DIRECT__COMPILER_H__
 #define __DIRECT__COMPILER_H__
 
+#include <direct/build.h>
+
 /**********************************************************************************************************************/
 
 #define D_FORMAT_PRINTF(n)             __attribute__((__format__(__printf__,n,n+1)))
 #define D_FORMAT_VPRINTF(n)            __attribute__((__format__(__printf__,n,0)))
+
 #define D_UNUSED                       __attribute__((unused))
+
 #define __dfb_no_instrument_function__ __attribute__((no_instrument_function))
+
+#if DIRECT_BUILD_CTORS
+#define __dfb_constructor__            __attribute__((constructor))
+#define __dfb_destructor__             __attribute__((destructor))
+#else
+#define __dfb_constructor__
+#define __dfb_destructor__
+#endif
 
 #endif

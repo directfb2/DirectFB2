@@ -86,6 +86,12 @@ os_headers = [
 
 build_conf = configuration_data()
 
+if get_option('default_library') == 'shared' and not get_option('constructors')
+  error('''Choose 'static' library type to disable use of constructor attribute.''')
+endif
+
+build_conf.set10('DIRECT_BUILD_CTORS', get_option('constructors'))
+
 build_conf.set10('DIRECT_BUILD_DEBUG', get_option('debug'))
 
 if get_option('debug')
@@ -101,7 +107,7 @@ build_conf.set10('DIRECT_BUILD_MEMCPY_PROBING', get_option('memcpy-probing'))
 build_conf.set10('DIRECT_BUILD_SENTINELS', get_option('sentinels'))
 
 if get_option('os') == 'linux'
-  os_linux_sources = [
+  os_sources = [
     'os/linux/clock.c',
     'os/linux/filesystem.c',
     'os/linux/log.c',
@@ -144,7 +150,10 @@ if get_option('default_library') == 'shared'
 endif
 
 librt_dep = []
-libdirect_private = ['-Wl,-u,__D_init_all']
+libdirect_private = []
+if get_option('constructors')
+  libdirect_private = ['-Wl,-u,__D_init_all']
+endif
 if not cc.has_function('clock_gettime')
   librt_dep = cc.find_library('rt')
   libdirect_private += ['-lrt']
@@ -153,7 +162,7 @@ threads_dep = dependency('threads')
 libdirect_private += ['-pthread']
 
 libdirect = library('direct-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
-                    direct_sources, os_linux_sources,
+                    direct_sources, os_sources,
                     include_directories: [config_inc, lib_inc],
                     c_args: moduledir_def,
                     dependencies: [libdl_dep, librt_dep, threads_dep],
@@ -166,7 +175,9 @@ install_symlink('libdirect' + libsuffix,
 
 install_headers(direct_headers,   subdir: 'directfb/direct')
 install_headers(os_headers,       subdir: 'directfb/direct/os')
-install_headers(os_linux_headers, subdir: 'directfb/direct/os/linux')
+if get_option('os') == 'linux'
+  install_headers(os_linux_headers, subdir: 'directfb/direct/os/linux')
+endif
 
 pkgconfig.generate(filebase: 'direct',
                    name: 'Direct',

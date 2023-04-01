@@ -93,8 +93,8 @@ static CoreSystemFuncs system_funcs = {
 
 #define DFB_CORE_SYSTEM(shortname)                         \
                                                            \
-__attribute__((constructor))                               \
-static void                                                \
+__dfb_constructor__                                        \
+void                                                       \
 directfb_##shortname##_ctor()                              \
 {                                                          \
      direct_modules_register( &dfb_core_systems,           \

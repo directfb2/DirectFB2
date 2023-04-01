@@ -19,6 +19,10 @@ option('args-size',
        value: '1024',
        description: 'Maximum static args size (bytes) for Flux')
 
+option('constructors',
+       type: 'boolean',
+       description: 'Use constructor attribute for library initialization and loaded modules')
+
 option('debug-support',
        type: 'boolean',
        description: 'Debug support')

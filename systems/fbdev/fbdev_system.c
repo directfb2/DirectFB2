@@ -442,6 +442,11 @@ system_initialize( CoreDFB  *core,
      shared->temp_cmap.blue   = shared->temp_cmap_memory + 256 * 2 * 2;
      shared->temp_cmap.transp = shared->temp_cmap_memory + 256 * 2 * 3;
 
+     /* Initialize the mode table. */
+     ret = fbdev_init_modes( fbdev );
+     if (ret)
+          return ret;
+
      shared->device.vendor = 0xffff;
      shared->device.model  = 0xffff;
      get_pci_info( shared );

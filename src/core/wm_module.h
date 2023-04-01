@@ -239,8 +239,8 @@ static CoreWMFuncs wm_funcs = {
 
 #define DFB_WINDOW_MANAGER(shortname)                  \
                                                        \
-__attribute__((constructor))                           \
-static void                                            \
+__dfb_constructor__                                    \
+void                                                   \
 directfb_##shortname##_ctor()                          \
 {                                                      \
      direct_modules_register( &dfb_wm_modules,         \

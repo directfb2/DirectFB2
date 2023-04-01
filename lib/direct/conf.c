@@ -22,6 +22,7 @@
 #include <direct/map.h>
 #include <direct/mem.h>
 #include <direct/messages.h>
+#include <direct/system.h>
 #include <direct/util.h>
 
 D_DEBUG_DOMAIN( Direct_Config, "Direct/Config", "Direct Runtime Configuration options" );
@@ -94,7 +95,7 @@ __D_conf_init()
      direct_config->thread_block_signals  = true;
      direct_config->thread_priority_scale = 100;
 
-     char *args = getenv( "D_ARGS" );
+     char *args = direct_getenv( "D_ARGS" );
 
      if (args) {
           args = D_STRDUP( args );
