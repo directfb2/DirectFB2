@@ -31,7 +31,6 @@ fbdevInitScreen( CoreScreen           *screen,
                  void                 *screen_data,
                  DFBScreenDescription *description )
 {
-     DFBResult        ret;
      FBDevData       *fbdev = driver_data;
      FBDevDataShared *shared;
      VideoMode       *mode;
@@ -52,20 +51,15 @@ fbdevInitScreen( CoreScreen           *screen,
      /* Set name. */
      snprintf( description->name, DFB_SCREEN_DESC_NAME_LENGTH, "FBDev Screen" );
 
-     /* Initialize the mode table. */
-     ret = fbdev_init_modes( fbdev );
-     if (ret)
-          return ret;
-
-     if (dfb_config->mode.width && dfb_config->mode.height) {
-          VideoMode *mode = fbdev_find_mode( fbdev, dfb_config->mode.width, dfb_config->mode.height );
-          if (mode)
-               shared->mode = *mode;
-     }
-
      while (mode) {
           count++;
           mode = mode->next;
+     }
+
+     if (dfb_config->mode.width && dfb_config->mode.height) {
+          mode = fbdev_find_mode( fbdev, dfb_config->mode.width, dfb_config->mode.height );
+          if (mode)
+               shared->mode = *mode;
      }
 
      D_INFO( "FBDev/Screen: Default mode is %dx%d (%d modes in total)\n",

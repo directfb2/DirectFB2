@@ -37,6 +37,12 @@ const unsigned int directfb_major_version = DIRECTFB_MAJOR_VERSION;
 const unsigned int directfb_minor_version = DIRECTFB_MINOR_VERSION;
 const unsigned int directfb_micro_version = DIRECTFB_MICRO_VERSION;
 
+#if !DIRECT_BUILD_CTORS
+void __D_init_all( void );
+void __Fusion_init_all( void );
+void __DFB_init_all( void );
+#endif
+
 /**********************************************************************************************************************/
 
 const char *
@@ -70,6 +76,14 @@ DirectFBInit( int   *argc,
 {
      DFBResult ret;
 
+#if !DIRECT_BUILD_CTORS
+     if (!dfb_config) {
+          __D_init_all();
+          __Fusion_init_all();
+          __DFB_init_all();
+     }
+#endif
+
      ret = dfb_config_init( argc, argv );
      if (ret)
           return ret;
@@ -85,7 +99,7 @@ DirectFBSetOption( const char *name,
 
      D_DEBUG_AT( DirectFB_Main, "%s( '%s', '%s' )\n", __FUNCTION__, name, value );
 
-     if (dfb_config == NULL) {
+     if (!dfb_config) {
           D_ERROR( "DirectFB/Main: DirectFBInit() has to be called before DirectFBSetOption()!\n" );
           return DFB_INIT;
      }

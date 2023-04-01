@@ -95,7 +95,6 @@ fusion_skirmish_init2( FusionSkirmish    *skirmish,
      if (!local)
           return fusion_skirmish_init( skirmish, name, world );
 
-
      skirmish->single = D_CALLOC( 1, sizeof(FusionSkirmishSingle) + strlen( name ) + 1 );
      if (skirmish->single == 0)
           return DR_NOLOCALMEMORY;

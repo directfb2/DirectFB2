@@ -9710,7 +9710,7 @@ Bop_rgb32_to_Aop_rgb16_LE( GenefxState *gfxs )
      }
 }
 
-#endif  /* #ifndef WORDS_BIGENDIAN */
+#endif /* WORDS_BIGENDIAN */
 
 /**********************************************************************************************************************/
 

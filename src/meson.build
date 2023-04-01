@@ -173,6 +173,11 @@ configure_file(configuration: build_conf,
                install: true,
                install_dir: join_paths(get_option('includedir'), 'directfb-internal'))
 
+libdirectfb_private = []
+if get_option('constructors')
+  libdirectfb_private = '-Wl,-u,__DFB_init_all'
+endif
+
 libdirectfb = library('directfb-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
                       directfb_sources, flux_sources, surface_pool_sources,
                       include_directories: [config_inc, directfb_inc],
@@ -200,7 +205,7 @@ pkgconfig.generate(filebase: 'directfb',
                    requires: 'direct fusion',
                    requires_private: 'directfb-gfxdriver directfb-inputdriver directfb-interface directfb-system directfb-wm',
                    libraries: '-L${libdir} -ldirectfb',
-                   libraries_private: '-Wl,-u,__DFB_init_all',
+                   libraries_private: libdirectfb_private,
                    subdirs: 'directfb')
 
 pkgconfig.generate(filebase: 'directfb-internal',

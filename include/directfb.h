@@ -222,6 +222,83 @@ DFBResult  DIRECTFB_API  DirectFBInit (
      char                                  **argv[]              /* pointer to main()'s argv */
 );
 
+#if !DIRECT_BUILD_CTORS
+
+#define StringizeDirectFBCoreSystemInit(name)    directfb_##name##_ctor()
+#define DirectFBCoreSystemInit(name)             StringizeDirectFBCoreSystemInit( name )
+#define DirectFBCoreSystemInitProtoype(name)     void DirectFBCoreSystemInit(name)
+
+#ifdef DFB_GRAPHICS_DRIVER
+#define StringizeGraphicsDriverInit(name)        directfb_##name##_ctor()
+#define DirectFBGraphicsDriverInit(name)         StringizeDirectFBGraphicsDriverInit( name )
+#define DirectFBGraphicsDriverInitProtoype(name) void DirectFBGraphicsDriverInit(name)
+#else
+#define DirectFBGraphicsDriverInit(name)
+#define DirectFBGraphicsDriverInitProtoype(name)
+#endif
+
+#ifdef DFB_INPUT_DRIVER
+#define StringizeDirectFBInputDriverInit(name)   directfb_##name##_ctor()
+#define DirectFBInputDriverInit(name)            StringizeDirectFBInputDriverInit( name )
+#define DirectFBInputDriverInitProtoype(name)    void DirectFBInputDriverInit(name)
+#else
+#define DirectFBInputDriverInit(name)
+#define DirectFBInputDriverInitProtoype(name)
+#endif
+
+#ifdef DFB_FONT_PROVIDER
+#define StringizeDirectFBFontProviderInit(name)  IDirectFBFont_##name##_ctor()
+#define DirectFBFontProviderInit(name)           StringizeDirectFBFontProviderInit( name )
+#define DirectFBFontProviderInitProtoype(name)   void DirectFBFontProviderInit(name)
+#else
+#define DirectFBFontProviderInit(name)
+#define DirectFBFontProviderInitProtoype(name)
+#endif
+
+#ifdef DFB_IMAGE_PROVIDER
+#define StringizeDirectFBImageProviderInit(name) IDirectFBImageProvider_##name##_ctor()
+#define DirectFBImageProviderInit(name)          StringizeDirectFBImageProviderInit( name )
+#define DirectFBImageProviderInitProtoype(name)  void DirectFBImageProviderInit(name)
+#else
+#define DirectFBImageProviderInit(name)
+#define DirectFBImageProviderInitProtoype(name)
+#endif
+
+#ifdef DFB_VIDEO_PROVIDER
+#define StringizeDirectFBVideoProviderInit(name) IDirectFBVideoProvider_##name##_ctor()
+#define DirectFBVideoProviderInit(name)          StringizeDirectFBVideoProviderInit( name )
+#define DirectFBVideoProviderInitProtoype(name)  void DirectFBVideoProviderInit(name)
+#else
+#define DirectFBVideoProviderInit(name)
+#define DirectFBVideoProviderInitProtoype(name)
+#endif
+
+#define StringizeDirectFBWindowManagerInit(name) directfb_##name##_ctor()
+#define DirectFBWindowManagerInit(name)          StringizeDirectFBWindowManagerInit( name )
+#define DirectFBWindowManagerInitProtoype(name)  void DirectFBWindowManagerInit(name)
+
+#if defined(DFB_CORE_SYSTEM) && defined(DFB_WINDOW_MANAGER)
+DirectFBCoreSystemInitProtoype    ( DFB_CORE_SYSTEM );
+DirectFBGraphicsDriverInitProtoype( DFB_GRAPHICS_DRIVER );
+DirectFBInputDriverInitProtoype   ( DFB_INPUT_DRIVER );
+DirectFBFontProviderInitProtoype  ( DFB_FONT_PROVIDER );
+DirectFBImageProviderInitProtoype ( DFB_IMAGE_PROVIDER );
+DirectFBVideoProviderInitProtoype ( DFB_VIDEO_PROVIDER );
+DirectFBWindowManagerInitProtoype ( DFB_WINDOW_MANAGER );
+
+#define DirectFBInit( argc_ptr, argv_ptr )              \
+     DirectFBInit              ( argc_ptr, argv_ptr );  \
+     DirectFBCoreSystemInit    ( DFB_CORE_SYSTEM );     \
+     DirectFBGraphicsDriverInit( DFB_GRAPHICS_DRIVER ); \
+     DirectFBInputDriverInit   ( DFB_INPUT_DRIVER );    \
+     DirectFBFontProviderInit  ( DFB_FONT_PROVIDER );   \
+     DirectFBImageProviderInit ( DFB_IMAGE_PROVIDER );  \
+     DirectFBVideoProviderInit ( DFB_VIDEO_PROVIDER );  \
+     DirectFBWindowManagerInit ( DFB_WINDOW_MANAGER );
+#endif
+
+#endif
+
 /*
  * Sets configuration parameters supported on command line and in
  * config file. Can only be called before DirectFBCreate but after

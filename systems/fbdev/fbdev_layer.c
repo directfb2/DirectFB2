@@ -175,7 +175,7 @@ fbdevPrimaryInitLayer( CoreLayer                  *layer,
      config->flags       = DLCONF_WIDTH | DLCONF_HEIGHT | DLCONF_PIXELFORMAT | DLCONF_BUFFERMODE;
      config->width       = shared->mode.xres;
      config->height      = shared->mode.yres;
-     config->pixelformat = dfb_config->mode.format ?: dfb_pixelformat_for_depth( shared->modes->bpp );
+     config->pixelformat = dfb_config->mode.format ?: dfb_pixelformat_for_depth( shared->mode.bpp );
      config->buffermode  = DLBM_FRONTONLY;
 
      return DFB_OK;
