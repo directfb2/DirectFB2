@@ -16,6 +16,11 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 */
 
+#include <direct/build.h>
+#if DIRECT_BUILD_NETWORK
+#define _GNU_SOURCE /* To get EAI_ADDRFAMILY and EAI_NODATA definition. */
+#endif /* DIRECT_BUILD_NETWORK */
+
 #include <direct/os/log.h>
 #include <direct/messages.h>
 #include <direct/util.h>
@@ -148,6 +153,8 @@ init_file( DirectLog  *log,
      return DR_OK;
 }
 
+#if DIRECT_BUILD_NETWORK
+
 static DirectResult
 parse_host_addr( const char       *hostport,
                  struct addrinfo **ret_addr )
@@ -268,3 +275,14 @@ init_udp( DirectLog  *log,
 
      return DR_OK;
 }
+
+#else /* DIRECT_BUILD_NETWORK */
+
+static DirectResult
+init_udp( DirectLog  *log,
+          const char *hostport )
+{
+     return DR_UNSUPPORTED;
+}
+
+#endif /* DIRECT_BUILD_NETWORK */

@@ -28,12 +28,14 @@
 #include <grp.h>
 #include <limits.h>
 #include <linux/unistd.h>
+#if DIRECT_BUILD_NETWORK
 #include <netdb.h>
-#include <netinet/in.h>
+#endif
 #include <pthread.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

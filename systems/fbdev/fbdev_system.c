@@ -16,6 +16,8 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 */
 
+#define _GNU_SOURCE /* To get basename() declaration. */
+
 #include <core/core.h>
 #include <core/core_system.h>
 #include <core/layers.h>
@@ -74,7 +76,7 @@ get_pci_info( FBDevDataShared *shared )
                shared->pci.bus  = bus;
                shared->pci.dev  = dev;
                shared->pci.func = func;
-           }
+          }
 
           snprintf( path, sizeof(path), SYS_CLASS_GRAPHICS_DEV_VENDOR, devname );
 

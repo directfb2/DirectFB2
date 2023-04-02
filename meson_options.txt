@@ -53,10 +53,6 @@ option('mmx',
        type: 'boolean',
        description: 'MMX assembly support')
 
-option('neon',
-       type: 'boolean',
-       description: 'NEON assembly support')
-
 option('moduledirname',
        type: 'string',
        description: 'DirectFB module directory name')
@@ -70,6 +66,14 @@ option('multi-kernel',
        type: 'boolean',
        value: false,
        description: 'Use the Linux Fusion device for multi application')
+
+option('neon',
+       type: 'boolean',
+       description: 'NEON assembly support')
+
+option('network',
+       type: 'boolean',
+       description: 'Network support')
 
 option('os',
        type: 'string',

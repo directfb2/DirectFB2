@@ -423,7 +423,7 @@ direct_trace_print_stack( DirectTraceBuffer *buffer )
                if (info.dli_fname) {
                     const char *symbol = direct_trace_lookup_symbol( info.dli_fname, (long) (fn - info.dli_fbase) );
                     if (!symbol) {
-                         symbol = direct_trace_lookup_symbol( info.dli_fname, (long) (fn) );
+                         symbol = direct_trace_lookup_symbol( info.dli_fname, (long) fn );
                          if (!symbol) {
                               if (info.dli_sname)
                                    symbol = info.dli_sname;
@@ -445,7 +445,7 @@ direct_trace_print_stack( DirectTraceBuffer *buffer )
           }
           else
           {
-               const char *symbol = direct_trace_lookup_symbol( NULL, (long) (fn) );
+               const char *symbol = direct_trace_lookup_symbol( NULL, (long) fn );
                direct_log_printf( NULL, "  #%-2d 0x%08lx in %s ()\n",
                                   level - i - 1, (unsigned long) fn, symbol ?: "??" );
           }

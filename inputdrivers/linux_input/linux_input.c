@@ -18,7 +18,10 @@
 
 #define DFB_INPUTDRIVER_HAS_AXIS_INFO
 #define DFB_INPUTDRIVER_HAS_SET_CONFIGURATION
+#include <direct/build.h>
+#if DIRECT_BUILD_NETWORK
 #define DISABLE_INPUT_HOTPLUG_FUNCTION_STUB
+#endif /* DIRECT_BUILD_NETWORK */
 
 #include <core/input_driver.h>
 #include <direct/thread.h>
@@ -1598,6 +1601,8 @@ driver_close_device( void *driver_data )
      D_FREE( data );
 }
 
+#if DIRECT_BUILD_NETWORK
+
 /**********************************************************************************************************************
  ********************************* Hot-plug functions *****************************************************************
  **********************************************************************************************************************/
@@ -1985,6 +1990,8 @@ stop_hotplug()
 
      return DFB_OK;
 }
+
+#endif /* DIRECT_BUILD_NETWORK */
 
 /**********************************************************************************************************************
  ********************************* Axis info function *****************************************************************
