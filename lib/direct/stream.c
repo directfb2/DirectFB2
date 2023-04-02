@@ -44,6 +44,7 @@ struct __D_DirectStream {
      void                 *cache;
      unsigned int          cache_size;
 
+#if DIRECT_BUILD_NETWORK
      /* Remote streams data. */
      struct {
           int              sd;
@@ -62,6 +63,7 @@ struct __D_DirectStream {
 
           void            *data;
      } remote;
+#endif /* DIRECT_BUILD_NETWORK */
 
      DirectResult (*wait)( DirectStream *stream, unsigned int length, struct timeval *timeout );
      DirectResult (*peek)( DirectStream *stream, unsigned int length, int offset, void *buf, unsigned int *read_out );
@@ -71,18 +73,10 @@ struct __D_DirectStream {
 
 /**********************************************************************************************************************/
 
-#define NET_TIMEOUT        15
-#define HTTP_PORT          80
-#define FTP_PORT           21
-#define HTTP_MAX_REDIRECTS 15
-
-static DirectResult file_open( DirectStream *stream, const char *filename );
-static DirectResult http_open( DirectStream *stream, const char *filename );
-static DirectResult ftp_open ( DirectStream *stream, const char *filename );
-
 static void
 direct_stream_close( DirectStream *stream )
 {
+#if DIRECT_BUILD_NETWORK
      if (stream->remote.host) {
           D_FREE( stream->remote.host );
           stream->remote.host = NULL;
@@ -122,6 +116,7 @@ direct_stream_close( DirectStream *stream )
           close( stream->remote.sd );
           stream->remote.sd = -1;
      }
+#endif /* DIRECT_BUILD_NETWORK */
 
      if (stream->mime) {
           D_FREE( stream->mime );
@@ -143,19 +138,21 @@ direct_stream_close( DirectStream *stream )
 
 /**********************************************************************************************************************/
 
+#if DIRECT_BUILD_NETWORK
+
 static __inline__ char *
 trim( char *s )
 {
      char *e;
 
-     #define space(c) ((c) == ' ' || (c) == '\t' || (c) == '\r' || (c) == '\n' || (c) == '"' || (c) == '\'')
+#define space(c) ((c) == ' ' || (c) == '\t' || (c) == '\r' || (c) == '\n' || (c) == '"' || (c) == '\'')
 
      for (; space(*s); s++);
 
      e = s + strlen( s ) - 1;
      for (; e > s && space(*e); *e-- = '\0');
 
-     #undef space
+#undef space
 
      return s;
 }
@@ -232,6 +229,8 @@ parse_url( const char  *url,
 
 /**********************************************************************************************************************/
 
+#define NET_TIMEOUT 15
+
 static int
 net_response( DirectStream *stream,
               char         *buf,
@@ -307,104 +306,6 @@ net_command( DirectStream *stream,
      }
 
      return 0;
-}
-
-static DirectResult
-net_wait( DirectStream   *stream,
-          unsigned int    length,
-          struct timeval *timeout )
-{
-     fd_set s;
-
-     D_DEBUG_AT( Direct_Stream, "%s()\n", __FUNCTION__ );
-
-     if (stream->cache_size >= length)
-          return DR_OK;
-
-     if (stream->fd == -1)
-          return DR_EOF;
-
-     FD_ZERO( &s );
-     FD_SET( stream->fd, &s );
-
-     switch (select( stream->fd + 1, &s, NULL, NULL, timeout )) {
-          case 0:
-               if (!timeout && !stream->cache_size)
-                    return DR_EOF;
-               return DR_TIMEOUT;
-          case -1:
-               return errno2result( errno );
-     }
-
-     return DR_OK;
-}
-
-static DirectResult
-net_peek( DirectStream *stream,
-          unsigned int  length,
-          int           offset,
-          void         *buf,
-          unsigned int *read_out )
-{
-     char    *tmp;
-     ssize_t  size;
-
-     D_DEBUG_AT( Direct_Stream, "%s()\n", __FUNCTION__ );
-
-     if (offset < 0)
-          return DR_UNSUPPORTED;
-
-     tmp = alloca( length + offset );
-
-     size = recv( stream->fd, tmp, length + offset, MSG_PEEK );
-     switch (size) {
-          case 0:
-               return DR_EOF;
-          case -1:
-               if (errno == EAGAIN || errno == EWOULDBLOCK)
-                    return DR_BUFFEREMPTY;
-               return errno2result( errno );
-          default:
-               if (size < offset)
-                    return DR_BUFFEREMPTY;
-               size -= offset;
-               break;
-     }
-
-     direct_memcpy( buf, tmp + offset, size );
-
-     if (read_out)
-          *read_out = size;
-
-     return DR_OK;
-}
-
-static DirectResult
-net_read( DirectStream *stream,
-          unsigned int  length,
-          void         *buf,
-          unsigned int *read_out )
-{
-     ssize_t size;
-
-     D_DEBUG_AT( Direct_Stream, "%s()\n", __FUNCTION__ );
-
-     size = recv( stream->fd, buf, length, 0 );
-     switch (size) {
-          case 0:
-               return DR_EOF;
-          case -1:
-               if (errno == EAGAIN || errno == EWOULDBLOCK)
-                    return DR_BUFFEREMPTY;
-               return errno2result( errno );
-     }
-
-     stream->offset += size;
-
-     if (read_out)
-          *read_out = size;
-
-     return DR_OK;
 }
 
 static DirectResult
@@ -506,9 +407,107 @@ net_connect( struct addrinfo *addr,
 }
 
 static DirectResult
-net_open( DirectStream *stream,
-          const char   *filename,
-          int           proto )
+net_stream_wait( DirectStream   *stream,
+                 unsigned int    length,
+                 struct timeval *timeout )
+{
+     fd_set s;
+
+     D_DEBUG_AT( Direct_Stream, "%s()\n", __FUNCTION__ );
+
+     if (stream->cache_size >= length)
+          return DR_OK;
+
+     if (stream->fd == -1)
+          return DR_EOF;
+
+     FD_ZERO( &s );
+     FD_SET( stream->fd, &s );
+
+     switch (select( stream->fd + 1, &s, NULL, NULL, timeout )) {
+          case 0:
+               if (!timeout && !stream->cache_size)
+                    return DR_EOF;
+               return DR_TIMEOUT;
+          case -1:
+               return errno2result( errno );
+     }
+
+     return DR_OK;
+}
+
+static DirectResult
+net_stream_peek( DirectStream *stream,
+                 unsigned int  length,
+                 int           offset,
+                 void         *buf,
+                 unsigned int *read_out )
+{
+     char    *tmp;
+     ssize_t  size;
+
+     D_DEBUG_AT( Direct_Stream, "%s()\n", __FUNCTION__ );
+
+     if (offset < 0)
+          return DR_UNSUPPORTED;
+
+     tmp = alloca( length + offset );
+
+     size = recv( stream->fd, tmp, length + offset, MSG_PEEK );
+     switch (size) {
+          case 0:
+               return DR_EOF;
+          case -1:
+               if (errno == EAGAIN || errno == EWOULDBLOCK)
+                    return DR_BUFFEREMPTY;
+               return errno2result( errno );
+          default:
+               if (size < offset)
+                    return DR_BUFFEREMPTY;
+               size -= offset;
+               break;
+     }
+
+     direct_memcpy( buf, tmp + offset, size );
+
+     if (read_out)
+          *read_out = size;
+
+     return DR_OK;
+}
+
+static DirectResult
+net_stream_read( DirectStream *stream,
+                 unsigned int  length,
+                 void         *buf,
+                 unsigned int *read_out )
+{
+     ssize_t size;
+
+     D_DEBUG_AT( Direct_Stream, "%s()\n", __FUNCTION__ );
+
+     size = recv( stream->fd, buf, length, 0 );
+     switch (size) {
+          case 0:
+               return DR_EOF;
+          case -1:
+               if (errno == EAGAIN || errno == EWOULDBLOCK)
+                    return DR_BUFFEREMPTY;
+               return errno2result( errno );
+     }
+
+     stream->offset += size;
+
+     if (read_out)
+          *read_out = size;
+
+     return DR_OK;
+}
+
+static DirectResult
+net_stream_open( DirectStream *stream,
+                 const char   *filename,
+                 int           proto )
 {
      DirectResult    ret;
      int             sock = (proto == IPPROTO_TCP) ? SOCK_STREAM : SOCK_DGRAM;
@@ -542,165 +541,16 @@ net_open( DirectStream *stream,
 
      stream->fd     = stream->remote.sd;
      stream->length = -1;
-     stream->wait   = net_wait;
-     stream->peek   = net_peek;
-     stream->read   = net_read;
+     stream->wait   = net_stream_wait;
+     stream->peek   = net_stream_peek;
+     stream->read   = net_stream_read;
 
      return DR_OK;
 }
 
 /**********************************************************************************************************************/
 
-static DirectResult
-http_seek( DirectStream *stream,
-           unsigned int  offset )
-{
-     DirectResult ret;
-     char         buf[1280];
-     int          status, len;
-
-     close( stream->remote.sd );
-     stream->remote.sd = -1;
-
-     ret = net_connect( stream->remote.addr, SOCK_STREAM, IPPROTO_TCP, &stream->remote.sd );
-     if (ret)
-          return ret;
-
-     stream->fd = stream->remote.sd;
-
-     len = snprintf( buf, sizeof(buf),
-                     "GET %s HTTP/1.0\r\n"
-                     "Host: %s:%d\r\n",
-                     stream->remote.path, stream->remote.host, stream->remote.port );
-
-     if (stream->remote.auth) {
-          len += snprintf( buf + len, sizeof(buf) - len,
-                           "Authorization: Basic %s\r\n",
-                           stream->remote.auth );
-     }
-
-     snprintf( buf + len, sizeof(buf) - len,
-               "User-Agent: DirectFB\r\n"
-               "Accept: */*\r\n"
-               "Range: bytes=%u-\r\n"
-               "Connection: Close\r\n",
-               offset );
-
-     status = net_command( stream, buf, sizeof(buf) );
-     switch (status) {
-          case 200 ... 299:
-               stream->offset = offset;
-               break;
-          default:
-               if (status)
-                    D_ERROR( "Direct/Stream: Server returned status %d\n", status );
-               return DR_FAILURE;
-     }
-
-     /* Discard remaining headers. */
-     while (net_response( stream, buf, sizeof(buf) ) > 0);
-
-     return DR_OK;
-}
-
-static DirectResult
-http_open( DirectStream *stream,
-           const char   *filename )
-{
-     DirectResult ret;
-     char         buf[1280];
-     int          status, len;
-
-     stream->remote.port = HTTP_PORT;
-
-     ret = net_open( stream, filename, IPPROTO_TCP );
-     if (ret)
-          return ret;
-
-     if (stream->remote.user) {
-          char *tmp;
-
-          if (stream->remote.pass) {
-               tmp = alloca( strlen( stream->remote.user ) + strlen( stream->remote.pass ) + 2 );
-               len = sprintf( tmp, "%s:%s", stream->remote.user, stream->remote.pass );
-          }
-          else {
-               tmp = alloca( strlen( stream->remote.user ) + 2 );
-               len = sprintf( tmp, "%s:", stream->remote.user );
-          }
-
-          stream->remote.auth = direct_base64_encode( tmp, len );
-     }
-
-     len = snprintf( buf, sizeof(buf),
-                     "GET %s HTTP/1.0\r\n"
-                     "Host: %s:%d\r\n",
-                     stream->remote.path, stream->remote.host, stream->remote.port );
-
-     if (stream->remote.auth) {
-          len += snprintf( buf + len, sizeof(buf) - len,
-                           "Authorization: Basic %s\r\n",
-                           stream->remote.auth );
-     }
-
-     snprintf( buf + len, sizeof(buf) - len,
-               "User-Agent: DirectFB\r\n"
-               "Accept: */*\r\n"
-               "Connection: Close\r\n" );
-
-     status = net_command( stream, buf, sizeof(buf) );
-
-     while (net_response( stream, buf, sizeof(buf) ) > 0) {
-          if (!strncasecmp( buf, "Accept-Ranges:", 14 )) {
-               if (strcmp( trim( buf + 14 ), "none" ))
-                    stream->seek = http_seek;
-          }
-          else if (!strncasecmp( buf, "Content-Type:", 13 )) {
-               char *mime = trim( buf + 13 );
-               char *tmp  = strchr( mime, ';' );
-               if (tmp)
-                    *tmp = '\0';
-               if (stream->mime)
-                    D_FREE( stream->mime );
-               stream->mime = D_STRDUP( mime );
-          }
-          else if (!strncasecmp( buf, "Content-Length:", 15 )) {
-               char *tmp = trim( buf + 15 );
-               if (sscanf( tmp, ""_ZD"", &stream->length ) < 1)
-                    sscanf( tmp, "bytes="_ZD"", &stream->length );
-          }
-          else if (!strncasecmp( buf, "Location:", 9 )) {
-               direct_stream_close( stream );
-               stream->seek = NULL;
-
-               if (++stream->remote.redirects > HTTP_MAX_REDIRECTS) {
-                    D_ERROR( "Direct/Stream: Reached maximum number of redirects (%d)\n", HTTP_MAX_REDIRECTS );
-                    return DR_LIMITEXCEEDED;
-               }
-
-               filename = trim( buf + 9 );
-               if (!strncmp( filename, "http://", 7 ))
-                    return http_open( stream, filename + 7 );
-               if (!strncmp( filename, "ftp://", 6 ))
-                    return ftp_open( stream, filename + 6 );
-
-               return DR_UNSUPPORTED;
-          }
-     }
-
-     switch (status) {
-          case 200 ... 299:
-               break;
-          default:
-               if (status)
-                    D_ERROR( "Direct/Stream: Server returned status %d\n", status );
-               return (status == 404) ? DR_FILENOTFOUND : DR_FAILURE;
-     }
-
-     return DR_OK;
-}
-
-/**********************************************************************************************************************/
+#define FTP_PORT 21
 
 static DirectResult
 ftp_open_pasv( DirectStream *stream,
@@ -747,8 +597,8 @@ ftp_open_pasv( DirectStream *stream,
 }
 
 static DirectResult
-ftp_seek( DirectStream *stream,
-          unsigned int  offset )
+ftp_stream_seek( DirectStream *stream,
+                 unsigned int  offset )
 {
      DirectResult ret = DR_OK;
      char         buf[512];
@@ -795,8 +645,8 @@ error:
 }
 
 static DirectResult
-ftp_open( DirectStream *stream,
-          const char   *filename )
+ftp_stream_open( DirectStream *stream,
+                 const char   *filename )
 {
      DirectResult ret;
      int          status = 0;
@@ -804,7 +654,7 @@ ftp_open( DirectStream *stream,
 
      stream->remote.port = FTP_PORT;
 
-     ret = net_open( stream, filename, IPPROTO_TCP );
+     ret = net_stream_open( stream, filename, IPPROTO_TCP );
      if (ret)
           return ret;
 
@@ -856,17 +706,173 @@ ftp_open( DirectStream *stream,
                return DR_FAILURE;
      }
 
-     stream->seek = ftp_seek;
+     stream->seek = ftp_stream_seek;
 
      return DR_OK;
 }
 
 /**********************************************************************************************************************/
 
+#define HTTP_PORT          80
+#define HTTP_MAX_REDIRECTS 15
+
 static DirectResult
-pipe_wait( DirectStream   *stream,
-           unsigned int    length,
-           struct timeval *timeout )
+http_stream_seek( DirectStream *stream,
+           unsigned int  offset )
+{
+     DirectResult ret;
+     char         buf[1280];
+     int          status, len;
+
+     close( stream->remote.sd );
+     stream->remote.sd = -1;
+
+     ret = net_connect( stream->remote.addr, SOCK_STREAM, IPPROTO_TCP, &stream->remote.sd );
+     if (ret)
+          return ret;
+
+     stream->fd = stream->remote.sd;
+
+     len = snprintf( buf, sizeof(buf),
+                     "GET %s HTTP/1.0\r\n"
+                     "Host: %s:%d\r\n",
+                     stream->remote.path, stream->remote.host, stream->remote.port );
+
+     if (stream->remote.auth) {
+          len += snprintf( buf + len, sizeof(buf) - len,
+                           "Authorization: Basic %s\r\n",
+                           stream->remote.auth );
+     }
+
+     snprintf( buf + len, sizeof(buf) - len,
+               "User-Agent: DirectFB\r\n"
+               "Accept: */*\r\n"
+               "Range: bytes=%u-\r\n"
+               "Connection: Close\r\n",
+               offset );
+
+     status = net_command( stream, buf, sizeof(buf) );
+     switch (status) {
+          case 200 ... 299:
+               stream->offset = offset;
+               break;
+          default:
+               if (status)
+                    D_ERROR( "Direct/Stream: Server returned status %d\n", status );
+               return DR_FAILURE;
+     }
+
+     /* Discard remaining headers. */
+     while (net_response( stream, buf, sizeof(buf) ) > 0);
+
+     return DR_OK;
+}
+
+static DirectResult
+http_stream_open( DirectStream *stream,
+                  const char   *filename )
+{
+     DirectResult ret;
+     char         buf[1280];
+     int          status, len;
+
+     stream->remote.port = HTTP_PORT;
+
+     ret = net_stream_open( stream, filename, IPPROTO_TCP );
+     if (ret)
+          return ret;
+
+     if (stream->remote.user) {
+          char *tmp;
+
+          if (stream->remote.pass) {
+               tmp = alloca( strlen( stream->remote.user ) + strlen( stream->remote.pass ) + 2 );
+               len = sprintf( tmp, "%s:%s", stream->remote.user, stream->remote.pass );
+          }
+          else {
+               tmp = alloca( strlen( stream->remote.user ) + 2 );
+               len = sprintf( tmp, "%s:", stream->remote.user );
+          }
+
+          stream->remote.auth = direct_base64_encode( tmp, len );
+     }
+
+     len = snprintf( buf, sizeof(buf),
+                     "GET %s HTTP/1.0\r\n"
+                     "Host: %s:%d\r\n",
+                     stream->remote.path, stream->remote.host, stream->remote.port );
+
+     if (stream->remote.auth) {
+          len += snprintf( buf + len, sizeof(buf) - len,
+                           "Authorization: Basic %s\r\n",
+                           stream->remote.auth );
+     }
+
+     snprintf( buf + len, sizeof(buf) - len,
+               "User-Agent: DirectFB\r\n"
+               "Accept: */*\r\n"
+               "Connection: Close\r\n" );
+
+     status = net_command( stream, buf, sizeof(buf) );
+
+     while (net_response( stream, buf, sizeof(buf) ) > 0) {
+          if (!strncasecmp( buf, "Accept-Ranges:", 14 )) {
+               if (strcmp( trim( buf + 14 ), "none" ))
+                    stream->seek = http_stream_seek;
+          }
+          else if (!strncasecmp( buf, "Content-Type:", 13 )) {
+               char *mime = trim( buf + 13 );
+               char *tmp  = strchr( mime, ';' );
+               if (tmp)
+                    *tmp = '\0';
+               if (stream->mime)
+                    D_FREE( stream->mime );
+               stream->mime = D_STRDUP( mime );
+          }
+          else if (!strncasecmp( buf, "Content-Length:", 15 )) {
+               char *tmp = trim( buf + 15 );
+               if (sscanf( tmp, ""_ZD"", &stream->length ) < 1)
+                    sscanf( tmp, "bytes="_ZD"", &stream->length );
+          }
+          else if (!strncasecmp( buf, "Location:", 9 )) {
+               direct_stream_close( stream );
+               stream->seek = NULL;
+
+               if (++stream->remote.redirects > HTTP_MAX_REDIRECTS) {
+                    D_ERROR( "Direct/Stream: Reached maximum number of redirects (%d)\n", HTTP_MAX_REDIRECTS );
+                    return DR_LIMITEXCEEDED;
+               }
+
+               filename = trim( buf + 9 );
+               if (!strncmp( filename, "http://", 7 ))
+                    return http_stream_open( stream, filename + 7 );
+               if (!strncmp( filename, "ftp://", 6 ))
+                    return ftp_stream_open( stream, filename + 6 );
+
+               return DR_UNSUPPORTED;
+          }
+     }
+
+     switch (status) {
+          case 200 ... 299:
+               break;
+          default:
+               if (status)
+                    D_ERROR( "Direct/Stream: Server returned status %d\n", status );
+               return (status == 404) ? DR_FILENOTFOUND : DR_FAILURE;
+     }
+
+     return DR_OK;
+}
+
+#endif /* DIRECT_BUILD_NETWORK */
+
+/**********************************************************************************************************************/
+
+static DirectResult
+pipe_stream_wait( DirectStream   *stream,
+                  unsigned int    length,
+                  struct timeval *timeout )
 {
      fd_set s;
 
@@ -889,11 +895,11 @@ pipe_wait( DirectStream   *stream,
 }
 
 static DirectResult
-pipe_peek( DirectStream *stream,
-           unsigned int  length,
-           int           offset,
-           void         *buf,
-           unsigned int *read_out )
+pipe_stream_peek( DirectStream *stream,
+                  unsigned int  length,
+                  int           offset,
+                  void         *buf,
+                  unsigned int *read_out )
 {
      unsigned int size = length;
      int          len;
@@ -934,10 +940,10 @@ pipe_peek( DirectStream *stream,
 }
 
 static DirectResult
-pipe_read( DirectStream *stream,
-           unsigned int  length,
-           void         *buf,
-           unsigned int *read_out )
+pipe_stream_read( DirectStream *stream,
+                  unsigned int  length,
+                  void         *buf,
+                  unsigned int *read_out )
 {
      unsigned int size = 0;
 
@@ -987,9 +993,9 @@ pipe_read( DirectStream *stream,
 }
 
 static DirectResult
-file_wait( DirectStream   *stream,
-           unsigned int    length,
-           struct timeval *timeout )
+file_stream_wait( DirectStream   *stream,
+                  unsigned int    length,
+                  struct timeval *timeout )
 {
      if (stream->offset >= stream->length)
           return DR_EOF;
@@ -998,11 +1004,11 @@ file_wait( DirectStream   *stream,
 }
 
 static DirectResult
-file_peek( DirectStream *stream,
-           unsigned int  length,
-           int           offset,
-           void         *buf,
-           unsigned int *read_out )
+file_stream_peek( DirectStream *stream,
+                  unsigned int  length,
+                  int           offset,
+                  void         *buf,
+                  unsigned int *read_out )
 {
      DirectResult ret;
      size_t       size;
@@ -1026,10 +1032,10 @@ file_peek( DirectStream *stream,
 }
 
 static DirectResult
-file_read( DirectStream *stream,
-           unsigned int  length,
-           void         *buf,
-           unsigned int *read_out )
+file_stream_read( DirectStream *stream,
+                  unsigned int  length,
+                  void         *buf,
+                  unsigned int *read_out )
 {
      DirectResult ret;
      size_t       size;
@@ -1047,8 +1053,8 @@ file_read( DirectStream *stream,
 }
 
 static DirectResult
-file_seek( DirectStream *stream,
-           unsigned int  offset )
+file_stream_seek( DirectStream *stream,
+                  unsigned int  offset )
 {
      DirectResult ret;
 
@@ -1062,8 +1068,8 @@ file_seek( DirectStream *stream,
 }
 
 static DirectResult
-file_open( DirectStream *stream,
-           const char   *filename )
+file_stream_open( DirectStream *stream,
+                  const char   *filename )
 {
      DirectResult   ret;
      DirectFileInfo info;
@@ -1077,9 +1083,9 @@ file_open( DirectStream *stream,
      ret = direct_file_seek( &stream->file, 0 );
      if (ret == DR_IO) {
           stream->length = -1;
-          stream->wait   = pipe_wait;
-          stream->peek   = pipe_peek;
-          stream->read   = pipe_read;
+          stream->wait   = pipe_stream_wait;
+          stream->peek   = pipe_stream_peek;
+          stream->read   = pipe_stream_read;
      }
      else {
           ret = direct_file_get_info( &stream->file, &info );
@@ -1089,10 +1095,10 @@ file_open( DirectStream *stream,
           }
 
           stream->length = info.size;
-          stream->wait   = file_wait;
-          stream->peek   = file_peek;
-          stream->read   = file_read;
-          stream->seek   = file_seek;
+          stream->wait   = file_stream_wait;
+          stream->peek   = file_stream_peek;
+          stream->read   = file_stream_read;
+          stream->seek   = file_stream_seek;
      }
 
      return DR_OK;
@@ -1122,22 +1128,24 @@ direct_stream_create( const char    *filename,
      stream->fd  = -1;
 
      if (!strncmp( filename, "file://", 7 )) {
-          ret = file_open( stream, filename + 7 );
+          ret = file_stream_open( stream, filename + 7 );
      }
+#if DIRECT_BUILD_NETWORK
      else if (!strncmp( filename, "http://", 7 )) {
-          ret = http_open( stream, filename + 7 );
+          ret = http_stream_open( stream, filename + 7 );
      }
      else if (!strncmp( filename, "ftp://", 6 )) {
-          ret = ftp_open( stream, filename + 6 );
+          ret = ftp_stream_open( stream, filename + 6 );
      }
      else if (!strncmp( filename, "tcp://", 6 )) {
-          ret = net_open( stream, filename + 6, IPPROTO_TCP );
+          ret = net_stream_open( stream, filename + 6, IPPROTO_TCP );
      }
      else if (!strncmp( filename, "udp://", 6 )) {
-          ret = net_open( stream, filename + 6, IPPROTO_UDP );
+          ret = net_stream_open( stream, filename + 6, IPPROTO_UDP );
      }
+#endif /* DIRECT_BUILD_NETWORK */
      else {
-          ret = file_open( stream, filename );
+          ret = file_stream_open( stream, filename );
      }
 
      if (ret) {
@@ -1182,8 +1190,10 @@ direct_stream_remote( DirectStream *stream )
 {
      D_MAGIC_ASSERT( stream, DirectStream );
 
+#if DIRECT_BUILD_NETWORK
      if (stream->remote.host)
           return true;
+#endif /* DIRECT_BUILD_NETWORK */
 
      return false;
 }

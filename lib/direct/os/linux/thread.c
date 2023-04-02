@@ -16,6 +16,8 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 */
 
+#define _GNU_SOURCE /* To get pthread_getattr_np() declaration. */
+
 #include <direct/conf.h>
 #include <direct/debug.h>
 #include <direct/messages.h>

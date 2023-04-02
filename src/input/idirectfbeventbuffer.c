@@ -577,9 +577,12 @@ IDirectFBEventBuffer_CreateFileDescriptor( IDirectFBEventBuffer *thiz,
      }
 
      /* Create the file descriptor(s). */
+#if DIRECT_BUILD_NETWORK
      ret = socketpair( PF_LOCAL, SOCK_STREAM, 0, data->pipe_fds );
+#else /* DIRECT_BUILD_NETWORK */
+     ret = pipe( data->pipe_fds );
+#endif /* DIRECT_BUILD_NETWORK */
      if (ret) {
-          D_DERROR( ret, "IDirectFBEventBuffer: socketpair() failed!\n" );
           direct_mutex_unlock( &data->events_mutex );
           return ret;
      }

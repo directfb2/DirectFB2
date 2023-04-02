@@ -72,8 +72,6 @@ config_inc = include_directories('.')
 lib_inc = include_directories('lib')
 directfb_inc = [include_directories('include', 'src'), lib_inc]
 
-add_global_arguments('-D_GNU_SOURCE', language: 'c')
-
 pkgconfig = import('pkgconfig')
 
 # core libraries
