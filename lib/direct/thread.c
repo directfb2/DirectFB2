@@ -65,6 +65,8 @@ direct_thread_add_init_handler( DirectThreadInitFunc  func,
 {
      DirectThreadInitHandler *handler;
 
+     D_DEBUG_AT( Direct_Thread, "Adding thread init handler %p...\n", func );
+
      handler = D_CALLOC( 1, sizeof(DirectThreadInitHandler) );
      if (!handler) {
           return NULL;
@@ -88,6 +90,8 @@ void
 direct_thread_remove_init_handler( DirectThreadInitHandler *handler )
 {
      D_MAGIC_ASSERT( handler, DirectThreadInitHandler );
+
+     D_DEBUG_AT( Direct_Thread, "Removing thread init handler %p...\n", handler->func );
 
      direct_mutex_lock( &handler_lock );
 

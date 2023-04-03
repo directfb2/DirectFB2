@@ -19,40 +19,8 @@
 #ifndef __DIRECT__SIGNALS_H__
 #define __DIRECT__SIGNALS_H__
 
-#include <direct/os/types.h>
+#include <direct/os/signals.h>
 
 /**********************************************************************************************************************/
-
-typedef enum {
-     DSHR_OK     = 0x00000000,
-     DSHR_REMOVE = 0x00000001,
-     DSHR_RESUME = 0x00000002
-} DirectSignalHandlerResult;
-
-typedef DirectSignalHandlerResult (*DirectSignalHandlerFunc)( int num, void *addr, void *ctx );
-
-/*
- * Signal number to use when registering a handler for any interrupt.
- */
-#define DIRECT_SIGNAL_ANY        -1
-#define DIRECT_SIGNAL_DUMP_STACK -2
-
-/**********************************************************************************************************************/
-
-DirectResult DIRECT_API direct_signals_initialize   ( void );
-
-DirectResult DIRECT_API direct_signals_shutdown     ( void );
-
-/*
- * Modifies the current thread's signal mask to block everything.
- */
-void         DIRECT_API direct_signals_block_all    ( void );
-
-DirectResult DIRECT_API direct_signal_handler_add   ( int                       num,
-                                                      DirectSignalHandlerFunc   func,
-                                                      void                     *ctx,
-                                                      DirectSignalHandler     **ret_handler );
-
-DirectResult DIRECT_API direct_signal_handler_remove( DirectSignalHandler      *handler );
 
 #endif

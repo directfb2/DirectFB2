@@ -77,8 +77,8 @@ typedef enum {
 typedef void (*DirectOnceInitHandler)( void );
 
 typedef void (*DirectThreadPrepareHandler)( void );
-typedef void (*DirectThreadParentHandler)( void );
-typedef void (*DirectThreadChildHandler)( void );
+typedef void (*DirectThreadParentHandler) ( void );
+typedef void (*DirectThreadChildHandler)  ( void );
 
 typedef void (*DirectTLSDestructor)( void *arg );
 

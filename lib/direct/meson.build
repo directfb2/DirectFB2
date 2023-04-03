@@ -31,7 +31,6 @@ direct_sources = [
   'messages.c',
   'modules.c',
   'result.c',
-  'signals.c',
   'stream.c',
   'system.c',
   'trace.c',
@@ -78,6 +77,7 @@ os_headers = [
   'os/log.h',
   'os/mem.h',
   'os/mutex.h',
+  'os/signals.h',
   'os/system.h',
   'os/thread.h',
   'os/types.h',
@@ -115,6 +115,7 @@ if get_option('os') == 'linux'
     'os/linux/log.c',
     'os/linux/mem.c',
     'os/linux/mutex.c',
+    'os/linux/signals.c',
     'os/linux/system.c',
     'os/linux/thread.c',
   ]

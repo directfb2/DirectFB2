@@ -41,10 +41,6 @@ DirectResult  DIRECT_API  direct_kill       ( pid_t                  pid,
 
 void          DIRECT_API  direct_sync       ( void );
 
-DirectResult  DIRECT_API  direct_sigprocmask( int                    how,
-                                              const sigset_t        *set,
-                                              sigset_t              *oset );
-
 uid_t         DIRECT_API  direct_geteuid    ( void );
 
 char          DIRECT_API *direct_getenv     ( const char            *name );
