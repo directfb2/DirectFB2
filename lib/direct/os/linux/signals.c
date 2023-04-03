@@ -18,7 +18,7 @@
 
 #include <direct/interface.h>
 #include <direct/list.h>
-#include <direct/signals.h>
+#include <direct/os/signals.h>
 #include <direct/system.h>
 #include <direct/thread.h>
 #include <direct/trace.h>
@@ -83,7 +83,7 @@ direct_signals_initialize()
                for (i = 0; i < NUM_SIGS_TO_HANDLE; i++)
                     sigaddset( &mask, sigs_to_handle[i] );
 
-               direct_sigprocmask( SIG_BLOCK, &mask, NULL );
+               sigprocmask( SIG_BLOCK, &mask, NULL );
 
                sighandler_thread = direct_thread_create( DTT_CRITICAL, handle_signals, NULL, "SigHandler" );
 
@@ -126,7 +126,7 @@ direct_signals_block_all()
 
      sigfillset( &signals );
 
-     direct_sigprocmask( SIG_BLOCK, &signals, NULL );
+     sigprocmask( SIG_BLOCK, &signals, NULL );
 }
 
 DirectResult
@@ -406,11 +406,11 @@ signal_handler( int        num,
 
      sigemptyset( &mask );
      sigaddset( &mask, num );
-     direct_sigprocmask( SIG_UNBLOCK, &mask, NULL );
+     sigprocmask( SIG_UNBLOCK, &mask, NULL );
 
      direct_trap( "SigHandler", num );
 
-     direct_sigprocmask( SIG_BLOCK, &mask, NULL );
+     sigprocmask( SIG_BLOCK, &mask, NULL );
 }
 
 /**********************************************************************************************************************/
@@ -436,7 +436,7 @@ handle_signals( DirectThread *thread,
      sigaddset( &mask, SIGSYS );
      sigaddset( &mask, SIGPIPE );
 
-     direct_sigprocmask( SIG_BLOCK, &mask, NULL );
+     sigprocmask( SIG_BLOCK, &mask, NULL );
 
      while (1) {
           D_DEBUG_AT( Direct_Signals, "%s() -> waiting for a signal...\n", __FUNCTION__ );
@@ -489,8 +489,7 @@ install_handlers()
      for (i = 0; i < NUM_SIGS_TO_HANDLE; i++) {
           sigs_handled[i].signum = -1;
 
-          if (direct_config->sighandler && !sigismember( &direct_config->dont_catch,
-                                                         sigs_to_handle[i] )) {
+          if (direct_config->sighandler && !sigismember( &direct_config->dont_catch, sigs_to_handle[i] )) {
                struct sigaction action;
                int              signum = sigs_to_handle[i];
 

@@ -111,16 +111,6 @@ direct_sync()
      sync();
 }
 
-DirectResult
-direct_sigprocmask( int             how,
-                    const sigset_t *set,
-                    sigset_t       *oset )
-{
-     int erno = pthread_sigmask( how, set, oset );
-
-     return errno2result( erno );
-}
-
 uid_t
 direct_geteuid()
 {

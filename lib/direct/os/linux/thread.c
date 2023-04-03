@@ -521,7 +521,7 @@ direct_thread_main( void *arg )
      if (direct_config->thread_block_signals) {
           sigset_t signals;
           sigfillset( &signals );
-          direct_sigprocmask( SIG_BLOCK, &signals, NULL );
+          sigprocmask( SIG_BLOCK, &signals, NULL );
      }
 
      /* Lock the thread mutex. */
