@@ -115,7 +115,7 @@ DirectFBSetOption( const char *name,
 }
 
 static void
-init_once()
+init_once( void )
 {
      direct_recursive_mutex_init( &idirectfb_lock );
 }

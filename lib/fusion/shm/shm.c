@@ -22,7 +22,7 @@
 #include <fusion/shm/pool.h>
 #include <fusion/shm/shm.h>
 
-D_DEBUG_DOMAIN( Fusion_SHMInit, "Fusion/SHM/Init", "Fusion Shared Memory Init" );
+D_DEBUG_DOMAIN( Fusion_SHMInit, "Fusion/SHMInit", "Fusion Shared Memory Init" );
 
 /**********************************************************************************************************************/
 
@@ -52,7 +52,7 @@ fusion_find_tmpfs( char *name,
                size_t size;
 
                if (direct_filesystem_size( mount_point, &size )) {
-                    D_ERROR( "Fusion/SHM/Init: Failed to get filesystem size on '%s'!\n", mount_point );
+                    D_ERROR( "Fusion/SHMInit: Failed to get filesystem size on '%s'!\n", mount_point );
                     continue;
                }
 
@@ -100,7 +100,7 @@ fusion_shm_init( FusionWorld *world )
                direct_snputs( shm->shared->tmpfs, fusion_config->tmpfs, FUSION_SHM_TMPFS_PATH_NAME_LEN );
           }
           else if (!fusion_find_tmpfs( shm->shared->tmpfs, FUSION_SHM_TMPFS_PATH_NAME_LEN )) {
-               D_ERROR( "Fusion/SHM/Init: Could not find tmpfs mount point, falling back to /dev/shm!\n" );
+               D_ERROR( "Fusion/SHMInit: Could not find tmpfs mount point, falling back to /dev/shm!\n" );
                snprintf( shm->shared->tmpfs, FUSION_SHM_TMPFS_PATH_NAME_LEN, "/dev/shm" );
           }
 
@@ -109,7 +109,7 @@ fusion_shm_init( FusionWorld *world )
           /* Initialize shared lock. */
           ret = fusion_skirmish_init2( &shm->shared->lock, "Fusion SHM", world, fusion_config->secure_fusion );
           if (ret) {
-               D_DERROR( ret, "Fusion/SHM/Init: Failed to create skirmish!\n" );
+               D_DERROR( ret, "Fusion/SHMInit: Failed to create skirmish!\n" );
                return ret;
           }
 

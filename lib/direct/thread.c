@@ -111,7 +111,7 @@ direct_thread_create( DirectThreadType      thread_type,
      D_ASSERT( thread_main != NULL );
      D_ASSERT( name != NULL );
 
-     D_DEBUG_AT( Direct_Thread, "%s( %s, %p( %p ), '%s' )\n", __FUNCTION__,
+     D_DEBUG_AT( Direct_ThreadInit, "%s( %s, %p( %p ), '%s' )\n", __FUNCTION__,
                  direct_thread_type_name( thread_type ), thread_main, arg, name );
 
      /* Allocate thread structure. */
@@ -269,10 +269,10 @@ direct_thread_destroy( DirectThread *thread )
      D_ASSUME( thread->tid != direct_gettid() );
      D_ASSUME( !thread->detached );
 
-     D_DEBUG_AT( Direct_Thread, "%s( %p, '%s' %d )\n", __FUNCTION__, thread->main, thread->name, thread->tid );
+     D_DEBUG_AT( Direct_ThreadInit, "%s( %p, '%s' %d )\n", __FUNCTION__, thread->main, thread->name, thread->tid );
 
      if (thread->detached) {
-          D_DEBUG_AT( Direct_Thread, "  -> detached\n" );
+          D_DEBUG_AT( Direct_ThreadInit, "  -> detached\n" );
           return;
      }
 

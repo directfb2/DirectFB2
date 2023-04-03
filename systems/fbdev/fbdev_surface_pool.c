@@ -50,19 +50,19 @@ typedef struct {
 /**********************************************************************************************************************/
 
 static int
-fbdevPoolDataSize()
+fbdevPoolDataSize( void )
 {
      return sizeof(FBDevPoolData);
 }
 
 static int
-fbdevPoolLocalDataSize()
+fbdevPoolLocalDataSize( void )
 {
      return sizeof(FBDevPoolLocalData);
 }
 
 static int
-fbdevAllocationDataSize()
+fbdevAllocationDataSize( void )
 {
      return sizeof(FBDevAllocationData);
 }

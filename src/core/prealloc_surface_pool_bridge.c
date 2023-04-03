@@ -35,7 +35,7 @@ typedef struct {
 /**********************************************************************************************************************/
 
 static int
-preallocPoolBridgeDataSize()
+preallocPoolBridgeDataSize( void )
 {
      return sizeof(preallocPoolBridgeData);
 }

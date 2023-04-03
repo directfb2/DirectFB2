@@ -48,19 +48,19 @@ typedef struct {
 /**********************************************************************************************************************/
 
 static int
-sharedSecurePoolDataSize()
+sharedSecurePoolDataSize( void )
 {
      return sizeof(SharedPoolData);
 }
 
 static int
-sharedSecurePoolLocalDataSize()
+sharedSecurePoolLocalDataSize( void )
 {
      return sizeof(SharedPoolLocalData);
 }
 
 static int
-sharedSecureAllocationDataSize()
+sharedSecureAllocationDataSize( void )
 {
      return sizeof(SharedAllocationData);
 }

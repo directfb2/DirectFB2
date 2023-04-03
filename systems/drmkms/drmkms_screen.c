@@ -38,7 +38,7 @@ static const char *panel_orientation_table[] = {
 /**********************************************************************************************************************/
 
 static int
-drmkmsScreenDataSize()
+drmkmsScreenDataSize( void )
 {
      return sizeof(DRMKMSScreenData);
 }

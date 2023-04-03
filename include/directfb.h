@@ -210,7 +210,7 @@ const char DIRECTFB_API *DirectFBCheckVersion (
 /*
  * Retrieves usage information about supported command-line flags.
  */
-const char DIRECTFB_API *DirectFBUsageString ();
+const char DIRECTFB_API *DirectFBUsageString ( void );
 
 /*
  * Parses the command-line and initializes some variables.

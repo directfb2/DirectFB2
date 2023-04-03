@@ -21,8 +21,6 @@
 #include <fusion/call.h>
 #include <fusion/conf.h>
 
-D_DEBUG_DOMAIN( Fusion_Init, "Fusion/Init", "Fusion Init" );
-
 /**********************************************************************************************************************/
 
 typedef void (*Func)( void );
@@ -42,11 +40,9 @@ static Func deinit_funcs[] = {
 
 __dfb_constructor__
 void
-__Fusion_init_all()
+__Fusion_init_all( void )
 {
      size_t i;
-
-     D_DEBUG_AT( Fusion_Init, "%s()\n", __FUNCTION__ );
 
      for (i = 0; i < D_ARRAY_SIZE(init_funcs); i++)
           init_funcs[i]();
@@ -54,11 +50,9 @@ __Fusion_init_all()
 
 __dfb_destructor__
 void
-__Fusion_deinit_all()
+__Fusion_deinit_all( void )
 {
      size_t i;
-
-     D_DEBUG_AT( Fusion_Init, "%s()\n", __FUNCTION__ );
 
      for (i = 0; i < D_ARRAY_SIZE(deinit_funcs); i++)
           deinit_funcs[i]();

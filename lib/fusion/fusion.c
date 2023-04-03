@@ -122,7 +122,7 @@ static void fusion_fork_handler_parent ( void );
 static void fusion_fork_handler_child  ( void );
 
 static void
-init_once()
+init_once( void )
 {
      if (fusion_config->fork_handler)
           direct_thread_atfork( fusion_fork_handler_prepare, fusion_fork_handler_parent, fusion_fork_handler_child );

@@ -116,8 +116,9 @@ __D_interface_dbg_deinit()
 
 /**********************************************************************************************************************/
 
-__attribute__((noinline)) void
-workaround_func()
+__attribute__((noinline))
+void
+workaround_func( void )
 {
 }
 
@@ -520,7 +521,7 @@ direct_print_interface_leaks()
 
 __dfb_no_instrument_function__
 static InterfaceDesc *
-allocate_interface_desc()
+allocate_interface_desc( void )
 {
      int cap = alloc_capacity;
 

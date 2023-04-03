@@ -36,7 +36,7 @@ typedef struct {
 /**********************************************************************************************************************/
 
 static int
-localAllocationDataSize()
+localAllocationDataSize( void )
 {
      return sizeof(LocalAllocationData);
 }

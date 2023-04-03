@@ -54,7 +54,7 @@ static GraphicsDriverFuncs gfxdriver_funcs = {
                                                                \
 __dfb_constructor__                                            \
 void                                                           \
-directfb_##shortname##_ctor()                                  \
+directfb_##shortname##_ctor( void )                            \
 {                                                              \
      direct_modules_register( &dfb_graphics_drivers,           \
                               DFB_GRAPHICS_DRIVER_ABI_VERSION, \
@@ -64,7 +64,7 @@ directfb_##shortname##_ctor()                                  \
                                                                \
 __dfb_destructor__                                             \
 void                                                           \
-directfb_##shortname##_dtor()                                  \
+directfb_##shortname##_dtor( void )                            \
 {                                                              \
      direct_modules_unregister( &dfb_graphics_drivers,         \
                                 #shortname );                  \
