@@ -77,13 +77,13 @@ typedef struct {
 /**********************************************************************************************************************/
 
 static int
-drmkmsPoolLocalDataSize()
+drmkmsPoolLocalDataSize( void )
 {
      return sizeof(DRMKMSPoolLocalData);
 }
 
 static int
-drmkmsAllocationDataSize()
+drmkmsAllocationDataSize( void )
 {
      return sizeof(DRMKMSAllocationData);
 }

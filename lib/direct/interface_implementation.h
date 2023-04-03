@@ -67,14 +67,14 @@ Deallocate( void *interface_ptr )                            \
                                                              \
 __dfb_constructor__                                          \
 void                                                         \
-type##_##impl##_ctor()                                       \
+type##_##impl##_ctor( void )                                 \
 {                                                            \
      DirectRegisterInterface( &interface_funcs );            \
 }                                                            \
                                                              \
 __dfb_destructor__                                           \
 void                                                         \
-type##_##impl##_dtor()                                       \
+type##_##impl##_dtor( void )                                 \
 {                                                            \
      DirectUnregisterInterface( &interface_funcs );          \
 }

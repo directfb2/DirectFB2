@@ -241,7 +241,7 @@ static CoreWMFuncs wm_funcs = {
                                                        \
 __dfb_constructor__                                    \
 void                                                   \
-directfb_##shortname##_ctor()                          \
+directfb_##shortname##_ctor( void )                    \
 {                                                      \
      direct_modules_register( &dfb_wm_modules,         \
                               DFB_CORE_WM_ABI_VERSION, \

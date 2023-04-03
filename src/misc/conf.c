@@ -143,7 +143,7 @@ const char *dfb_config_usage =
 /**********************************************************************************************************************/
 
 static void
-print_config_usage()
+print_config_usage( void )
 {
     fprintf( stderr, "DirectFB version %d.%d.%d\n",
              DIRECTFB_MAJOR_VERSION, DIRECTFB_MINOR_VERSION, DIRECTFB_MICRO_VERSION );
@@ -235,7 +235,7 @@ config_read_cmdline( char       *cmdbuf,
 }
 
 static void
-config_allocate()
+config_allocate( void )
 {
      int i;
 

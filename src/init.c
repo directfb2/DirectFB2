@@ -19,8 +19,6 @@
 #include <core/core.h>
 #include <directfb_result.h>
 
-D_DEBUG_DOMAIN( DirectFB_Init, "Direct/Init", "DirectFB Init" );
-
 /**********************************************************************************************************************/
 
 typedef void (*Func)( void );
@@ -39,11 +37,9 @@ static Func deinit_funcs[] = {
 
 __dfb_constructor__
 void
-__DFB_init_all()
+__DFB_init_all( void )
 {
      size_t i;
-
-     D_DEBUG_AT( DirectFB_Init, "%s()\n", __FUNCTION__ );
 
      for (i = 0; i < D_ARRAY_SIZE(init_funcs); i++)
           init_funcs[i]();
@@ -51,11 +47,9 @@ __DFB_init_all()
 
 __dfb_destructor__
 void
-__DFB_deinit_all()
+__DFB_deinit_all( void )
 {
      size_t i;
-
-     D_DEBUG_AT( DirectFB_Init, "%s()\n", __FUNCTION__ );
 
      dfb_config_deinit();
 

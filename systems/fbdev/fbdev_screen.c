@@ -100,7 +100,7 @@ fbdevSetPowerMode( CoreScreen         *screen,
 }
 
 static inline void
-waitretrace()
+waitretrace( void )
 {
 #if defined(__i386__) || defined(__x86_64__)
      if (iopl( 3 ))

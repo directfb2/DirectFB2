@@ -95,7 +95,7 @@ static CoreSystemFuncs system_funcs = {
                                                            \
 __dfb_constructor__                                        \
 void                                                       \
-directfb_##shortname##_ctor()                              \
+directfb_##shortname##_ctor( void )                        \
 {                                                          \
      direct_modules_register( &dfb_core_systems,           \
                               DFB_CORE_SYSTEM_ABI_VERSION, \

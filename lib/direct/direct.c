@@ -115,7 +115,7 @@ direct_shutdown()
 }
 
 static void
-direct_atexit_handler()
+direct_atexit_handler( void )
 {
      DirectCleanupHandler *handler, *temp;
 

@@ -135,7 +135,7 @@ set_palette( FBDevData   *fbdev,
 /**********************************************************************************************************************/
 
 static int
-fbdevPrimaryLayerDataSize()
+fbdevPrimaryLayerDataSize( void )
 {
      return sizeof(FBDevLayerData);
 }

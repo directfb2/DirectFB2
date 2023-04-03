@@ -24,8 +24,6 @@
 #include <direct/thread.h>
 #include <direct/util.h>
 
-D_DEBUG_DOMAIN( Direct_Init, "Direct/Init", "Direct Init" );
-
 /**********************************************************************************************************************/
 
 typedef void (*Func)( void );
@@ -62,11 +60,9 @@ static Func deinit_funcs[] = {
 
 __dfb_constructor__
 void
-__D_init_all()
+__D_init_all( void )
 {
      size_t i;
-
-     D_DEBUG_AT( Direct_Init, "%s()\n", __FUNCTION__ );
 
      for (i = 0; i < D_ARRAY_SIZE(init_funcs); i++)
           init_funcs[i]();
@@ -74,11 +70,9 @@ __D_init_all()
 
 __dfb_destructor__
 void
-__D_deinit_all()
+__D_deinit_all( void )
 {
      size_t i;
-
-     D_DEBUG_AT( Direct_Init, "%s()\n", __FUNCTION__ );
 
      for (i = 0; i < D_ARRAY_SIZE(deinit_funcs); i++)
           deinit_funcs[i]();

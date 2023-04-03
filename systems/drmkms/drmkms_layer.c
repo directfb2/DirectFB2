@@ -92,7 +92,7 @@ drmkms_buffer_thread( DirectThread *thread,
 /**********************************************************************************************************************/
 
 static int
-drmkmsPrimaryLayerDataSize()
+drmkmsPrimaryLayerDataSize( void )
 {
      return sizeof(DRMKMSLayerData);
 }
@@ -356,7 +356,7 @@ drmkmsPrimaryUpdateRegion( CoreLayer             *layer,
 }
 
 static int
-drmkmsPlaneLayerDataSize()
+drmkmsPlaneLayerDataSize( void )
 {
      return sizeof(DRMKMSLayerData);
 }

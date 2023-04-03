@@ -9722,7 +9722,7 @@ Bop_rgb32_to_Aop_rgb16_LE( GenefxState *gfxs )
  * patches function pointers to MMX functions
  */
 static void
-gInit_MMX()
+gInit_MMX( void )
 {
 /********************************* Xacc_blend *************************************/
      Xacc_blend[DSBF_SRCALPHA-1]    = Xacc_blend_srcalpha_MMX;
@@ -9776,7 +9776,7 @@ gInit_NEON()
  * patches function pointers to 64 bits functions
  */
 static void
-gInit_64bit()
+gInit_64bit( void )
 {
 /********************************* Cop_to_Aop_PFI *********************************/
      Cop_to_Aop_PFI[DFB_PIXELFORMAT_INDEX(DSPF_RGB32)] = Cop_to_Aop_32_64;

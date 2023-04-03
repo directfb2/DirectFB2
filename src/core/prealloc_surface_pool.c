@@ -33,7 +33,7 @@ typedef struct {
 /**********************************************************************************************************************/
 
 static int
-preallocAllocationDataSize()
+preallocAllocationDataSize( void )
 {
      return sizeof(PreallocAllocationData);
 }

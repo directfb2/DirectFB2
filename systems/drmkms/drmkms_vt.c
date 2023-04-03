@@ -133,7 +133,7 @@ vt_switch_handler( int signum )
 }
 
 static DFBResult
-vt_init_switching()
+vt_init_switching( void )
 {
      char           buf[32];
      struct termios ts;
@@ -295,7 +295,7 @@ vt_flusher( DirectThread *thread,
 }
 
 static void
-vt_start_flushing()
+vt_start_flushing( void )
 {
      vt->flush        = true;
      vt->flush_thread = direct_thread_create( DTT_DEFAULT, vt_flusher, NULL, "VT Flusher" );
@@ -444,7 +444,7 @@ drmkms_vt_initialize( CoreDFB *core )
 }
 
 static void
-vt_stop_flushing()
+vt_stop_flushing( void )
 {
      vt->flush = false;
      direct_thread_cancel( vt->flush_thread );

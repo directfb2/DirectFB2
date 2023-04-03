@@ -29,7 +29,7 @@ static DirectResultType  DFBResult__type = {
 };
 
 void
-DFBResult__init()
+DFBResult__init( void )
 {
      DFBResult__strings[0] = "DFBResult";
 
@@ -43,7 +43,7 @@ DFBResult__init()
 }
 
 void
-DFBResult__deinit()
+DFBResult__deinit( void )
 {
      DirectResultTypeUnregister( &DFBResult__type );
 }

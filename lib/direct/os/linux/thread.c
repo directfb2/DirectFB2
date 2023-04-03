@@ -55,7 +55,7 @@ direct_once( DirectOnce            *once,
 
 __attribute__((no_instrument_function))
 static void
-init_once()
+init_once( void )
 {
      /* Create the key for the TSD (thread specific data). */
      pthread_key_create( &thread_key, NULL );
@@ -69,6 +69,8 @@ direct_thread_init( DirectThread *thread )
      struct sched_param param;
      int                policy;
      int                priority;
+
+     D_DEBUG_AT( Direct_ThreadInit, "%s( %p, '%s' )\n", __FUNCTION__, thread->main, thread->name );
 
      direct_once( &thread_init_once, init_once );
 
@@ -93,7 +95,7 @@ direct_thread_init( DirectThread *thread )
      }
 
      if (pthread_attr_setschedpolicy( &attr, policy ))
-          D_PERROR( "Direct/Thread: Could not set scheduling policy to %s!\n", direct_thread_policy_name( policy ) );
+          D_PERROR( "Direct/Thread/Init: Could not set scheduling policy to %s!\n", direct_thread_policy_name( policy ) );
 
      /* Read (back) value. */
      pthread_attr_getschedpolicy( &attr, &policy );
@@ -114,7 +116,7 @@ direct_thread_init( DirectThread *thread )
                break;
      }
 
-     D_DEBUG_AT( Direct_ThreadInit, "  -> %s (%d) [%d;%d]\n", direct_thread_policy_name( policy ), priority,
+     D_DEBUG_AT( Direct_ThreadInit, "  -> priority %d [%d;%d]\n", priority,
                  sched_get_priority_min( policy ), sched_get_priority_max( policy ) );
 
      if (priority < sched_get_priority_min( policy ))
@@ -123,15 +125,18 @@ direct_thread_init( DirectThread *thread )
      if (priority > sched_get_priority_max( policy ))
           priority = sched_get_priority_max( policy );
 
+     D_DEBUG_AT( Direct_ThreadInit, "  -> policy %s with priority set to %d\n", direct_thread_policy_name( policy ),
+                 priority );
+
      param.sched_priority = priority;
 
      if (pthread_attr_setschedparam( &attr, &param ))
-          D_PERROR( "Direct/Thread: Could not set scheduling priority to %d!\n", priority );
+          D_PERROR( "Direct/Thread/Init: Could not set scheduling priority to %d!\n", priority );
 
      /* Select stack size. */
      if (direct_config->thread_stack_size > 0) {
           if (pthread_attr_setstacksize( &attr, direct_config->thread_stack_size ))
-               D_PERROR( "Direct/Thread: Could not set stack size to %d!\n", direct_config->thread_stack_size );
+               D_PERROR( "Direct/Thread/Init: Could not set stack size to %d!\n", direct_config->thread_stack_size );
      }
 
      erno = pthread_create( &thread->handle, &attr, direct_thread_main, thread );
@@ -158,23 +163,18 @@ direct_thread_deinit( DirectThread *thread )
      D_ASSUME( !pthread_equal( thread->handle, pthread_self() ) );
      D_ASSUME( !thread->detached );
 
-     D_DEBUG_AT( Direct_Thread, "%s( %p, '%s' %d )\n", __FUNCTION__, thread->main, thread->name, thread->tid );
-
-     if (thread->detached) {
-          D_DEBUG_AT( Direct_Thread, "  -> detached!\n" );
-          return;
-     }
+     D_DEBUG_AT( Direct_ThreadInit, "%s( %p, '%s' %d )\n", __FUNCTION__, thread->main, thread->name, thread->tid );
 
      if (!thread->joined && !pthread_equal( thread->handle, pthread_self() )) {
           if (thread->canceled)
-               D_DEBUG_AT( Direct_Thread, "  -> canceled but not joined!\n" );
+               D_DEBUG_AT( Direct_ThreadInit, "  -> canceled but not joined!\n" );
           else {
-               D_DEBUG_AT( Direct_Thread, "  -> still running!\n" );
+               D_DEBUG_AT( Direct_ThreadInit, "  -> still running!\n" );
 
                if (thread->name)
-                    D_ERROR( "Direct/Thread: Canceling '%s' (%d)!\n", thread->name, thread->tid );
+                    D_ERROR( "Direct/Thread/Init: Canceling '%s' (%d)!\n", thread->name, thread->tid );
                else
-                    D_ERROR( "Direct/Thread: Canceling %d!\n", thread->tid );
+                    D_ERROR( "Direct/Thread/Init: Canceling %d!\n", thread->tid );
 
                pthread_cancel( thread->handle );
           }
@@ -539,7 +539,7 @@ direct_thread_main( void *arg )
      direct_mutex_unlock( &thread->lock );
 
      if (thread->joining) {
-          D_DEBUG_AT( Direct_Thread, "  -> being joined before entering main routine!\n" );
+          D_DEBUG_AT( Direct_ThreadInit, "  -> being joined before entering main routine!\n" );
           return NULL;
      }
 

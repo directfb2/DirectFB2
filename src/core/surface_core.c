@@ -170,7 +170,7 @@ surface_pool_callback( CoreSurfacePool *pool,
 }
 
 static void
-dump_surface_pools()
+dump_surface_pools( void )
 {
      dfb_surface_pools_enumerate( surface_pool_callback, NULL );
 }

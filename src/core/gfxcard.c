@@ -279,7 +279,7 @@ dfb_graphics_core_initialize( CoreDFB               *core,
  * Load the driver module used by the session.
  */
 static void
-dfb_gfxcard_load_driver()
+dfb_gfxcard_load_driver( void )
 {
      DFBGraphicsCoreShared *shared;
      DirectLink            *link;
