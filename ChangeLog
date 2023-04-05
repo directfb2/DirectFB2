@@ -1,3 +1,144 @@
+commit ff14133b16a0bffcc9e597cd33e8cb551f964703
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Apr 5 22:10:23 2023 +0200
+
+    Fix -Wshadow and -Woverflow warnings when using bare metal toolchain
+
+commit f0904fdd06c972384bd526f440823a8e95393c19
+Merge: f904c12 b039561
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Apr 5 12:37:43 2023 +0200
+
+    Merge pull request #105 from caramelli/master
+    
+    meson: Update INSTALL instructions
+
+commit b0395614ea9213b86fde03b842132778233bf068
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Apr 5 13:35:05 2023 +0200
+
+    meson: Update INSTALL instructions
+
+commit f904c1206e7b729024e91d9a20bc558a85bb9e30
+Merge: b4b351b 440784a
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Tue Apr 4 02:52:28 2023 +0200
+
+    Merge pull request #104 from caramelli/master
+    
+    Add os/signals.h
+
+commit 440784ab747a2547cab4b72f0b134ad7f30e3a5e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Apr 4 03:53:30 2023 +0200
+
+    Add os/signals.h
+
+commit b4b351b98f0933c509b7223afe27a9dcaa8650cd
+Merge: ac474a2 9af0ca5
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Apr 3 15:00:32 2023 +0200
+
+    Merge pull request #103 from caramelli/master
+    
+    Move signals.c to the os directory
+
+commit 9af0ca58cbefee17e0200e9f2aca582e6641f88a
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Apr 3 16:00:19 2023 +0200
+
+    Move signals.c to the os directory
+
+commit ac474a2e9d85a5bc5ec5639f04755963c82082eb
+Merge: 1d310d2 c71f508
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Apr 3 11:14:49 2023 +0200
+
+    Merge pull request #102 from caramelli/master
+    
+    Fix warning: function declaration isn't a prototype [-Wstrict-prototypes]
+
+commit c71f508b3b58c101560a6726b94d9235cb17db98
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Apr 3 12:12:06 2023 +0200
+
+    Fix warning: function declaration isn't a prototype [-Wstrict-prototypes]
+
+commit 1d310d2f9a08df42c17225289029a54f144b21f4
+Merge: 4a02a2b 7555132
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Apr 2 20:43:43 2023 +0200
+
+    Merge pull request #101 from caramelli/master
+    
+    Restore build option for network support
+
+commit 75551320d921327a536d6f22d405d8752d26de1e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Apr 2 20:32:14 2023 +0200
+
+    Restore build option for network support
+
+commit 4a02a2b3c418daa84a3050ba0c71cfe71ca22918
+Merge: 1ac8ead 0daf53e
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Apr 1 09:59:32 2023 +0200
+
+    Merge pull request #100 from caramelli/master
+    
+    Add build option for constructor attribute
+
+commit 0daf53ebc8c80d67b32540d1053730d60580b01c
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Apr 1 09:51:11 2023 +0200
+
+    Add build option for constructor attribute
+
+commit 1ac8ead8f18870f3a42cd5aa159fe0e1741d9bdd
+Merge: db494a2 2d69fe6
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Mar 31 22:27:39 2023 +0200
+
+    Merge pull request #99 from caramelli/master
+    
+    drmkms: alpha range is [0 - 65535]
+
+commit 2d69fe606ae125b476508322683124567781c190
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Mar 31 22:25:38 2023 +0200
+
+    drmkms: alpha range is [0 - 65535]
+
+commit db494a279fdff50f4b1480783f766e058e611767
+Merge: 27037bc a83ef2c
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Tue Mar 28 17:41:07 2023 +0200
+
+    Merge pull request #97 from caramelli/master
+    
+    Fix type cast when calling direct_file_seek() in file_peek()
+
+commit a83ef2c5640b93deb4a4cd0624877250933c3c27
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Mar 28 17:41:43 2023 +0200
+
+    Fix type cast when calling direct_file_seek() in file_peek()
+
+commit 27037bcf84dbb8f280637ba149c5f793f7231c15
+Merge: 1b87ca6 85cc655
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Mar 12 10:46:51 2023 +0100
+
+    Merge pull request #96 from caramelli/master
+    
+    VideoProvider/DFVFF: Add support for speed multiplier below and over 1.0
+
+commit 85cc65592a45ce9bee035130f3559360b543ed92
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Mar 12 10:40:41 2023 +0100
+
+    Update ChangeLog
+
 commit 318c33fbf2244b876b8067b2e3ac4f4aa62e5bfd
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Sun Mar 12 10:40:29 2023 +0100
