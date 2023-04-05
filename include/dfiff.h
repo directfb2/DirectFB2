@@ -22,17 +22,17 @@
 #include <directfb.h>
 
 typedef struct {
-     unsigned char         magic[5]; /* "DFIFF" magic */
+     u8                    magic[5]; /* "DFIFF" magic */
 
-     unsigned char         major;    /* Major version number */
-     unsigned char         minor;    /* Minor version number */
+     u8                    major;    /* Major version number */
+     u8                    minor;    /* Minor version number */
 
-     unsigned char         flags;
+     u8                    flags;
 
-     uint32_t              width;
-     uint32_t              height;
+     u32                   width;
+     u32                   height;
      DFBSurfacePixelFormat format;
-     uint32_t              pitch;
+     u32                   pitch;
 } DFIFFHeader;
 
 #endif

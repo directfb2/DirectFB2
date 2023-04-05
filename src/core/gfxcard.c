@@ -622,9 +622,9 @@ dfb_gfxcard_state_check( CardState           *state,
                          DFBAccelerationMask  accel )
 {
      DFBResult          ret;
+     int                cx2, cy2;
      CoreSurfaceBuffer *dst_buffer;
      CoreSurfaceBuffer *src_buffer;
-     int                cx2, cy2;
 
      D_ASSERT( card != NULL );
 
@@ -1020,15 +1020,14 @@ static bool
 dfb_gfxcard_state_check_acquire( CardState           *state,
                                  DFBAccelerationMask  accel )
 {
+     DFBResult               ret;
+     int                     cx2, cy2;
      CoreSurfaceBuffer      *dst_buffer;
      CoreSurfaceBuffer      *src_buffer;
-     DFBResult               ret;
      DFBGraphicsCoreShared  *shared;
-     CoreSurfaceAccessFlags  access = CSAF_WRITE;
-     int                     cx2;
-     int                     cy2;
      FusionSkirmish         *locks[4];
      unsigned int            num_locks = 0;
+     CoreSurfaceAccessFlags  access    = CSAF_WRITE;
 
      D_ASSERT( card != NULL );
      D_ASSERT( card->shared != NULL );
@@ -1596,7 +1595,8 @@ fill_tri( DFBTriangle *tri,
           bool         accelerated )
 {
      int y, yend;
-     DDA dda1 = { .xi = 0 }, dda2 = { .xi = 0 };
+     DDA dda1    = { .xi = 0 };
+     DDA dda2    = { .xi = 0 };
      int clip_x1 = state->clip.x1;
      int clip_x2 = state->clip.x2;
 
@@ -1680,8 +1680,8 @@ dfb_gfxcard_fillrectangles( DFBRectangle *rects,
      }
 
      if (num > 0) {
-          int          i = 0;
           DFBRectangle rect;
+          int          i = 0;
 
           /* Check for acceleration and setup execution. */
           if (dfb_gfxcard_state_check_acquire( state, DFXL_FILLRECTANGLE )) {
@@ -1819,8 +1819,9 @@ dfb_gfxcard_drawrectangle( DFBRectangle *rect,
                            CardState    *state )
 {
      DFBRectangle rects[4];
-     bool         hw = false;
-     int          i = 0, num = 0;
+     bool         hw  = false;
+     int          i   = 0;
+     int          num = 0;
 
      D_ASSERT( card != NULL );
      D_ASSERT( card->shared != NULL );
@@ -1883,9 +1884,9 @@ dfb_gfxcard_drawrectangle( DFBRectangle *rect,
           }
           else {
                 if (gAcquire( state, DFXL_DRAWLINE )) {
-                    DFBRegion line;
                     int       x1, x2, x3, x4;
                     int       y1, y2, y3, y4;
+                    DFBRegion line;
 
                     x1 = rect->x;           y1 = rect->y;
                     x2 = rect->x + rect->w; y2 = rect->y;
@@ -2093,7 +2094,8 @@ fill_trap( DFBTrapezoid *trap,
            bool          accelerated )
 {
      int y, yend;
-     DDA dda1 = { .xi = 0 }, dda2 = { .xi = 0 };
+     DDA dda1    = { .xi = 0 };
+     DDA dda2    = { .xi = 0 };
      int clip_x1 = state->clip.x1;
      int clip_x2 = state->clip.x2;
 
@@ -2392,8 +2394,8 @@ dfb_gfxcard_fillspans( int        y,
                unsigned int done = 0;
 
                do {
-                    DFBRectangle *rects;
                     int           real_num;
+                    DFBRectangle *rects;
 
                     if (num > 256) {
                          rects = D_MALLOC( sizeof(DFBRectangle) * num );
@@ -2720,8 +2722,7 @@ dfb_gfxcard_blit_locked( DFBRectangle *rect,
                     }
                }
                else if (gAcquire( state, DFXL_STRETCHBLIT )) {
-                    DFBRectangle drect;
-                    int          x1, y1, x2, y2;
+                    int x1, y1, x2, y2;
 
                     x1 = dx;           y1 = dy;
                     x2 = dx + rect->w; y2 = dy + rect->h;
@@ -2827,9 +2828,9 @@ dfb_gfxcard_batchblit( DFBRectangle *rects,
 
                if (!D_FLAGS_IS_SET( card->caps.flags, CCF_CLIPPING ) &&
                    !D_FLAGS_IS_SET( card->caps.clip, DFXL_BLIT )) {
+                    unsigned int  clipped_num;
                     DFBRectangle *clipped_rects;
                     DFBPoint     *clipped_points;
-                    unsigned int  clipped_num;
 
                     if (num > 256) {
                          clipped_rects = D_MALLOC( sizeof(DFBRectangle) * num );
@@ -2944,8 +2945,8 @@ dfb_gfxcard_batchblit( DFBRectangle *rects,
                }
                else if (gAcquire( state, DFXL_STRETCHBLIT )) {
                     for (; i < num; i++) {
-                         DFBRectangle drect;
                          int          x1, y1, x2, y2;
+                         DFBRectangle drect;
 
                          x1 = points[i].x;     y1 = points[i].y;
                          x2 = x1 + rects[i].w; y2 = y1 + rects[i].h;
@@ -3071,7 +3072,8 @@ dfb_gfxcard_batchstretchblit( DFBRectangle *srects,
                               CardState    *state )
 {
      int  i;
-     bool need_clip, acquired = false;
+     bool need_clip;
+     bool acquired = false;
 
      DFBSurfaceBlittingFlags blittingflags;
 
@@ -3352,8 +3354,8 @@ dfb_gfxcard_tileblit( DFBRectangle *rect,
                else if (gAcquire( state, DFXL_STRETCHBLIT )) {
                     for (; dy1 < dy2; dy1 += rect->h) {
                          for (; dx1 < dx2; dx1 += rect->w) {
-                              DFBRectangle drect;
                               int          x1, y1, x2, y2;
+                              DFBRectangle drect;
 
                               x1 = dx1;           y1 = dy1;
                               x2 = dx1 + rect->w; y2 = dy1 + rect->h;
@@ -3434,7 +3436,7 @@ dfb_gfxcard_texture_triangles( DFBVertex            *vertices,
 
      if (!hw) {
           if (gAcquire( state, DFXL_TEXTRIANGLES )) {
-               int i;
+               int                i;
                GenefxVertexAffine v[num];
 
                /* Convert vertices. */
@@ -3532,19 +3534,19 @@ dfb_gfxcard_drawstring( const u8                *text,
                         DFBSurfaceTextFlags      flags )
 {
      DFBResult     ret;
-     unsigned int  prev = 0;
      unsigned int  indices[bytes];
      int           i, l, num;
      int           kern_x;
      int           kern_y;
-     CoreSurface  *surface;
-     CardState     state_backup;
-     DFBPoint      points[50];
      DFBRectangle  rects[50];
-     int           num_blits = 0;
-     int           ox = x;
-     int           oy = y;
+     DFBPoint      points[50];
+     CardState     state_backup;
      CardState    *state;
+     CoreSurface  *surface;
+     int           num_blits = 0;
+     int           ox        = x;
+     int           oy        = y;
+     unsigned int  prev      = 0;
 
      D_ASSERT( card != NULL );
      D_ASSERT( card->shared != NULL );
@@ -3595,7 +3597,6 @@ dfb_gfxcard_drawstring( const u8                *text,
 
           /* Blit glyphs. */
           for (i = 0; i < num; i++) {
-               DFBResult      ret;
                CoreGlyphData *glyph;
                unsigned int   current = indices[i];
 
@@ -3654,9 +3655,9 @@ dfb_gfxcard_drawglyph( CoreGlyphData           **glyph,
                        DFBSurfaceTextFlags       flags )
 {
      int          l;
-     CoreSurface *surface;
      CardState    state_backup;
      CardState   *state;
+     CoreSurface *surface;
 
      D_ASSERT( card != NULL );
      D_ASSERT( card->shared != NULL );

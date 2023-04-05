@@ -42,15 +42,6 @@ DirectResult DIRECT_API  direct_log_create     ( DirectLogType   type,
 DirectResult DIRECT_API  direct_log_destroy    ( DirectLog      *log );
 
 /*
- * Write to the log in a plain fashion.
- *
- * If log is NULL, the default log is used if it's valid, otherwise stderr is used as a fallback until now.
- */
-DirectResult DIRECT_API  direct_log_write      ( DirectLog      *log,
-                                                 const char     *buffer,
-                                                 size_t          bytes );
-
-/*
  * Write to the log in a printf fashion.
  *
  * If log is NULL, the default log is used if it's valid, otherwise stderr is used as a fallback until now.
@@ -74,17 +65,9 @@ void         DIRECT_API  direct_log_lock       ( DirectLog      *log );
 void         DIRECT_API  direct_log_unlock     ( DirectLog      *log );
 
 /*
- * Set a buffer to be used for the log data.
+ * Flush the log data.
  */
-DirectResult DIRECT_API  direct_log_set_buffer ( DirectLog      *log,
-                                                 char           *buffer,
-                                                 size_t          bytes );
-
-/*
- * Flush the log data and optionally synchronize with the output.
- */
-DirectResult DIRECT_API  direct_log_flush      ( DirectLog      *log,
-                                                 bool            sync );
+DirectResult DIRECT_API  direct_log_flush      ( DirectLog      *log );
 
 /*
  * Returns the default log.

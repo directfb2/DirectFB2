@@ -352,6 +352,8 @@ dfb_input_core_shutdown( DFBInputCore *data,
      const InputDriverFuncs *funcs;
      FusionSHMPoolShared    *pool;
 
+     D_UNUSED_P( shared );
+
      D_DEBUG_AT( Core_Input, "%s( %p, %semergency )\n", __FUNCTION__, data, emergency ? "" : "no " );
 
      D_MAGIC_ASSERT( data, DFBInputCore );
@@ -1796,7 +1798,7 @@ local_processing_hotplug( const void *msg_data,
                /* Update local device list according to shared devices array. */
                if (!(device = add_device_into_local_list( message->dev_id ))) {
                     D_ERROR( "Core/Input: Failed to update local device list!\n" );
-                    return DFB_FAILURE;
+                    return RS_DROP;
                }
           }
 
@@ -1827,10 +1829,9 @@ local_processing_hotplug( const void *msg_data,
           }
           else
                D_ERROR( "Core/Input: Can't find the device to be removed!\n" );
-
      }
 
-     return DFB_OK;
+     return RS_OK;
 }
 
 /**********************************************************************************************************************/

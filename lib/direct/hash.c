@@ -223,17 +223,19 @@ direct_hash_insert( DirectHash    *hash,
           }
 
           for (i = 0; i < hash->size; i++) {
-               DirectHashElement *element = &hash->Elements[i];
                DirectHashElement *insertElement;
+
+               element = &hash->Elements[i];
 
                if (element->value && element->value != DIRECT_HASH_ELEMENT_REMOVED) {
                     pos = element->key % size;
 
                     insertElement = &elements[pos];
                     while (insertElement->value && insertElement->value != DIRECT_HASH_ELEMENT_REMOVED) {
-                        if (++pos == size)
-                            pos = 0;
-                        insertElement = &elements[pos];
+                         if (++pos == size)
+                              pos = 0;
+
+                         insertElement = &elements[pos];
                     }
 
                     elements[pos] = *element;

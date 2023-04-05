@@ -22,19 +22,19 @@
 #include <directfb.h>
 
 typedef struct {
-     unsigned char         magic[5];      /* "DFVFF" magic */
+     u8                    magic[5];      /* "DFVFF" magic */
 
-     unsigned char         major;         /* Major version number */
-     unsigned char         minor;         /* Minor version number */
+     u8                    major;         /* Major version number */
+     u8                    minor;         /* Minor version number */
 
-     unsigned char         flags;
+     u8                    flags;
 
-     uint32_t              width;
-     uint32_t              height;
+     u32                   width;
+     u32                   height;
      DFBSurfacePixelFormat format;
      DFBSurfaceColorSpace  colorspace;
-     uint32_t              framerate_num;
-     uint32_t              framerate_den;
+     u32                   framerate_num;
+     u32                   framerate_den;
 } DFVFFHeader;
 
 #endif

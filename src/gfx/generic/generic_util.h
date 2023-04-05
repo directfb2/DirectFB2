@@ -26,34 +26,34 @@
 
 /**********************************************************************************************************************/
 
-#define CHECK_PIPELINE()                                                                                      \
-     {                                                                                                        \
-          if (!gfxs->funcs[0])                                                                                \
-               return;                                                                                        \
-                                                                                                              \
-          if (dfb_config->software_trace) {                                                                   \
-               int         i;                                                                                 \
-               GenefxFunc *funcs = gfxs->funcs;                                                               \
-               DirectLog  *log   = direct_log_default();                                                      \
-                                                                                                              \
-               direct_log_lock( log );                                                                        \
-               direct_log_printf( log, "  Software Fallback Pipeline:\n" );                                   \
-                                                                                                              \
-               for (i = 0; funcs[i]; ++i)                                                                     \
-                    direct_log_printf( log, "    [%2d] %s\n", i, direct_trace_lookup_symbol_at( funcs[i] ) ); \
-                                                                                                              \
-               direct_log_printf( log, "\n" );                                                                \
-               direct_log_unlock( log );                                                                      \
-          }                                                                                                   \
+#define CHECK_PIPELINE()                                                                                          \
+     {                                                                                                            \
+          if (!gfxs->funcs[0])                                                                                    \
+               return;                                                                                            \
+                                                                                                                  \
+          if (dfb_config->software_trace) {                                                                       \
+               int         idx;                                                                                   \
+               GenefxFunc *funcs = gfxs->funcs;                                                                   \
+               DirectLog  *log   = direct_log_default();                                                          \
+                                                                                                                  \
+               direct_log_lock( log );                                                                            \
+               direct_log_printf( log, "  Software Fallback Pipeline:\n" );                                       \
+                                                                                                                  \
+               for (idx = 0; funcs[idx]; ++idx)                                                                   \
+                    direct_log_printf( log, "    [%2d] %s\n", idx, direct_trace_lookup_symbol_at( funcs[idx] ) ); \
+                                                                                                                  \
+               direct_log_printf( log, "\n" );                                                                    \
+               direct_log_unlock( log );                                                                          \
+          }                                                                                                       \
      }
 
 #define RUN_PIPELINE()                     \
      {                                     \
-          int         i;                   \
+          int         idx;                 \
           GenefxFunc *funcs = gfxs->funcs; \
                                            \
-          for (i = 0; funcs[i]; ++i)       \
-               funcs[i]( gfxs );           \
+          for (idx = 0; funcs[idx]; ++idx) \
+               funcs[idx]( gfxs );         \
      }
 
 /**********************************************************************************************************************/

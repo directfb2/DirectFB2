@@ -83,16 +83,10 @@ common_log_write( DirectLog  *log,
 
 __attribute__((no_instrument_function))
 static DirectResult
-common_log_flush( DirectLog *log,
-                  bool       sync )
+common_log_flush( DirectLog *log )
 {
      if (log->type == DLT_STDERR && fflush( stderr ))
           return errno2result( errno );
-
-     if (sync) {
-          if (fdatasync( (long) log->data ))
-               return errno2result( errno );
-     }
 
      return DR_OK;
 }
@@ -109,24 +103,12 @@ stderr_log_write( DirectLog  *log,
 }
 
 static DirectResult
-stderr_log_set_buffer( DirectLog *log,
-                       char      *buffer,
-                       size_t     bytes )
-{
-     if (setvbuf( stderr, buffer, _IOLBF, bytes ))
-          return errno2result( errno );
-
-     return DR_OK;
-}
-
-static DirectResult
 init_stderr( DirectLog *log )
 {
      log->data = (void*)(long) dup( fileno( stderr ) );
 
      log->write      = stderr_log_write;
      log->flush      = common_log_flush;
-     log->set_buffer = stderr_log_set_buffer;
 
      return DR_OK;
 }

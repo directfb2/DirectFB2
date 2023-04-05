@@ -37,7 +37,7 @@ ILayerRegion_Real__FlipUpdate2( CoreLayerRegion     *obj,
                                 const DFBRegion     *left_update,
                                 const DFBRegion     *right_update,
                                 DFBSurfaceFlipFlags  flags,
-                                unsigned int         flip_count,
+                                u32                  flip_count,
                                 s64                  pts )
 {
      D_DEBUG_AT( DirectFB_CoreLayerRegion, "%s( %p, flags 0x%08x, flip_count %u, pts %lld )\n", __FUNCTION__,

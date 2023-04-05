@@ -228,7 +228,7 @@ ILayerContext_Real__CreateWindow( CoreLayerContext            *obj,
 
 DFBResult
 ILayerContext_Real__FindWindow( CoreLayerContext  *obj,
-                                DFBWindowID        window_id,
+                                u32                window_id,
                                 CoreWindow       **ret_window )
 {
      CoreWindow *window;

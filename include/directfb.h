@@ -224,58 +224,65 @@ DFBResult  DIRECTFB_API  DirectFBInit (
 
 #if !DIRECT_BUILD_CTORS
 
-#define StringizeDirectFBCoreSystemInit(name)    directfb_##name##_ctor()
-#define DirectFBCoreSystemInit(name)             StringizeDirectFBCoreSystemInit( name )
-#define DirectFBCoreSystemInitProtoype(name)     void DirectFBCoreSystemInit(name)
+#define StringizeDirectFBCoreSystemInit(name)             directfb_##name##_ctor()
+#define DirectFBCoreSystemInit(name)                      StringizeDirectFBCoreSystemInit( name )
+#define StringizeDirectFBCoreSystemInitProtoype(name)     void directfb_##name##_ctor( void )
+#define DirectFBCoreSystemInitProtoype(name)              StringizeDirectFBCoreSystemInitProtoype( name )
 
 #ifdef DFB_GRAPHICS_DRIVER
-#define StringizeGraphicsDriverInit(name)        directfb_##name##_ctor()
-#define DirectFBGraphicsDriverInit(name)         StringizeDirectFBGraphicsDriverInit( name )
-#define DirectFBGraphicsDriverInitProtoype(name) void DirectFBGraphicsDriverInit(name)
+#define StringizeGraphicsDriverInit(name)                 directfb_##name##_ctor()
+#define DirectFBGraphicsDriverInit(name)                  StringizeDirectFBGraphicsDriverInit( name )
+#define StringizeDirectFBGraphicsDriverInitProtoype(name) void directfb_##name##_ctor( void )
+#define DirectFBGraphicsDriverInitProtoype(name)          StringizeDirectFBGraphicsDriverInitProtoype( name )
 #else
 #define DirectFBGraphicsDriverInit(name)
 #define DirectFBGraphicsDriverInitProtoype(name)
 #endif
 
 #ifdef DFB_INPUT_DRIVER
-#define StringizeDirectFBInputDriverInit(name)   directfb_##name##_ctor()
-#define DirectFBInputDriverInit(name)            StringizeDirectFBInputDriverInit( name )
-#define DirectFBInputDriverInitProtoype(name)    void DirectFBInputDriverInit(name)
+#define StringizeDirectFBInputDriverInit(name)            directfb_##name##_ctor()
+#define DirectFBInputDriverInit(name)                     StringizeDirectFBInputDriverInit( name )
+#define StringizeDirectFBInputDriverInitProtoype(name)    void directfb_##name##_ctor( void )
+#define DirectFBInputDriverInitProtoype(name)             StringizeDirectFBInputDriverInitProtoype( name )
 #else
 #define DirectFBInputDriverInit(name)
 #define DirectFBInputDriverInitProtoype(name)
 #endif
 
 #ifdef DFB_FONT_PROVIDER
-#define StringizeDirectFBFontProviderInit(name)  IDirectFBFont_##name##_ctor()
-#define DirectFBFontProviderInit(name)           StringizeDirectFBFontProviderInit( name )
-#define DirectFBFontProviderInitProtoype(name)   void DirectFBFontProviderInit(name)
+#define StringizeDirectFBFontProviderInit(name)           IDirectFBFont_##name##_ctor()
+#define DirectFBFontProviderInit(name)                    StringizeDirectFBFontProviderInit( name )
+#define StringizeDirectFBFontProviderInitProtoype(name)   void IDirectFBFont_##name##_ctor( void )
+#define DirectFBFontProviderInitProtoype(name)            StringizeDirectFBFontProviderInitProtoype( name )
 #else
 #define DirectFBFontProviderInit(name)
 #define DirectFBFontProviderInitProtoype(name)
 #endif
 
 #ifdef DFB_IMAGE_PROVIDER
-#define StringizeDirectFBImageProviderInit(name) IDirectFBImageProvider_##name##_ctor()
-#define DirectFBImageProviderInit(name)          StringizeDirectFBImageProviderInit( name )
-#define DirectFBImageProviderInitProtoype(name)  void DirectFBImageProviderInit(name)
+#define StringizeDirectFBImageProviderInit(name)          IDirectFBImageProvider_##name##_ctor()
+#define DirectFBImageProviderInit(name)                   StringizeDirectFBImageProviderInit( name )
+#define StringizeDirectFBImageProviderInitProtoype(name)  void IDirectFBImageProvider_##name##_ctor( void )
+#define DirectFBImageProviderInitProtoype(name)           StringizeDirectFBImageProviderInitProtoype( name )
 #else
 #define DirectFBImageProviderInit(name)
 #define DirectFBImageProviderInitProtoype(name)
 #endif
 
 #ifdef DFB_VIDEO_PROVIDER
-#define StringizeDirectFBVideoProviderInit(name) IDirectFBVideoProvider_##name##_ctor()
-#define DirectFBVideoProviderInit(name)          StringizeDirectFBVideoProviderInit( name )
-#define DirectFBVideoProviderInitProtoype(name)  void DirectFBVideoProviderInit(name)
+#define StringizeDirectFBVideoProviderInit(name)          IDirectFBVideoProvider_##name##_ctor()
+#define DirectFBVideoProviderInit(name)                   StringizeDirectFBVideoProviderInit( name )
+#define StringizeDirectFBVideoProviderInitProtoype(name)  void IDirectFBVideoProvider_##name##_ctor( void )
+#define DirectFBVideoProviderInitProtoype(name)           StringizeDirectFBVideoProviderInitProtoype( name )
 #else
 #define DirectFBVideoProviderInit(name)
 #define DirectFBVideoProviderInitProtoype(name)
 #endif
 
-#define StringizeDirectFBWindowManagerInit(name) directfb_##name##_ctor()
-#define DirectFBWindowManagerInit(name)          StringizeDirectFBWindowManagerInit( name )
-#define DirectFBWindowManagerInitProtoype(name)  void DirectFBWindowManagerInit(name)
+#define StringizeDirectFBWindowManagerInit(name)          directfb_##name##_ctor()
+#define DirectFBWindowManagerInit(name)                   StringizeDirectFBWindowManagerInit( name )
+#define StringizeDirectFBWindowManagerInitProtoype(name)  void directfb_##name##_ctor( void )
+#define DirectFBWindowManagerInitProtoype(name)           StringizeDirectFBWindowManagerInitProtoype( name )
 
 #if defined(DFB_CORE_SYSTEM) && defined(DFB_WINDOW_MANAGER)
 DirectFBCoreSystemInitProtoype    ( DFB_CORE_SYSTEM );

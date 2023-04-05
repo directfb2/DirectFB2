@@ -114,30 +114,6 @@ direct_log_destroy( DirectLog *log )
 
 __dfb_no_instrument_function__
 DirectResult
-direct_log_write( DirectLog        *log,
-                  const char       *buffer,
-                  size_t            bytes )
-{
-     DirectResult ret;
-
-     /* Don't use D_MAGIC_ASSERT or any other macros/functions that might cause an endless loop. */
-
-     /* Use the default log if passed log is invalid. */
-     if (!D_MAGIC_CHECK( log, DirectLog ))
-          log = direct_log_default();
-
-     if (!D_MAGIC_CHECK( log, DirectLog ))
-          return DR_BUG;
-
-     ret = log->write( log, buffer, bytes );
-
-     direct_log_debug_delay( true );
-
-     return ret;
-}
-
-__dfb_no_instrument_function__
-DirectResult
 direct_log_printf( DirectLog  *log,
                    const char *format, ... )
 {
@@ -217,26 +193,7 @@ direct_log_unlock( DirectLog *log )
 }
 
 DirectResult
-direct_log_set_buffer( DirectLog *log,
-                       char      *buffer,
-                       size_t     bytes )
-{
-     D_MAGIC_ASSERT_IF( log, DirectLog );
-
-     if (!log)
-          log = direct_log_default();
-
-     D_MAGIC_ASSERT( log, DirectLog );
-
-     if (!log->set_buffer)
-          return DR_UNSUPPORTED;
-
-     return log->set_buffer( log, buffer, bytes );
-}
-
-DirectResult
-direct_log_flush( DirectLog *log,
-                  bool       sync )
+direct_log_flush( DirectLog *log )
 {
      /* Don't use D_MAGIC_ASSERT or any other macros/functions that might cause an endless loop. */
 
@@ -250,7 +207,7 @@ direct_log_flush( DirectLog *log,
      if (!log->flush)
           return DR_UNSUPPORTED;
 
-     return log->flush( log, sync );
+     return log->flush( log );
 }
 
 __dfb_no_instrument_function__

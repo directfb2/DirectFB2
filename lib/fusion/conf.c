@@ -24,9 +24,9 @@ D_DEBUG_DOMAIN( Fusion_Config, "Fusion/Config", "Fusion Runtime Configuration op
 
 /**********************************************************************************************************************/
 
-static FusionConfig config = { 0 };
+static FusionConfig conf = { 0 };
 
-FusionConfig *fusion_config = &config;
+FusionConfig *fusion_config = &conf;
 const char   *fusion_config_usage =
      "libfusion options:\n"
      "  tmpfs=<directory>              Location of the shared memory file in multi application mode (default = auto)\n"
