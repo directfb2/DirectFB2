@@ -33,8 +33,8 @@ direct_sources = [
   'result.c',
   'stream.c',
   'system.c',
-  'trace.c',
   'thread.c',
+  'trace.c',
   'util.c'
 ]
 
@@ -128,7 +128,7 @@ if get_option('os') == 'linux'
     'os/linux/waitqueue.h'
   ]
 
-  build_conf.set('DIRECT_BUILD_OS_LINUX', 1)
+  build_conf.set('DIRECT_BUILD_OS_LINUX', true)
 else
   error('Unsupported OS')
 endif

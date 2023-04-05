@@ -29,9 +29,9 @@ D_DEBUG_DOMAIN( Direct_Config, "Direct/Config", "Direct Runtime Configuration op
 
 /**********************************************************************************************************************/
 
-static DirectConfig config = { 0 };
+static DirectConfig conf = { 0 };
 
-DirectConfig *direct_config = &config;
+DirectConfig *direct_config = &conf;
 const char   *direct_config_usage =
      "libdirect options:\n"
      "  disable-module=<module_name>   Suppress loading of this module\n"

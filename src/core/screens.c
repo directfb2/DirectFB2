@@ -141,55 +141,58 @@ dfb_screen_core_initialize( CoreDFB             *core,
 
           /* Initialize mixers. */
           if (sshared->description.mixers) {
-               int i;
+               int mixer;
 
                D_ASSERT( funcs->InitMixer != NULL );
                D_ASSERT( funcs->SetMixerConfig != NULL );
 
                sshared->mixers = SHCALLOC( pool, sshared->description.mixers, sizeof(CoreScreenMixer) );
 
-               for (i = 0; i < sshared->description.mixers; i++) {
-                    funcs->InitMixer( screen, screen->driver_data, sshared->screen_data, i,
-                                      &sshared->mixers[i].description, &sshared->mixers[i].configuration );
+               for (mixer = 0; mixer < sshared->description.mixers; mixer++) {
+                    funcs->InitMixer( screen, screen->driver_data, sshared->screen_data, mixer,
+                                      &sshared->mixers[mixer].description,
+                                      &sshared->mixers[mixer].configuration );
 
-                    funcs->SetMixerConfig( screen, screen->driver_data, sshared->screen_data, i,
-                                           &sshared->mixers[i].configuration );
+                    funcs->SetMixerConfig( screen, screen->driver_data, sshared->screen_data, mixer,
+                                           &sshared->mixers[mixer].configuration );
                }
           }
 
           /* Initialize encoders. */
           if (sshared->description.encoders) {
-               int i;
+               int encoder;
 
                D_ASSERT( funcs->InitEncoder != NULL );
                D_ASSERT( funcs->SetEncoderConfig != NULL );
 
                sshared->encoders = SHCALLOC( pool, sshared->description.encoders, sizeof(CoreScreenEncoder) );
 
-               for (i = 0; i < sshared->description.encoders; i++) {
-                    funcs->InitEncoder( screen, screen->driver_data, sshared->screen_data, i,
-                                        &sshared->encoders[i].description, &sshared->encoders[i].configuration );
+               for (encoder = 0; encoder < sshared->description.encoders; encoder++) {
+                    funcs->InitEncoder( screen, screen->driver_data, sshared->screen_data, encoder,
+                                        &sshared->encoders[encoder].description,
+                                        &sshared->encoders[encoder].configuration );
 
-                    funcs->SetEncoderConfig( screen, screen->driver_data, sshared->screen_data, i,
-                                             &sshared->encoders[i].configuration );
+                    funcs->SetEncoderConfig( screen, screen->driver_data, sshared->screen_data, encoder,
+                                             &sshared->encoders[encoder].configuration );
                }
           }
 
           /* Initialize outputs. */
           if (sshared->description.outputs) {
-               int i;
+               int output;
 
                D_ASSERT( funcs->InitOutput != NULL );
                D_ASSERT( funcs->SetOutputConfig != NULL );
 
                sshared->outputs = SHCALLOC( pool, sshared->description.outputs, sizeof(CoreScreenOutput) );
 
-               for (i = 0; i < sshared->description.outputs; i++) {
-                    funcs->InitOutput( screen, screen->driver_data, sshared->screen_data, i,
-                                       &sshared->outputs[i].description, &sshared->outputs[i].configuration );
+               for (output = 0; output < sshared->description.outputs; output++) {
+                    funcs->InitOutput( screen, screen->driver_data, sshared->screen_data, output,
+                                       &sshared->outputs[output].description,
+                                       &sshared->outputs[output].configuration );
 
-                    funcs->SetOutputConfig( screen, screen->driver_data, sshared->screen_data, i,
-                                            &sshared->outputs[i].configuration );
+                    funcs->SetOutputConfig( screen, screen->driver_data, sshared->screen_data, output,
+                                            &sshared->outputs[output].configuration );
                }
           }
 

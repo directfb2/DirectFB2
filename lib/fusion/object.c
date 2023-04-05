@@ -42,12 +42,12 @@ object_reference_watcher( int           caller,
      D_DEBUG_AT( Fusion_Object, "%s( %d, %d, %p, %p, %u, %p )\n", __FUNCTION__,
                  caller, call_arg, call_ptr, ctx, serial, ret_val );
 
-#if FUSION_BUILD_KERNEL
+#if FUSION_BUILD_MULTI && FUSION_BUILD_KERNEL
      if (caller && !pool->secure) {
           D_BUG( "call not coming from fusion device (caller %d)", caller );
           return FCHR_RETURN;
      }
-#endif /* FUSION_BUILD_KERNEL */
+#endif /* FUSION_BUILD_MULTI && FUSION_BUILD_KERNEL */
 
      D_MAGIC_ASSERT( pool, FusionObjectPool );
 

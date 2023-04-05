@@ -482,7 +482,7 @@ dfb_surface_create_simple ( CoreDFB                 *core,
                             CorePalette             *palette,
                             CoreSurface            **ret_surface )
 {
-     CoreSurfaceConfig config;
+     CoreSurfaceConfig surface_config;
 
      D_ASSERT( core != NULL );
      D_ASSERT( ret_surface != NULL );
@@ -490,14 +490,14 @@ dfb_surface_create_simple ( CoreDFB                 *core,
      D_DEBUG_AT( Core_Surface, "%s( %p, %dx%d %s, %p )\n", __FUNCTION__,
                  core, width, height, dfb_pixelformat_name( format ), ret_surface );
 
-     config.flags      = CSCONF_SIZE | CSCONF_FORMAT | CSCONF_COLORSPACE | CSCONF_CAPS;
-     config.size.w     = width;
-     config.size.h     = height;
-     config.format     = format;
-     config.colorspace = colorspace;
-     config.caps       = caps;
+     surface_config.flags      = CSCONF_SIZE | CSCONF_FORMAT | CSCONF_COLORSPACE | CSCONF_CAPS;
+     surface_config.size.w     = width;
+     surface_config.size.h     = height;
+     surface_config.format     = format;
+     surface_config.colorspace = colorspace;
+     surface_config.caps       = caps;
 
-     return CoreDFB_CreateSurface( core, &config, type, resource_id, palette, ret_surface );
+     return CoreDFB_CreateSurface( core, &surface_config, type, resource_id, palette, ret_surface );
 }
 
 DFBResult

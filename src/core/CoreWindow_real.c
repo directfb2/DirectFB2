@@ -179,8 +179,8 @@ IWindow_Real__SetCursorShape( CoreWindow     *obj,
 
 DFBResult
 IWindow_Real__Move( CoreWindow *obj,
-                    int         dx,
-                    int         dy )
+                    s32         dx,
+                    s32         dy )
 {
      D_DEBUG_AT( Core_Window, "%s( %p )\n", __FUNCTION__, obj );
 
@@ -191,8 +191,8 @@ IWindow_Real__Move( CoreWindow *obj,
 
 DFBResult
 IWindow_Real__MoveTo( CoreWindow *obj,
-                      int         x,
-                      int         y )
+                      s32         x,
+                      s32         y )
 {
      DFBResult ret;
      DFBInsets insets;
@@ -214,8 +214,8 @@ IWindow_Real__MoveTo( CoreWindow *obj,
 
 DFBResult
 IWindow_Real__Resize( CoreWindow *obj,
-                      int         width,
-                      int         height )
+                      s32         width,
+                      s32         height )
 {
      DFBResult ret;
      DFBInsets insets;
@@ -260,7 +260,7 @@ IWindow_Real__SetStacking( CoreWindow             *obj,
 DFBResult
 IWindow_Real__Restack( CoreWindow *obj,
                        CoreWindow *relative,
-                       int         relation )
+                       s32         relation )
 {
      DFBResult        ret;
      CoreWindowStack *stack;
@@ -294,8 +294,8 @@ IWindow_Real__Restack( CoreWindow *obj,
 DFBResult
 IWindow_Real__Bind( CoreWindow *obj,
                     CoreWindow *source,
-                    int         x,
-                    int         y )
+                    s32         x,
+                    s32         y )
 {
      D_DEBUG_AT( Core_Window, "%s( %p )\n", __FUNCTION__, obj );
 
@@ -378,7 +378,7 @@ IWindow_Real__SetKeySelection( CoreWindow                    *obj,
 
 DFBResult
 IWindow_Real__SetRotation( CoreWindow *obj,
-                           int         rotation )
+                           s32         rotation )
 {
      D_DEBUG_AT( Core_Window, "%s( %p )\n", __FUNCTION__, obj );
 
@@ -425,8 +425,8 @@ IWindow_Real__PostEvent( CoreWindow           *obj,
 
 DFBResult
 IWindow_Real__SetCursorPosition( CoreWindow *obj,
-                                 int         x,
-                                 int         y )
+                                 s32         x,
+                                 s32         y )
 {
      DFBResult ret;
 

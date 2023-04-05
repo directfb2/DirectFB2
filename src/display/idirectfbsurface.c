@@ -2020,8 +2020,6 @@ IDirectFBSurface_FillRectangles( IDirectFBSurface   *thiz,
 
      D_DEBUG_AT( Surface, "%s( %p, %p [%u] )\n", __FUNCTION__, thiz, rects, num_rects );
 
-     DFB_RECTANGLES_DEBUG_AT( Surface, rects, num_rects );
-
      if (!data->surface)
           return DFB_DESTROYED;
 

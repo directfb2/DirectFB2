@@ -29,9 +29,8 @@ typedef enum {
      DLT_UDP    = 0x00000002  /* Send out log via UDP. */
 } DirectLogType;
 
-typedef DirectResult (*DirectLogWriteFunc)    ( DirectLog *log, const char *buffer, size_t bytes );
-typedef DirectResult (*DirectLogFlushFunc)    ( DirectLog *log, bool sync );
-typedef DirectResult (*DirectLogSetBufferFunc)( DirectLog *log, char *buffer, size_t bytes );
+typedef DirectResult (*DirectLogWriteFunc)( DirectLog *log, const char *buffer, size_t bytes );
+typedef DirectResult (*DirectLogFlushFunc)( DirectLog *log );
 
 struct __D_DirectLog {
      int                     magic;
@@ -44,7 +43,6 @@ struct __D_DirectLog {
 
      DirectLogWriteFunc      write;
      DirectLogFlushFunc      flush;
-     DirectLogSetBufferFunc  set_buffer;
 };
 
 /**********************************************************************************************************************/

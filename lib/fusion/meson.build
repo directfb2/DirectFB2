@@ -24,8 +24,8 @@ fusion_sources = [
   'lock.c',
   'object.c',
   'reactor.c',
-  'shmalloc.c',
   'ref.c',
+  'shmalloc.c',
   'vector.c'
 ]
 

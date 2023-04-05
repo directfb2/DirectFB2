@@ -244,7 +244,7 @@ direct_log_domain_vprintf( DirectLogDomain *domain,
                              millis / 1000LL, millis % 1000LL, micros % 1000LL,
                              direct_gettid(), domain->name, indent, "", ptr );
 
-          direct_log_flush( domain->config.log, false );
+          direct_log_flush( domain->config.log );
 
           if (ptr != buf)
                direct_free( ptr );
@@ -315,7 +315,7 @@ direct_log_domain_log( DirectLogDomain *domain,
                              millis / 1000LL, millis % 1000LL, micros % 1000LL,
                              direct_gettid(), domain->name, indent, "", file, line, func, ptr );
 
-          direct_log_flush( domain->config.log, false );
+          direct_log_flush( domain->config.log );
 
           if (ptr != buf)
                direct_free( ptr );

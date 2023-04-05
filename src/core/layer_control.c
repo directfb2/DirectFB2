@@ -301,7 +301,7 @@ DFBResult
 dfb_layer_activate_context( CoreLayer        *layer,
                             CoreLayerContext *context )
 {
-     DFBResult          ret = DFB_OK;
+     DFBResult          ret;
      int                index;
      CoreLayerShared   *shared;
      CoreLayerContexts *ctxs;
@@ -332,8 +332,6 @@ dfb_layer_activate_context( CoreLayer        *layer,
 
      /* Need to activate. */
      if (ctxs->active != index) {
-          DFBResult ret;
-
           /* Another context currently active. */
           if (ctxs->active >= 0) {
                CoreLayerContext *current = fusion_vector_at( &ctxs->stack, ctxs->active );

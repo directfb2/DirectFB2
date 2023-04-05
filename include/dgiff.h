@@ -22,57 +22,57 @@
 #include <directfb.h>
 
 typedef struct {
-     unsigned char magic[5];  /* "DGIFF" magic */
+     u8  magic[5];  /* "DGIFF" magic */
 
-     unsigned char major;     /* Major version number */
-     unsigned char minor;     /* Minor version number */
+     u8  major;     /* Major version number */
+     u8  minor;     /* Minor version number */
 
-     unsigned char flags;
+     u8  flags;
 
-     uint32_t      num_faces;
+     u32 num_faces;
 
-     uint32_t      __pad;
+     u32 __pad;
 } DGIFFHeader;
 
 typedef struct {
-     int32_t                 next_face;     /* byte offset from this to next face */
+     s32                     next_face;     /* byte offset from this to next face */
 
-     int32_t                 size;
+     s32                     size;
 
-     int32_t                 ascender;
-     int32_t                 descender;
-     int32_t                 height;
+     s32                     ascender;
+     s32                     descender;
+     s32                     height;
 
-     int32_t                 max_advance;
+     s32                     max_advance;
 
-     uint32_t                pixelformat;
+     u32                     pixelformat;
 
-     uint32_t                num_glyphs;
-     uint32_t                num_rows;
+     u32                     num_glyphs;
+     u32                     num_rows;
 
      DFBSurfaceBlittingFlags blittingflags;
 } DGIFFFaceHeader;
 
 typedef struct {
-     uint32_t unicode;
+     u32 unicode;
 
-     uint32_t row;
+     u32 row;
 
-     int32_t  offset;
-     int32_t  width;
-     int32_t  height;
+     s32 offset;
+     s32 width;
+     s32 height;
 
-     int32_t  left;
-     int32_t  top;
-     int32_t  advance;
+     s32 left;
+     s32 top;
+     s32 advance;
 } DGIFFGlyphInfo;
 
 typedef struct {
-     int32_t  width;
-     int32_t  height;
-     int32_t  pitch;
+     s32 width;
+     s32 height;
+     s32 pitch;
 
-     uint32_t __pad;
+     u32 __pad;
 
      /* Raw pixel data follows, 'height * pitch' bytes. */
 } DGIFFGlyphRow;

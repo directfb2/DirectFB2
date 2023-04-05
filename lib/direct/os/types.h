@@ -23,7 +23,7 @@
 
 #endif
 
-#if DIRECT_BUILD_OS_LINUX
+#if defined(DIRECT_BUILD_OS_LINUX)
 
 #include <direct/os/linux/types.h>
 

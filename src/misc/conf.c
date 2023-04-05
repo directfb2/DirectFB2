@@ -880,8 +880,7 @@ dfb_config_set( const char *name,
           }
 
           if (value) {
-               char *error;
-               u32   argb;
+               u32 argb;
 
                argb = strtoul( value, &error, 16 );
 
