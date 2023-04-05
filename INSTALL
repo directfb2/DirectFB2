@@ -1,6 +1,6 @@
-DirectFB2 is built using Meson and Ninja.
+DirectFB2 is built using Meson.
 
-You will also need a C99 compatible compiler and fluxcomp for converting .flux interface description files to .c files.
+You will also need a C compiler and fluxcomp for converting .flux interface description files to .c files.
 
 With the default build of DirectFB2, only one application can be running (single application core). However you have the
 option to use the multi application core which allows multiple applications to run at the same time within a session.
@@ -9,19 +9,20 @@ relying on the linux-fusion kernel module (which implements the critical parts o
 
 To build the single application core:
 
-  $ meson build/
-  $ ninja -C build/
+  $ meson setup build/
 
 To build the multi application core with Fusion implemented completely in user space:
 
-  $ meson -Dmulti=true build/
-  $ ninja -C build/
+  $ meson setup -Dmulti=true build/
 
 or with Fusion based on the linux-fusion kernel module:
 
-  $ meson -Dmulti=true -Dmulti-kernel=true build/
-  $ ninja -C build/
+  $ meson setup -Dmulti=true -Dmulti-kernel=true build/
 
-Finally, you can install DirectFB2 using:
+On Linux, start the DirectFB2 build with:
 
-  $ ninja -C build/ install
+  $ meson compile -C build/
+
+And install it using:
+
+  $ meson install -C build/
