@@ -3,6 +3,8 @@ DirectFB2
 
 DirectFB2 is a fork of DirectFB, a graphics library which was designed with embedded systems in mind.
 
+Linux and NuttX operating systems are supported.
+
 See the file INSTALL for installation instructions.
 
 Enjoy!

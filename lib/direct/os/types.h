@@ -43,6 +43,26 @@
 #include <direct/os/linux/waitqueue.h>
 #endif
 
+#elif defined(DIRECT_BUILD_OS_NUTTX)
+
+#include <direct/os/nuttx/types.h>
+
+#ifdef __DIRECT__OS__FILESYSTEM_H__
+#include <direct/os/nuttx/filesystem.h>
+#endif
+
+#ifdef __DIRECT__OS__MUTEX_H__
+#include <direct/os/nuttx/mutex.h>
+#endif
+
+#ifdef __DIRECT__OS__THREAD_H__
+#include <direct/os/nuttx/thread.h>
+#endif
+
+#ifdef __DIRECT__OS__WAITQUEUE_H__
+#include <direct/os/nuttx/waitqueue.h>
+#endif
+
 #else
 #error Unsupported OS!
 #endif
