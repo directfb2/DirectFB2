@@ -1,3 +1,6 @@
+Installation Instructions
+=========================
+
 DirectFB2 is built using Meson.
 
 You will also need a C compiler and fluxcomp for converting .flux interface description files to .c files.
@@ -19,6 +22,9 @@ or with Fusion based on the linux-fusion kernel module:
 
   $ meson setup -Dmulti=true -Dmulti-kernel=true build/
 
+Linux
+=====
+
 On Linux, start the DirectFB2 build with:
 
   $ meson compile -C build/
@@ -26,3 +32,13 @@ On Linux, start the DirectFB2 build with:
 And install it using:
 
   $ meson install -C build/
+
+NuttX
+=====
+
+On NuttX, copy the DirectFB2 directory to your NuttX apps/graphics/ directory.
+
+Verify that the following Pthread options are enabled in your NuttX configuration:
+
+	[*] Enable mutex types
+	[*] pthread cleanup stack
