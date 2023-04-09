@@ -140,15 +140,16 @@ static DFBResult
 system_initialize( CoreDFB  *core,
                    void    **ret_data )
 {
-     DFBResult            ret;
-     int                  i;
-     uint32_t             fourcc;
-     char                 name[5];
-     DRMKMSData          *drmkms;
-     DRMKMSDataShared    *shared;
-     FusionSHMPoolShared *pool;
-     const char          *value;
-     drmModePlane        *plane;
+     DFBResult              ret;
+     int                    i, j;
+     uint32_t               fourcc;
+     char                   name[5];
+     DRMKMSData            *drmkms;
+     DRMKMSDataShared      *shared;
+     FusionSHMPoolShared   *pool;
+     const char            *value;
+     drmModePlane          *plane;
+     DFBSurfacePixelFormat  fallback_format = DSPF_UNKNOWN;
 
      D_DEBUG_AT( DRMKMS_System, "%s()\n", __FUNCTION__ );
 
@@ -232,25 +233,23 @@ system_initialize( CoreDFB  *core,
                shared->primary_format = DSPF_ARGB;
                break;
           }
-     }
-
-     if (i == plane->count_formats) {
-          fourcc = plane->formats[0];
-          snprintf( name, sizeof(name), "%c%c%c%c", fourcc, fourcc >> 8, fourcc >> 16, fourcc >> 24 );
-
-          for (i = 1; i < D_ARRAY_SIZE(dfb_fourcc_names); i++) {
-               if (!strcmp( name, dfb_fourcc_names[i].name )) {
-                    shared->primary_format = dfb_fourcc_names[i].format;
-                    break;
+          else if (fallback_format == DSPF_UNKNOWN) {
+               for (j = 1; j < D_ARRAY_SIZE(dfb_fourcc_names); j++) {
+                    if (!strcmp( name, dfb_fourcc_names[j].name )) {
+                         fallback_format = dfb_fourcc_names[j].format;
+                         break;
+                    }
                }
           }
      }
 
-     if (i == D_ARRAY_SIZE(dfb_fourcc_names)) {
+     if (shared->primary_format != DSPF_ARGB && fallback_format == DSPF_UNKNOWN) {
           D_ERROR( "DRMKMS/System: No supported format!\n" );
           ret = DFB_INIT;
           goto error;
      }
+     else if (shared->primary_format != DSPF_ARGB)
+          shared->primary_format = fallback_format;
 
      *ret_data = drmkms;
 
