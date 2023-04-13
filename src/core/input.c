@@ -392,7 +392,7 @@ dfb_input_core_shutdown( DFBInputCore *data,
           D_ASSERT( device->driver != NULL );
 
           ishared = device->shared;
-          driver = device->driver;
+          driver  = device->driver;
 
           CoreInputDevice_Deinit_Dispatch( &ishared->call );
 
@@ -533,7 +533,7 @@ dfb_input_core_suspend( DFBInputCore *data )
           D_ASSERT( device->driver != NULL );
 
           ishared = device->shared;
-          driver = device->driver;
+          driver  = device->driver;
 
           if (device->driver_data != NULL) {
                void *driver_data;

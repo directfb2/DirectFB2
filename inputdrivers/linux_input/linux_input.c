@@ -1099,8 +1099,6 @@ get_device_info( int              fd,
 
      D_DEBUG_AT( Linux_Input, "%s()\n", __FUNCTION__ );
 
-     device_info->desc.caps = 0;
-
      /* Get device name. */
      ioctl( fd, EVIOCGNAME( DFB_INPUT_DEVICE_DESC_NAME_LENGTH - 1 ), device_info->desc.name );
 
@@ -1169,8 +1167,6 @@ get_device_info( int              fd,
      else
           *touchpad = false;
 
-     device_info->desc.type = DIDTF_NONE;
-
      /* Mouse, Touchscreen or Joystick */
      if ((test_bit( EV_KEY, evbit ) && (test_bit( BTN_TOUCH, keybit ) || test_bit( BTN_TOOL_FINGER, keybit ))) ||
          ((num_rels >= 2 && num_buttons) || (num_abs == 2 && num_buttons == 1)))
@@ -1185,8 +1181,6 @@ get_device_info( int              fd,
           device_info->desc.min_keycode = 0;
           device_info->desc.max_keycode = 127;
      }
-     else
-          device_info->desc.min_keycode = device_info->desc.max_keycode = 0;
 
      /* Remote Control */
      if (num_ext_keys) {
@@ -1198,16 +1192,12 @@ get_device_info( int              fd,
           device_info->desc.caps       |= DICAPS_BUTTONS;
           device_info->desc.max_button  = DIBI_FIRST + num_buttons - 1;
      }
-     else
-          device_info->desc.max_button = 0;
 
      /* Axes */
      if (num_rels || num_abs) {
           device_info->desc.caps     |= DICAPS_AXES;
           device_info->desc.max_axis  = DIAI_FIRST + MAX( num_rels, num_abs ) - 1;
      }
-     else
-          device_info->desc.max_axis = 0;
 
      /* Primary input device */
      if (device_info->desc.type & DIDTF_KEYBOARD)
@@ -1270,6 +1260,11 @@ check_device( const char *device )
      }
 
      /* Get device information. */
+     memset( &device_info, 0, sizeof(InputDeviceInfo) );
+
+     device_info.desc.min_keycode = -1;
+     device_info.desc.max_keycode = -1;
+
      get_device_info( fd, &device_info, &touchpad );
 
      if (linux_input_grab)
