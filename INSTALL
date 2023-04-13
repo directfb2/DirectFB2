@@ -25,11 +25,11 @@ or with Fusion based on the linux-fusion kernel module:
 Linux
 =====
 
-On Linux, start the DirectFB2 build with:
+On Linux, start the build with:
 
   $ meson compile -C build/
 
-And install it using:
+And install DirectFB2 using:
 
   $ meson install -C build/
 
