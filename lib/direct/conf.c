@@ -64,7 +64,7 @@ const char   *direct_config_usage =
      "  [no-]thread-block-signals      Block all signals in new threads (default enabled)\n"
      "  thread-priority-scale=<100th>  Apply scaling factor on thread type based priorities\n"
      "  thread-priority=<priority>     Set priority for the default thread type (default = 100)\n"
-     "  thread-scheduler=<policy>      Select thread scheduler (default = other)\n"
+     "  thread-scheduler=<policy>      Select thread scheduler\n"
      "  thread-stacksize=<stacksize>   Set thread stack size (default = auto)\n"
      "  default-interface-implementation=<type/name>\n"
      "                                 Probe interface_type/implementation_name first\n"
@@ -570,6 +570,9 @@ direct_config_set( const char *name,
                }
                else if (strcmp( value, "rr" ) == 0) {
                     direct_config->thread_scheduler = DCTS_RR;
+               }
+               else if (strcmp( value, "sporadic" ) == 0) {
+                    direct_config->thread_scheduler = DCTS_SPORADIC;
                }
                else {
                     D_ERROR( "Direct/Config: '%s': Unknown scheduler '%s'!\n", name, value );

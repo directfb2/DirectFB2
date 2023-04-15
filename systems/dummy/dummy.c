@@ -36,9 +36,6 @@ dummyInitScreen( CoreScreen           *screen,
                  void                 *screen_data,
                  DFBScreenDescription *description )
 {
-     /* Set capabilities. */
-     description->caps = DSCCAPS_NONE;
-
      /* Set name. */
      snprintf( description->name, DFB_SCREEN_DESC_NAME_LENGTH, "Dummy Screen" );
 

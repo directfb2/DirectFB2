@@ -88,7 +88,7 @@ direct_thread_init( DirectThread *thread )
                break;
 
           default:
-               policy = SCHED_OTHER;
+               policy = SCHED_SPORADIC;
                break;
      }
 
@@ -403,8 +403,8 @@ const char *
 direct_thread_policy_name( int policy )
 {
      switch (policy) {
-          case SCHED_OTHER:
-               return "OTHER";
+          case SCHED_SPORADIC:
+               return "SPORADIC";
 
           case SCHED_FIFO:
                return "FIFO";

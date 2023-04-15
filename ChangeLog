@@ -1,3 +1,69 @@
+commit 820a2146f7eb83348ad22356fb915ad1bf04d8f0
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Apr 15 14:10:47 2023 +0200
+
+    Add definition for the SCHED_SPORADIC scheduling policy
+
+commit f0d703b7a3aaf38b94815449cbf86e3420e20a2f
+Merge: 452b899 95d9fb3
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Apr 13 18:41:10 2023 +0200
+
+    Merge pull request #111 from caramelli/master
+    
+    Input/Linux: Initialize device_info before calling get_device_info()
+
+commit 95d9fb31694c6a5aeaedb9b6b27911b97fb92dba
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Apr 13 18:36:44 2023 +0200
+
+    Input/Linux: Initialize device_info before calling get_device_info()
+
+commit 452b899a28fbc13710af16d6798a587bbfd51ae1
+Merge: d01c4df 9bddf65
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Apr 10 12:21:58 2023 +0200
+
+    Merge pull request #109 from caramelli/master
+    
+    If the AR24 format is not supported, look at all formats to find a fallback format (not just the first one)
+
+commit 9bddf65c1f29b37fabf92eedd7836df96fd65391
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Apr 10 01:00:35 2023 +0200
+
+    If the AR24 format is not supported, look at all formats to find a fallback format (not just the first one)
+
+commit d01c4dff74bb9be5f9b66bed410befd572e401de
+Merge: 2f872de d11102d
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Apr 7 09:56:14 2023 +0200
+
+    Merge pull request #107 from caramelli/master
+    
+    Add NuttX support for running DirectFB apps on MCU devices
+
+commit d11102daba0af1f75339d9a27b3b5c9eba242884
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Apr 7 09:50:46 2023 +0200
+
+    Add NuttX support for running DirectFB apps on MCU devices
+
+commit 2f872de307cc9db0749122fa33286268d4e1be49
+Merge: f0904fd 3d9375c
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Apr 5 22:19:09 2023 +0200
+
+    Merge pull request #106 from caramelli/master
+    
+    Fix -Wshadow and -Woverflow warnings when using bare metal toolchain
+
+commit 3d9375c67041849fcf37f674218b008cd08c04ce
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed Apr 5 22:13:01 2023 +0200
+
+    Update ChangeLog
+
 commit ff14133b16a0bffcc9e597cd33e8cb551f964703
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Wed Apr 5 22:10:23 2023 +0200
