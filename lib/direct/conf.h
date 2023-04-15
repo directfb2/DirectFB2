@@ -30,9 +30,10 @@ typedef enum {
 } DirectConfigFatalLevel;
 
 typedef enum {
-     DCTS_OTHER = 0x00000000, /* Other scheduling. */
-     DCTS_FIFO  = 0x00000001, /* First in, first out scheduling. */
-     DCTS_RR    = 0x00000002  /* Round-robin scheduling. */
+     DCTS_OTHER    = 0x00000000, /* Other scheduling. */
+     DCTS_FIFO     = 0x00000001, /* First in, first out scheduling. */
+     DCTS_RR       = 0x00000002, /* Round-robin scheduling. */
+     DCTS_SPORADIC = 0x00000003  /* Sporadic scheduling. */
 } DirectConfigThreadScheduler;
 
 typedef enum {
