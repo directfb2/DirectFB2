@@ -26,7 +26,7 @@ D_DEBUG_DOMAIN( DRMKMS_Layer, "DRMKMS/Layer", "DRM/KMS Layer" );
 /**********************************************************************************************************************/
 
 typedef struct {
-     int                    layer_index;
+     int                    primary_index;
      int                    plane_index;
 
      drmModePlane          *plane;
@@ -118,7 +118,7 @@ drmkmsPrimaryInitLayer( CoreLayer                  *layer,
      shared = drmkms->shared;
 
      /* Initialize the layer data. */
-     data->layer_index = shared->layer_index_count++;
+     data->primary_index = shared->primary_index_count++;
 
      /* Set type and capabilities. */
      description->type             = DLTF_GRAPHICS;
@@ -130,8 +130,8 @@ drmkmsPrimaryInitLayer( CoreLayer                  *layer,
 
      /* Fill out the default configuration. */
      config->flags       = DLCONF_WIDTH | DLCONF_HEIGHT | DLCONF_PIXELFORMAT | DLCONF_BUFFERMODE;
-     config->width       = shared->mode[data->layer_index].hdisplay;
-     config->height      = shared->mode[data->layer_index].vdisplay;
+     config->width       = shared->mode[data->primary_index].hdisplay;
+     config->height      = shared->mode[data->primary_index].vdisplay;
      config->pixelformat = dfb_config->mode.format ?: shared->primary_format;
      config->buffermode  = DLBM_FRONTONLY;
 
@@ -159,7 +159,6 @@ drmkmsPrimaryTestRegion( CoreLayer                  *layer,
      DRMKMSDataShared           *shared;
      DRMKMSLayerData            *data   = layer_data;
      CoreLayerRegionConfigFlags  failed = CLRCF_NONE;
-     int                         index;
 
      D_DEBUG_AT( DRMKMS_Layer, "%s( %dx%d, %s )\n", __FUNCTION__,
                  config->width, config->height, dfb_pixelformat_name( config->format ) );
@@ -170,10 +169,8 @@ drmkmsPrimaryTestRegion( CoreLayer                  *layer,
 
      shared = drmkms->shared;
 
-     index = data->layer_index;
-
-     if ((shared->primary_dimension[index].w && (shared->primary_dimension[index].w > config->width )) ||
-         (shared->primary_dimension[index].h && (shared->primary_dimension[index].h > config->height))) {
+     if (shared->primary_dimension[data->primary_index].w > config->width ||
+         shared->primary_dimension[data->primary_index].h > config->height) {
           failed = CLRCF_WIDTH | CLRCF_HEIGHT;
 
           D_DEBUG_AT( DRMKMS_Layer, "  -> rejection of layers smaller than the current primary layer\n" );
@@ -205,7 +202,6 @@ drmkmsPrimarySetRegion( CoreLayer                  *layer,
      DRMKMSData       *drmkms = driver_data;
      DRMKMSDataShared *shared;
      DRMKMSLayerData  *data   = layer_data;
-     int               index, i;
 
      D_DEBUG_AT( DRMKMS_Layer, "%s()\n", __FUNCTION__ );
 
@@ -215,10 +211,11 @@ drmkmsPrimarySetRegion( CoreLayer                  *layer,
 
      shared = drmkms->shared;
 
-     index = data->layer_index;
-
      if (updated & (CLRCF_WIDTH | CLRCF_HEIGHT | CLRCF_BUFFERMODE | CLRCF_SOURCE)) {
-          for (i = 0; i < shared->enabled_crtcs; i++) {
+          int i;
+          int index = data->primary_index;
+
+          for (i = 0; i < drmkms->enabled_crtcs; i++) {
                if (shared->mirror_outputs)
                     index = i;
 
@@ -241,9 +238,9 @@ drmkmsPrimarySetRegion( CoreLayer                  *layer,
                     break;
           }
 
-          shared->primary_dimension[data->layer_index] = surface->config.size;
-          shared->primary_rect                         = config->source;
-          shared->primary_fb                           = (uint32_t)(long) left_lock->handle;
+          shared->primary_dimension[data->primary_index] = surface->config.size;
+          shared->primary_rect                           = config->source;
+          shared->primary_fb                             = (uint32_t)(long) left_lock->handle;
      }
 
      return DFB_OK;
@@ -262,7 +259,6 @@ drmkmsPrimaryUpdateFlipRegion( void                  *driver_data,
      DRMKMSData       *drmkms = driver_data;
      DRMKMSDataShared *shared;
      DRMKMSLayerData  *data   = layer_data;
-     int               index, i;
 
      D_DEBUG_AT( DRMKMS_Layer, "%s()\n", __FUNCTION__ );
 
@@ -271,8 +267,6 @@ drmkmsPrimaryUpdateFlipRegion( void                  *driver_data,
      D_ASSERT( data != NULL );
 
      shared = drmkms->shared;
-
-     index = data->layer_index;
 
      direct_mutex_lock( &data->lock );
 
@@ -291,8 +285,8 @@ drmkmsPrimaryUpdateFlipRegion( void                  *driver_data,
 
      D_DEBUG_AT( DRMKMS_Layer, "  -> calling drmModePageFlip()\n" );
 
-     err = drmModePageFlip( drmkms->fd, drmkms->encoder[index]->crtc_id, (uint32_t)(long) left_lock->handle,
-                            DRM_MODE_PAGE_FLIP_EVENT, data );
+     err = drmModePageFlip( drmkms->fd, drmkms->encoder[data->primary_index]->crtc_id,
+                            (uint32_t)(long) left_lock->handle, DRM_MODE_PAGE_FLIP_EVENT, data );
      if (err) {
           ret = errno2result( errno );
           D_PERROR( "DRMKMS/Layer: drmModePageFlip() failed!\n" );
@@ -301,9 +295,11 @@ drmkmsPrimaryUpdateFlipRegion( void                  *driver_data,
      }
 
      if (shared->mirror_outputs) {
-          for (i = 1; i < shared->enabled_crtcs; i++) {
-               err = drmModePageFlip( drmkms->fd, drmkms->encoder[i]->crtc_id, (uint32_t)(long) left_lock->handle,
-                                      DRM_MODE_PAGE_FLIP_ASYNC, NULL );
+          int i;
+
+          for (i = 1; i < drmkms->enabled_crtcs; i++) {
+               err = drmModePageFlip( drmkms->fd, drmkms->encoder[i]->crtc_id,
+                                      (uint32_t)(long) left_lock->handle, DRM_MODE_PAGE_FLIP_ASYNC, NULL );
                if (err)
                     D_WARN( "page-flip failed for mirror on crtc id %u", drmkms->encoder[i]->crtc_id );
           }
@@ -387,7 +383,8 @@ drmkmsPlaneInitLayer( CoreLayer                  *layer,
      /* Initialize the layer data. */
      data->plane_index = ++shared->plane_index_count;
      data->level       = data->plane_index;
-     data->plane       = drmModeGetPlane( drmkms->fd, drmkms->plane_resources->planes[data->plane_index] );
+     data->plane       = drmModeGetPlane( drmkms->fd,
+                                          drmkms->plane_resources->planes[drmkms->layer_indices[data->plane_index]] );
 
      D_DEBUG_AT( DRMKMS_Layer, "  -> getting plane with index %d\n", data->plane_index );
      D_DEBUG_AT( DRMKMS_Layer, "    => plane_id is %u\n", data->plane->plane_id );
@@ -643,7 +640,7 @@ drmkmsPlaneUpdateFlipRegion( void                  *driver_data,
 
      D_DEBUG_AT( DRMKMS_Layer, "%s()\n", __FUNCTION__ );
 
-     if (!config->dest.w || !config->dest.h)
+     if (!config->source.w || !config->source.h || !config->dest.w || !config->dest.h)
           return DFB_INVARG;
 
      direct_mutex_lock( &data->lock );
