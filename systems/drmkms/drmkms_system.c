@@ -54,11 +54,15 @@ static const struct DFBFourCCName dfb_fourcc_names[] = {
 
 static DFBResult
 local_init( const char *device_name,
+            bool        mirror_outputs,
+            bool        multihead_outputs,
             DRMKMSData *drmkms )
 {
-     CoreScreen *screen;
-     uint64_t    has_dumb = 0;
-     int         i;
+     int               busy, i, j, k;
+     CoreScreen       *screen;
+     drmModeConnector *connector;
+     drmModeEncoder   *encoder;
+     uint64_t          has_dumb = 0;
 
      /* Open DRM/KMS device. */
      drmkms->fd = open( device_name, O_RDWR );
@@ -96,12 +100,126 @@ local_init( const char *device_name,
 
      dfb_layers_register( screen, drmkms, &drmkmsPrimaryLayerFuncs );
 
-     DFB_DISPLAYLAYER_IDS_ADD( drmkms->layer_ids[0], drmkms->layer_id_next++ );
+     DFB_DISPLAYLAYER_IDS_ADD( drmkms->layer_ids[0], drmkms->layer_id++ );
 
-     for (i = 1; i < drmkms->plane_resources->count_planes; i++) {
-          dfb_layers_register( screen, drmkms, &drmkmsPlaneLayerFuncs );
+     for (i = 0; i < drmkms->resources->count_connectors; i++) {
+          connector = drmModeGetConnector( drmkms->fd, drmkms->resources->connectors[i] );
+          if (!connector)
+               continue;
 
-          DFB_DISPLAYLAYER_IDS_ADD( drmkms->layer_ids[0], drmkms->layer_id_next++ );
+          encoder = NULL;
+
+          if (connector->count_modes > 0) {
+               D_DEBUG_AT( DRMKMS_Screen, "  -> found connector %u\n", connector->connector_id );
+
+               if (connector->encoder_id) {
+                    D_DEBUG_AT( DRMKMS_Screen, "  -> connector is bound to encoder %u\n", connector->encoder_id );
+
+                    encoder = drmModeGetEncoder( drmkms->fd, connector->encoder_id );
+                    if (!encoder)
+                         continue;
+               }
+               else {
+                    D_DEBUG_AT( DRMKMS_Screen, "  -> searching for appropriate encoder\n" );
+
+                    for (j = 0; j < drmkms->resources->count_encoders; j++) {
+                         encoder = drmModeGetEncoder( drmkms->fd, drmkms->resources->encoders[j] );
+                         if (!encoder)
+                              continue;
+
+                         busy = 0;
+
+                         for (k = 0; k < drmkms->enabled_crtcs; k++) {
+                              if (drmkms->encoder[k]->encoder_id == encoder->encoder_id) {
+                                   D_DEBUG_AT( DRMKMS_Screen, "  -> encoder %u is already in use by connector %u\n",
+                                               encoder->encoder_id, drmkms->connector[k]->connector_id );
+                                   busy = 1;
+                              }
+                         }
+
+                         if (busy)
+                              continue;
+
+                         D_DEBUG_AT( DRMKMS_Screen, "  -> found encoder %u\n", encoder->encoder_id );
+                         break;
+                    }
+               }
+
+               if (encoder) {
+                    if (encoder->crtc_id) {
+                         D_DEBUG_AT( DRMKMS_Screen, "  -> encoder is bound to crtc %u\n", encoder->crtc_id );
+
+                         drmkms->crtc = drmModeGetCrtc( drmkms->fd, encoder->crtc_id );
+                    }
+                    else {
+                         D_DEBUG_AT( DRMKMS_Screen, "  -> searching for appropriate crtc\n" );
+
+                         for (j = 0; j < drmkms->resources->count_crtcs; j++) {
+                              if (!(encoder->possible_crtcs & (1 << j)))
+                                   continue;
+
+                              busy = 0;
+
+                              for (k = 0; k < drmkms->enabled_crtcs; k++) {
+                                   if (drmkms->encoder[k]->crtc_id == drmkms->resources->crtcs[j]) {
+                                        D_DEBUG_AT( DRMKMS_Screen, "  -> crtc %u is already in use by encoder %u\n",
+                                                    drmkms->resources->crtcs[j], drmkms->encoder[k]->encoder_id );
+                                        busy = 1;
+                                   }
+                              }
+
+                              if (busy)
+                                   continue;
+
+                              encoder->crtc_id = drmkms->resources->crtcs[j];
+
+                              D_DEBUG_AT( DRMKMS_Screen, "  -> found crtc %u\n", encoder->crtc_id );
+
+                              drmkms->crtc = drmModeGetCrtc( drmkms->fd, encoder->crtc_id );
+                              break;
+                         }
+
+                         if (!encoder->crtc_id) {
+                              D_DEBUG_AT( DRMKMS_Screen, "  -> cannot find crtc for encoder %u\n", encoder->encoder_id );
+                              break;
+                         }
+                    }
+
+                    drmkms->connector[drmkms->enabled_crtcs] = connector;
+                    drmkms->encoder[drmkms->enabled_crtcs]   = encoder;
+
+                    for (j = 0; j < connector->count_modes; j++)
+                         D_DEBUG_AT( DRMKMS_Screen, "    => modes[%2d] is %ux%u@%uHz\n", j,
+                                     connector->modes[j].hdisplay, connector->modes[j].vdisplay,
+                                     connector->modes[j].vrefresh );
+
+                    drmkms->enabled_crtcs++;
+
+                    if ((!mirror_outputs && !multihead_outputs) || (drmkms->enabled_crtcs == 8))
+                         break;
+
+                    if (multihead_outputs && drmkms->enabled_crtcs > 1) {
+                         dfb_layers_register( screen, drmkms, &drmkmsPrimaryLayerFuncs );
+
+                         DFB_DISPLAYLAYER_IDS_ADD( drmkms->layer_ids[drmkms->enabled_crtcs-1], drmkms->layer_id++ );
+                    }
+               }
+          }
+     }
+
+     for (i = 0; i < drmkms->plane_resources->count_planes; i++) {
+          drmModePlane *plane;
+
+          plane = drmModeGetPlane( drmkms->fd, drmkms->plane_resources->planes[i] );
+
+          if ((plane->possible_crtcs & drmkms->encoder[0]->possible_crtcs) &&
+              (plane->crtc_id != drmkms->encoder[0]->crtc_id)) {
+               drmkms->layer_indices[drmkms->layer_id] = i;
+
+               dfb_layers_register( screen, drmkms, &drmkmsPlaneLayerFuncs );
+
+               DFB_DISPLAYLAYER_IDS_ADD( drmkms->layer_ids[0], drmkms->layer_id++ );
+          }
      }
 
      return DFB_OK;
@@ -214,7 +332,7 @@ system_initialize( CoreDFB  *core,
           }
      }
 
-     ret = local_init( shared->device_name, drmkms );
+     ret = local_init( shared->device_name, shared->mirror_outputs, shared->multihead_outputs, drmkms );
      if (ret)
           goto error;
 
@@ -223,6 +341,9 @@ system_initialize( CoreDFB  *core,
           if (ret)
                goto error;
      }
+
+     for (i = 0; i < drmkms->enabled_crtcs; i++)
+          shared->mode[i] = drmkms->connector[0]->modes[0];
 
      plane = drmModeGetPlane( drmkms->fd, drmkms->plane_resources->planes[0] );
      for (i = 0; i < plane->count_formats; i++) {
@@ -300,7 +421,7 @@ system_join( CoreDFB  *core,
 
      drmkms->shared = shared;
 
-     ret = local_init( shared->device_name, drmkms );
+     ret = local_init( shared->device_name, shared->mirror_outputs, shared->multihead_outputs, drmkms );
      if (ret)
           goto error;
 

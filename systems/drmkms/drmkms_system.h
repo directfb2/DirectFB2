@@ -19,6 +19,7 @@
 #ifndef __DRMKMS_SYSTEM_H__
 #define __DRMKMS_SYSTEM_H__
 
+#include <core/coredefs.h>
 #include <core/coretypes.h>
 #include <fusion/types.h>
 #include <xf86drm.h>
@@ -31,23 +32,22 @@ typedef struct {
 
      CoreSurfacePool       *pool;
 
-     char                   device_name[256];       /* DRM/KMS device name, e.g. /dev/dri/card0 */
-     bool                   use_prime_fd;           /* DRM/KMS PRIME file descriptor enabled */
+     char                   device_name[256];     /* DRM/KMS device name, e.g. /dev/dri/card0 */
+     bool                   use_prime_fd;         /* DRM/KMS PRIME file descriptor enabled */
 
-     bool                   vt;                     /* use VT handling */
+     bool                   vt;                   /* use VT handling */
 
-     bool                   mirror_outputs;         /* enable mirror display */
-     bool                   multihead_outputs;      /* enable multi-head display */
+     bool                   mirror_outputs;       /* enable mirror display */
+     bool                   multihead_outputs;    /* enable multi-head display */
 
-     int                    enabled_crtcs;          /* CRTCs enabled (limiting to 8) */
-     drmModeModeInfo        mode[8];                /* current video mode (for each available CRTC) */
+     drmModeModeInfo        mode[8];              /* current video mode (for each available CRTC) */
 
      DFBDimension           primary_dimension[8];
      DFBRectangle           primary_rect;
      uint32_t               primary_fb;
      DFBSurfacePixelFormat  primary_format;
 
-     int                    layer_index_count;
+     int                    primary_index_count;
      int                    plane_index_count;
 } DRMKMSDataShared;
 
@@ -56,15 +56,17 @@ typedef struct {
 
      CoreDFB            *core;
 
-     int                 fd;              /* DRM/KMS file descriptor */
+     int                 fd;                        /* DRM/KMS file descriptor */
 
-     drmModeRes         *resources;       /* display configuration information */
-     drmModePlaneRes    *plane_resources; /* planes information */
+     drmModeRes         *resources;                 /* display configuration information */
+     drmModePlaneRes    *plane_resources;           /* planes information */
      drmModeConnector   *connector[8];
      drmModeEncoder     *encoder[8];
      drmModeCrtc        *crtc;
+     int                 enabled_crtcs;             /* CRTCs enabled (limiting to 8) */
      DFBDisplayLayerIDs  layer_ids[8];
-     DFBDisplayLayerID   layer_id_next;
+     DFBDisplayLayerID   layer_id;
+     int                 layer_indices[MAX_LAYERS];
 
      drmEventContext     event_context;
      DirectThread       *thread;
