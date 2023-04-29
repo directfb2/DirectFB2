@@ -1998,11 +1998,11 @@ static DFBResult
 load_keymap( CoreInputDevice *device,
              char            *filename )
 {
-     DFBResult                ret       = DFB_OK;
-     DFBInputDeviceLockState  lockstate = 0;
+     DFBResult                ret;
+     DirectFile               fd;
      InputDeviceKeymap       *map;
      CoreInputDeviceShared   *shared;
-     DirectFile               file;
+     DFBInputDeviceLockState  lockstate = 0;
 
      D_MAGIC_ASSERT( device, CoreInputDevice );
      D_ASSERT( core_input != NULL );
@@ -2014,7 +2014,7 @@ load_keymap( CoreInputDevice *device,
      map = &shared->keymap;
 
      /* Open the file. */
-     ret = direct_file_open( &file, filename, O_RDONLY, 0 );
+     ret = direct_file_open( &fd, filename, O_RDONLY, 0 );
      if (ret)
           return ret;
 
@@ -2029,13 +2029,13 @@ load_keymap( CoreInputDevice *device,
 
           DFBInputDeviceKeymapEntry entry = { .code = 0 };
 
-          ret = direct_file_get_string( &file, buffer, 200 );
+          ret = direct_file_get_string( &fd, buffer, 200 );
           if (ret) {
                if (ret == DFB_EOF) {
-                    direct_file_close( &file );
+                    direct_file_close( &fd );
                     return DFB_OK;
                }
-               direct_file_close( &file );
+               direct_file_close( &fd );
                return ret;
           }
 

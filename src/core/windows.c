@@ -1081,7 +1081,7 @@ dfb_window_set_cursor_shape( CoreWindow   *window,
                              int           hot_x,
                              int           hot_y )
 {
-     DFBResult        ret   = DFB_OK;
+     DFBResult        ret;
      CoreWindowStack *stack = window->stack;
 
      D_MAGIC_ASSERT( window, CoreWindow );
@@ -1109,6 +1109,8 @@ dfb_window_set_cursor_shape( CoreWindow   *window,
                     dfb_windowstack_cursor_set_shape( stack, shape, hot_x, hot_y );
           }
      }
+     else
+          ret = DFB_OK;
 
      /* Unlock the window stack. */
      dfb_windowstack_unlock( stack );
@@ -1874,7 +1876,7 @@ DFBResult
 dfb_window_set_rotation( CoreWindow *window,
                          int         rotation )
 {
-     DFBResult        ret   = DFB_OK;
+     DFBResult        ret;
      CoreWindowStack *stack = window->stack;
 
      D_MAGIC_ASSERT( window, CoreWindow );
@@ -1909,6 +1911,8 @@ dfb_window_set_rotation( CoreWindow *window,
                     ret = DFB_UNSUPPORTED;
           }
      }
+     else
+          ret = DFB_OK;
 
      /* Unlock the window stack. */
      dfb_windowstack_unlock( stack );

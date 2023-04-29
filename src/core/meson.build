@@ -35,7 +35,7 @@ fluxcomp = find_program('fluxcomp')
 
 flux_sources = []
 foreach flux_file : flux_files
-  flux_sources += custom_target('flux_source_' + flux_file,
+  flux_sources += custom_target(flux_file,
                                 input: flux_file + '.flux',
                                 output: [flux_file + '.c', flux_file + '.h'],
                                 command: [fluxcomp, '--call-mode',

@@ -97,10 +97,8 @@ vt_set_fb( int fbdev_fd,
 
      D_DEBUG_AT( VT, "%s( %d, %d )\n", __FUNCTION__, num, fb );
 
-     if (fstat( fbdev_fd, &st )) {
-          D_PERROR( "FBDev/VT: fstat() failed!\n" );
+     if (fstat( fbdev_fd, &st ))
           return;
-     }
 
      if (fb >= 0)
           c2m.framebuffer = fb;

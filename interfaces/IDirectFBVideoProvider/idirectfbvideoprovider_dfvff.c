@@ -240,7 +240,10 @@ IDirectFBVideoProvider_DFVFF_Destruct( IDirectFBVideoProvider *thiz )
 
      direct_mutex_deinit( &data->events_lock );
 
-     direct_file_unmap( data->ptr, data->len );
+     if (!data->len)
+          D_FREE( data->ptr );
+     else if (data->len > 0)
+          direct_file_unmap( data->ptr, data->len );
 
      DIRECT_DEALLOCATE_INTERFACE( thiz );
 }
@@ -705,9 +708,10 @@ Construct( IDirectFBVideoProvider *thiz,
 {
      DFBResult                 ret;
      DirectFile                fd;
-     DirectFileInfo            info;
+     int                       len;
      const DFVFFHeader        *header;
      void                     *ptr;
+     char                     *chunk       = NULL;
      IDirectFBDataBuffer_data *buffer_data = buffer->priv;
 
      DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBVideoProvider_DFVFF )
@@ -717,40 +721,73 @@ Construct( IDirectFBVideoProvider *thiz,
      data->ref       = 1;
      data->idirectfb = idirectfb;
 
-     /* Check for valid filename. */
-     if (!buffer_data->filename) {
-          DIRECT_DEALLOCATE_INTERFACE( thiz );
-          return DFB_UNSUPPORTED;
+     if (buffer_data->buffer) {
+          len = -1;
+          ptr = buffer_data->buffer;
      }
+     else if (buffer_data->filename) {
+          DirectFileInfo info;
 
-     /* Open the file. */
-     ret = direct_file_open( &fd, buffer_data->filename, O_RDONLY, 0 );
-     if (ret) {
-          D_DERROR( ret, "VideoProvider/DFVFF: Failed to open file '%s'!\n", buffer_data->filename );
-          DIRECT_DEALLOCATE_INTERFACE( thiz );
-          return ret;
+          /* Open the file. */
+          ret = direct_file_open( &fd, buffer_data->filename, O_RDONLY, 0 );
+          if (ret) {
+               D_DERROR( ret, "VideoProvider/DFVFF: Failed to open file '%s'!\n", buffer_data->filename );
+               len = 0;
+               goto error;
+          }
+
+          /* Query file size. */
+          ret = direct_file_get_info( &fd, &info );
+          if (ret) {
+               D_DERROR( ret, "VideoProvider/DFVFF: Failed during get_info() of '%s'!\n", buffer_data->filename );
+               len = -1;
+               goto error;
+          }
+          else
+               len = info.size;
+
+          /* Memory-mapped file. */
+          ret = direct_file_map( &fd, NULL, 0, len, DFP_READ, &ptr );
+          if (ret) {
+               D_DERROR( ret, "VideoProvider/DFVFF: Failed during mmap() of '%s'!\n", buffer_data->filename );
+               goto error;
+          }
+
+          direct_file_close( &fd );
      }
+     else {
+          unsigned int size = 0;
 
-     /* Query file size. */
-     ret = direct_file_get_info( &fd, &info );
-     if (ret) {
-          D_DERROR( ret, "VideoProvider/DFVFF: Failed during get_info() of '%s'!\n", buffer_data->filename );
-          goto error;
+          len = 0;
+
+          while (1) {
+               unsigned int bytes;
+
+               chunk = D_REALLOC( chunk, size + 4096 );
+               if (!chunk) {
+                    ret = D_OOM();
+                    goto error;
+               }
+
+               buffer->WaitForData( buffer, 4096 );
+               if (buffer->GetData( buffer, 4096, chunk + size, &bytes ))
+                    break;
+
+               size += bytes;
+          }
+
+          if (!size) {
+               ret = DFB_IO;
+               goto error;
+          }
+
+          ptr = chunk;
      }
-
-     /* Memory-mapped file. */
-     ret = direct_file_map( &fd, NULL, 0, info.size, DFP_READ, &ptr );
-     if (ret) {
-          D_DERROR( ret, "VideoProvider/DFVFF: Failed during mmap() of '%s'!\n", buffer_data->filename );
-          goto error;
-     }
-
-     direct_file_close( &fd );
 
      header = ptr;
 
      data->ptr              = ptr;
-     data->len              = info.size;
+     data->len              = len;
      data->desc.flags       = DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT | DSDESC_COLORSPACE;
      data->desc.width       = header->width;
      data->desc.height      = header->height;
@@ -793,7 +830,11 @@ Construct( IDirectFBVideoProvider *thiz,
      return DFB_OK;
 
 error:
-     direct_file_close( &fd );
+     if (len)
+          direct_file_close( &fd );
+
+     if (chunk)
+          D_FREE( chunk );
 
      DIRECT_DEALLOCATE_INTERFACE( thiz );
 

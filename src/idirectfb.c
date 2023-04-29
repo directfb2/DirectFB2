@@ -1445,7 +1445,7 @@ IDirectFB_CreateVideoProvider( IDirectFB               *thiz,
      D_DEBUG_AT( DirectFB, "%s( %p, '%s' )\n", __FUNCTION__, thiz, filename );
 
      /* Check arguments. */
-     if (!ret_interface || !filename)
+     if (!filename || !ret_interface)
           return DFB_INVARG;
 
      /* Create a data buffer. */
@@ -1482,14 +1482,8 @@ IDirectFB_CreateFont( IDirectFB                 *thiz,
      D_DEBUG_AT( DirectFB, "%s( %p, '%s' )\n", __FUNCTION__, thiz, filename );
 
      /* Check arguments. */
-     if (!ret_interface || !filename || !desc)
+     if (!filename || !desc || !ret_interface)
           return DFB_INVARG;
-
-     ret = direct_access( filename, R_OK );
-     if (ret) {
-          D_DEBUG_AT( DirectFB, "  -> cannot access '%s'\n", filename );
-          return ret;
-     }
 
      if ((desc->flags & DFDESC_HEIGHT) && desc->height < 1) {
           D_DEBUG_AT( DirectFB, "  -> invalid height %d\n", desc->height );
@@ -1541,6 +1535,7 @@ IDirectFB_CreateDataBuffer( IDirectFB                       *thiz,
           ret = IDirectFBDataBuffer_Streamed_Construct( iface, data->core, thiz );
      }
      else if (desc->flags & DBDESC_FILE) {
+          /* Check for valid filename. */
           if (!desc->file)
                return DFB_INVARG;
 
