@@ -40,9 +40,6 @@ DIRECT_INTERFACE_IMPLEMENTATION( IDirectFBFont, DGIFF )
 /**********************************************************************************************************************/
 
 typedef struct {
-     void         *map;      /* memory map of the font file */
-     int           size;     /* size of the memory map */
-
      CoreSurface **rows;     /* bitmaps of loaded glyphs */
      int           num_rows;
 } DGIFFImplData;
@@ -67,8 +64,6 @@ IDirectFBFont_DGIFF_Destruct( IDirectFBFont *thiz )
           D_FREE( data->rows );
      }
 
-     direct_file_unmap( data->map, data->size );
-
      D_FREE( data );
 
      IDirectFBFont_Destruct( thiz );
@@ -92,9 +87,6 @@ IDirectFBFont_DGIFF_Release( IDirectFBFont *thiz )
 static DFBResult
 Probe( IDirectFBFont_ProbeContext *ctx )
 {
-     if (!ctx->filename)
-          return DFB_UNSUPPORTED;
-
      /* Check the magic. */
      if (!strncmp( (const char*) ctx->content, "DGIFF", 5 ))
           return DFB_OK;
@@ -110,13 +102,10 @@ Construct( IDirectFBFont              *thiz,
 {
      DFBResult              ret;
      int                    i;
-     DirectFile             fd;
-     DirectFileInfo         info;
      const DGIFFHeader     *header;
      const DGIFFFaceHeader *faceheader;
      DGIFFGlyphInfo        *glyphs;
      DGIFFGlyphRow         *row;
-     void                  *ptr  = NULL;
      CoreFont              *font = NULL;
      DGIFFImplData         *data = NULL;
 
@@ -129,33 +118,10 @@ Construct( IDirectFBFont              *thiz,
      if (desc->flags & DFDESC_ROTATION)
           return DFB_UNSUPPORTED;
 
-     D_DEBUG_AT( Font_DGIFF, "  -> file '%s' at pixel height %d\n", ctx->filename, desc->height );
+     D_DEBUG_AT( Font_DGIFF, "  -> font at pixel height %d\n", desc->height );
 
-     /* Open the file. */
-     ret = direct_file_open( &fd, ctx->filename, O_RDONLY, 0 );
-     if (ret) {
-          D_DERROR( ret, "Font/DGIFF: Failed to open file '%s'!\n", ctx->filename );
-          return ret;
-     }
-
-     /* Query file size. */
-     ret = direct_file_get_info( &fd, &info );
-     if (ret) {
-          D_DERROR( ret, "Font/DGIFF: Failed during get_info() of '%s'!\n", ctx->filename );
-          goto error;
-     }
-
-     /* Memory-mapped file. */
-     ret = direct_file_map( &fd, NULL, 0, info.size, DFP_READ, &ptr );
-     if (ret) {
-          D_DERROR( ret, "Font/DGIFF: Failed during mmap() of '%s'!\n", ctx->filename );
-          goto error;
-     }
-
-     direct_file_close( &fd );
-
-     header = ptr;
-     faceheader = ptr + sizeof(DGIFFHeader);
+     header     = (void*) ctx->content;
+     faceheader = (void*) ctx->content + sizeof(DGIFFHeader);
 
      /* Lookup requested face. */
      for (i = 0; i < header->num_faces; i++) {
@@ -166,7 +132,7 @@ Construct( IDirectFBFont              *thiz,
      }
 
      if (i == header->num_faces) {
-          D_ERROR( "Font/DGIFF: Requested size %d not found in '%s'!\n", desc->height, ctx->filename );
+          D_ERROR( "Font/DGIFF: Requested size %d not found!\n", desc->height );
           ret = DFB_UNSUPPORTED;
           goto error;
      }
@@ -175,7 +141,7 @@ Construct( IDirectFBFont              *thiz,
      row    = (void*) (glyphs + faceheader->num_glyphs);
 
      /* Create the font object. */
-     ret = dfb_font_create( core, desc, ctx->filename, &font );
+     ret = dfb_font_create( core, desc, &font );
      if (ret)
           goto error;
 
@@ -201,9 +167,6 @@ Construct( IDirectFBFont              *thiz,
           ret = D_OOM();
           goto error;
      }
-
-     data->map  = ptr;
-     data->size = info.size;
 
      data->num_rows = faceheader->num_rows;
 
@@ -284,11 +247,6 @@ error:
 
           dfb_font_destroy( font );
      }
-
-     if (ptr)
-          direct_file_unmap( ptr, info.size );
-
-     direct_file_close( &fd );
 
      return ret;
 }

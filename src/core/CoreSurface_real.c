@@ -469,7 +469,7 @@ ISurface_Real__Flip2( CoreSurface         *obj,
                       DFBSurfaceFlipFlags  flags,
                       s64                  timestamp )
 {
-     DFBResult ret = DFB_OK;
+     DFBResult ret;
      DFBRegion l, r;
 
      D_DEBUG_AT( DirectFB_CoreSurface, "%s( %p, timestamp %lld )\n", __FUNCTION__, obj, (long long) timestamp );
@@ -531,6 +531,8 @@ ISurface_Real__Flip2( CoreSurface         *obj,
      }
 
      dfb_surface_dispatch_update( obj, &l, &r, timestamp, flags );
+
+     ret = DFB_OK;
 
 out:
      dfb_surface_unlock( obj );

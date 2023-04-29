@@ -62,7 +62,6 @@ struct __DFB_CoreFont {
      CoreFontManager              *manager;
 
      DFBFontDescription            description;     /* original description used to create the font */
-     char                         *url;
 
      DFBSurfaceBlittingFlags       blittingflags;
      DFBSurfacePixelFormat         pixel_format;
@@ -224,7 +223,6 @@ DFBResult dfb_font_cache_row_deinit      ( CoreFontCacheRow             *row );
  */
 DFBResult dfb_font_create                ( CoreDFB                      *core,
                                            const DFBFontDescription     *description,
-                                           const char                   *url,
                                            CoreFont                    **ret_font );
 
 /*

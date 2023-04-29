@@ -185,7 +185,7 @@ IDirectFBDataBuffer_CreateFont( IDirectFBDataBuffer       *thiz,
      D_DEBUG_AT( DataBuffer, "%s( %p )\n", __FUNCTION__, thiz );
 
      /* Check arguments. */
-     if (!ret_interface || !desc)
+     if (!desc || !ret_interface)
           return DFB_INVARG;
 
      return IDirectFBFont_CreateFromBuffer( thiz, data->core, desc, ret_interface );

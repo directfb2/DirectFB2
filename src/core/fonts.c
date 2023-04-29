@@ -607,7 +607,6 @@ dfb_font_cache_row_deinit( CoreFontCacheRow *row )
 DFBResult
 dfb_font_create( CoreDFB                   *core,
                  const DFBFontDescription  *description,
-                 const char                *url,
                  CoreFont                 **ret_font )
 {
      DFBResult  ret;
@@ -634,13 +633,11 @@ dfb_font_create( CoreDFB                   *core,
           }
      }
 
-     font->description = *description;
-     font->url         = D_STRDUP( url );
-
-     font->core    = core;
-     font->manager = dfb_core_font_manager( core );
-
-     font->pixel_format = dfb_config->font_format;
+     font->core          = core;
+     font->manager       = dfb_core_font_manager( core );
+     font->description   = *description;
+     font->blittingflags = DSBLIT_BLEND_ALPHACHANNEL | DSBLIT_COLORIZE;
+     font->pixel_format  = dfb_config->font_format;
 
      if ((font->pixel_format == DSPF_ARGB     ||
           font->pixel_format == DSPF_ABGR     ||
@@ -651,8 +648,6 @@ dfb_font_create( CoreDFB                   *core,
           font->pixel_format == DSPF_RGBA5551) && dfb_config->font_premult) {
           font->surface_caps = DSCAPS_PREMULTIPLIED;
      }
-
-     font->blittingflags = DSBLIT_BLEND_ALPHACHANNEL | DSBLIT_COLORIZE;
 
      D_MAGIC_SET( font, CoreFont );
 
@@ -690,8 +685,6 @@ dfb_font_destroy( CoreFont *font )
 
      if (font->encodings)
           D_FREE( font->encodings );
-
-     D_FREE( font->url );
 
      D_MAGIC_CLEAR( font );
 

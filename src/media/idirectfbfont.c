@@ -807,48 +807,6 @@ IDirectFBFont_Construct( IDirectFBFont *thiz, CoreFont *font )
      return DFB_OK;
 }
 
-static DFBResult
-try_map_file( IDirectFBDataBuffer_data   *buffer_data,
-              IDirectFBFont_ProbeContext *ctx )
-{
-     if (direct_access( buffer_data->filename, R_OK ) == DR_OK) {
-          DirectResult    ret;
-          DirectFile      file;
-          DirectFileInfo  info;
-          void           *map;
-
-          ret = direct_file_open( &file, ctx->filename, O_RDONLY, 0 );
-          if (ret) {
-               D_DERROR( ret, "IDirectFBFont: Could not open '%s'\n", buffer_data->filename );
-               return ret;
-          }
-
-          ret = direct_file_get_info( &file, &info );
-          if (ret) {
-               D_DERROR( ret, "IDirectFBFont: Could not query info about '%s'\n", buffer_data->filename );
-               direct_file_close( &file );
-               return ret;
-          }
-
-          ret = direct_file_map( &file, NULL, 0, info.size, DFP_READ, &map );
-          if (ret) {
-               D_DERROR( ret, "IDirectFBFont: Could not mmap '%s'\n", buffer_data->filename );
-               direct_file_close( &file );
-               return ret;
-          }
-
-          ctx->content      = map;
-          ctx->content_size = info.size;
-          ctx->content_type = IDFBFONT_CONTEXT_CONTENT_TYPE_MAPPED;
-
-          direct_file_close( &file );
-
-          return DFB_OK;
-     }
-
-     return DFB_UNSUPPORTED;
-}
-
 static void
 unmap_or_free( IDirectFBFont_ProbeContext *ctx )
 {
@@ -901,9 +859,41 @@ IDirectFBFont_CreateFromBuffer( IDirectFBDataBuffer       *buffer,
           ctx.content_size = buffer_data->length;
           ctx.content_type = IDFBFONT_CONTEXT_CONTENT_TYPE_MEMORY;
      }
-     /* Try to map the file content first. */
-     else if (try_map_file( buffer_data, &ctx ) != DFB_OK) {
-          /* Try to load the content from the buffer. */
+     else if (buffer_data->filename) {
+          DirectFile      fd;
+          DirectFileInfo  info;
+          void           *ptr;
+
+          /* Open the file. */
+          ret = direct_file_open( &fd, ctx.filename, O_RDONLY, 0 );
+          if (ret) {
+               D_DERROR( ret, "IDirectFBFont: Could not open '%s'\n", ctx.filename );
+               return ret;
+          }
+
+          /* Query file size. */
+          ret = direct_file_get_info( &fd, &info );
+          if (ret) {
+               D_DERROR( ret, "IDirectFBFont: Could not query info about '%s'\n", ctx.filename );
+               direct_file_close( &fd );
+               return ret;
+          }
+
+          /* Memory-mapped file. */
+          ret = direct_file_map( &fd, NULL, 0, info.size, DFP_READ, &ptr );
+          if (ret) {
+               D_DERROR( ret, "IDirectFBFont: Could not mmap '%s'\n", ctx.filename );
+               direct_file_close( &fd );
+               return ret;
+          }
+
+          ctx.content      = ptr;
+          ctx.content_size = info.size;
+          ctx.content_type = IDFBFONT_CONTEXT_CONTENT_TYPE_MAPPED;
+
+          direct_file_close( &fd );
+     }
+     else {
           if (buffer->SeekTo( buffer, 0 ) == DFB_OK) {
                unsigned int size, got;
 
