@@ -198,12 +198,8 @@ direct_file_seek( DirectFile *file,
 {
      D_ASSERT( file != NULL );
 
-     if (lseek( file->fd, offset, SEEK_CUR ) < 0) {
-          if (errno == ESPIPE)
-               return DR_IO;
-          else
-               return errno2result( errno );
-     }
+     if (lseek( file->fd, offset, SEEK_CUR ) < 0)
+          return errno2result( errno );
 
      return DR_OK;
 }

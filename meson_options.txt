@@ -80,6 +80,10 @@ option('os',
        value: 'linux',
        description: 'OS name')
 
+option('piped-stream',
+       type: 'boolean',
+       description: 'Piped stream support')
+
 option('sentinels',
        type: 'boolean',
        value: false,
