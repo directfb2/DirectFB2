@@ -40,9 +40,11 @@ struct __D_DirectStream {
 
      char                 *mime;
 
+#if DIRECT_BUILD_PIPED_STREAM
      /* Cache for piped streams. */
      void                 *cache;
      unsigned int          cache_size;
+#endif /* DIRECT_BUILD_PIPED_STREAM */
 
 #if DIRECT_BUILD_NETWORK
      /* Remote streams data. */
@@ -118,21 +120,26 @@ direct_stream_close( DirectStream *stream )
      }
 #endif /* DIRECT_BUILD_NETWORK */
 
-     if (stream->mime) {
-          D_FREE( stream->mime );
-          stream->mime = NULL;
-     }
-
+#if DIRECT_BUILD_PIPED_STREAM
      if (stream->cache) {
           D_FREE( stream->cache );
           stream->cache = NULL;
           stream->cache_size = 0;
      }
+#endif /* DIRECT_BUILD_PIPED_STREAM */
 
+#if DIRECT_BUILD_NETWORK || DIRECT_BUILD_PIPED_STREAM
      if (stream->fd >= 0) {
           fcntl( stream->fd, F_SETFL, fcntl( stream->fd, F_GETFL ) & ~O_NONBLOCK );
           close( stream->fd );
           stream->fd = -1;
+     } else
+#endif /* DIRECT_BUILD_NETWORK || DIRECT_BUILD_PIPED_STREAM */
+     direct_file_close( &stream->file );
+
+     if (stream->mime) {
+          D_FREE( stream->mime );
+          stream->mime = NULL;
      }
 }
 
@@ -415,9 +422,6 @@ net_stream_wait( DirectStream   *stream,
 
      D_DEBUG_AT( Direct_Stream, "%s()\n", __FUNCTION__ );
 
-     if (stream->cache_size >= length)
-          return DR_OK;
-
      if (stream->fd == -1)
           return DR_EOF;
 
@@ -426,7 +430,7 @@ net_stream_wait( DirectStream   *stream,
 
      switch (select( stream->fd + 1, &s, NULL, NULL, timeout )) {
           case 0:
-               if (!timeout && !stream->cache_size)
+               if (!timeout)
                     return DR_EOF;
                return DR_TIMEOUT;
           case -1:
@@ -869,6 +873,7 @@ http_stream_open( DirectStream *stream,
 
 /**********************************************************************************************************************/
 
+#if DIRECT_BUILD_PIPED_STREAM
 static DirectResult
 pipe_stream_wait( DirectStream   *stream,
                   unsigned int    length,
@@ -991,6 +996,7 @@ pipe_stream_read( DirectStream *stream,
 
      return DR_OK;
 }
+#endif /* DIRECT_BUILD_PIPED_STREAM */
 
 static DirectResult
 file_stream_wait( DirectStream   *stream,
@@ -1078,28 +1084,30 @@ file_stream_open( DirectStream *stream,
      if (ret)
           return ret;
 
+#if DIRECT_BUILD_PIPED_STREAM
      stream->fd = stream->file.fd;
 
-     ret = direct_file_seek( &stream->file, 0 );
-     if (ret == DR_IO) {
+     if (lseek( stream->fd, 0, SEEK_CUR ) < 0 && errno == ESPIPE) {
           stream->length = -1;
           stream->wait   = pipe_stream_wait;
           stream->peek   = pipe_stream_peek;
           stream->read   = pipe_stream_read;
-     }
-     else {
-          ret = direct_file_get_info( &stream->file, &info );
-          if (ret) {
-               direct_file_close( &stream->file );
-               return ret;
-          }
 
-          stream->length = info.size;
-          stream->wait   = file_stream_wait;
-          stream->peek   = file_stream_peek;
-          stream->read   = file_stream_read;
-          stream->seek   = file_stream_seek;
+          return DR_OK;
      }
+#endif /* DIRECT_BUILD_PIPED_STREAM */
+
+     ret = direct_file_get_info( &stream->file, &info );
+     if (ret) {
+          direct_file_close( &stream->file );
+          return ret;
+     }
+
+     stream->length = info.size;
+     stream->wait   = file_stream_wait;
+     stream->peek   = file_stream_peek;
+     stream->read   = file_stream_read;
+     stream->seek   = file_stream_seek;
 
      return DR_OK;
 }
@@ -1198,7 +1206,7 @@ direct_stream_remote( DirectStream *stream )
      return false;
 }
 
-const char*
+const char *
 direct_stream_mime( DirectStream *stream )
 {
      D_MAGIC_ASSERT( stream, DirectStream );

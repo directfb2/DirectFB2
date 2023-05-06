@@ -106,6 +106,8 @@ build_conf.set10('DIRECT_BUILD_MEMCPY_PROBING', get_option('memcpy-probing'))
 
 build_conf.set10('DIRECT_BUILD_NETWORK', get_option('network'))
 
+build_conf.set10('DIRECT_BUILD_PIPED_STREAM', get_option('piped-stream'))
+
 build_conf.set10('DIRECT_BUILD_SENTINELS', get_option('sentinels'))
 
 if get_option('os') == 'linux'
