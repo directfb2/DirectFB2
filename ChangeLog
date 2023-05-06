@@ -1,3 +1,54 @@
+commit 8cb3a8a67eb51b3b5b6b5eed44082bd51f522568
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat May 6 11:24:07 2023 +0200
+
+    Add build option for piped stream support
+
+commit 84a31310821fb4af12df7651376b3bd3debd3f65
+Merge: 6269d4a 646c725
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Apr 29 14:22:05 2023 +0200
+
+    Merge pull request #114 from caramelli/master
+    
+    DGIFF/DFIFF/DFVFF: Add support for input data located in memory or streamed
+
+commit 646c7259d6f17f71fc5de4d60e3e5a9e429b99c8
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Apr 29 14:11:56 2023 +0200
+
+    DGIFF/DFIFF/DFVFF: Add support for input data located in memory or streamed
+
+commit 6269d4a55d013737704997dadccdf32e07890dd4
+Merge: 632cba0 d06f9b3
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Apr 16 13:04:34 2023 +0200
+
+    Merge pull request #113 from caramelli/master
+    
+    drmkms: Only register planes with possible_crtcs compatible with primary CRTC
+
+commit d06f9b3dc2ccfb08a1420c0c3ef30d6299325c5a
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Apr 16 12:57:31 2023 +0200
+
+    drmkms: Only register planes with possible_crtcs compatible with primary CRTC
+
+commit 632cba05c265346cc2cd27c99b311f99526f1ce1
+Merge: f0d703b fb01984
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Apr 15 14:28:02 2023 +0200
+
+    Merge pull request #112 from caramelli/master
+    
+    Add definition for the SCHED_SPORADIC scheduling policy
+
+commit fb0198449e57efd89d7e1b51416e5efa92088c08
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Apr 15 14:11:15 2023 +0200
+
+    Update ChangeLog
+
 commit 820a2146f7eb83348ad22356fb915ad1bf04d8f0
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Sat Apr 15 14:10:47 2023 +0200
