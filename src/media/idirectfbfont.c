@@ -894,48 +894,23 @@ IDirectFBFont_CreateFromBuffer( IDirectFBDataBuffer       *buffer,
           direct_file_close( &fd );
      }
      else {
-          if (buffer->SeekTo( buffer, 0 ) == DFB_OK) {
-               unsigned int size, got;
+          ctx.content_size = 0;
+          ctx.content_type = IDFBFONT_CONTEXT_CONTENT_TYPE_MALLOCED;
 
-               /* Get the length. */
-               buffer->GetLength( buffer, &size );
+          while (1) {
+               unsigned int bytes;
 
-               ctx.content = D_MALLOC( size );
-               if (!ctx.content)
-                    return DR_NOLOCALMEMORY;
-
-               ctx.content_size = 0;
-               ctx.content_type = IDFBFONT_CONTEXT_CONTENT_TYPE_MALLOCED;
-
-               while (ctx.content_size < size) {
-                    unsigned int get = size - ctx.content_size;
-
-                    if (get > 8192)
-                         get = 8192;
-
-                    ret = buffer->WaitForData( buffer, get );
-                    if (ret) {
-                         D_DERROR( ret, "IDirectFBFont: WaitForData() failed!\n" );
-                         break;
-                    }
-
-                    ret = buffer->GetData( buffer, get, ctx.content + ctx.content_size, &got );
-                    if (ret) {
-                         D_DERROR( ret, "IDirectFBFont: GetData() failed!\n" );
-                         break;
-                    }
-
-                    if (!got)
-                         break;
-
-                    ctx.content_size += got;
+               ctx.content = D_REALLOC( ctx.content, ctx.content_size + 4096 );
+               if (!ctx.content) {
+                    ret = D_OOM();
+                    return ret;
                }
 
-               if (ctx.content_size != size) {
-                    D_ERROR( "IDirectFBFont: Got size %u differs from supposed %u!\n", ctx.content_size, size );
-                    D_FREE( ctx.content );
-                    return DFB_FAILURE;
-               }
+               buffer->WaitForData( buffer, 4096 );
+               if (buffer->GetData( buffer, 4096, ctx.content + ctx.content_size, &bytes ))
+                    break;
+
+               ctx.content_size += bytes;
           }
      }
 

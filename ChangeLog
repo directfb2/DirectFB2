@@ -1,3 +1,24 @@
+commit 0f9d5265270031d4a8d03a892beef4481b6a97a4
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed May 10 16:53:42 2023 +0200
+
+    IDirectFBFont: Fix loading from streamed data buffer
+
+commit 26927796d587aafccedceb9faf531670347448a1
+Merge: 84a3131 1c4cf69
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat May 6 11:32:07 2023 +0200
+
+    Merge pull request #115 from caramelli/master
+    
+    Add build option for piped stream support
+
+commit 1c4cf69ab193fc8e0b59062415f1c1022aa5c406
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat May 6 11:24:15 2023 +0200
+
+    Update ChangeLog
+
 commit 8cb3a8a67eb51b3b5b6b5eed44082bd51f522568
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Sat May 6 11:24:07 2023 +0200
