@@ -19,7 +19,6 @@
 #include <core/fonts.h>
 #include <core/surface.h>
 #include <dgiff.h>
-#include <direct/filesystem.h>
 #include <direct/hash.h>
 #include <directfb_util.h>
 #include <media/idirectfbfont.h>

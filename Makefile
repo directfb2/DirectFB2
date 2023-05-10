@@ -208,6 +208,7 @@ lib/direct/build.h:
 		echo "#define DIRECT_BUILD_MEMCPY_PROBING 0" >> $@; \
 		echo "#define DIRECT_BUILD_NETWORK 0" >> $@; \
 		echo "#define DIRECT_BUILD_OS_NUTTX 1" >> $@; \
+		echo "#define DIRECT_BUILD_PIPED_STREAM 0" >> $@; \
 		echo "#define DIRECT_BUILD_SENTINELS 0" >> $@; \
 		echo "#define DIRECT_BUILD_TEXT 0" >> $@; \
 		echo "#define DIRECT_BUILD_TRACE 0" >> $@
