@@ -50,7 +50,8 @@ typedef struct {
 } SigHandled;
 
 static int sigs_to_handle[] = {
-     SIGHUP, SIGINT, SIGQUIT, SIGPIPE, SIGTERM
+     SIGHUP, SIGINT, SIGQUIT, SIGILL, SIGTRAP, SIGABRT, SIGBUS, SIGFPE, SIGSEGV, SIGPIPE, SIGTERM, SIGXCPU, SIGXFSZ,
+     SIGSYS
 };
 
 #define NUM_SIGS_TO_HANDLE (D_ARRAY_SIZE(sigs_to_handle))
@@ -211,12 +212,8 @@ signal_handler( int        num,
                 siginfo_t *info,
                 void      *uctx )
 {
-     if (info && info > (siginfo_t*) 0x100) {
-          if (info->si_code)
-               D_LOG( Direct_Signals, FATAL, "  --> Caught signal %d (sent by the kernel) <--\n", info->si_signo );
-          else
-               D_LOG( Direct_Signals, FATAL, "  --> Caught signal %d (unknown origin) <--\n", info->si_signo );
-     }
+     if (info && info > (siginfo_t*) 0x100)
+          D_LOG( Direct_Signals, FATAL, "  --> Caught signal %d <--\n", info->si_signo );
      else
           D_LOG( Direct_Signals, FATAL, "  --> Caught signal %d, no siginfo available <--\n", num );
 
@@ -247,6 +244,9 @@ install_handlers()
 
                action.sa_sigaction = signal_handler;
                action.sa_flags     = SA_SIGINFO;
+
+               if (signum != SIGSEGV)
+                    action.sa_flags |= SA_NODEFER;
 
                sigemptyset( &action.sa_mask );
 

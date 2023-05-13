@@ -44,6 +44,14 @@ direct_clock_get_time( DirectClockType type )
                clock_id = CLOCK_MONOTONIC;
                break;
 
+          case DIRECT_CLOCK_PROCESS_CPUTIME_ID:
+               clock_id = CLOCK_PROCESS_CPUTIME_ID;
+               break;
+
+          case DIRECT_CLOCK_THREAD_CPUTIME_ID:
+               clock_id = CLOCK_THREAD_CPUTIME_ID;
+               break;
+
           default:
                D_BUG( "invalid clock type %u", type );
                return DR_INVARG;
@@ -89,6 +97,14 @@ direct_clock_set_time( DirectClockType type,
                clock_id = CLOCK_MONOTONIC;
                break;
 
+          case DIRECT_CLOCK_PROCESS_CPUTIME_ID:
+               clock_id = CLOCK_PROCESS_CPUTIME_ID;
+               break;
+
+          case DIRECT_CLOCK_THREAD_CPUTIME_ID:
+               clock_id = CLOCK_THREAD_CPUTIME_ID;
+               break;
+
           default:
                D_BUG( "invalid clock type %u", type );
                return DR_INVARG;
@@ -121,6 +137,14 @@ direct_clock_resolution( DirectClockType type )
 
           case DIRECT_CLOCK_MONOTONIC:
                clock_id = CLOCK_MONOTONIC;
+               break;
+
+          case DIRECT_CLOCK_PROCESS_CPUTIME_ID:
+               clock_id = CLOCK_PROCESS_CPUTIME_ID;
+               break;
+
+          case DIRECT_CLOCK_THREAD_CPUTIME_ID:
+               clock_id = CLOCK_THREAD_CPUTIME_ID;
                break;
 
           default:
