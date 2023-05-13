@@ -47,7 +47,4 @@ typedef long long int          s64;
 #define _ZU "%zu"
 #define _ZUn(x) "%" #x "zu"
 
-#define SIGABRT MAX_SIGNO
-#define SIGTRAP MAX_SIGNO - 1
-
 #endif

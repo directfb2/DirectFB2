@@ -87,8 +87,12 @@ direct_thread_init( DirectThread *thread )
                policy = SCHED_RR;
                break;
 
-          default:
+          case DCTS_SPORADIC:
                policy = SCHED_SPORADIC;
+               break;
+
+          default:
+               policy = SCHED_OTHER;
                break;
      }
 
@@ -403,14 +407,17 @@ const char *
 direct_thread_policy_name( int policy )
 {
      switch (policy) {
-          case SCHED_SPORADIC:
-               return "SPORADIC";
+          case SCHED_OTHER:
+               return "OTHER";
 
           case SCHED_FIFO:
                return "FIFO";
 
           case SCHED_RR:
                return "RR";
+
+          case SCHED_SPORADIC:
+               return "SPORADIC";
      }
 
      return "<unknown>";
