@@ -1145,6 +1145,9 @@ direct_stream_create( const char    *filename,
      else if (!strncmp( filename, "ftp://", 6 )) {
           ret = ftp_stream_open( stream, filename + 6 );
      }
+     else if (!strncmp( filename, "rtsp://", 7 )) {
+          ret = DR_OK;
+     }
      else if (!strncmp( filename, "tcp://", 6 )) {
           ret = net_stream_open( stream, filename + 6, IPPROTO_TCP );
      }
