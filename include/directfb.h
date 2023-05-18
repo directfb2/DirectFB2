@@ -197,6 +197,11 @@ extern const unsigned int directfb_minor_version;
 extern const unsigned int directfb_micro_version;
 
 /*
+ * Singleton.
+ */
+extern IDirectFB *idirectfb_singleton;
+
+/*
  * Checks for a certain DirectFB version.
  * In case of an error a message is returned describing
  * the mismatch.

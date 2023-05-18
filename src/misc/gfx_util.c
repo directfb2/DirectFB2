@@ -26,8 +26,8 @@
 
 /**********************************************************************************************************************/
 
-#define SUBSAMPLE_BITS  4
-#define SUBSAMPLE      (1 << SUBSAMPLE_BITS)
+#define SUBSAMPLE_BITS 4
+#define SUBSAMPLE       (1 << SUBSAMPLE_BITS)
 #define SUBSAMPLE_MASK ((1 << SUBSAMPLE_BITS) - 1)
 
 #define SCALE_SHIFT 16
@@ -50,17 +50,17 @@ static void
 write_argb_span( u32         *src,
                  u8          *dst[],
                  int          len,
-                 int          dx,
-                 int          dy,
-                 CoreSurface *dst_surface,
-                 bool         premultiply )
+                 int          x,
+                 int          y,
+                 CoreSurface *dst_surface )
 {
-     CorePalette *palette = dst_surface->palette;
-     u8          *d       = dst[0];
-     u8          *d1, *d2;
      int          i, j;
+     u8          *d       = dst[0];
+     u8          *d1      = dst[1];
+     u8          *d2      = dst[2];
+     CorePalette *palette = dst_surface->palette;
 
-     if (premultiply && (dst_surface->config.caps & DSCAPS_PREMULTIPLIED)) {
+     if (dst_surface->config.caps & DSCAPS_PREMULTIPLIED) {
           for (i = 0; i < len; i++) {
                u32 s = src[i];
                u32 a = (s >> 24) + 1;
@@ -250,7 +250,7 @@ write_argb_span( u32         *src,
                break;
 
           case DSPF_YUY2:
-               if (dx & 1) {
+               if (x & 1) {
                     u32 y, u, v;
                     D_UNUSED_P( u );
                     RGB_TO_YCBCR( (src[0] >> 16) & 0xff, (src[0] >> 8) & 0xff, src[0] & 0xff, y, u, v );
@@ -280,7 +280,7 @@ write_argb_span( u32         *src,
                break;
 
           case DSPF_UYVY:
-               if (dx & 1) {
+               if (x & 1) {
                     u32 y, u, v;
                     D_UNUSED_P( u );
                     RGB_TO_YCBCR( (src[0] >> 16) & 0xff, (src[0] >> 8) & 0xff, src[0] & 0xff, y, u, v );
@@ -347,8 +347,6 @@ write_argb_span( u32         *src,
           case DSPF_YV12:
           case DSPF_Y42B:
           case DSPF_YV16:
-               d1 = dst[1];
-               d2 = dst[2];
                for (i = 0; i < (len - 1); i += 2) {
                     u32 y0, u0, v0;
                     u32 y1, u1, v1;
@@ -356,7 +354,7 @@ write_argb_span( u32         *src,
                     RGB_TO_YCBCR( (src[i+1] >> 16) & 0xff, (src[i+1] >> 8) & 0xff, src[i+1] & 0xff, y1, u1, v1 );
                     d[i]   = y0;
                     d[i+1] = y1;
-                    if (dy & 1) {
+                    if (y & 1) {
                          d1[i>>1] = (u0 + u1) >> 1;
                          d2[i>>1] = (v0 + v1) >> 1;
                     }
@@ -366,7 +364,7 @@ write_argb_span( u32         *src,
                     i = len - 1;
                     RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y, u, v );
                     d[i] = y;
-                    if (dy & 1) {
+                    if (y & 1) {
                          d1[i>>1] = u;
                          d2[i>>1] = v;
                     }
@@ -375,8 +373,6 @@ write_argb_span( u32         *src,
 
           case DSPF_Y444:
           case DSPF_YV24: {
-               d1 = dst[1];
-               d2 = dst[2];
                for (i = 0; i < len; i++)
                     RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, d[i], d1[i], d2[i] );
                break;
@@ -384,7 +380,6 @@ write_argb_span( u32         *src,
 
           case DSPF_NV12:
           case DSPF_NV16:
-               d1 = dst[1];
                for (i = 0; i < (len - 1); i += 2) {
                     u32 y0, u0, v0;
                     u32 y1, u1, v1;
@@ -392,7 +387,7 @@ write_argb_span( u32         *src,
                     RGB_TO_YCBCR( (src[i+1] >> 16) & 0xff, (src[i+1] >> 8) & 0xff, src[i+1] & 0xff, y1, u1, v1 );
                     d[i]   = y0;
                     d[i+1] = y1;
-                    if (dst_surface->config.format == DSPF_NV16 || dy & 1) {
+                    if (dst_surface->config.format == DSPF_NV16 || y & 1) {
 #ifdef WORDS_BIGENDIAN
                          ((u16*) d1)[i>>1] = ((v0 + v1) >> 1) | (((u0 + u1) >> 1) << 8);
 #else
@@ -405,7 +400,7 @@ write_argb_span( u32         *src,
                     i = len - 1;
                     RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y, u, v );
                     d[i] = y;
-                    if (dst_surface->config.format == DSPF_NV16 || dy & 1)
+                    if (dst_surface->config.format == DSPF_NV16 || y & 1)
 #ifdef WORDS_BIGENDIAN
                          ((u16*) d1)[i>>1] = v | (u << 8);
 #else
@@ -416,7 +411,6 @@ write_argb_span( u32         *src,
 
           case DSPF_NV21:
           case DSPF_NV61:
-               d1 = dst[1];
                for (i = 0; i < (len - 1); i += 2) {
                     u32 y0, u0, v0;
                     u32 y1, u1, v1;
@@ -424,7 +418,7 @@ write_argb_span( u32         *src,
                     RGB_TO_YCBCR( (src[i+1] >> 16) & 0xff, (src[i+1] >> 8) & 0xff, src[i+1] & 0xff, y1, u1, v1 );
                     d[i]   = y0;
                     d[i+1] = y1;
-                    if (dst_surface->config.format == DSPF_NV61 || dy & 1) {
+                    if (dst_surface->config.format == DSPF_NV61 || y & 1) {
 #ifdef WORDS_BIGENDIAN
                          ((u16*) d1)[i>>1] = ((u0 + u1) >> 1) | (((v0 + v1) >> 1) << 8);
 #else
@@ -437,7 +431,7 @@ write_argb_span( u32         *src,
                     i = len - 1;
                     RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y, u, v );
                     d[i] = y;
-                    if (dst_surface->config.format == DSPF_NV61 || dy & 1)
+                    if (dst_surface->config.format == DSPF_NV61 || y & 1)
 #ifdef WORDS_BIGENDIAN
                          ((u16*) d1)[i>>1] = u | (v << 8);
 #else
@@ -447,7 +441,6 @@ write_argb_span( u32         *src,
                break;
 
           case DSPF_NV24:
-               d1 = dst[1];
                for (i = 0; i < len; i++) {
                     u32 y0, u0, v0;
                     RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y0, u0, v0 );
@@ -458,7 +451,6 @@ write_argb_span( u32         *src,
                break;
 
           case DSPF_NV42:
-               d1 = dst[1];
                for (i = 0; i < len; i++) {
                     u32 y0, u0, v0;
                     RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y0, u0, v0 );
@@ -509,9 +501,9 @@ dfb_copy_buffer_32( u32             *src,
                     CoreSurface     *dst_surface,
                     const DFBRegion *dst_clip )
 {
-     u8  *dst1, *dst2;
-     int  sw = drect->w;
      int  x, y;
+     u8  *dst1 = NULL;
+     u8  *dst2 = NULL;
 
      if (dst_clip) {
           int sx = 0, sy = 0;
@@ -536,162 +528,101 @@ dfb_copy_buffer_32( u32             *src,
                drect->h -= drect->y + drect-> h - 1 - dst_clip->y2;
           }
 
-          src += sy * sw + sx;
+          src += sy * drect->w + sx;
      }
 
      if (drect->w < 1 || drect->h < 1)
           return;
 
-     x = drect->x;
-
      switch (dst_surface->config.format) {
           case DSPF_I420:
+               dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
+               dst2 = dst1 + dpitch / 2 * dst_surface->config.size.h / 2;
+               break;
           case DSPF_YV12:
-               if (dst_surface->config.format == DSPF_I420) {
-                    dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
-                    dst2 = dst1 + dpitch / 2 * dst_surface->config.size.h / 2;
-               }
-               else {
-                    dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
-                    dst1 = dst2 + dpitch / 2 * dst_surface->config.size.h / 2;
-               }
+               dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
+               dst1 = dst2 + dpitch / 2 * dst_surface->config.size.h / 2;
+               break;
+          case DSPF_Y42B:
+               dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
+               dst2 = dst1 + dpitch / 2 * dst_surface->config.size.h;
+               break;
+          case DSPF_YV16:
+               dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
+               dst1 = dst2 + dpitch / 2 * dst_surface->config.size.h;
+               break;
+          case DSPF_Y444:
+               dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
+               dst2 = dst1 + dpitch * dst_surface->config.size.h;
+               break;
+          case DSPF_YV24:
+               dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
+               dst1 = dst2 + dpitch * dst_surface->config.size.h;
+               break;
+          case DSPF_NV12:
+          case DSPF_NV21:
+          case DSPF_NV16:
+          case DSPF_NV61:
+          case DSPF_NV24:
+          case DSPF_NV42:
+               dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
+               break;
+          default:
+               break;
+     }
 
-               for (y = drect->y; y < drect->y + drect->h; y++) {
-                    u8 *d[3];
+     x = drect->x;
 
-                    d[0] = LINE_PTR( dst,  dst_surface->config.caps, y, dst_surface->config.size.h,
-                                     dpitch )     + x;
+     for (y = drect->y; y < drect->y + drect->h; y++) {
+          u8 *d[3];
+
+          d[0] = LINE_PTR( dst, dst_surface->config.caps, y, dst_surface->config.size.h, dpitch ) +
+                 DFB_BYTES_PER_LINE( dst_surface->config.format, x );
+
+          switch (dst_surface->config.format) {
+               case DSPF_I420:
+               case DSPF_YV12:
                     d[1] = LINE_PTR( dst1, dst_surface->config.caps, y / 2, dst_surface->config.size.h / 2,
                                      dpitch / 2 ) + x / 2;
                     d[2] = LINE_PTR( dst2, dst_surface->config.caps, y / 2, dst_surface->config.size.h / 2,
                                      dpitch / 2 ) + x / 2;
-
-                    write_argb_span( src, d, drect->w, x, y, dst_surface, true );
-
-                    src += sw;
-               }
-               break;
-
-          case DSPF_Y42B:
-          case DSPF_YV16:
-               if (dst_surface->config.format == DSPF_Y42B) {
-                    dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
-                    dst2 = dst1 + dpitch / 2 * dst_surface->config.size.h;
-               }
-               else {
-                    dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
-                    dst1 = dst2 + dpitch / 2 * dst_surface->config.size.h;
-               }
-
-               for (y = drect->y; y < drect->y + drect->h; y++) {
-                    u8 *d[3];
-
-                    d[0] = LINE_PTR( dst,  dst_surface->config.caps, y, dst_surface->config.size.h,
-                                     dpitch )     + x;
+                    break;
+               case DSPF_Y42B:
+               case DSPF_YV16:
                     d[1] = LINE_PTR( dst1, dst_surface->config.caps, y, dst_surface->config.size.h,
                                      dpitch / 2 ) + x / 2;
                     d[2] = LINE_PTR( dst2, dst_surface->config.caps, y, dst_surface->config.size.h,
                                      dpitch / 2 ) + x / 2;
-
-                    write_argb_span( src, d, drect->w, x, y, dst_surface, true );
-
-                    src += sw;
-               }
-               break;
-
-          case DSPF_Y444:
-          case DSPF_YV24:
-               if (dst_surface->config.format == DSPF_Y444) {
-                    dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
-                    dst2 = dst1 + dpitch * dst_surface->config.size.h;
-               }
-               else {
-                    dst2 = (u8*) dst + dpitch * dst_surface->config.size.h;
-                    dst1 = dst2 + dpitch * dst_surface->config.size.h;
-               }
-
-               for (y = drect->y; y < drect->y + drect->h; y++) {
-                    u8 *d[3];
-
-                    d[0] = LINE_PTR( dst,  dst_surface->config.caps, y, dst_surface->config.size.h,
-                                     dpitch ) + x;
+                    break;
+               case DSPF_Y444:
+               case DSPF_YV24:
                     d[1] = LINE_PTR( dst1, dst_surface->config.caps, y, dst_surface->config.size.h,
                                      dpitch ) + x;
                     d[2] = LINE_PTR( dst2, dst_surface->config.caps, y, dst_surface->config.size.h,
                                      dpitch ) + x;
-
-                    write_argb_span( src, d, drect->w, x, y, dst_surface, true );
-
-                    src += sw;
-            }
-            break;
-
-          case DSPF_NV12:
-          case DSPF_NV21:
-               dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
-
-               for (y = drect->y; y < drect->y + drect->h; y++) {
-                    u8 *d[2];
-
-                    d[0] = LINE_PTR( dst,  dst_surface->config.caps, y, dst_surface->config.size.h,
-                                     dpitch ) + x;
+                 break;
+               case DSPF_NV12:
+               case DSPF_NV21:
                     d[1] = LINE_PTR( dst1, dst_surface->config.caps, y / 2, dst_surface->config.size.h / 2,
                                      dpitch ) + (x & ~1);
-
-                    write_argb_span( src, d, drect->w, x, y, dst_surface, true );
-
-                    src += sw;
-               }
-               break;
-
-          case DSPF_NV16:
-          case DSPF_NV61:
-               dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
-
-               for (y = drect->y; y < drect->y + drect->h; y++) {
-                    u8 *d[2];
-
-                    d[0] = LINE_PTR( dst,  dst_surface->config.caps, y, dst_surface->config.size.h,
-                                     dpitch ) + x;
+                    break;
+               case DSPF_NV16:
+               case DSPF_NV61:
                     d[1] = LINE_PTR( dst1, dst_surface->config.caps, y, dst_surface->config.size.h,
                                      dpitch ) + (x & ~1);
-
-                    write_argb_span( src, d, drect->w, x, y, dst_surface, true );
-
-                    src += sw;
-               }
-               break;
-
-          case DSPF_NV24:
-          case DSPF_NV42:
-               dst1 = (u8*) dst + dpitch * dst_surface->config.size.h;
-
-               for (y = drect->y; y < drect->y + drect->h; y++) {
-                    u8 *d[2];
-
-                    d[0] = LINE_PTR( dst,  dst_surface->config.caps, y, dst_surface->config.size.h,
-                                     dpitch )     + x;
+                    break;
+               case DSPF_NV24:
+               case DSPF_NV42:
                     d[1] = LINE_PTR( dst1, dst_surface->config.caps, y, dst_surface->config.size.h,
                                      dpitch * 2 ) + x * 2;
+                    break;
+               default:
+                    break;
+          }
 
-                    write_argb_span( src, d, drect->w, x, y, dst_surface, true );
+          write_argb_span( src, d, drect->w, x, y, dst_surface );
 
-                    src += sw;
-               }
-               break;
-
-          default:
-               for (y = drect->y; y < drect->y + drect->h; y++) {
-                    u8 *d[1];
-
-                    d[0] = LINE_PTR( dst, dst_surface->config.caps, y, dst_surface->config.size.h,
-                                     dpitch ) + DFB_BYTES_PER_LINE( dst_surface->config.format, x );
-
-                    write_argb_span( src, d, drect->w, x, y, dst_surface, true );
-
-                    src += sw;
-               }
-               break;
+          src += drect->w;
      }
 }
 
@@ -746,29 +677,29 @@ bilinear_make_fast_weights( PixopsFilter *filter,
 
      for (i_offset = 0; i_offset < SUBSAMPLE; i_offset++)
           for (j_offset = 0; j_offset < SUBSAMPLE; j_offset++) {
-               int   *pixel_weights = filter->weights + ((i_offset * SUBSAMPLE) + j_offset) * n_x * n_y;
+               int    i, j;
                float  x             = j_offset / 16.0;
                float  y             = i_offset / 16.0;
-               int    i, j;
+               int   *pixel_weights = filter->weights + ((i_offset * SUBSAMPLE) + j_offset) * n_x * n_y;
 
                if (x_scale > 1.0) { /* Bilinear */
-                    for (i = 0; i < n_x; i++) {
-                         x_weights[i] = ((i == 0) ? (1 - x) : x) / x_scale;
+                    for (j = 0; j < n_x; j++) {
+                         x_weights[j] = ((j == 0) ? (1 - x) : x) / x_scale;
                     }
                }
                else {               /* Tile */
-                    for (i = 0; i < n_x; i++) {
-                         if (i < x) {
-                              if (i + 1 > x)
-                                   x_weights[i] = MIN( i + 1, x + 1.0 / x_scale ) - x;
+                    for (j = 0; j < n_x; j++) {
+                         if (j < x) {
+                              if (j + 1 > x)
+                                   x_weights[j] = MIN( j + 1, x + 1.0 / x_scale ) - x;
                               else
-                                   x_weights[i] = 0;
+                                   x_weights[j] = 0;
                          }
                          else {
-                              if (x + 1 / x_scale > i)
-                                   x_weights[i] = MIN( i + 1, x + 1.0 / x_scale ) - i;
+                              if (x + 1 / x_scale > j)
+                                   x_weights[j] = MIN( j + 1, x + 1.0 / x_scale ) - j;
                               else
-                                   x_weights[i] = 0;
+                                   x_weights[j] = 0;
                          }
                     }
                }
@@ -814,15 +745,14 @@ scale_pixel( const int  *weights,
              int         x,
              int         sw )
 {
-     u32 r = 0, g = 0, b = 0, a = 0;
      int i, j;
+     u32 r = 0, g = 0, b = 0, a = 0;
 
      for (i = 0; i < n_y; i++) {
           const int *pixel_weights = weights + n_x * i;
 
           for (j = 0; j < n_x; j++) {
                const u32 *q;
-               u32  ta;
 
                if (x + j < 0)
                     q = src[i];
@@ -831,19 +761,17 @@ scale_pixel( const int  *weights,
                else
                     q = src[i] + sw - 1;
 
-               ta = ((*q & 0xff000000) >> 24) * pixel_weights[j];
-
-               b += ta * ( (*q & 0xff)            + 1);
-               g += ta * (((*q & 0xff00)   >>  8) + 1);
-               r += ta * (((*q & 0xff0000) >> 16) + 1);
-               a += ta;
+               b += pixel_weights[j] * ( *q & 0xff             );
+               g += pixel_weights[j] * ((*q & 0xff00)     >>  8);
+               r += pixel_weights[j] * ((*q & 0xff0000)   >> 16);
+               a += pixel_weights[j] * ((*q & 0xff000000) >> 24);
           }
      }
 
-     r = (r >> 24) == 0xff ? 0xff : (r + 0x800000) >> 24;
-     g = (g >> 24) == 0xff ? 0xff : (g + 0x800000) >> 24;
-     b = (b >> 24) == 0xff ? 0xff : (b + 0x800000) >> 24;
-     a = (a >> 16) == 0xff ? 0xff : (a + 0x8000  ) >> 16;
+     r = (r >> 16) == 0xff ? 0xff : (r + 0x8000) >> 16;
+     g = (g >> 16) == 0xff ? 0xff : (g + 0x8000) >> 16;
+     b = (b >> 16) == 0xff ? 0xff : (b + 0x8000) >> 16;
+     a = (a >> 16) == 0xff ? 0xff : (a + 0x8000) >> 16;
 
      *dst = (a << 24) | (r << 16) | (g << 8) | b;
 }
@@ -860,10 +788,10 @@ scale_line( const int  *weights,
             int         sw )
 {
      while (dst < dst_end) {
-          const int *pixel_weights = weights + ((x >> (SCALE_SHIFT - SUBSAMPLE_BITS)) & SUBSAMPLE_MASK) * n_x * n_y;
-          int        x_scaled      = x >> SCALE_SHIFT;
-          u32        r, g, b, a;
           int        i, j;
+          u32        r, g, b, a;
+          int        x_scaled      = x >> SCALE_SHIFT;
+          const int *pixel_weights = weights + ((x >> (SCALE_SHIFT - SUBSAMPLE_BITS)) & SUBSAMPLE_MASK) * n_x * n_y;
 
           r = g = b = a = 0;
 
@@ -872,22 +800,20 @@ scale_line( const int  *weights,
                const u32 *q            = src[i] + x_scaled;
 
                for (j = 0; j < n_x; j++) {
-                    u32 ta = ((*q & 0xff000000) >> 24) * line_weights[j];
+                    b += line_weights[j] * ( *q & 0xff             );
+                    g += line_weights[j] * ((*q & 0xff00)     >>  8);
+                    r += line_weights[j] * ((*q & 0xff0000)   >> 16);
+                    a += line_weights[j] * ((*q & 0xff000000) >> 24);
 
-                    b += ta * ( (*q & 0xff)            + 1);
-                    g += ta * (((*q & 0xff00)   >>  8) + 1);
-                    r += ta * (((*q & 0xff0000) >> 16) + 1);
-                    a += ta;
-
-                    if ((x_scaled + j) < sw - 1)
-                        q++;
+                    if (x_scaled + j < sw - 1)
+                         q++;
                }
           }
 
-          r = (r >> 24) == 0xff ? 0xff : (r + 0x800000) >> 24;
-          g = (g >> 24) == 0xff ? 0xff : (g + 0x800000) >> 24;
-          b = (b >> 24) == 0xff ? 0xff : (b + 0x800000) >> 24;
-          a = (a >> 16) == 0xff ? 0xff : (a + 0x8000  ) >> 16;
+          r = (r >> 16) == 0xff ? 0xff : (r + 0x8000) >> 16;
+          g = (g >> 16) == 0xff ? 0xff : (g + 0x8000) >> 16;
+          b = (b >> 16) == 0xff ? 0xff : (b + 0x8000) >> 16;
+          a = (a >> 16) == 0xff ? 0xff : (a + 0x8000) >> 16;
 
           *dst++ = (a << 24) | (r << 16) | (g << 8) | b;
 
@@ -907,15 +833,16 @@ dfb_scale_linear_32( u32             *src,
                      CoreSurface     *dst_surface,
                      const DFBRegion *dst_clip )
 {
-     DFBRectangle  srect = { 0, 0, sw, sh };
      float         scale_x, scale_y;
-     int           i, j;
+     int           x, y;
      int           sx, sy;
      int           x_step, y_step;
      int           scaled_x_offset;
      PixopsFilter  filter;
-     u8           *dst1 = NULL, *dst2 = NULL;
-     u32          *buf;
+     u32          *scaled_src;
+     u8           *dst1  = NULL;
+     u8           *dst2  = NULL;
+     DFBRectangle  srect = { 0, 0, sw, sh };
 
      if (drect->w == sw && drect->h == sh) {
           dfb_copy_buffer_32( src, dst, dpitch, drect, dst_surface, dst_clip );
@@ -941,6 +868,8 @@ dfb_scale_linear_32( u32             *src,
 
      scaled_x_offset = D_IFLOOR( filter.x_offset * (1 << SCALE_SHIFT) );
      sy              = D_IFLOOR( filter.y_offset * (1 << SCALE_SHIFT) );
+
+     scaled_src = alloca( drect->w * 4 );
 
      switch (dst_surface->config.format) {
           case DSPF_I420:
@@ -979,32 +908,32 @@ dfb_scale_linear_32( u32             *src,
                break;
      }
 
-     buf = alloca( drect->w * 4 );
+     x = drect->x;
 
-     for (i = drect->y; i < drect->y + drect->h; i++) {
-          int         x_start;
-          int         y_start;
+     for (y = drect->y; y < drect->y + drect->h; y++) {
+          int         i;
+          int         x_start, y_start;
           const int  *run_weights;
-          u32        *outbuf     = buf;
-          u32        *outbuf_end = buf + drect->w;
-          u32        *new_outbuf;
-          const u32 **line_bufs;
           u8         *d[3];
+          const u32 **bufs;
+          u32        *buf     = scaled_src;
+          u32        *buf_end = scaled_src + drect->w;
+          u32        *new_buf;
 
           y_start = sy >> SCALE_SHIFT;
 
           run_weights = filter.weights +
                         ((sy >> (SCALE_SHIFT - SUBSAMPLE_BITS)) & SUBSAMPLE_MASK) * filter.n_x * filter.n_y * SUBSAMPLE;
 
-          line_bufs = alloca( filter.n_y * sizeof(void*) );
+          bufs = alloca( filter.n_y * sizeof(void*) );
 
-          for (j = 0; j < filter.n_y; j++) {
+          for (i = 0; i < filter.n_y; i++) {
                if (y_start <  0)
-                    line_bufs[j] = src;
+                    bufs[i] = src;
                else if (y_start < sh)
-                    line_bufs[j] = src + sw * y_start;
+                    bufs[i] = src + sw * y_start;
                else
-                    line_bufs[j] = src + sw * (sh - 1);
+                    bufs[i] = src + sw * (sh - 1);
 
                y_start++;
           }
@@ -1012,78 +941,76 @@ dfb_scale_linear_32( u32             *src,
           sx = scaled_x_offset;
           x_start = sx >> SCALE_SHIFT;
 
-          while (x_start < 0 && outbuf < outbuf_end) {
+          while (x_start < 0 && buf < buf_end) {
                scale_pixel( run_weights +
                             ((sx >> (SCALE_SHIFT - SUBSAMPLE_BITS)) & SUBSAMPLE_MASK) * filter.n_x * filter.n_y,
-                            filter.n_x, filter.n_y,
-                            outbuf, line_bufs, sx >> SCALE_SHIFT, sw );
+                            filter.n_x, filter.n_y, buf, bufs, sx >> SCALE_SHIFT, sw );
                sx += x_step;
                x_start = sx >> SCALE_SHIFT;
-               outbuf++;
+               buf++;
           }
 
-          new_outbuf = scale_line( run_weights,
-                                   filter.n_x, filter.n_y,
-                                   outbuf, outbuf_end, line_bufs, sx >> SCALE_SHIFT, x_step, sw );
-          sx = ((outbuf_end - outbuf) >> 2) * x_step + scaled_x_offset;
-          outbuf = new_outbuf;
+          new_buf = scale_line( run_weights,
+                                filter.n_x, filter.n_y, buf, buf_end, bufs, sx >> SCALE_SHIFT, x_step, sw );
 
-          while (outbuf < outbuf_end) {
+          sx = ((buf_end - buf) >> 2) * x_step + scaled_x_offset;
+          buf = new_buf;
+
+          while (buf < buf_end) {
                scale_pixel( run_weights +
                             ((sx >> (SCALE_SHIFT - SUBSAMPLE_BITS)) & SUBSAMPLE_MASK) * filter.n_x * filter.n_y,
-                            filter.n_x, filter.n_y,
-                            outbuf, line_bufs, sx >> SCALE_SHIFT, sw );
+                            filter.n_x, filter.n_y, buf, bufs, sx >> SCALE_SHIFT, sw );
                sx += x_step;
-               outbuf++;
+               buf++;
           }
 
           sy += y_step;
 
-          d[0] = LINE_PTR( dst, dst_surface->config.caps, i, dst_surface->config.size.h,
-                           dpitch ) + DFB_BYTES_PER_LINE( dst_surface->config.format, drect->x );
+          d[0] = LINE_PTR( dst, dst_surface->config.caps, y, dst_surface->config.size.h, dpitch ) +
+                 DFB_BYTES_PER_LINE( dst_surface->config.format, x );
 
           switch (dst_surface->config.format) {
                case DSPF_I420:
                case DSPF_YV12:
-                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, i / 2, dst_surface->config.size.h / 2,
-                                     dpitch / 2 ) + drect->x / 2;
-                    d[2] = LINE_PTR( dst2, dst_surface->config.caps, i / 2, dst_surface->config.size.h / 2,
-                                     dpitch / 2 ) + drect->x / 2;
+                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, y / 2, dst_surface->config.size.h / 2,
+                                     dpitch / 2 ) + x / 2;
+                    d[2] = LINE_PTR( dst2, dst_surface->config.caps, y / 2, dst_surface->config.size.h / 2,
+                                     dpitch / 2 ) + x / 2;
                     break;
                case DSPF_Y42B:
                case DSPF_YV16:
-                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, i, dst_surface->config.size.h,
-                                     dpitch / 2 ) + drect->x / 2;
-                    d[2] = LINE_PTR( dst2, dst_surface->config.caps, i, dst_surface->config.size.h,
-                                     dpitch / 2 ) + drect->x / 2;
+                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, y, dst_surface->config.size.h,
+                                     dpitch / 2 ) + x / 2;
+                    d[2] = LINE_PTR( dst2, dst_surface->config.caps, y, dst_surface->config.size.h,
+                                     dpitch / 2 ) + x / 2;
                     break;
                case DSPF_Y444:
                case DSPF_YV24:
-                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, i, dst_surface->config.size.h,
-                                     dpitch ) + drect->x;
-                    d[2] = LINE_PTR( dst2, dst_surface->config.caps, i, dst_surface->config.size.h,
-                                     dpitch ) + drect->x;
+                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, y, dst_surface->config.size.h,
+                                     dpitch ) + x;
+                    d[2] = LINE_PTR( dst2, dst_surface->config.caps, y, dst_surface->config.size.h,
+                                     dpitch ) + x;
                     break;
                case DSPF_NV12:
                case DSPF_NV21:
-                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, i / 2, dst_surface->config.size.h / 2,
-                                     dpitch ) + (drect->x & ~1);
+                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, y / 2, dst_surface->config.size.h / 2,
+                                     dpitch ) + (x & ~1);
                     break;
                case DSPF_NV16:
                case DSPF_NV61:
-                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, i, dst_surface->config.size.h,
-                                     dpitch ) + (drect->x & ~1);
+                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, y, dst_surface->config.size.h,
+                                     dpitch ) + (x & ~1);
                     break;
                case DSPF_NV24:
                case DSPF_NV42:
-                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, i, dst_surface->config.size.h,
-                                     dpitch * 2 ) + (drect->x * 2);
+                    d[1] = LINE_PTR( dst1, dst_surface->config.caps, y, dst_surface->config.size.h,
+                                     dpitch * 2 ) + (x * 2);
                     break;
                default:
                     break;
           }
 
-          write_argb_span( buf, d, drect->w, drect->x, i, dst_surface, false );
+          write_argb_span( scaled_src, d, drect->w, x, y, dst_surface );
      }
 
      D_FREE( filter.weights );

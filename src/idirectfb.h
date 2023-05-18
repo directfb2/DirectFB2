@@ -21,8 +21,6 @@
 
 #include <core/coretypes.h>
 
-extern IDirectFB *idirectfb_singleton;
-
 void eventbuffer_containers_remove( IDirectFBEventBuffer *thiz );
 
 /*
