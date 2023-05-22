@@ -72,6 +72,8 @@ direct_clock_get_time( DirectClockType type )
      if (type == DIRECT_CLOCK_SESSION)
           micros -= session_clock_offset;
 
+     usleep( 1 );
+
      return micros;
 }
 

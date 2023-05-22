@@ -16,6 +16,6 @@
 
 menuconfig GRAPHICS_DIRECTFB2
 	bool "DirectFB2"
-	default y
+	default n
 	---help---
 		Enable support for DirectFB2.
