@@ -91,7 +91,7 @@ direct_geteuid()
 char *
 direct_getenv( const char *name )
 {
-     return NULL;
+     return getenv( name );
 }
 
 DirectResult

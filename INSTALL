@@ -38,7 +38,19 @@ NuttX
 
 On NuttX, copy the DirectFB2 directory to your NuttX apps/graphics/ directory.
 
-Verify that the following Pthread options are enabled in your NuttX configuration:
+A defconfig file for the NuttX simulator is available.
+It must be placed in a directory nuttx/boards/sim/sim/sim/configs/directfb/
 
-	[*] Enable mutex types
-	[*] pthread cleanup stack
+Add a DirectFB application containing the "directfb_main" entry point.
+
+Configure the simulator:
+
+  ./tools/configure.sh sim:directfb
+
+And start the build with:
+
+  $ make
+
+Run the simulator using:
+
+  $ ./nuttx

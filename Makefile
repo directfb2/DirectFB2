@@ -164,7 +164,10 @@ FLUX_HDRS = $(patsubst %.c,%.h,$(FLUX_CSRCS))
 
 CSRCS = $(DIRECT_CSRCS) $(FUSION_CSRCS) $(DIRECTFB_CSRCS) $(FLUX_CSRCS)
 
-CORE_SYSTEM_CSRCS = systems/dummy/dummy.c
+CORE_SYSTEM_CSRCS  = systems/nuttxfb/nuttxfb_layer.c
+CORE_SYSTEM_CSRCS += systems/nuttxfb/nuttxfb_screen.c
+CORE_SYSTEM_CSRCS += systems/nuttxfb/nuttxfb_surface_pool.c
+CORE_SYSTEM_CSRCS += systems/nuttxfb/nuttxfb_system.c
 CSRCS += $(CORE_SYSTEM_CSRCS)
 
 FONT_PROVIDER_CSRCS = interfaces/IDirectFBFont/idirectfbfont_dgiff.c
@@ -210,7 +213,7 @@ lib/direct/build.h:
 		echo "#define DIRECT_BUILD_OS_NUTTX 1" >> $@; \
 		echo "#define DIRECT_BUILD_PIPED_STREAM 0" >> $@; \
 		echo "#define DIRECT_BUILD_SENTINELS 0" >> $@; \
-		echo "#define DIRECT_BUILD_TEXT 0" >> $@; \
+		echo "#define DIRECT_BUILD_TEXT 1" >> $@; \
 		echo "#define DIRECT_BUILD_TRACE 0" >> $@
 
 lib/fusion/build.h:

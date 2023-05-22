@@ -55,6 +55,7 @@ write_argb_span( u32         *src,
                  CoreSurface *dst_surface )
 {
      int          i, j;
+     u32          a, y0, u0, v0, y1, u1, v1;
      u8          *d       = dst[0];
      u8          *d1      = dst[1];
      u8          *d2      = dst[2];
@@ -63,7 +64,8 @@ write_argb_span( u32         *src,
      if (dst_surface->config.caps & DSCAPS_PREMULTIPLIED) {
           for (i = 0; i < len; i++) {
                u32 s = src[i];
-               u32 a = (s >> 24) + 1;
+
+               a = (s >> 24) + 1;
 
                src[i] = ((((s & 0x00ff00ff) * a) >> 8) & 0x00ff00ff) |
                         ((((s & 0x0000ff00) * a) >> 8) & 0x0000ff00) |
@@ -251,17 +253,13 @@ write_argb_span( u32         *src,
 
           case DSPF_YUY2:
                if (x & 1) {
-                    u32 y, u, v;
-                    D_UNUSED_P( u );
-                    RGB_TO_YCBCR( (src[0] >> 16) & 0xff, (src[0] >> 8) & 0xff, src[0] & 0xff, y, u, v );
-                    *((u16*) d) = y | (v << 8);
+                    RGB_TO_YCBCR( (src[0] >> 16) & 0xff, (src[0] >> 8) & 0xff, src[0] & 0xff, y0, u0, v0 );
+                    *((u16*) d) = y0 | (v0 << 8);
                     d += 2;
                     src++;
                     len--;
                }
                for (i = 0; i < (len - 1); i += 2) {
-                    u32 y0, u0, v0;
-                    u32 y1, u1, v1;
                     RGB_TO_YCBCR( (src[i]   >> 16) & 0xff, (src[i]   >> 8) & 0xff, src[i]   & 0xff, y0, u0, v0 );
                     RGB_TO_YCBCR( (src[i+1] >> 16) & 0xff, (src[i+1] >> 8) & 0xff, src[i+1] & 0xff, y1, u1, v1 );
                     u0 = (u0 + u1) >> 1;
@@ -270,28 +268,22 @@ write_argb_span( u32         *src,
                     ((u16*) d)[i+1] = y1 | (v1 << 8);
                }
                if (len & 1) {
-                    u32 y, u, v;
-                    D_UNUSED_P( v );
                     src += len - 1;
                     d   += (len - 1) * 2;
-                    RGB_TO_YCBCR( (*src >> 16) & 0xff, (*src >> 8) & 0xff, *src & 0xff, y, u, v );
-                    *((u16*) d) = y | (u << 8);
+                    RGB_TO_YCBCR( (*src >> 16) & 0xff, (*src >> 8) & 0xff, *src & 0xff, y0, u0, v0 );
+                    *((u16*) d) = y0 | (u0 << 8);
                }
                break;
 
           case DSPF_UYVY:
                if (x & 1) {
-                    u32 y, u, v;
-                    D_UNUSED_P( u );
-                    RGB_TO_YCBCR( (src[0] >> 16) & 0xff, (src[0] >> 8) & 0xff, src[0] & 0xff, y, u, v );
-                    *((u16*) d) = v | (y << 8);
+                    RGB_TO_YCBCR( (src[0] >> 16) & 0xff, (src[0] >> 8) & 0xff, src[0] & 0xff, y0, u0, v0 );
+                    *((u16*) d) = v0 | (y0 << 8);
                     d += 2;
                     src++;
                     len--;
                }
                for (i = 0; i < (len - 1); i += 2) {
-                    u32 y0, u0, v0;
-                    u32 y1, u1, v1;
                     RGB_TO_YCBCR( (src[i]   >> 16) & 0xff, (src[i]   >> 8) & 0xff, src[i]   & 0xff, y0, u0, v0 );
                     RGB_TO_YCBCR( (src[i+1] >> 16) & 0xff, (src[i+1] >> 8) & 0xff, src[i+1] & 0xff, y1, u1, v1 );
                     u0 = (u0 + u1) >> 1;
@@ -300,45 +292,40 @@ write_argb_span( u32         *src,
                     ((u16*) d)[i+1] = v1 | (y1 << 8);
                }
                if (len & 1) {
-                    u32 y, u, v;
-                    D_UNUSED_P( v );
                     src += len - 1;
                     d   += (len - 1) * 2;
-                    RGB_TO_YCBCR( (*src >> 16) & 0xff, (*src >> 8) & 0xff, *src & 0xff, y, u, v );
-                    *((u16*) d) = u | (y << 8);
+                    RGB_TO_YCBCR( (*src >> 16) & 0xff, (*src >> 8) & 0xff, *src & 0xff, y0, u0, v0 );
+                    *((u16*) d) = u0 | (y0 << 8);
                }
                break;
 
           case DSPF_AYUV:
                for (i = 0; i < len; i++) {
-                    u32 a, y, u, v;
-                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y, u, v );
+                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y0, u0, v0 );
                     a = (src[i] >> 24) & 0xff;
-                    ((u32*) d)[i] = PIXEL_AYUV( a, y, u, v );
+                    ((u32*) d)[i] = PIXEL_AYUV( a, y0, u0, v0 );
                }
                break;
 
           case DSPF_AVYU:
                for (i = 0; i < len; i++) {
-                    u32 a, y, u, v;
-                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y, u, v );
+                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y0, u0, v0 );
                     a = (src[i] >> 24) & 0xff;
-                    ((u32*) d)[i] = PIXEL_AVYU( a, y, u, v );
+                    ((u32*) d)[i] = PIXEL_AVYU( a, y0, u0, v0 );
                }
                break;
 
           case DSPF_VYU:
                for (i = 0, j = -1; i < len; i++) {
-                    u32 y, u, v;
-                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y, u, v );
+                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y0, u0, v0 );
 #ifdef WORDS_BIGENDIAN
-                    d[++j] = v;
-                    d[++j] = y;
-                    d[++j] = u;
+                    d[++j] = v0;
+                    d[++j] = y0;
+                    d[++j] = u0;
 #else
-                    d[++j] = u;
-                    d[++j] = y;
-                    d[++j] = v;
+                    d[++j] = u0;
+                    d[++j] = y0;
+                    d[++j] = v0;
 #endif
                }
                break;
@@ -348,8 +335,6 @@ write_argb_span( u32         *src,
           case DSPF_Y42B:
           case DSPF_YV16:
                for (i = 0; i < (len - 1); i += 2) {
-                    u32 y0, u0, v0;
-                    u32 y1, u1, v1;
                     RGB_TO_YCBCR( (src[i]   >> 16) & 0xff, (src[i]   >> 8) & 0xff, src[i]   & 0xff, y0, u0, v0 );
                     RGB_TO_YCBCR( (src[i+1] >> 16) & 0xff, (src[i+1] >> 8) & 0xff, src[i+1] & 0xff, y1, u1, v1 );
                     d[i]   = y0;
@@ -360,13 +345,12 @@ write_argb_span( u32         *src,
                     }
                }
                if (len & 1) {
-                    u32 y, u, v;
                     i = len - 1;
-                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y, u, v );
-                    d[i] = y;
+                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y0, u0, v0 );
+                    d[i] = y0;
                     if (y & 1) {
-                         d1[i>>1] = u;
-                         d2[i>>1] = v;
+                         d1[i>>1] = u0;
+                         d2[i>>1] = v0;
                     }
                }
                break;
@@ -381,8 +365,6 @@ write_argb_span( u32         *src,
           case DSPF_NV12:
           case DSPF_NV16:
                for (i = 0; i < (len - 1); i += 2) {
-                    u32 y0, u0, v0;
-                    u32 y1, u1, v1;
                     RGB_TO_YCBCR( (src[i]   >> 16) & 0xff, (src[i]   >> 8) & 0xff, src[i]   & 0xff, y0, u0, v0 );
                     RGB_TO_YCBCR( (src[i+1] >> 16) & 0xff, (src[i+1] >> 8) & 0xff, src[i+1] & 0xff, y1, u1, v1 );
                     d[i]   = y0;
@@ -396,15 +378,14 @@ write_argb_span( u32         *src,
                     }
                }
                if (len & 1) {
-                    u32 y, u, v;
                     i = len - 1;
-                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y, u, v );
-                    d[i] = y;
+                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y0, u0, v0 );
+                    d[i] = y0;
                     if (dst_surface->config.format == DSPF_NV16 || y & 1)
 #ifdef WORDS_BIGENDIAN
-                         ((u16*) d1)[i>>1] = v | (u << 8);
+                         ((u16*) d1)[i>>1] = v0 | (u0 << 8);
 #else
-                         ((u16*) d1)[i>>1] = u | (v << 8);
+                         ((u16*) d1)[i>>1] = u0 | (v0 << 8);
 #endif
                }
                break;
@@ -412,8 +393,6 @@ write_argb_span( u32         *src,
           case DSPF_NV21:
           case DSPF_NV61:
                for (i = 0; i < (len - 1); i += 2) {
-                    u32 y0, u0, v0;
-                    u32 y1, u1, v1;
                     RGB_TO_YCBCR( (src[i]   >> 16) & 0xff, (src[i]   >> 8) & 0xff, src[i]   & 0xff, y0, u0, v0 );
                     RGB_TO_YCBCR( (src[i+1] >> 16) & 0xff, (src[i+1] >> 8) & 0xff, src[i+1] & 0xff, y1, u1, v1 );
                     d[i]   = y0;
@@ -427,22 +406,20 @@ write_argb_span( u32         *src,
                     }
                }
                if (len & 1) {
-                    u32 y, u, v;
                     i = len - 1;
-                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y, u, v );
-                    d[i] = y;
+                    RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y0, u0, v0 );
+                    d[i] = y0;
                     if (dst_surface->config.format == DSPF_NV61 || y & 1)
 #ifdef WORDS_BIGENDIAN
-                         ((u16*) d1)[i>>1] = u | (v << 8);
+                         ((u16*) d1)[i>>1] = u0 | (v0 << 8);
 #else
-                         ((u16*) d1)[i>>1] = v | (u << 8);
+                         ((u16*) d1)[i>>1] = v0 | (u0 << 8);
 #endif
                }
                break;
 
           case DSPF_NV24:
                for (i = 0; i < len; i++) {
-                    u32 y0, u0, v0;
                     RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y0, u0, v0 );
                     d[i]      = y0;
                     d1[2*i]   = u0;
@@ -452,7 +429,6 @@ write_argb_span( u32         *src,
 
           case DSPF_NV42:
                for (i = 0; i < len; i++) {
-                    u32 y0, u0, v0;
                     RGB_TO_YCBCR( (src[i] >> 16) & 0xff, (src[i] >> 8) & 0xff, src[i] & 0xff, y0, u0, v0 );
                     d[i]      = y0;
                     d1[2*i]   = v0;
@@ -718,7 +694,7 @@ bilinear_make_fast_weights( PixopsFilter *filter,
                                    y_weights[i] = 0;
                          }
                          else {
-                              if (y + 1/y_scale > i)
+                              if (y + 1 / y_scale > i)
                                    y_weights[i] = MIN( i + 1, y + 1.0 / y_scale ) - i;
                               else
                                    y_weights[i] = 0;
