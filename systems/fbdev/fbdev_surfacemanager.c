@@ -20,7 +20,6 @@
 #include <core/gfxcard.h>
 #include <core/surface_allocation.h>
 #include <core/surface_buffer.h>
-#include <directfb_util.h>
 #include <fusion/shmalloc.h>
 
 #include "fbdev_surfacemanager.h"
@@ -58,8 +57,6 @@ struct _SurfaceManager {
      int                  avail;          /* amount of available memory */
 
      int                  min_toleration;
-
-     bool                 suspended;
 };
 
 static Chunk *free_chunk  ( SurfaceManager        *manager,
@@ -203,9 +200,6 @@ surfacemanager_allocate( CoreDFB                *core,
           D_MAGIC_ASSERT( allocation, CoreSurfaceAllocation );
      else
           D_ASSUME( allocation == NULL );
-
-     if (manager->suspended)
-          return DFB_SUSPENDED;
 
      dfb_gfxcard_calc_buffer_size( buffer, &pitch, &length );
 

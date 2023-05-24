@@ -711,11 +711,11 @@ gStretchBlit( CardState    *state,
                ix = fx * (drect->x - orect.x);
                iy = fy * ((orect.y + orect.h - 1) - (drect->y + drect->h - 1));
                break;
-          case DSBLIT_FLIP_HORIZONTAL | DSBLIT_FLIP_VERTICAL: // ROTATE180
+          case DSBLIT_FLIP_HORIZONTAL | DSBLIT_FLIP_VERTICAL: /* ROTATE180 */
                ix = fx * ((orect.x + orect.w - 1) - (drect->x + drect->w - 1));
                iy = fy * ((orect.y + orect.h - 1) - (drect->y + drect->h - 1));
                break;
-          case DSBLIT_ROTATE90 | DSBLIT_FLIP_VERTICAL | DSBLIT_FLIP_HORIZONTAL: // ROTATE270
+          case DSBLIT_ROTATE90 | DSBLIT_FLIP_VERTICAL | DSBLIT_FLIP_HORIZONTAL: /* ROTATE270 */
                ix = fx * ((orect.x + orect.w - 1) - (drect->x + drect->w - 1));
                iy = fy * (drect->y - orect.y);
                break;
@@ -816,20 +816,20 @@ gStretchBlit( CardState    *state,
                Aop_advance = Genefx_Aop_prev;
                break;
 
-          case DSBLIT_ROTATE90: // 90 deg ccw
+          case DSBLIT_ROTATE90:
                Aop_Y = drect->y + drect->h - 1;
                gfxs->Astep *= -gfxs->dst_pitch / gfxs->dst_bpp;
                Aop_advance = Genefx_Aop_crab;
                break;
 
-          case DSBLIT_FLIP_VERTICAL | DSBLIT_FLIP_HORIZONTAL: // 180 deg
+          case DSBLIT_FLIP_VERTICAL | DSBLIT_FLIP_HORIZONTAL: /* ROTATE180 */
                gfxs->Astep *= -1;
                Aop_X += (drect->w - 1);
                Aop_Y += (drect->h - 1);
                Aop_advance = Genefx_Aop_prev;
                break;
 
-          case DSBLIT_ROTATE90 | DSBLIT_FLIP_HORIZONTAL | DSBLIT_FLIP_VERTICAL: // 270 deg ccw
+          case DSBLIT_ROTATE90 | DSBLIT_FLIP_HORIZONTAL | DSBLIT_FLIP_VERTICAL: /* ROTATE270 */
                gfxs->Astep *= gfxs->dst_pitch / gfxs->dst_bpp;
                Bop_Y = srect->y + srect->h - 1;
                Aop_advance = Genefx_Aop_crab;

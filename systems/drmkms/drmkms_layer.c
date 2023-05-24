@@ -84,7 +84,7 @@ drmkms_buffer_thread( DirectThread *thread,
      D_DEBUG_AT( DRMKMS_Layer, "%s()\n", __FUNCTION__ );
 
      while (true)
-        drmHandleEvent( drmkms->fd, &drmkms->event_context );
+          drmHandleEvent( drmkms->fd, &drmkms->event_context );
 
      return NULL;
 }
