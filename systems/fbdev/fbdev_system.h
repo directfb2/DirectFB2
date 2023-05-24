@@ -20,6 +20,7 @@
 #define __FBDEV_SYSTEM_H__
 
 #include <core/system.h>
+#include <fusion/call.h>
 #include <linux/fb.h>
 
 #include "fbdev_surfacemanager.h"
@@ -62,13 +63,13 @@ typedef struct {
      } pci;
 
      struct {
-          unsigned short       vendor;               /* graphics device vendor id */
-          unsigned short       model;                /* graphics device model id */
+          unsigned short       vendor;              /* graphics device vendor id */
+          unsigned short       model;               /* graphics device model id */
      } device;
 
-     FusionCall                call;                 /* ioctl rpc */
+     FusionCall                call;                /* ioctl rpc */
 
-     SurfaceManager           *manager;              /* surface manager */
+     SurfaceManager           *manager;             /* surface manager */
 } FBDevDataShared;
 
 typedef struct {

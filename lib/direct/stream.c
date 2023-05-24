@@ -22,6 +22,7 @@
 #include <direct/memcpy.h>
 #include <direct/messages.h>
 #include <direct/stream.h>
+#include <direct/system.h>
 #include <direct/util.h>
 
 D_DEBUG_DOMAIN( Direct_Stream, "Direct/Stream", "Direct Stream wrapper" );
@@ -722,7 +723,7 @@ ftp_stream_open( DirectStream *stream,
 
 static DirectResult
 http_stream_seek( DirectStream *stream,
-           unsigned int  offset )
+                  unsigned int  offset )
 {
      DirectResult ret;
      char         buf[1280];
@@ -848,10 +849,10 @@ http_stream_open( DirectStream *stream,
                }
 
                filename = trim( buf + 9 );
-               if (!strncmp( filename, "http://", 7 ))
-                    return http_stream_open( stream, filename + 7 );
                if (!strncmp( filename, "ftp://", 6 ))
                     return ftp_stream_open( stream, filename + 6 );
+               if (!strncmp( filename, "http://", 7 ))
+                    return http_stream_open( stream, filename + 7 );
 
                return DR_UNSUPPORTED;
           }
@@ -1135,15 +1136,18 @@ direct_stream_create( const char    *filename,
      stream->ref =  1;
      stream->fd  = -1;
 
-     if (!strncmp( filename, "file://", 7 )) {
+     if (direct_getenv( "D_STREAM_BYPASS" )) {
+          ret = DR_OK;
+     }
+     else if (!strncmp( filename, "file://", 7 )) {
           ret = file_stream_open( stream, filename + 7 );
      }
 #if DIRECT_BUILD_NETWORK
-     else if (!strncmp( filename, "http://", 7 )) {
-          ret = http_stream_open( stream, filename + 7 );
-     }
      else if (!strncmp( filename, "ftp://", 6 )) {
           ret = ftp_stream_open( stream, filename + 6 );
+     }
+     else if (!strncmp( filename, "http://", 7 )) {
+          ret = http_stream_open( stream, filename + 7 );
      }
      else if (!strncmp( filename, "rtsp://", 7 )) {
           ret = DR_OK;

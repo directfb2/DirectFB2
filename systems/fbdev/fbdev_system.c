@@ -698,7 +698,7 @@ system_map_mmio( unsigned int offset,
           return NULL;
      }
 
-     return (u8*) addr + (fbdev->fix->mmio_start & shared->page_mask);
+     return addr + (fbdev->fix->mmio_start & shared->page_mask);
 }
 
 static void
@@ -753,7 +753,7 @@ system_video_memory_virtual( unsigned int offset )
 
      D_ASSERT( fbdev != NULL );
 
-     return (u8*) fbdev->addr + offset;
+     return fbdev->addr + offset;
 }
 
 static unsigned int

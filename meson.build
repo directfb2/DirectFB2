@@ -84,7 +84,7 @@ subdir('src')
 # inputdriver modules
 
 if get_option('os') == 'linux'
-  if get_option('linuxinput')
+  if get_option('linux_input')
     subdir('inputdrivers/linux_input')
   endif
 endif
