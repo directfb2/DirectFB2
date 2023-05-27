@@ -1223,7 +1223,8 @@ get_device_info( int              fd,
 static bool
 check_device( const char *device )
 {
-     int err, fd;
+     int             err;
+     int             fd;
      InputDeviceInfo device_info;
      bool            touchpad;
      bool            linux_input_grab;
@@ -1373,7 +1374,8 @@ driver_open_device( CoreInputDevice  *device,
                     void            **driver_data )
 {
      LinuxInputData *data;
-     int             err, fd;
+     int             err;
+     int             fd;
      bool            linux_input_grab;
      unsigned long   ledbit[NBITS(LED_CNT)];
      bool            touchpad;

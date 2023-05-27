@@ -84,7 +84,19 @@ subdir('lib/direct')
 subdir('lib/fusion')
 subdir('src')
 
-# inputdriver modules
+# core system modules
+
+subdir('systems/dummy')
+if get_option('os') == 'linux'
+  if get_option('drmkms')
+    subdir('systems/drmkms')
+  endif
+  if get_option('fbdev')
+    subdir('systems/fbdev')
+  endif
+endif
+
+# input driver modules
 
 if get_option('os') == 'linux'
   if get_option('linux_input')
@@ -99,18 +111,6 @@ subdir('interfaces/IDirectFBFont')
 subdir('interfaces/IDirectFBImageProvider')
 subdir('interfaces/IDirectFBVideoProvider')
 subdir('interfaces/IDirectFBWindows')
-
-# system modules
-
-subdir('systems/dummy')
-if get_option('os') == 'linux'
-  if get_option('drmkms')
-    subdir('systems/drmkms')
-  endif
-  if get_option('fbdev')
-    subdir('systems/fbdev')
-  endif
-endif
 
 # wm modules
 
