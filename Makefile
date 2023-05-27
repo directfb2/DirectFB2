@@ -170,6 +170,9 @@ CORE_SYSTEM_CSRCS += systems/nuttxfb/nuttxfb_surface_pool.c
 CORE_SYSTEM_CSRCS += systems/nuttxfb/nuttxfb_system.c
 CSRCS += $(CORE_SYSTEM_CSRCS)
 
+INPUT_DRIVER_CSRCS = inputdrivers/nuttx_input/nuttx_input.c
+CSRCS += $(INPUT_DRIVER_CSRCS)
+
 FONT_PROVIDER_CSRCS = interfaces/IDirectFBFont/idirectfbfont_dgiff.c
 CSRCS += $(FONT_PROVIDER_CSRCS)
 
