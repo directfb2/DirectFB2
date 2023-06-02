@@ -1882,7 +1882,7 @@ dfb_layer_context_allocate_surface( CoreLayer             *layer,
                caps |= DSCAPS_STEREO;
 
           /* Add available surface capabilities. */
-          caps |= config->surface_caps & (DSCAPS_INTERLACED | DSCAPS_SEPARATED  | DSCAPS_PREMULTIPLIED | DSCAPS_GL);
+          caps |= config->surface_caps & (DSCAPS_INTERLACED | DSCAPS_SEPARATED | DSCAPS_PREMULTIPLIED | DSCAPS_GL);
 
           scon.flags      = CSCONF_SIZE | CSCONF_FORMAT | CSCONF_COLORSPACE | CSCONF_CAPS;
           scon.size.w     = config->width;

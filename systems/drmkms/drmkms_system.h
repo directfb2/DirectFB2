@@ -21,6 +21,7 @@
 
 #include <core/coredefs.h>
 #include <core/coretypes.h>
+#include <core/video_mode.h>
 #include <fusion/types.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
@@ -40,6 +41,7 @@ typedef struct {
      bool                   mirror_outputs;       /* enable mirror display */
      bool                   multihead_outputs;    /* enable multi-head display */
 
+     VideoMode             *modes;                /* linked list of valid video modes */
      drmModeModeInfo        mode[8];              /* current video mode (for each available CRTC) */
 
      DFBDimension           primary_dimension[8];

@@ -1209,9 +1209,9 @@ fusion_call_execute_internal( FusionCall          *call,
           ret = _fusion_send_message( world->fusion_fd, msg, sizeof(FusionCallMessage) + length, &addr );
      }
      else {
-          int       fd;
-          socklen_t len;
-          int       err;
+          int fd;
+          int err;
+          int len;
 
           fd = socket( PF_LOCAL, SOCK_RAW, 0 );
           if (fd < 0) {
@@ -1270,9 +1270,10 @@ fusion_call_execute_internal( FusionCall          *call,
                }
           }
 
-          len = sizeof(addr);
-          if (getsockname( fd, (struct sockaddr*) &addr, &len ) == 0)
+          socklen_t addrlen = sizeof(addr);
+          if (getsockname( fd, (struct sockaddr*) &addr, &addrlen ) == 0)
                direct_unlink( addr.sun_path );
+
           close( fd );
      }
 

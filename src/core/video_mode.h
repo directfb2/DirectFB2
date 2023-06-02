@@ -16,36 +16,35 @@
    Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA
 */
 
-#ifndef __NUTTXFB_SYSTEM_H__
-#define __NUTTXFB_SYSTEM_H__
-
-#include <core/coretypes.h>
-#include <core/video_mode.h>
-#include <fusion/types.h>
-#include <nuttx/video/fb.h>
+#ifndef __CORE__VIDEO_MODE_H__
+#define __CORE__VIDEO_MODE_H__
 
 /**********************************************************************************************************************/
 
-typedef struct {
-     FusionSHMPoolShared *shmpool;
+typedef struct _VideoMode {
+     int                xres;
+     int                yres;
+     int                bpp;
 
-     CoreSurfacePool     *pool;
+     int                pixclock;
+     int                left_margin;
+     int                right_margin;
+     int                upper_margin;
+     int                lower_margin;
+     int                hsync_len;
+     int                vsync_len;
+     int                hsync_high;
+     int                vsync_high;
+     int                csync_high;
 
-     char                 device_name[256]; /* NuttXFB device name, e.g. /dev/fb0 */
+     int                laced;
+     int                doubled;
 
-     VideoMode            mode;             /* current video mode */
-} NuttXFBDataShared;
+     int                sync_on_green;
+     int                external_sync;
+     int                broadcast;
 
-typedef struct {
-     NuttXFBDataShared     *shared;
-
-     CoreDFB               *core;
-
-     int                    fd;        /* framebuffer file descriptor */
-
-     struct fb_planeinfo_s *planeinfo; /* plane information */
-
-     void                  *addr;      /* framebuffer memory address */
-} NuttXFBData;
+     struct _VideoMode *next;
+} VideoMode;
 
 #endif

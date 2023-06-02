@@ -267,6 +267,7 @@ system_initialize( CoreDFB  *core,
      FusionSHMPoolShared   *pool;
      const char            *value;
      drmModePlane          *plane;
+     VideoMode             *prev_mode       = NULL;
      DFBSurfacePixelFormat  fallback_format = DSPF_UNKNOWN;
 
      D_DEBUG_AT( DRMKMS_System, "%s()\n", __FUNCTION__ );
@@ -372,6 +373,35 @@ system_initialize( CoreDFB  *core,
      else if (shared->primary_format != DSPF_ARGB)
           shared->primary_format = fallback_format;
 
+     /* Initialize the mode table. */
+     for (i = 0; i < drmkms->connector[0]->count_modes; i++) {
+          VideoMode *mode;
+
+          if (!prev_mode ||
+              (prev_mode &&
+               prev_mode->xres != drmkms->connector[0]->modes[i].hdisplay &&
+               prev_mode->yres != drmkms->connector[0]->modes[i].vdisplay)) {
+               mode = SHCALLOC( shared->shmpool, 1, sizeof(VideoMode) );
+               if (!mode) {
+                    D_OOSHM();
+                    continue;
+               }
+
+               mode->xres = drmkms->connector[0]->modes[i].hdisplay;
+               mode->yres = drmkms->connector[0]->modes[i].vdisplay;
+               mode->bpp  = DFB_BITS_PER_PIXEL( dfb_config->mode.format ?: shared->primary_format );
+          }
+          else
+               continue;
+
+          if (!prev_mode)
+               shared->modes = mode;
+          else
+               prev_mode->next = mode;
+
+          prev_mode = mode;
+     }
+
      *ret_data = drmkms;
 
      ret = dfb_surface_pool_initialize( core, &drmkmsSurfacePoolFuncs, &shared->pool );
@@ -446,6 +476,7 @@ system_shutdown( bool emergency )
 {
      DRMKMSData       *drmkms = dfb_system_data();
      DRMKMSDataShared *shared;
+     VideoMode        *mode;
 
      D_DEBUG_AT( DRMKMS_System, "%s()\n", __FUNCTION__ );
 
@@ -455,6 +486,13 @@ system_shutdown( bool emergency )
      shared = drmkms->shared;
 
      dfb_surface_pool_destroy( shared->pool );
+
+     mode = shared->modes;
+     while (mode) {
+          VideoMode *next = mode->next;
+          SHFREE( shared->shmpool, mode );
+          mode = next;
+     }
 
      if (drmkms->crtc) {
           drmModeSetCrtc( drmkms->fd, drmkms->crtc->crtc_id, drmkms->crtc->buffer_id, drmkms->crtc->x, drmkms->crtc->y,
@@ -512,13 +550,38 @@ system_resume()
 static VideoMode *
 system_get_modes()
 {
-     return NULL;
+     DRMKMSData       *drmkms = dfb_system_data();
+     DRMKMSDataShared *shared;
+
+     D_ASSERT( drmkms != NULL );
+     D_ASSERT( drmkms->shared != NULL );
+
+     shared = drmkms->shared;
+
+     return shared->modes;
 }
 
 static VideoMode *
 system_get_current_mode()
 {
-     return NULL;
+     DRMKMSData       *drmkms = dfb_system_data();
+     DRMKMSDataShared *shared;
+     VideoMode        *mode;
+
+     D_ASSERT( drmkms != NULL );
+     D_ASSERT( drmkms->shared != NULL );
+
+     shared = drmkms->shared;
+
+     mode = shared->modes;
+     while (mode) {
+          if (mode->xres == shared->mode[0].hdisplay && mode->yres == shared->mode[0].vdisplay)
+               break;
+
+          mode = mode->next;
+     }
+
+     return mode;
 }
 
 static DFBResult

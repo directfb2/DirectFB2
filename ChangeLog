@@ -1,3 +1,129 @@
+commit d96c8c43ae375d28d58ccc71b40e3670830f4f9a
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Jun 2 08:03:32 2023 +0200
+
+    drmkms: Implement system_get_modes() / system_get_current_mode()
+
+commit 62fb8e283b2acff8afbb41cd365ee2c4ed3104e8
+Merge: 69975b9 fc38845
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat May 27 08:27:54 2023 +0200
+
+    Merge pull request #124 from caramelli/master
+    
+    Add NuttX input driver module
+
+commit fc38845b7878773fa7c12e4073cbf253f2ef183d
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat May 27 08:22:26 2023 +0200
+
+    Add NuttX input driver module
+
+commit 69975b9a9e96f3f1253f5818e89b1c9e7c3e03e5
+Merge: 6a1e50d 5435e13
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri May 26 14:58:14 2023 +0200
+
+    Merge pull request #123 from caramelli/master
+    
+    Direct/Stream: Restore RTSP support
+
+commit 5435e137d1a95674acaa656b6a7f064459b9ec09
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri May 26 14:42:52 2023 +0200
+
+    Direct/Stream: Restore RTSP support
+
+commit 6a1e50d741ef552b36fcf73d30be2dd35cf93bc5
+Merge: 223ad60 648adcd
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed May 24 19:01:26 2023 +0200
+
+    Merge pull request #122 from caramelli/master
+    
+    Direct/Stream: Add D_STREAM_BYPASS environment variable
+
+commit 648adcdab2a342a051608b48845ec6c267c38c0b
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed May 24 18:50:48 2023 +0200
+
+    Direct/Stream: Add D_STREAM_BYPASS environment variable
+
+commit 223ad60872f6b95c1d01bacf6e3e85e2ab360b4e
+Merge: 0beca0f 5b6504f
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon May 22 15:50:48 2023 +0200
+
+    Merge pull request #121 from caramelli/master
+    
+    NuttX: Add NuttXFB System Module
+
+commit 5b6504f4ca36b1fc303de4588ec094b308d16d11
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon May 22 15:23:36 2023 +0200
+
+    NuttX: Add NuttXFB System Module
+
+commit 0beca0f2c47a57885fcd5d910188a5961ab87d12
+Merge: e3919ee 70c600a
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu May 18 08:18:00 2023 +0200
+
+    Merge pull request #120 from caramelli/master
+    
+    dfb_scale_linear_32(): Fix premultiplication when loading a scaled image
+
+commit 70c600a530324d7cc36c82a35f22eff1dbe8fb8a
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu May 18 08:13:46 2023 +0200
+
+    dfb_scale_linear_32(): Fix premultiplication when loading a scaled image
+
+commit e3919eee1bfca09d88b2280ca06ca7fa127a6d76
+Merge: 68666a6 42f6d22
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun May 14 16:26:08 2023 +0200
+
+    Merge pull request #119 from caramelli/master
+    
+    Direct/Stream: Add RTSP URL stub
+
+commit 42f6d220e2f33a875ec2d62605303764a2730e80
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun May 14 16:09:08 2023 +0200
+
+    Direct/Stream: Add RTSP URL stub
+
+commit 68666a61e47f6c386f08889fa781a6b1f14e61a1
+Merge: cb33e33 72698b2
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat May 13 21:40:13 2023 +0200
+
+    Merge pull request #118 from caramelli/master
+    
+    Update to NuttX 12.1.0
+
+commit 72698b25fef7de684374b50761c675eaaf1d5355
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat May 13 21:33:18 2023 +0200
+
+    Update to NuttX 12.1.0
+
+commit cb33e33cd5ccfb0d084ed13153f71501110f7784
+Merge: 2692779 5879443
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed May 10 17:04:49 2023 +0200
+
+    Merge pull request #116 from caramelli/master
+    
+    IDirectFBFont: Fix loading from streamed data buffer
+
+commit 58794434bc29f6e5706eece867d5a614cec9aa5f
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Wed May 10 16:54:39 2023 +0200
+
+    Update ChangeLog
+
 commit 0f9d5265270031d4a8d03a892beef4481b6a97a4
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Wed May 10 16:53:42 2023 +0200
