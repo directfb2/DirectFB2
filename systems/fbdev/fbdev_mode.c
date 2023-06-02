@@ -357,7 +357,7 @@ read_modes( FBDevData *fbdev )
      char             line[80], label[32], value[16];
      int              geometry, timings, dummy;
      VideoMode        temp_mode;
-     VideoMode       *prev;
+     VideoMode       *prev_mode = NULL;
 
      D_DEBUG_AT( FBDev_Mode, "%s()\n", __FUNCTION__ );
 
@@ -365,8 +365,6 @@ read_modes( FBDevData *fbdev )
      D_ASSERT( fbdev->shared != NULL );
 
      shared = fbdev->shared;
-
-     prev = shared->modes;
 
      if (!(fp = fopen( shared->modes_file, "r" )))
           return;
@@ -423,14 +421,14 @@ read_modes( FBDevData *fbdev )
                          continue;
                     }
 
-                    if (!prev)
+                    if (!prev_mode)
                          shared->modes = mode;
                     else
-                         prev->next = mode;
+                         prev_mode->next = mode;
 
                     direct_memcpy( mode, &temp_mode, sizeof(VideoMode) );
 
-                    prev = mode;
+                    prev_mode = mode;
 
                     D_DEBUG_AT( FBDev_Mode, "  -> %16s %4dx%4d  %s%s\n", label, temp_mode.xres, temp_mode.yres,
                                 temp_mode.laced ? "interlaced " : "", temp_mode.doubled ? "doublescan" : "" );

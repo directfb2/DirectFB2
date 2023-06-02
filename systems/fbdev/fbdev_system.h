@@ -19,7 +19,7 @@
 #ifndef __FBDEV_SYSTEM_H__
 #define __FBDEV_SYSTEM_H__
 
-#include <core/system.h>
+#include <core/video_mode.h>
 #include <fusion/call.h>
 #include <linux/fb.h>
 

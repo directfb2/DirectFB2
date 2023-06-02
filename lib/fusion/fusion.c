@@ -1821,16 +1821,16 @@ _fusion_send_message( int                 fd,
                       size_t              msg_size,
                       struct sockaddr_un *addr )
 {
-     socklen_t len = sizeof(struct sockaddr_un);
+     socklen_t addrlen = sizeof(struct sockaddr_un);
 
      D_ASSERT( msg != NULL );
 
      if (!addr) {
           addr = alloca( sizeof(struct sockaddr_un) );
-          getsockname( fd, (struct sockaddr*) addr, &len );
+          getsockname( fd, (struct sockaddr*) addr, &addrlen );
      }
 
-     while (sendto( fd, msg, msg_size, 0, (struct sockaddr*) addr, len ) < 0) {
+     while (sendto( fd, msg, msg_size, 0, (struct sockaddr*) addr, addrlen ) < 0) {
           switch (errno) {
                case EINTR:
                     continue;
@@ -1854,11 +1854,11 @@ _fusion_recv_message( int                 fd,
                       size_t              msg_size,
                       struct sockaddr_un *addr )
 {
-     socklen_t len = addr ? sizeof(struct sockaddr_un) : 0;
+     socklen_t addrlen = addr ? sizeof(struct sockaddr_un) : 0;
 
      D_ASSERT( msg != NULL );
 
-     while (recvfrom( fd, msg, msg_size, 0, (struct sockaddr*) addr, &len ) < 0) {
+     while (recvfrom( fd, msg, msg_size, 0, (struct sockaddr*) addr, &addrlen ) < 0) {
           switch (errno) {
                case EINTR:
                     continue;
@@ -2026,15 +2026,16 @@ fusion_enter( int               world_index,
               FusionEnterRole   role,
               FusionWorld     **ret_world )
 {
-     DirectResult        ret    = DR_OK;
-     int                 fd     = -1;
-     FusionID            id     = -1;
-     FusionWorld        *world  = NULL;
-     FusionWorldShared  *shared = MAP_FAILED;
+     DirectResult        ret        = DR_OK;
+     int                 orig_index = world_index;
+     int                 fd         = -1;
+     FusionID            id         = -1;
+     FusionWorld        *world      = NULL;
+     FusionWorldShared  *shared     = MAP_FAILED;
      struct sockaddr_un  addr;
      char                buf[128];
-     int                 len, err;
-     int                 orig_index = world_index;
+     int                 err;
+     int                 len;
 
      D_DEBUG_AT( Fusion_Main, "%s( %d, %d, %p )\n", __FUNCTION__, world_index, abi_version, ret_world );
 
@@ -2056,10 +2057,10 @@ fusion_enter( int               world_index,
 
 retry:
      world_index = orig_index;
-     fd      = -1;
-     id      = -1;
-     world   = NULL;
-     shared  = MAP_FAILED;
+     fd          = -1;
+     id          = -1;
+     world       = NULL;
+     shared      = MAP_FAILED;
 
      fd = socket( PF_LOCAL, SOCK_RAW, 0 );
      if (fd < 0) {
@@ -2302,8 +2303,8 @@ retry:
                     D_DERROR( ret, "Fusion/Main: Error opening directory '%s' for cleanup!\n", addr.sun_path );
 
                     /* Unbind. */
-                    socklen_t len = sizeof(addr);
-                    if (getsockname( fd, (struct sockaddr*) &addr, &len ) == 0)
+                    socklen_t addrlen = sizeof(addr);
+                    if (getsockname( fd, (struct sockaddr*) &addr, &addrlen ) == 0)
                          direct_unlink( addr.sun_path );
 
                     close( fd );
@@ -2326,8 +2327,8 @@ retry:
                          direct_dir_close( &dir );
 
                          /* Unbind. */
-                         socklen_t len = sizeof(addr);
-                         if (getsockname( fd, (struct sockaddr*) &addr, &len ) == 0)
+                         socklen_t addrlen = sizeof(addr);
+                         if (getsockname( fd, (struct sockaddr*) &addr, &addrlen ) == 0)
                               direct_unlink( addr.sun_path );
 
                          close( fd );
@@ -2340,8 +2341,8 @@ retry:
                direct_dir_close( &dir );
 
                /* Unbind. */
-               socklen_t len = sizeof(addr);
-               if (getsockname( fd, (struct sockaddr*) &addr, &len ) == 0)
+               socklen_t addrlen = sizeof(addr);
+               if (getsockname( fd, (struct sockaddr*) &addr, &addrlen ) == 0)
                     direct_unlink( addr.sun_path );
 
                close( fd );
@@ -2517,8 +2518,8 @@ error:
 
      if (fd != -1) {
           /* Unbind. */
-          socklen_t len = sizeof(addr);
-          if (getsockname( fd, (struct sockaddr*) &addr, &len ) == 0)
+          socklen_t addrlen = sizeof(addr);
+          if (getsockname( fd, (struct sockaddr*) &addr, &addrlen ) == 0)
                direct_unlink( addr.sun_path );
 
           close( fd );
@@ -2855,7 +2856,7 @@ fusion_dispatch_loop( DirectThread *self,
 {
      FusionWorld        *world = arg;
      struct sockaddr_un  addr;
-     socklen_t           addr_len = sizeof(addr);
+     socklen_t           addrlen = sizeof(addr);
      fd_set              set;
      char                buf[FUSION_MESSAGE_SIZE];
 
@@ -2883,7 +2884,7 @@ fusion_dispatch_loop( DirectThread *self,
           }
 
           if (FD_ISSET( world->fusion_fd, &set ) &&
-              (msg_size = recvfrom( world->fusion_fd, buf, sizeof(buf), 0, (struct sockaddr*) &addr, &addr_len )) > 0) {
+              (msg_size = recvfrom( world->fusion_fd, buf, sizeof(buf), 0, (struct sockaddr*) &addr, &addrlen )) > 0) {
                FusionMessage *msg = (FusionMessage*) buf;
 
                direct_thread_setcancelstate( DIRECT_THREAD_CANCEL_DISABLE );

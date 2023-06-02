@@ -125,6 +125,7 @@ core_headers = [
   'core/surface_pool.h',
   'core/surface_pool_bridge.h',
   'core/system.h',
+  'core/video_mode.h',
   'core/windows.h',
   'core/windowstack.h',
   'core/wm.h',

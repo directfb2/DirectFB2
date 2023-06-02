@@ -20,6 +20,7 @@
 #define __CORE__SYSTEM_H__
 
 #include <core/coretypes.h>
+#include <core/video_mode.h>
 #include <direct/modules.h>
 
 DECLARE_MODULE_DIRECTORY( dfb_core_systems );
@@ -62,32 +63,6 @@ typedef struct {
      char                   url[DFB_CORE_SYSTEM_INFO_URL_LENGTH];         /* URL for driver updates */
      char                   license[DFB_CORE_SYSTEM_INFO_LICENSE_LENGTH]; /* License, e.g. 'LGPL' or 'proprietary' */
 } CoreSystemInfo;
-
-typedef struct _VideoMode {
-     int xres;
-     int yres;
-     int bpp;
-
-     int pixclock;
-     int left_margin;
-     int right_margin;
-     int upper_margin;
-     int lower_margin;
-     int hsync_len;
-     int vsync_len;
-     int hsync_high;
-     int vsync_high;
-     int csync_high;
-
-     int laced;
-     int doubled;
-
-     int sync_on_green;
-     int external_sync;
-     int broadcast;
-
-     struct _VideoMode *next;
-} VideoMode;
 
 typedef struct {
      void           (*GetSystemInfo)      ( CoreSystemInfo   *info );
