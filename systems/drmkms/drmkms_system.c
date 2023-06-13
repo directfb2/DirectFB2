@@ -207,18 +207,29 @@ local_init( const char *device_name,
           }
      }
 
-     for (i = 0; i < drmkms->plane_resources->count_planes; i++) {
-          drmModePlane *plane;
+     if (dfb_core_is_master( drmkms->core )) {
+          for (i = 0; i < drmkms->plane_resources->count_planes; i++) {
+               drmModePlane *plane;
 
-          plane = drmModeGetPlane( drmkms->fd, drmkms->plane_resources->planes[i] );
+               plane = drmModeGetPlane( drmkms->fd, drmkms->plane_resources->planes[i] );
 
-          if ((plane->possible_crtcs & drmkms->encoder[0]->possible_crtcs) &&
-              (plane->crtc_id != drmkms->encoder[0]->crtc_id)) {
-               drmkms->layer_indices[drmkms->layer_id] = i;
+               if ((plane->possible_crtcs & drmkms->encoder[0]->possible_crtcs) &&
+                   (plane->crtc_id != drmkms->encoder[0]->crtc_id)) {
+                    drmkms->shared->layer_indices[drmkms->layer_id] = i;
 
-               dfb_layers_register( screen, drmkms, &drmkmsPlaneLayerFuncs );
+                    dfb_layers_register( screen, drmkms, &drmkmsPlaneLayerFuncs );
 
-               DFB_DISPLAYLAYER_IDS_ADD( drmkms->layer_ids[0], drmkms->layer_id++ );
+                    DFB_DISPLAYLAYER_IDS_ADD( drmkms->layer_ids[0], drmkms->layer_id++ );
+               }
+          }
+     }
+     else {
+          for (i = 0; i < drmkms->plane_resources->count_planes; i++) {
+               if (i == drmkms->shared->layer_indices[drmkms->layer_id]) {
+                    dfb_layers_register( screen, drmkms, &drmkmsPlaneLayerFuncs );
+
+                    DFB_DISPLAYLAYER_IDS_ADD( drmkms->layer_ids[0], drmkms->layer_id++ );
+               }
           }
      }
 
