@@ -5,6 +5,8 @@ https://directfb2.github.io
 
 ________________________________________________________________
 
+**2023-06-12** Play with [DirectFB-examples](https://github.com/directfb2/DirectFB-examples) and [LiTE-examples](https://github.com/directfb2/LiTE-examples) on MCU devices using available NuttX support
+
 **2023-01-01** Restoring [FusionSound](https://github.com/directfb2/FusionSound2) to add sound in DirectFB apps
 
 **2022-12-02** All platforms supporting generic buffer management can use the [DirectFB2-eglgbm](https://github.com/directfb2/DirectFB2-eglgbm) system module

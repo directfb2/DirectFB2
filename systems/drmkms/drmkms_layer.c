@@ -383,8 +383,8 @@ drmkmsPlaneInitLayer( CoreLayer                  *layer,
      /* Initialize the layer data. */
      data->plane_index = ++shared->plane_index_count;
      data->level       = data->plane_index;
-     data->plane       = drmModeGetPlane( drmkms->fd,
-                                          drmkms->plane_resources->planes[drmkms->layer_indices[data->plane_index]] );
+     i                 = shared->layer_indices[data->plane_index];
+     data->plane       = drmModeGetPlane( drmkms->fd, drmkms->plane_resources->planes[i] );
 
      D_DEBUG_AT( DRMKMS_Layer, "  -> getting plane with index %d\n", data->plane_index );
      D_DEBUG_AT( DRMKMS_Layer, "    => plane_id is %u\n", data->plane->plane_id );
