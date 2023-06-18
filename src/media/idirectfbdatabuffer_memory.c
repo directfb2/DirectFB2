@@ -174,7 +174,7 @@ IDirectFBDataBuffer_Memory_GetData( IDirectFBDataBuffer *thiz,
 
      size = MIN( length, data->length - data->pos );
 
-     direct_memcpy( ret_data_ptr, (char*) data->buffer + data->pos, size );
+     direct_memcpy( ret_data_ptr, data->buffer + data->pos, size );
 
      data->pos += size;
 
@@ -205,7 +205,7 @@ IDirectFBDataBuffer_Memory_PeekData( IDirectFBDataBuffer *thiz,
 
      size = MIN( length, data->length - data->pos - offset );
 
-     direct_memcpy( ret_data_ptr, (char*) data->buffer + data->pos + offset, size );
+     direct_memcpy( ret_data_ptr, data->buffer + data->pos + offset, size );
 
      if (ret_read)
           *ret_read = size;

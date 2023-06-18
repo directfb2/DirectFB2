@@ -33,6 +33,8 @@ And install DirectFB2 using:
 
   $ meson install -C build/
 
+Next, install and run DirectFB applications, such as those available in DirectFB-examples.
+
 NuttX
 =====
 
@@ -41,7 +43,7 @@ On NuttX, copy the DirectFB2 directory to your NuttX apps/graphics/ directory.
 A defconfig file for the NuttX simulator is available.
 It must be placed in a directory nuttx/boards/sim/sim/sim/configs/directfb/
 
-Add a DirectFB application containing the "directfb_main" entry point.
+Add a DirectFB application, such as those available in DirectFB-examples.
 
 Configure the simulator:
 

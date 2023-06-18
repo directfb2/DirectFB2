@@ -11,8 +11,9 @@ Static library support for MCU targets
 
 Modularization of the source code, which now only contains:
   - libdirect / libfusion / libdirectfb core libraries
-  - a generic system module and a generic input driver for supported operating systems (only Linux for now)
-    (on Linux OS, legacy FBDev or modern DRM/KMS system module and Linux input driver)
+  - a generic system module and a generic input driver for supported operating systems:
+      - legacy Linux FBDev or modern DRM/KMS system module and Linux input driver
+      - NuttX Framebuffer system module and NuttX input driver
   - the default WM module
   - the DGIFF (DirectFB Glyph Image File Format) font provider
   - the DFIFF (DirectFB Fast Image File Format) image provider
