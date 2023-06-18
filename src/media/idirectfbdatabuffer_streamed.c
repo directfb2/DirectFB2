@@ -431,10 +431,10 @@ ReadChunkData( IDirectFBDataBuffer_Streamed_data *data,
           /* Read from this chunk. */
           if (len) {
                /* Copy as many bytes as possible. */
-               direct_memcpy( buffer, (char*) chunk->data + chunk->done + off, len );
+               direct_memcpy( buffer, chunk->data + chunk->done + off, len );
 
                /* Increase write pointer. */
-               buffer = (char*) buffer + len;
+               buffer = buffer + len;
 
                /* Decrease number of bytes to read. */
                length -= len;

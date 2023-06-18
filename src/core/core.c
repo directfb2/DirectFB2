@@ -97,10 +97,10 @@ static void dfb_core_process_cleanups( CoreDFB *core, bool emergency );
 
 static DirectSignalHandlerResult dfb_core_signal_handler( int num, void *addr, void *ctx );
 
-static int dfb_core_arena_initialize( void *ctx );
-static int dfb_core_arena_shutdown  ( void *ctx, bool emergency );
-static int dfb_core_arena_join      ( void *ctx );
-static int dfb_core_arena_leave     ( void *ctx, bool emergency );
+static DFBResult dfb_core_arena_initialize( void *ctx );
+static DFBResult dfb_core_arena_shutdown  ( void *ctx, bool emergency );
+static DFBResult dfb_core_arena_join      ( void *ctx );
+static DFBResult dfb_core_arena_leave     ( void *ctx, bool emergency );
 
 typedef struct {
      ICoreResourceClient *client;
@@ -1641,11 +1641,11 @@ region_callback( FusionObjectPool *pool,
      return true;
 }
 
-static int
+static DFBResult
 dfb_core_shutdown( CoreDFB *core,
                    bool     emergency )
 {
-     DFBResult      ret;
+     DFBResult      ret   = DFB_OK;
      int            loops = 200;
      CoreDFBShared *shared;
 
@@ -1734,7 +1734,7 @@ dfb_core_shutdown( CoreDFB *core,
      return DFB_OK;
 }
 
-static int
+static DFBResult
 dfb_core_leave( CoreDFB *core,
                 bool     emergency )
 {
@@ -1754,7 +1754,7 @@ dfb_core_leave( CoreDFB *core,
      return DFB_OK;
 }
 
-static int
+static DFBResult
 dfb_core_join( CoreDFB *core )
 {
      int i;
@@ -1792,7 +1792,7 @@ dfb_core_leave_callback( FusionWorld *world,
      Core_Resource_DisposeIdentity( fusion_id );
 }
 
-static int
+static DFBResult
 dfb_core_arena_initialize( void *ctx )
 {
      DFBResult            ret;
@@ -1851,7 +1851,7 @@ dfb_core_arena_initialize( void *ctx )
      return DFB_OK;
 }
 
-static int
+static DFBResult
 dfb_core_arena_shutdown( void *ctx,
                          bool  emergency )
 {
@@ -1892,7 +1892,7 @@ dfb_core_arena_shutdown( void *ctx,
      return ret;
 }
 
-static int
+static DFBResult
 dfb_core_arena_join( void *ctx )
 {
      DFBResult      ret;
@@ -1923,7 +1923,7 @@ dfb_core_arena_join( void *ctx )
      return DFB_OK;
 }
 
-static int
+static DFBResult
 dfb_core_arena_leave( void *ctx,
                       bool  emergency )
 {
