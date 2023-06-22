@@ -597,6 +597,7 @@ typedef unsigned int DFBWindowID;
 #define DIDID_MOUSE                          0x00000001          /* primary mouse */
 #define DIDID_JOYSTICK                       0x00000002          /* primary joystick */
 #define DIDID_REMOTE                         0x00000003          /* primary remote control */
+#define DIDID_BUTTONS                        0x00000004          /* primary buttons */
 #define DIDID_ANY                            0x00000010          /* no primary device */
 
 /* Predefined screen ids. */
@@ -1315,13 +1316,14 @@ typedef struct {
 typedef enum {
      DIDTF_NONE                            = 0x00000000,         /* Unclassified, no specific type. */
 
-     DIDTF_KEYBOARD                        = 0x00000001,         /* Can act as a keyboard. */
-     DIDTF_MOUSE                           = 0x00000002,         /* Can be used as a mouse. */
-     DIDTF_JOYSTICK                        = 0x00000004,         /* Can be used as a joystick. */
+     DIDTF_KEYBOARD                        = 0x00000001,         /* Is a keyboard. */
+     DIDTF_MOUSE                           = 0x00000002,         /* Is a mouse. */
+     DIDTF_JOYSTICK                        = 0x00000004,         /* Is a joystick. */
      DIDTF_REMOTE                          = 0x00000008,         /* Is a remote control. */
      DIDTF_VIRTUAL                         = 0x00000010,         /* Is a virtual input device. */
+     DIDTF_BUTTONS                         = 0x00000020,         /* Is buttons. */
 
-     DIDTF_ALL                             = 0x0000001F          /* All type flags set. */
+     DIDTF_ALL                             = 0x0000003F          /* All type flags set. */
 } DFBInputDeviceTypeFlags;
 
 /*
