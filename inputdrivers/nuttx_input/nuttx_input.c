@@ -55,9 +55,21 @@ static void *
 devinput_event_thread( DirectThread *thread,
                        void         *arg )
 {
-     NuttXData *data = arg;
+     NuttXData *data    = arg;
+     int        offsetx = 0;
+     int        offsety = 0;
+     int        threshx = 1;
+     int        threshy = 1;
 
      D_DEBUG_AT( NuttX_Input, "%s()\n", __FUNCTION__ );
+
+     /* Query the touchscreen X/Y offsets and thresholds. */
+     if (data->id == DIDID_MOUSE) {
+          ioctl( data->fd, TSIOC_GETOFFSETX, &offsetx );
+          ioctl( data->fd, TSIOC_GETOFFSETY, &offsety );
+          ioctl( data->fd, TSIOC_GETTHRESHX, &threshx );
+          ioctl( data->fd, TSIOC_GETTHRESHY, &threshy );
+     }
 
      while (1) {
           DFBInputEvent evt = { .type = DIET_UNKNOWN };
@@ -122,7 +134,7 @@ devinput_event_thread( DirectThread *thread,
                          evt.type    = DIET_AXISMOTION;
                          evt.flags   = DIEF_AXISABS | DIEF_BUTTONS;
                          evt.axis    = DIAI_X;
-                         evt.axisabs = touch_sample.point[0].x;
+                         evt.axisabs = (touch_sample.point[0].x - offsetx) / threshx;
                          evt.buttons = DIBM_LEFT;
 
                          dfb_input_dispatch( data->device, &evt );
@@ -133,6 +145,7 @@ devinput_event_thread( DirectThread *thread,
                          evt.flags   = DIEF_AXISABS | DIEF_BUTTONS;
                          evt.axis    = DIAI_Y;
                          evt.axisabs = touch_sample.point[0].y;
+                         evt.axisabs = (touch_sample.point[0].y - offsety) / threshy;
                          evt.buttons = DIBM_LEFT;
 
                          dfb_input_dispatch( data->device, &evt );
