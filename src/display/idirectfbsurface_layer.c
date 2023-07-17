@@ -84,6 +84,9 @@ IDirectFBSurface_Layer_Flip( IDirectFBSurface    *thiz,
          (region && (region->x1 > region->x2 || region->y1 > region->y2)))
           return DFB_INVAREA;
 
+     if (data->base.flip_func)
+          return data->base.flip_func( data->base.flip_func_ctx );
+
      IDirectFBSurface_StopAll( &data->base );
 
      if (data->base.parent) {

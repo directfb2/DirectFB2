@@ -284,6 +284,16 @@ DFBResult  DIRECTFB_API  DirectFBInit (
 #define DirectFBVideoProviderInitProtoype(name)
 #endif
 
+#ifdef DFB_OPENGL_IMPLEMENTATION
+#define StringizeDirectFBGLInit(name)                     IDirectFBGL_##name##_ctor()
+#define DirectFBGLInit(name)                              StringizeDirectFBGLInit( name )
+#define StringizeDirectFBGLInitProtoype(name)             void IDirectFBGL_##name##_ctor( void )
+#define DirectFBGLInitProtoype(name)                      StringizeDirectFBGLInitProtoype( name )
+#else
+#define DirectFBGLInit(name)
+#define DirectFBGLInitProtoype(name)
+#endif
+
 #define StringizeDirectFBWindowManagerInit(name)          directfb_##name##_ctor()
 #define DirectFBWindowManagerInit(name)                   StringizeDirectFBWindowManagerInit( name )
 #define StringizeDirectFBWindowManagerInitProtoype(name)  void directfb_##name##_ctor( void )
@@ -296,16 +306,18 @@ DirectFBInputDriverInitProtoype   ( DFB_INPUT_DRIVER );
 DirectFBFontProviderInitProtoype  ( DFB_FONT_PROVIDER );
 DirectFBImageProviderInitProtoype ( DFB_IMAGE_PROVIDER );
 DirectFBVideoProviderInitProtoype ( DFB_VIDEO_PROVIDER );
+DirectFBGLInitProtoype            ( DFB_OPENGL_IMPLEMENTATION );
 DirectFBWindowManagerInitProtoype ( DFB_WINDOW_MANAGER );
 
-#define DirectFBInit( argc_ptr, argv_ptr )              \
-     DirectFBInit              ( argc_ptr, argv_ptr );  \
-     DirectFBCoreSystemInit    ( DFB_CORE_SYSTEM );     \
-     DirectFBGraphicsDriverInit( DFB_GRAPHICS_DRIVER ); \
-     DirectFBInputDriverInit   ( DFB_INPUT_DRIVER );    \
-     DirectFBFontProviderInit  ( DFB_FONT_PROVIDER );   \
-     DirectFBImageProviderInit ( DFB_IMAGE_PROVIDER );  \
-     DirectFBVideoProviderInit ( DFB_VIDEO_PROVIDER );  \
+#define DirectFBInit( argc_ptr, argv_ptr )                    \
+     DirectFBInit              ( argc_ptr, argv_ptr );        \
+     DirectFBCoreSystemInit    ( DFB_CORE_SYSTEM );           \
+     DirectFBGraphicsDriverInit( DFB_GRAPHICS_DRIVER );       \
+     DirectFBInputDriverInit   ( DFB_INPUT_DRIVER );          \
+     DirectFBFontProviderInit  ( DFB_FONT_PROVIDER );         \
+     DirectFBImageProviderInit ( DFB_IMAGE_PROVIDER );        \
+     DirectFBVideoProviderInit ( DFB_VIDEO_PROVIDER );        \
+     DirectFBGLInit            ( DFB_OPENGL_IMPLEMENTATION ); \
      DirectFBWindowManagerInit ( DFB_WINDOW_MANAGER );
 #endif
 
