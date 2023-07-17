@@ -1,3 +1,99 @@
+commit 22d42e25bc73daf61a612a88ff4e9c6d969aad00
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jul 17 12:42:40 2023 +0200
+
+    Add support for DirectFBGL module initialization when constructor attribute is not used (MCU targets)
+
+commit 27dbab6d58662cbe7dfbb54315dcfc0b459af98f
+Merge: b99f492 42d7daf
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Jul 3 10:55:24 2023 +0200
+
+    Merge pull request #130 from caramelli/master
+    
+    NuttX Input Driver: Translate raw X/Y touchscreen data into pixel coordinates
+
+commit 42d7daf26d56704326abbe73c838f44f102046fb
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jul 3 10:51:16 2023 +0200
+
+    NuttX Input Driver: Translate raw X/Y touchscreen data into pixel coordinates
+
+commit b99f49243bab1c8ffccd6c2401d7085c2d66caab
+Merge: b60149a 69f0558
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Jun 22 15:09:53 2023 +0200
+
+    Merge pull request #129 from caramelli/master
+    
+    NuttX defconfig: CONFIG_PTHREAD_CLEANUP => CONFIG_PTHREAD_CLEANUP_STACKSIZE
+
+commit 69f05580ecde6eae418608623229bf8645d1ea38
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Jun 22 15:05:57 2023 +0200
+
+    NuttX defconfig: CONFIG_PTHREAD_CLEANUP => CONFIG_PTHREAD_CLEANUP_STACKSIZE
+
+commit b60149ab11185167f03876448edb863247c8bc19
+Merge: 2276c80 26fdee5
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Jun 22 08:25:07 2023 +0200
+
+    Merge pull request #128 from caramelli/master
+    
+    NuttX Input Driver: Add support for buttons and keyboard
+
+commit 26fdee5e4811fd2592145ae75b51c35cae998ba4
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Jun 22 08:20:15 2023 +0200
+
+    NuttX Input Driver: Add support for buttons and keyboard
+
+commit 2276c8096dd5effa235c0f672b212f50a5256f91
+Merge: 1c65e0c 6a64478
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Jun 18 11:34:06 2023 +0200
+
+    Merge pull request #127 from caramelli/master
+    
+    NuttX: Add defconfig for STM32F429I-DISCO board
+
+commit 6a64478037c017cabadc64a4c7c7c719f37ce328
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Jun 18 11:28:29 2023 +0200
+
+    NuttX: Add defconfig for STM32F429I-DISCO board
+
+commit 1c65e0c2c668b5d59705b0d0005b8976bddde8d2
+Merge: ab61370 ffe97c4
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Tue Jun 13 05:53:49 2023 +0200
+
+    Merge pull request #126 from caramelli/master
+    
+    drmkms: Fix plane layers registration with multi application core
+
+commit ffe97c43f621af0946b32a40b30f4a8ae4258178
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Jun 13 05:41:33 2023 +0200
+
+    drmkms: Fix plane layers registration with multi application core
+
+commit ab613703de874a59be5847b5068d8791d69881d7
+Merge: 62fb8e2 c1e5099
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Jun 2 08:17:17 2023 +0200
+
+    Merge pull request #125 from caramelli/master
+    
+    drmkms: Implement system_get_modes() / system_get_current_mode()
+
+commit c1e5099fb3d40b55118f8cb32a0313d3f8634d57
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Jun 2 08:03:57 2023 +0200
+
+    Update ChangeLog
+
 commit d96c8c43ae375d28d58ccc71b40e3670830f4f9a
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Fri Jun 2 08:03:32 2023 +0200
