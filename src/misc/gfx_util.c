@@ -818,9 +818,11 @@ dfb_scale_linear_32( u32             *src,
      u32          *scaled_src;
      u8           *dst1  = NULL;
      u8           *dst2  = NULL;
+     int           dw    = drect->w;
+     int           dh    = drect->h;
      DFBRectangle  srect = { 0, 0, sw, sh };
 
-     if (drect->w == sw && drect->h == sh) {
+     if (dw == sw && dh == sh) {
           dfb_copy_buffer_32( src, dst, dpitch, drect, dst_surface, dst_clip );
           return;
      }
