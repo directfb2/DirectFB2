@@ -95,14 +95,12 @@ drmkmsInitScreen( CoreScreen           *screen,
                if (!strcmp( prop->name, "panel orientation" )) {
                     D_ASSUME( props->prop_values[i] >= 0 && props->prop_values[i] <= 3 );
 
-                    for (i = 0; i < prop->count_enums; i++) {
-                         if (!strcmp( panel_orientation_table[props->prop_values[i]], "Upside Down" ))
-                              data->rotation = 180;
-                         else if (!strcmp( panel_orientation_table[props->prop_values[i]], "Left Side Up" ))
-                              data->rotation = 270;
-                         else if (!strcmp( panel_orientation_table[props->prop_values[i]], "Right Side Up" ))
-                              data->rotation = 90;
-                    }
+                    if (!strcmp( panel_orientation_table[props->prop_values[i]], "Upside Down" ))
+                         data->rotation = 180;
+                    else if (!strcmp( panel_orientation_table[props->prop_values[i]], "Left Side Up" ))
+                         data->rotation = 270;
+                    else if (!strcmp( panel_orientation_table[props->prop_values[i]], "Right Side Up" ))
+                         data->rotation = 90;
 
                     D_INFO( "DRMKMS/Screen: Using %s panel orientation (rotation = %d)\n",
                             panel_orientation_table[props->prop_values[i]], data->rotation );
