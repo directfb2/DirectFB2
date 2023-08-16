@@ -270,7 +270,7 @@ system_initialize( CoreDFB  *core,
                    void    **ret_data )
 {
      DFBResult              ret;
-     int                    i, j;
+     int                    i, j, p;
      uint32_t               fourcc;
      char                   name[5];
      DRMKMSData            *drmkms;
@@ -357,20 +357,22 @@ system_initialize( CoreDFB  *core,
      for (i = 0; i < drmkms->enabled_crtcs; i++)
           shared->mode[i] = drmkms->connector[0]->modes[0];
 
-     plane = drmModeGetPlane( drmkms->fd, drmkms->plane_resources->planes[0] );
-     for (i = 0; i < plane->count_formats; i++) {
-          fourcc = plane->formats[i];
-          snprintf( name, sizeof(name), "%c%c%c%c", fourcc, fourcc >> 8, fourcc >> 16, fourcc >> 24 );
+     for (p = 0; p < drmkms->plane_resources->count_planes; p++) {
+          plane = drmModeGetPlane( drmkms->fd, drmkms->plane_resources->planes[p] );
+          for (i = 0; i < plane->count_formats; i++) {
+               fourcc = plane->formats[i];
+               snprintf( name, sizeof(name), "%c%c%c%c", fourcc, fourcc >> 8, fourcc >> 16, fourcc >> 24 );
 
-          if (!strcmp( name, "AR24" )) {
-               shared->primary_format = DSPF_ARGB;
-               break;
-          }
-          else if (fallback_format == DSPF_UNKNOWN) {
-               for (j = 1; j < D_ARRAY_SIZE(dfb_fourcc_names); j++) {
-                    if (!strcmp( name, dfb_fourcc_names[j].name )) {
-                         fallback_format = dfb_fourcc_names[j].format;
-                         break;
+               if (!strcmp( name, "AR24" )) {
+                    shared->primary_format = DSPF_ARGB;
+                    break;
+               }
+               else if (fallback_format == DSPF_UNKNOWN) {
+                    for (j = 1; j < D_ARRAY_SIZE(dfb_fourcc_names); j++) {
+                         if (!strcmp( name, dfb_fourcc_names[j].name )) {
+                              fallback_format = dfb_fourcc_names[j].format;
+                              break;
+                         }
                     }
                }
           }
