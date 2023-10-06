@@ -711,7 +711,7 @@ Construct( IDirectFBVideoProvider *thiz,
      int                       len;
      const DFVFFHeader        *header;
      void                     *ptr;
-     char                     *chunk       = NULL;
+     void                     *chunk       = NULL;
      IDirectFBDataBuffer_data *buffer_data = buffer->priv;
 
      DIRECT_ALLOCATE_INTERFACE_DATA( thiz, IDirectFBVideoProvider_DFVFF )
