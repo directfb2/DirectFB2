@@ -32,7 +32,9 @@ extern "C" {
 /*
  * The DirectFBGL interface version.
  */
-#define DIRECTFBGL_INTERFACE_VERSION 1
+#ifndef DIRECTFBGL_INTERFACE_VERSION
+#define DIRECTFBGL_INTERFACE_VERSION 2
+#endif
 
 /*
  * Attributes of an OpenGL context.
@@ -96,6 +98,15 @@ D_DEFINE_INTERFACE( IDirectFBGL,
           const char                        *name,
           void                             **ret_address
      );
+
+#if DIRECTFBGL_INTERFACE_VERSION > 1
+     /*
+      * Swap buffers.
+      */
+     DFBResult (*SwapBuffers) (
+          IDirectFBGL                       *thiz
+     );
+#endif
 )
 
 #ifdef __cplusplus

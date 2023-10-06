@@ -5,6 +5,8 @@ https://directfb2.github.io
 
 ________________________________________________________________
 
+**2023-10-06** OpenGL ES and EGL for DirectFB platform with [SwiftShaderGL-DirectFB](https://github.com/directfb2/SwiftShaderGL-DirectFB) (DirectFBGL accessible via [DirectFBGL-EGL](https://github.com/directfb2/DirectFBGL-EGL))
+
 **2023-07-17** OpenGL software rendering with [DirectFBGL-PortableGL](https://github.com/directfb2/DirectFBGL-PortableGL)
 
 **2023-06-12** Play with [DirectFB-examples](https://github.com/directfb2/DirectFB-examples) and [LiTE-examples](https://github.com/directfb2/LiTE-examples) on MCU devices using available NuttX support

@@ -66,7 +66,7 @@ drmkms_find_mode( DRMKMSData   *drmkms,
                   unsigned int  freq )
 {
      int              i;
-     drmModeModeInfo *mode = drmkms->connector[connector]->modes;
+     drmModeModeInfo *mode       = drmkms->connector[connector]->modes;
      drmModeModeInfo *found_mode = NULL;
 
      D_DEBUG_AT( DRMKMS_Mode, "%s()\n", __FUNCTION__ );
