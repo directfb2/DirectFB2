@@ -1,3 +1,72 @@
+commit 5c5202a50e2f2ddb7d56738b290cfce5f70c42d9
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Oct 6 18:48:50 2023 +0200
+
+    IDirectFBGL: Add SwapBuffers()
+
+commit a7a176bb501c0730cd24bf06420ce35f53e85a15
+Merge: abf3795 d1b396f
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Aug 16 08:06:57 2023 +0200
+
+    Merge pull request #137 from fifteenhex/fixdrmkms-on-mstar-20230816
+    
+    drmkms: Enumerate all planes when looking for the primary format
+
+commit d1b396f67827e236d734f902874ff9568ca0256b
+Author: Daniel Palmer <daniel@0x0f.com>
+Date:   Tue Aug 15 20:18:17 2023 +0900
+
+    drmkms: Enumerate all planes when looking for the primary format
+
+commit abf379572bdc2271ddedea42c78a442218963d3c
+Merge: e4921b7 30e4afd
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Aug 12 09:25:49 2023 +0200
+
+    Merge pull request #135 from miyoo-oss/feature/screen_rot_fixes
+    
+    Fix screen rotation to read the proper props values
+
+commit 30e4afdd8be64cde0c73a6c9de69f64a3286e392
+Author: Stephen Bird <sebirdman@gmail.com>
+Date:   Fri Aug 11 15:35:14 2023 -0700
+
+    Fix screen rotation to read the proper props values
+    
+    This inner loop breaks screen rotation for devices that require it and is
+    unneccessary.
+
+commit e4921b7349329e6c1e4720adf5dec5979a31f48f
+Merge: c85b06b a8a327e
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sun Aug 6 10:44:23 2023 +0200
+
+    Merge pull request #133 from caramelli/master
+    
+    STM32F429I-DISCO NuttX defconfig: Use PL_MPEG video provider
+
+commit a8a327eb44cffa0f3111a05ba77e5b5f33aad534
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Aug 6 10:34:59 2023 +0200
+
+    STM32F429I-DISCO NuttX defconfig: Use PL_MPEG video provider
+
+commit c85b06b8fe6abc3853cf3b1be3cfa815fa09b542
+Merge: 27dbab6 6077fca
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Jul 17 12:53:57 2023 +0200
+
+    Merge pull request #131 from caramelli/master
+    
+    Add support for DirectFBGL module initialization when constructor attribute is not used (MCU targets)
+
+commit 6077fcae36d306b82f9060bd538a55b0ba38677a
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Jul 17 12:42:56 2023 +0200
+
+    Update ChangeLog
+
 commit 22d42e25bc73daf61a612a88ff4e9c6d969aad00
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Mon Jul 17 12:42:40 2023 +0200
