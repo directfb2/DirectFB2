@@ -1,3 +1,39 @@
+commit d2af10462639dfb0fb9293e358a7cc03b3b8bda9
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Dec 18 16:15:17 2023 +0100
+
+    meson: Add fluxcomp option
+
+commit 65c27072986793a646cb75cc2b0f5562227e1717
+Merge: 16b05d0 ed8084e
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Dec 11 22:45:02 2023 +0100
+
+    Merge pull request #139 from caramelli/master
+    
+    Python implementation of fluxcomp
+
+commit ed8084e7fdd6054be7065e760f2607811ea7d3de
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Dec 11 22:41:44 2023 +0100
+
+    Python implementation of fluxcomp
+
+commit 16b05d03e95032acca6aef3c527650ca94e048a5
+Merge: a7a176b 26daf3f
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Fri Oct 6 19:19:51 2023 +0200
+
+    Merge pull request #138 from caramelli/master
+    
+    IDirectFBGL: Add SwapBuffers()
+
+commit 26daf3fc9ef84e0bbf88c09df2c075e2ac57b504
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Fri Oct 6 18:48:55 2023 +0200
+
+    Update ChangeLog
+
 commit 5c5202a50e2f2ddb7d56738b290cfce5f70c42d9
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Fri Oct 6 18:48:50 2023 +0200
