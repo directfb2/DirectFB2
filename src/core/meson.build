@@ -31,7 +31,7 @@ flux_files = [
   'CoreWindowStack'
 ]
 
-fluxcomp = find_program('fluxcomp')
+fluxcomp = find_program(get_option('fluxcomp'))
 
 flux_sources = []
 foreach flux_file : flux_files
