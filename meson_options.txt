@@ -35,6 +35,11 @@ option('fbdev',
        type: 'boolean',
        description: 'Linux FBDev support')
 
+option('fluxcomp',
+       type : 'string',
+       value: 'fluxcomp.py',
+       description : 'The fluxcomp program to use')
+
 option('linux_input',
        type: 'boolean',
        description: 'Linux Input support')
