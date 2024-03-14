@@ -65,10 +65,14 @@ devinput_event_thread( DirectThread *thread,
 
      /* Query the touchscreen X/Y offsets and thresholds. */
      if (data->id == DIDID_MOUSE) {
+#if defined(TSIOC_GETOFFSETX) && defined(TSIOC_GETOFFSETY)
           ioctl( data->fd, TSIOC_GETOFFSETX, &offsetx );
           ioctl( data->fd, TSIOC_GETOFFSETY, &offsety );
+#endif
+#if defined(TSIOC_GETTHRESHX) && defined(TSIOC_GETTHRESHY)
           ioctl( data->fd, TSIOC_GETTHRESHX, &threshx );
           ioctl( data->fd, TSIOC_GETTHRESHY, &threshy );
+#endif
      }
 
      while (1) {

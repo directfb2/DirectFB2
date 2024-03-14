@@ -19,10 +19,10 @@ dummy_sources = [
 ]
 
 library('directfb_dummy',
-         dummy_sources,
-         dependencies: directfb_dep,
-         install: true,
-         install_dir: join_paths(moduledir, 'systems'))
+        dummy_sources,
+        dependencies: directfb_dep,
+        install: true,
+        install_dir: join_paths(moduledir, 'systems'))
 
 pkgconfig.generate(filebase: 'directfb-system-dummy',
                    variables: 'moduledir=' + moduledir,
