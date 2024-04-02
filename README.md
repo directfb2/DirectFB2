@@ -5,6 +5,8 @@ https://directfb2.github.io
 
 ________________________________________________________________
 
+**2024-04-02** Various font/image/music/video providers available in [DirectFB2-media](https://github.com/directfb2/DirectFB2-media) (can be tested via [DirectFB-media-samples](https://github.com/directfb2/DirectFB-media-samples))
+
 **2023-10-06** OpenGL ES and EGL for DirectFB platform with [SwiftShaderGL-DirectFB](https://github.com/directfb2/SwiftShaderGL-DirectFB) (DirectFBGL accessible via [DirectFBGL-EGL](https://github.com/directfb2/DirectFBGL-EGL))
 
 **2023-07-17** OpenGL software rendering with [DirectFBGL-PortableGL](https://github.com/directfb2/DirectFBGL-PortableGL)
