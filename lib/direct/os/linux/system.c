@@ -25,6 +25,10 @@
 #include <direct/os/system.h>
 #include <direct/os/thread.h>
 
+#if !defined(__NR_futex) && defined(__NR_futex_time64)
+#define __NR_futex __NR_futex_time64
+#endif
+
 D_DEBUG_DOMAIN( Direct_Futex, "Direct/Futex", "Direct Futex" );
 D_DEBUG_DOMAIN( Direct_Trap,  "Direct/Trap",  "Direct Trap" );
 
