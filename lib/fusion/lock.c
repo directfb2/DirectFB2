@@ -784,7 +784,7 @@ fusion_skirmish_wait( FusionSkirmish *skirmish,
 
      /* Install a (fake) signal handler for SIGRTMAX. */
      act.sa_handler = restart_handler;
-     act.sa_flags   = SA_RESETHAND | SA_RESTART | SA_NOMASK;
+     act.sa_flags   = SA_RESETHAND | SA_RESTART | SA_NODEFER;
 
      sigaction( SIGRTMAX, &act, &oldact );
 
