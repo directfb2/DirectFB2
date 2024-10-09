@@ -269,17 +269,20 @@ static DFBResult
 system_initialize( CoreDFB  *core,
                    void    **ret_data )
 {
-     DFBResult              ret;
-     int                    i, j, p;
-     uint32_t               fourcc;
-     char                   name[5];
-     DRMKMSData            *drmkms;
-     DRMKMSDataShared      *shared;
-     FusionSHMPoolShared   *pool;
-     const char            *value;
-     drmModePlane          *plane;
-     VideoMode             *prev_mode       = NULL;
-     DFBSurfacePixelFormat  fallback_format = DSPF_UNKNOWN;
+     DFBResult                ret;
+     int                      i, j, p;
+     uint32_t                 fourcc;
+     uint64_t                 plane_type = 0;
+     char                     name[5];
+     DRMKMSData              *drmkms;
+     DRMKMSDataShared        *shared;
+     FusionSHMPoolShared     *pool;
+     const char              *value;
+     drmModePlane            *plane;
+     drmModeObjectProperties *props;
+     drmModePropertyRes      *prop;
+     VideoMode               *prev_mode       = NULL;
+     DFBSurfacePixelFormat    fallback_format = DSPF_UNKNOWN;
 
      D_DEBUG_AT( DRMKMS_System, "%s()\n", __FUNCTION__ );
 
@@ -359,17 +362,32 @@ system_initialize( CoreDFB  *core,
 
      for (p = 0; p < drmkms->plane_resources->count_planes; p++) {
           plane = drmModeGetPlane( drmkms->fd, drmkms->plane_resources->planes[p] );
+
+          props = drmModeObjectGetProperties(  drmkms->fd, plane->plane_id, DRM_MODE_OBJECT_PLANE );
+          for (uint32_t j = 0; j < props->count_props; j++) {
+              prop = drmModeGetProperty( drmkms->fd, props->props[j] );
+              if (!prop) continue;
+
+              if (!strcmp( prop->name, "type" )) {
+                  plane_type = props->prop_values[j];
+                  break;
+              }
+
+              drmModeFreeProperty(prop);
+          }
+
           for (i = 0; i < plane->count_formats; i++) {
                fourcc = plane->formats[i];
                snprintf( name, sizeof(name), "%c%c%c%c", fourcc, fourcc >> 8, fourcc >> 16, fourcc >> 24 );
 
-               if (!strcmp( name, "AR24" )) {
+               if (!strcmp( name, "AR24" ) && plane_type == DRM_PLANE_TYPE_PRIMARY) {
                     shared->primary_format = DSPF_ARGB;
                     break;
                }
                else if (fallback_format == DSPF_UNKNOWN) {
                     for (j = 1; j < D_ARRAY_SIZE(dfb_fourcc_names); j++) {
-                         if (!strcmp( name, dfb_fourcc_names[j].name )) {
+                         if (!strcmp( name, dfb_fourcc_names[j].name ) &&
+                             plane_type == DRM_PLANE_TYPE_PRIMARY) {
                               fallback_format = dfb_fourcc_names[j].format;
                               break;
                          }
