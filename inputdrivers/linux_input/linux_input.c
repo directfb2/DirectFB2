@@ -65,7 +65,8 @@ typedef struct {
      int                      quitpipe[2];
 } LinuxInputData;
 
-#define MAX_LINUX_INPUT_DEVICES 16
+/* The maximum amount of evdev devices with static minors, from 13:64 to 13:95 */
+#define MAX_LINUX_INPUT_DEVICES 32
 
 /* Input devices are stored in the device_names and device_nums arrays: entries with the same index in device_names and
 device_nums are the same in two different forms (one is /dev/input/eventX, the other is X. */
