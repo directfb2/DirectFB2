@@ -20,13 +20,16 @@ dummy_sources = [
 
 library('directfb_dummy',
         dummy_sources,
+        build_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: directfb_dep,
         install: true,
-        install_dir: join_paths(moduledir, 'systems'))
+        install_dir: moduledir / 'systems')
 
-pkgconfig.generate(filebase: 'directfb-system-dummy',
-                   variables: 'moduledir=' + moduledir,
-                   name: 'DirectFB-system-dummy',
-                   description: 'Dummy system module',
-                   libraries_private: ['-L${moduledir}/systems',
-                                       '-Wl,--whole-archive -ldirectfb_dummy -Wl,--no-whole-archive'])
+if get_option('default_library') == 'static'
+  pkgconfig.generate(filebase: 'directfb-system-dummy',
+                     variables: 'moduledir=' + moduledir,
+                     name: 'DirectFB-system-dummy',
+                     description: 'Dummy system module',
+                     libraries_private: ['-L${moduledir}/systems',
+                                         '-Wl,--whole-archive -ldirectfb_dummy -Wl,--no-whole-archive'])
+endif

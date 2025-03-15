@@ -32,14 +32,17 @@ drmkms_sources = [
 
 library('directfb_drmkms',
         drmkms_sources,
+        build_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: [directfb_dep, drmkms_dep],
         install: true,
-        install_dir: join_paths(moduledir, 'systems'))
+        install_dir: moduledir / 'systems')
 
-pkgconfig.generate(filebase: 'directfb-system-drmkms',
-                   variables: 'moduledir=' + moduledir,
-                   name: 'DirectFB-system-drmkms',
-                   description: 'DRM/KMS system module',
-                   requires_private: 'libdrm',
-                   libraries_private: ['-L${moduledir}/systems',
-                                       '-Wl,--whole-archive -ldirectfb_drmkms -Wl,--no-whole-archive'])
+if get_option('default_library') == 'static'
+  pkgconfig.generate(filebase: 'directfb-system-drmkms',
+                     variables: 'moduledir=' + moduledir,
+                     name: 'DirectFB-system-drmkms',
+                     description: 'DRM/KMS system module',
+                     requires_private: 'libdrm',
+                     libraries_private: ['-L${moduledir}/systems',
+                                         '-Wl,--whole-archive -ldirectfb_drmkms -Wl,--no-whole-archive'])
+endif

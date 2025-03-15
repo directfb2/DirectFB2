@@ -31,13 +31,16 @@ fbdev_sources = [
 
 library('directfb_fbdev',
         fbdev_sources,
+        build_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: directfb_dep,
         install: true,
-        install_dir: join_paths(moduledir, 'systems'))
+        install_dir: moduledir / 'systems')
 
-pkgconfig.generate(filebase: 'directfb-system-fbdev',
-                   variables: 'moduledir=' + moduledir,
-                   name: 'DirectFB-system-fbdev',
-                   description: 'FBDev system module',
-                   libraries_private: ['-L${moduledir}/systems',
-                                       '-Wl,--whole-archive -ldirectfb_fbdev -Wl,--no-whole-archive'])
+if get_option('default_library') == 'static'
+  pkgconfig.generate(filebase: 'directfb-system-fbdev',
+                     variables: 'moduledir=' + moduledir,
+                     name: 'DirectFB-system-fbdev',
+                     description: 'FBDev system module',
+                     libraries_private: ['-L${moduledir}/systems',
+                                         '-Wl,--whole-archive -ldirectfb_fbdev -Wl,--no-whole-archive'])
+endif

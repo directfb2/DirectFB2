@@ -32,6 +32,10 @@ else
   libsuffix = '.a'
 endif
 
+if get_option('default_library') == 'shared' and not get_option('constructors')
+  error('''Choose 'static' library type to disable use of constructor attribute.''')
+endif
+
 moduledirname = get_option('moduledirname')
 if moduledirname == ''
   if get_option('debug')
@@ -44,7 +48,7 @@ if moduledirname == ''
     endif
   endif
 endif
-moduledir = join_paths(get_option('prefix'), get_option('libdir'), moduledirname)
+moduledir = get_option('prefix') / get_option('libdir') / moduledirname
 
 cc = meson.get_compiler('c')
 
@@ -115,18 +119,20 @@ subdir('interfaces/IDirectFBWindows')
 
 subdir('wm/default')
 
-# generate .pc files
+# generate the .pc files of the static modules
 
-dfb_update_pkgconfig_conf = configuration_data()
+if get_option('default_library') == 'static'
+  dfb_update_pkgconfig_conf = configuration_data()
 
-dfb_update_pkgconfig_conf.set('PKGCONFIGDIR', join_paths(get_option('prefix'), get_option('libdir'), 'pkgconfig'))
+  dfb_update_pkgconfig_conf.set('PKGCONFIGDIR', get_option('prefix') / get_option('libdir') / 'pkgconfig')
 
-dfb_update_pkgconfig_conf.set('VERSION', directfb_version)
+  dfb_update_pkgconfig_conf.set('VERSION', directfb_version)
 
-dfb_update_pkgconfig = configure_file(configuration: dfb_update_pkgconfig_conf,
-                                      input: 'dfb-update-pkgconfig.in',
-                                      output: 'dfb-update-pkgconfig',
-                                      install: true,
-                                      install_dir: get_option('bindir'))
+  dfb_update_pkgconfig = configure_file(configuration: dfb_update_pkgconfig_conf,
+                                        input: 'dfb-update-pkgconfig.in',
+                                        output: 'dfb-update-pkgconfig',
+                                        install: true,
+                                        install_dir: get_option('bindir'))
 
-meson.add_install_script(dfb_update_pkgconfig)
+  meson.add_install_script(dfb_update_pkgconfig)
+endif

@@ -16,13 +16,16 @@
 
 library('idirectfbwindows_default',
         'idirectfbwindows_default.c',
+        build_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: directfb_dep,
         install: true,
-        install_dir: join_paths(moduledir, 'interfaces/IDirectFBWindows'))
+        install_dir: moduledir / 'interfaces/IDirectFBWindows')
 
-pkgconfig.generate(filebase: 'directfb-interface-windows_default',
-                   variables: 'moduledir=' + moduledir,
-                   name: 'DirectFB-interface-windows_default',
-                   description: 'Default windows watcher',
-                   libraries_private: ['-L${moduledir}/interfaces/IDirectFBWindows',
-                                       '-Wl,--whole-archive -lidirectfbwindows_default -Wl,--no-whole-archive'])
+if get_option('default_library') == 'static'
+  pkgconfig.generate(filebase: 'directfb-interface-windows_default',
+                     variables: 'moduledir=' + moduledir,
+                     name: 'DirectFB-interface-windows_default',
+                     description: 'Default windows watcher',
+                     libraries_private: ['-L${moduledir}/interfaces/IDirectFBWindows',
+                                         '-Wl,--whole-archive -lidirectfbwindows_default -Wl,--no-whole-archive'])
+endif

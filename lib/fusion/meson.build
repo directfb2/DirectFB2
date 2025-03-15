@@ -77,23 +77,29 @@ build_conf.set10('FUSION_BUILD_MULTI', get_option('multi'))
 configure_file(configuration: build_conf,
                output: 'build.h',
                install: true,
-               install_dir: join_paths(get_option('includedir'), 'directfb/fusion'))
+               install_dir: get_option('includedir') / 'directfb/fusion')
+
+fusion_private = []
+if get_option('default_library') == 'static'
+  fusion_private = 'direct'
+endif
 
 libfusion_private = []
-if get_option('constructors')
+if get_option('default_library') == 'static' and get_option('constructors')
   libfusion_private = '-Wl,-u,__Fusion_init_all'
 endif
 
 libfusion = library('fusion-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
                     fusion_sources, shm_sources,
                     include_directories: [config_inc, lib_inc],
+                    build_rpath: get_option('prefix') / get_option('libdir'),
                     dependencies: direct_dep,
                     version: '0.@0@.0'.format(directfb_micro_version),
                     install: true)
 
 install_symlink('libfusion' + libsuffix,
                 pointing_to: 'libfusion-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
-                install_dir: join_paths(get_option('prefix'), get_option('libdir')))
+                install_dir: get_option('prefix') / get_option('libdir'))
 
 install_headers(fusion_headers, subdir: 'directfb/fusion')
 install_headers(shm_headers,    subdir: 'directfb/fusion/shm')
@@ -101,7 +107,7 @@ install_headers(shm_headers,    subdir: 'directfb/fusion/shm')
 pkgconfig.generate(filebase: 'fusion',
                    name: 'Fusion',
                    description: 'DirectFB IPC library',
-                   requires_private: 'direct',
+                   requires_private: fusion_private,
                    libraries: '-L${libdir} -lfusion',
                    libraries_private: libfusion_private,
                    subdirs: 'directfb')

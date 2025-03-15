@@ -20,6 +20,7 @@
 #include <core/gfxcard.h>
 #include <core/surface_allocation.h>
 #include <core/surface_buffer.h>
+#include <directfb_util.h>
 #include <fusion/shmalloc.h>
 
 #include "fbdev_surfacemanager.h"
