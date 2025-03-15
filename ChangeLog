@@ -1,3 +1,139 @@
+commit d83df032ec719b8d22d893e227e7d39f74e7b6f4
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Mar 15 12:04:19 2025 +0100
+
+    Don't generate .pc files for static modules when building for shared type libraries
+
+commit 77c71dcf072a5c7d1944073793c3030c14af049e
+Merge: 4d6b7dd db0c8b9
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Mar 8 23:35:58 2025 +0100
+
+    Merge pull request #155 from stefan11111/master
+    
+    increase maximum number of input evdev devices
+
+commit db0c8b938902b6a69772782c347b847c150a0ebc
+Author: stefan11111 <stefan11111@shitposting.expert>
+Date:   Sat Mar 8 20:30:54 2025 +0200
+
+    increase maximum number of input evdev devices
+
+commit 4d6b7ddd8477b4b52aa78ec82a3add28ade0c965
+Merge: 51af532 7a9e58a
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Wed Oct 9 22:05:07 2024 +0200
+
+    Merge pull request #154 from shengwen-tw/master
+    
+    Check DRM plane type before attaching it as main plane
+
+commit 7a9e58ac9d2c1f610c8cafe7d3c0c6a63b33c130
+Author: Shengwen Cheng <shengwen1997.tw@gmail.com>
+Date:   Wed Oct 9 00:18:36 2024 +0800
+
+    Check DRM plane type before attaching it as main plane
+    
+    Linux DRM allows using multiplane overlay (MPO) model for power-saving. The
+    plane types consist of PRIMARY, CURSOR, and OVERLAY, with only the PRIMARY
+    plane supporting operations like modesetting, flipping, etc.
+    
+    This commit introduces type checking for plane attachment, ensuring that
+    DirectFB2 does not misuse other plane types as the main plane.
+    
+    Reference:
+    [1] https://dri.freedesktop.org/docs/drm/gpu/amdgpu/display/mpo-overview.html
+
+commit 51af532e5c1d6c0c742092d3bc3f93770475e626
+Merge: 2952d1d 97d74c9
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Sep 23 22:55:51 2024 +0200
+
+    Merge pull request #152 from kootrit/patch-1
+    
+    Change SA_NOMASK to SA_NODEFER in lib/fusion/lock.c
+
+commit 97d74c98b9e133027a273fbea84bc5e64167bcd0
+Author: kootrit <humble.tyler@disroot.org>
+Date:   Sun Sep 22 13:15:04 2024 +0000
+
+    Change SA_NOMASK to SA_NODEFER in lib/fusion/lock.c
+    
+    This fixes compiling on musl.
+    SA_NOMASK is deprecated.
+
+commit 2952d1d16b546be09e1cbb5da5e0c718d8f5ee32
+Merge: 9ea1879 699ec04
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Jun 27 16:57:48 2024 +0200
+
+    Merge pull request #150 from shengwen-tw/master
+    
+    Alias __NR_futex with __NR_futex_time64 for RV32 platform
+
+commit 699ec0471dec73639e1d18eb4426590440c28642
+Author: Shengwen Cheng <shengwen1997.tw@gmail.com>
+Date:   Thu Jun 27 21:20:10 2024 +0800
+
+    Alias __NR_futex with __NR_futex_time64 for RV32 platform
+    
+    Since version 5.1, Linux has dropped several RISC-V 32-bit syscalls by
+    removing __ARCH_WANT_TIME32_SYSCALLS macro, causing the compilation of
+    DirectFB2 to fail on RV32 platform with error of no definition of
+    __NR_futex is declared.
+    
+    To resolve the issue, this commit aliases __NR_futex with __NR_futex_time64
+    as a fallback solution.
+    
+    Reference:
+    [1] https://sourceware.org/legacy-ml/libc-alpha/2019-06/msg00557.html
+    [2] https://git.openembedded.org/openembedded-core/tree/meta/recipes-support/boost/boost/0001-fiber-libs-Define-SYS_futex-if-it-does-not-exist.patch?h=honister
+
+commit 9ea1879446e1ccdb9a25e91e3b03d1980a0ec53e
+Merge: 38ad79a ed0ade2
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Tue Apr 2 22:58:16 2024 +0200
+
+    Merge pull request #146 from caramelli/master
+    
+    Disable shadow warnings
+
+commit ed0ade2ef88686b4b50c46310de2aa2233ebeaeb
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Tue Apr 2 22:51:52 2024 +0200
+
+    Disable shadow warnings
+
+commit 38ad79a4d63955fa7c3a8d307fc9d0c63de36a9b
+Merge: d1ed180 cf13a79
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Thu Mar 14 16:10:52 2024 +0100
+
+    Merge pull request #145 from caramelli/master
+    
+    Input/NuttX: Fix build on sim board
+
+commit cf13a798e5258190109a4808bdaf93483ff2599e
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Thu Mar 14 16:07:20 2024 +0100
+
+    Input/NuttX: Fix build on sim board
+
+commit d1ed1801f0b8485f4ebc246fac2f280e47e11b44
+Merge: 65c2707 ef1f5d5
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Mon Dec 18 22:24:36 2023 +0100
+
+    Merge pull request #140 from caramelli/master
+    
+    meson: Add fluxcomp option
+
+commit ef1f5d505491c650b9d59b73f7e967a80c49e6b5
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Mon Dec 18 16:16:34 2023 +0100
+
+    Update ChangeLog
+
 commit d2af10462639dfb0fb9293e358a7cc03b3b8bda9
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Mon Dec 18 16:15:17 2023 +0100
