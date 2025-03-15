@@ -16,13 +16,16 @@
 
 library('idirectfbfont_dgiff',
         'idirectfbfont_dgiff.c',
+        build_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: directfb_dep,
         install: true,
-        install_dir: join_paths(moduledir, 'interfaces/IDirectFBFont'))
+        install_dir: moduledir / 'interfaces/IDirectFBFont')
 
-pkgconfig.generate(filebase: 'directfb-interface-font_dgiff',
-                   variables: 'moduledir=' + moduledir,
-                   name: 'DirectFB-interface-font_dgiff',
-                   description: 'DGIFF font provider',
-                   libraries_private: ['-L${moduledir}/interfaces/IDirectFBFont',
-                                       '-Wl,--whole-archive -lidirectfbfont_dgiff -Wl,--no-whole-archive'])
+if get_option('default_library') == 'static'
+  pkgconfig.generate(filebase: 'directfb-interface-font_dgiff',
+                     variables: 'moduledir=' + moduledir,
+                     name: 'DirectFB-interface-font_dgiff',
+                     description: 'DGIFF font provider',
+                     libraries_private: ['-L${moduledir}/interfaces/IDirectFBFont',
+                                         '-Wl,--whole-archive -lidirectfbfont_dgiff -Wl,--no-whole-archive'])
+endif

@@ -1,4 +1,4 @@
-(c) Copyright 2017-2023  DirectFB2 Open Source Project (fork of DirectFB)
+(c) Copyright 2017-2025  DirectFB2 Open Source Project (fork of DirectFB)
 (c) Copyright 2012-2016  DirectFB integrated media GmbH
 (c) Copyright 2001-2013  The world wide DirectFB Open Source Community (directfb.org)
 (c) Copyright 2000-2004  Convergence (integrated media) GmbH
@@ -21,6 +21,7 @@ Sven Neumann
 Ville Syrjala
 Claudio Ciccani
 Michael Natterer
+Holger Waechtler
 Johannes Stezenbach
 Jiri Svoboda
 Hallvar Helleseth
@@ -28,6 +29,7 @@ Sebastian Klemke
 Andreas Kotes
 Antonino Daplas
 Andreas Oberritter
+Martin Mueller
 Sebastian Ley
 Maurizio Monge
 Andreas Robinson
@@ -80,4 +82,6 @@ Chris Tomlinson
 Takanari Hayama
 Kui Zheng
 Daniel Palmer
+Shengwen Cheng
+Stephen Bird
 Nicolas Caramelli

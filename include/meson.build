@@ -34,7 +34,7 @@ directfb_version_conf.set('DIRECTFB_MICRO_VERSION', directfb_micro_version)
 configure_file(configuration: directfb_version_conf,
                output: 'directfb_version.h',
                install: true,
-               install_dir: join_paths(get_option('includedir'), 'directfb'))
+               install_dir: get_option('includedir') / 'directfb')
 
 directfb_build_conf = configuration_data()
 
@@ -43,7 +43,7 @@ directfb_build_conf.set('FLUXED_ARGS_BYTES', get_option('args-size'))
 configure_file(configuration: directfb_build_conf,
                output: 'directfb_build.h',
                install: true,
-               install_dir: join_paths(get_option('includedir'), 'directfb'))
+               install_dir: get_option('includedir') / 'directfb')
 
 directfb_keynames = custom_target('directfb_keynames',
                                   command: ['gen_directfb_keynames.sh', '@INPUT@'],
@@ -51,7 +51,7 @@ directfb_keynames = custom_target('directfb_keynames',
                                   output: 'directfb_keynames.h',
                                   capture: true,
                                   install: true,
-                                  install_dir: join_paths(get_option('includedir'), 'directfb'))
+                                  install_dir: get_option('includedir') / 'directfb')
 
 directfb_strings = custom_target('directfb_strings',
                                  command: ['gen_directfb_strings.sh', '@INPUT@'],
@@ -59,6 +59,6 @@ directfb_strings = custom_target('directfb_strings',
                                  output: 'directfb_strings.h',
                                  capture: true,
                                  install: true,
-                                 install_dir: join_paths(get_option('includedir'), 'directfb'))
+                                 install_dir: get_option('includedir') / 'directfb')
 
 install_headers(directfb_headers, subdir: 'directfb')

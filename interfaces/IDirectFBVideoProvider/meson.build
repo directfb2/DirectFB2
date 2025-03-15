@@ -16,13 +16,16 @@
 
 library('idirectfbvideoprovider_dfvff',
         'idirectfbvideoprovider_dfvff.c',
+        build_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: directfb_dep,
         install: true,
-        install_dir: join_paths(moduledir, 'interfaces/IDirectFBVideoProvider'))
+        install_dir: moduledir / 'interfaces/IDirectFBVideoProvider')
 
-pkgconfig.generate(filebase: 'directfb-interface-videoprovider_dfvff',
-                   variables: 'moduledir=' + moduledir,
-                   name: 'DirectFB-interface-videoprovider_dfvff',
-                   description: 'DFVFF video provider',
-                   libraries_private: ['-L${moduledir}/interfaces/IDirectFBVideoProvider',
-                                       '-Wl,--whole-archive -lidirectfbvideoprovider_dfvff -Wl,--no-whole-archive'])
+if get_option('default_library') == 'static'
+  pkgconfig.generate(filebase: 'directfb-interface-videoprovider_dfvff',
+                     variables: 'moduledir=' + moduledir,
+                     name: 'DirectFB-interface-videoprovider_dfvff',
+                     description: 'DFVFF video provider',
+                     libraries_private: ['-L${moduledir}/interfaces/IDirectFBVideoProvider',
+                                         '-Wl,--whole-archive -lidirectfbvideoprovider_dfvff -Wl,--no-whole-archive'])
+endif

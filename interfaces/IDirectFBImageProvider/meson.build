@@ -16,13 +16,16 @@
 
 library('idirectfbimageprovider_dfiff',
         'idirectfbimageprovider_dfiff.c',
+        build_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: directfb_dep,
         install: true,
-        install_dir: join_paths(moduledir, 'interfaces/IDirectFBImageProvider'))
+        install_dir: moduledir / 'interfaces/IDirectFBImageProvider')
 
-pkgconfig.generate(filebase: 'directfb-interface-imageprovider_dfiff',
-                   variables: 'moduledir=' + moduledir,
-                   name: 'DirectFB-interface-imageprovider_dfiff',
-                   description: 'DFIFF image provider',
-                   libraries_private: ['-L${moduledir}/interfaces/IDirectFBImageProvider',
-                                       '-Wl,--whole-archive -lidirectfbimageprovider_dfiff -Wl,--no-whole-archive'])
+if get_option('default_library') == 'static'
+  pkgconfig.generate(filebase: 'directfb-interface-imageprovider_dfiff',
+                     variables: 'moduledir=' + moduledir,
+                     name: 'DirectFB-interface-imageprovider_dfiff',
+                     description: 'DFIFF image provider',
+                     libraries_private: ['-L${moduledir}/interfaces/IDirectFBImageProvider',
+                                         '-Wl,--whole-archive -lidirectfbimageprovider_dfiff -Wl,--no-whole-archive'])
+endif

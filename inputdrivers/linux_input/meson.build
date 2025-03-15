@@ -21,13 +21,16 @@ endif
 
 library('directfb_linux_input',
         'linux_input.c',
+        build_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: directfb_dep,
         install: true,
-        install_dir: join_paths(moduledir, 'inputdrivers'))
+        install_dir: moduledir / 'inputdrivers')
 
-pkgconfig.generate(filebase: 'directfb-inputdriver-linux_input',
-                   variables: 'moduledir=' + moduledir,
-                   name: 'DirectFB-inputdriver-linux_input',
-                   description: 'Linux input driver',
-                   libraries_private: ['-L${moduledir}/inputdrivers',
-                                       '-Wl,--whole-archive -ldirectfb_linux_input -Wl,--no-whole-archive'])
+if get_option('default_library') == 'static'
+  pkgconfig.generate(filebase: 'directfb-inputdriver-linux_input',
+                     variables: 'moduledir=' + moduledir,
+                     name: 'DirectFB-inputdriver-linux_input',
+                     description: 'Linux input driver',
+                     libraries_private: ['-L${moduledir}/inputdrivers',
+                                         '-Wl,--whole-archive -ldirectfb_linux_input -Wl,--no-whole-archive'])
+endif

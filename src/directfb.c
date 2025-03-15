@@ -152,7 +152,7 @@ DirectFBCreate( IDirectFB **ret_interface )
           direct_log_printf( NULL,
                              "\n"
                              "   ~~~~~~~~~~~~~~~~~~~~~~~~~~| DirectFB %d.%d.%d %s |~~~~~~~~~~~~~~~~~~~~~~~~~~\n"
-                             "        (c) 2017-2023  DirectFB2 Open Source Project (fork of DirectFB)\n"
+                             "        (c) 2017-2025  DirectFB2 Open Source Project (fork of DirectFB)\n"
                              "        (c) 2012-2016  DirectFB integrated media GmbH\n"
                              "        (c) 2001-2016  The world wide DirectFB Open Source Community\n"
                              "        (c) 2000-2004  Convergence (integrated media) GmbH\n"

@@ -172,10 +172,15 @@ build_conf.set10('DFB_SMOOTH_SCALING', get_option('smooth-scaling'))
 configure_file(configuration: build_conf,
                output: 'build.h',
                install: true,
-               install_dir: join_paths(get_option('includedir'), 'directfb-internal'))
+               install_dir: get_option('includedir') / 'directfb-internal')
+
+directfb_private = []
+if get_option('default_library') == 'static'
+  directfb_private = 'directfb-gfxdriver directfb-inputdriver directfb-interface directfb-system directfb-wm'
+endif
 
 libdirectfb_private = []
-if get_option('constructors')
+if get_option('default_library') == 'static' and get_option('constructors')
   libdirectfb_private = '-Wl,-u,__DFB_init_all'
 endif
 
@@ -184,14 +189,15 @@ libdirectfb = library('directfb-@0@.@1@'.format(directfb_major_version, directfb
                       include_directories: [config_inc, directfb_inc],
                       c_args: ['-DBUILDTIME="'  + run_command('date', '-u', '+%Y-%m-%d %H:%M',
                                                               check: true).stdout().strip()                  + '"',
-                               '-DSYSCONFDIR="' + join_paths(get_option('prefix'), get_option('sysconfdir')) + '"'],
+                               '-DSYSCONFDIR="' + get_option('prefix') / get_option('sysconfdir') + '"'],
+                      build_rpath: get_option('prefix') / get_option('libdir'),
                       dependencies: [direct_dep, fusion_dep],
                       version: '0.@0@.0'.format(directfb_micro_version),
                       install: true)
 
 install_symlink('libdirectfb' + libsuffix,
                 pointing_to: 'libdirectfb-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
-                install_dir: join_paths(get_option('prefix'), get_option('libdir')))
+                install_dir: get_option('prefix') / get_option('libdir'))
 
 install_headers('idirectfb.h',   subdir: 'directfb-internal')
 install_headers(core_headers,    subdir: 'directfb-internal/core')
@@ -202,9 +208,9 @@ install_headers(misc_headers,    subdir: 'directfb-internal/misc')
 
 pkgconfig.generate(filebase: 'directfb',
                    name: 'DirectFB',
-                   description: 'Graphics and windowing library in Frame Buffer memory',
+                   description: 'Graphics and windowing library in Framebuffer memory',
                    requires: 'direct fusion',
-                   requires_private: 'directfb-gfxdriver directfb-inputdriver directfb-interface directfb-system directfb-wm',
+                   requires_private: directfb_private,
                    libraries: '-L${libdir} -ldirectfb',
                    libraries_private: libdirectfb_private,
                    subdirs: 'directfb')

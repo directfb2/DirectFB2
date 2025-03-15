@@ -86,10 +86,6 @@ os_headers = [
 
 build_conf = configuration_data()
 
-if get_option('default_library') == 'shared' and not get_option('constructors')
-  error('''Choose 'static' library type to disable use of constructor attribute.''')
-endif
-
 build_conf.set10('DIRECT_BUILD_CTORS', get_option('constructors'))
 
 build_conf.set10('DIRECT_BUILD_DEBUG', get_option('debug'))
@@ -145,7 +141,7 @@ build_conf.set10('DIRECT_BUILD_TRACE', get_option('trace'))
 configure_file(configuration: build_conf,
                output: 'build.h',
                install: true,
-               install_dir: join_paths(get_option('includedir'), 'directfb/direct'))
+               install_dir: get_option('includedir') / 'directfb/direct')
 
 libdl_dep = []
 moduledir_def = []
@@ -154,17 +150,23 @@ if get_option('default_library') == 'shared'
   moduledir_def = '-DMODULEDIR="@0@"'.format(moduledir)
 endif
 
-librt_dep = []
 libdirect_private = []
-if get_option('constructors')
+if get_option('default_library') == 'static' and get_option('constructors')
   libdirect_private = ['-Wl,-u,__D_init_all']
 endif
+
+librt_dep = []
 if not cc.has_function('clock_gettime')
   librt_dep = cc.find_library('rt')
-  libdirect_private += ['-lrt']
+  if get_option('default_library') == 'static'
+    libdirect_private += ['-lrt']
+  endif
 endif
+
 threads_dep = dependency('threads')
-libdirect_private += ['-pthread']
+if get_option('default_library') == 'static'
+  libdirect_private += ['-pthread']
+endif
 
 libdirect = library('direct-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
                     direct_sources, os_sources,
@@ -176,7 +178,7 @@ libdirect = library('direct-@0@.@1@'.format(directfb_major_version, directfb_min
 
 install_symlink('libdirect' + libsuffix,
                 pointing_to: 'libdirect-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,
-                install_dir: join_paths(get_option('prefix'), get_option('libdir')))
+                install_dir: get_option('prefix') / get_option('libdir'))
 
 install_headers(direct_headers,   subdir: 'directfb/direct')
 install_headers(os_headers,       subdir: 'directfb/direct/os')
