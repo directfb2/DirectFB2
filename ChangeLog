@@ -1,3 +1,24 @@
+commit 3b6508281d8c23270dde6002f1142a3906fb2da0
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sun Jun 22 19:43:02 2025 +0200
+
+    Use unsigned int for accelerator ID selecting graphics driver
+
+commit f321b9a48c657acea37b7f23fb2eb040cca49602
+Merge: 77c71dc 5c81466
+Author: DirectFB2 <80045286+directfb2@users.noreply.github.com>
+Date:   Sat Mar 15 12:12:51 2025 +0100
+
+    Merge pull request #156 from caramelli/master
+    
+    Don't generate .pc files for static modules when building for shared type libraries
+
+commit 5c81466de693cb180712a71b36e7ccbcc8ad43ef
+Author: Nicolas Caramelli <caramelli.devel@gmail.com>
+Date:   Sat Mar 15 12:05:34 2025 +0100
+
+    Update ChangeLog
+
 commit d83df032ec719b8d22d893e227e7d39f74e7b6f4
 Author: Nicolas Caramelli <caramelli.devel@gmail.com>
 Date:   Sat Mar 15 12:04:19 2025 +0100
