@@ -2317,7 +2317,8 @@ retry:
                     if (!strcmp( entry.name, "." ) || !strcmp( entry.name, ".." ))
                          continue;
 
-                    snprintf( addr.sun_path, sizeof(addr.sun_path), "/tmp/.fusion-%d/%s", world_index, entry.name );
+                    /* sizeof(addr.sun_path) = 108 */
+                    snprintf( addr.sun_path, sizeof(addr.sun_path), "/tmp/.fusion-%d/%.83s", world_index, entry.name );
 
                     D_DEBUG_AT( Fusion_Main, "  -> removing '%s'\n", addr.sun_path );
 
@@ -3381,6 +3382,8 @@ _fusion_event_dispatcher_process( FusionWorld                      *world,
      }
 
      FusionEventDispatcherBuffer *buf = direct_list_get_last( world->event_dispatcher_buffers );
+     if (!buf)
+          return DR_FAILURE;
 
      D_MAGIC_ASSERT( buf, FusionEventDispatcherBuffer );
 
@@ -3475,6 +3478,8 @@ _fusion_event_dispatcher_process_reactions( FusionWorld   *world,
      }
 
      FusionEventDispatcherBuffer *buf = direct_list_get_last( world->event_dispatcher_buffers );
+     if (!buf)
+          return DR_FAILURE;
 
      D_MAGIC_ASSERT( buf, FusionEventDispatcherBuffer );
 
@@ -3555,6 +3560,8 @@ _fusion_event_dispatcher_process_reactor_free( FusionWorld   *world,
      }
 
      FusionEventDispatcherBuffer *buf = direct_list_get_last( world->event_dispatcher_buffers );
+     if (!buf)
+          return DR_FAILURE;
 
      D_MAGIC_ASSERT( buf, FusionEventDispatcherBuffer );
 

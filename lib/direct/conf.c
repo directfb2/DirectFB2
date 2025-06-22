@@ -463,19 +463,17 @@ direct_config_set( const char *name,
           }
      } else
      if (strcmp( name, "fatal-level" ) == 0) {
-          if (strcasecmp( value, "none" ) == 0) {
-               direct_config->fatal = DCFL_NONE;
-          }
-          else
-               if (strcasecmp( value, "assert" ) == 0) {
-               direct_config->fatal = DCFL_ASSERT;
-          }
-          else
-               if (strcasecmp( value, "assume" ) == 0) {
-               direct_config->fatal = DCFL_ASSUME;
+          if (value) {
+               if (!strcasecmp( value, "none" ))   direct_config->fatal = DCFL_NONE;   else
+               if (!strcasecmp( value, "assert" )) direct_config->fatal = DCFL_ASSERT; else
+               if (!strcasecmp( value, "assume" )) direct_config->fatal = DCFL_ASSUME;
+               else {
+                    D_ERROR( "Direct/Config: '%s': Unknown level specified (use 'none', 'assert', 'assume')!\n", name );
+                    return DR_INVARG;
+               }
           }
           else {
-               D_ERROR( "Direct/Config: '%s': Unknown level specified (use 'none', 'assert', 'assume')!\n", name );
+               D_ERROR( "Direct/Config: '%s': No fatal level specified!\n", name );
                return DR_INVARG;
           }
      } else
@@ -562,18 +560,10 @@ direct_config_set( const char *name,
      } else
      if (strcmp( name, "thread-scheduler" ) == 0) {
           if (value) {
-               if (strcmp( value, "other" ) == 0) {
-                    direct_config->thread_scheduler = DCTS_OTHER;
-               }
-               else if (strcmp( value, "fifo" ) == 0) {
-                    direct_config->thread_scheduler = DCTS_FIFO;
-               }
-               else if (strcmp( value, "rr" ) == 0) {
-                    direct_config->thread_scheduler = DCTS_RR;
-               }
-               else if (strcmp( value, "sporadic" ) == 0) {
-                    direct_config->thread_scheduler = DCTS_SPORADIC;
-               }
+               if (!strcmp( value, "other" ))    direct_config->thread_scheduler = DCTS_OTHER;    else
+               if (!strcmp( value, "fifo" ))     direct_config->thread_scheduler = DCTS_FIFO;     else
+               if (!strcmp( value, "rr" ))       direct_config->thread_scheduler = DCTS_RR;       else
+               if (!strcmp( value, "sporadic" )) direct_config->thread_scheduler = DCTS_SPORADIC;
                else {
                     D_ERROR( "Direct/Config: '%s': Unknown scheduler '%s'!\n", name, value );
                     return DR_INVARG;

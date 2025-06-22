@@ -656,7 +656,7 @@ system_unmap_mmio( volatile void *addr,
 {
 }
 
-static int
+static unsigned int
 system_get_accelerator()
 {
      return direct_config_get_int_value( "accelerator" );
@@ -705,12 +705,10 @@ system_get_busid( int *ret_bus,
                   int *ret_dev,
                   int *ret_func )
 {
-     return;
 }
 
 static void
 system_get_deviceid( unsigned int *ret_vendor_id,
                      unsigned int *ret_device_id )
 {
-     return;
 }

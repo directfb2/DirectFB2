@@ -423,9 +423,16 @@ dfb_font_cache_deinit( CoreFontCache *cache )
           dfb_font_cache_row_destroy( row );
      }
 
+     #if defined(__GNUC__) && __GNUC__ >= 10
+     #pragma GCC diagnostic push
+     #pragma GCC diagnostic ignored "-Wanalyzer-null-dereference"
+     #endif
      cache->rows = NULL;
 
      D_MAGIC_CLEAR( cache );
+     #if defined(__GNUC__) && __GNUC__ >= 10
+     #pragma GCC diagnostic pop
+     #endif
 
      return DFB_OK;
 }

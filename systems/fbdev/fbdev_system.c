@@ -126,6 +126,7 @@ get_pci_info( FBDevDataShared *shared )
           if ((value = direct_config_get_value( "busid" ))) {
                if (sscanf( value, "%d:%d:%d", &pci_bus, &pci_dev, &pci_func ) != 3) {
                     D_ERROR( "FBDev/System: Couldn't parse busid!\n" );
+                    fclose( fp );
                     return;
                }
           }
@@ -720,11 +721,11 @@ system_unmap_mmio( volatile void *addr,
           D_PERROR( "FBDev/System: Could not unmap MMIO region at %p (length %d)!\n", addr, length );
 }
 
-static int
+static unsigned int
 system_get_accelerator()
 {
-     FBDevData *fbdev = dfb_system_data();
-     int        accel;
+     FBDevData    *fbdev = dfb_system_data();
+     unsigned int  accel;
 
      D_ASSERT( fbdev != NULL );
 

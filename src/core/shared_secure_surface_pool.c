@@ -116,7 +116,7 @@ sharedSecureInitPool( CoreDFB                    *core,
           }
 
           while (direct_dir_read( &dir, &entry ) == DR_OK) {
-               char buf[FUSION_SHM_TMPFS_PATH_NAME_LEN + 99];
+               char buf[FUSION_SHM_TMPFS_PATH_NAME_LEN + 20 + 256];
 
                if (!strcmp( entry.name, "." ) || !strcmp( entry.name, ".." ))
                     continue;

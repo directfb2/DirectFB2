@@ -272,7 +272,7 @@ system_unmap_mmio( volatile void  *addr,
 {
 }
 
-static int
+static unsigned int
 system_get_accelerator()
 {
      return direct_config_get_int_value( "accelerator" );

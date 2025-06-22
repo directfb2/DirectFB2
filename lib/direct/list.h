@@ -159,6 +159,10 @@ direct_list_count_elements_EXPENSIVE( DirectLink *list )
      return count;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 10
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wanalyzer-null-dereference"
+#endif
 static __inline__ bool
 direct_list_remove( DirectLink **list,
                     DirectLink  *link )
@@ -256,24 +260,41 @@ direct_list_get_last( DirectLink *list )
      return NULL;
 }
 
+static __inline__ void *
+direct_list_get_next( DirectLink *list )
+{
+     D_MAGIC_ASSERT_IF( list, DirectLink );
+
+     if (list) {
+          D_MAGIC_ASSERT( list->prev, DirectLink );
+
+          return list->next;
+     }
+
+     return NULL;
+}
+#if defined __GNUC__ && __GNUC__ >= 10
+#pragma GCC diagnostic pop
+#endif
+
 /**********************************************************************************************************************/
 
-#define direct_list_check_link(link)                                                                     \
-     ({                                                                                                  \
-          D_MAGIC_ASSERT_IF( link, DirectLink );                                                         \
-          link != NULL;                                                                                  \
+#define direct_list_check_link(link)                                                \
+     ({                                                                             \
+          D_MAGIC_ASSERT_IF( link, DirectLink );                                    \
+          link != NULL;                                                             \
      })
 
-#define direct_list_foreach(elem,list)                                                                   \
-     for (elem = (__typeof__(elem)) (list);                                                              \
-          direct_list_check_link( (DirectLink*) (elem) );                                                \
+#define direct_list_foreach(elem,list)                                              \
+     for (elem = (__typeof__(elem)) (list);                                         \
+          direct_list_check_link( (DirectLink*) (elem) );                           \
           elem = (__typeof__(elem)) (((DirectLink*) (elem))->next))
 
-#define direct_list_foreach_safe(elem,temp,list)                                                         \
-     for (elem = (__typeof__(elem)) (list),                                                              \
-          temp = ((__typeof__(temp)) (elem) ? (__typeof__(temp)) (((DirectLink*) (elem))->next) : NULL); \
-          direct_list_check_link( (DirectLink*) (elem) );                                                \
-          elem = (__typeof__(elem)) (temp),                                                              \
-          temp = ((__typeof__(temp)) (elem) ? (__typeof__(temp)) (((DirectLink*) (elem))->next) : NULL))
+#define direct_list_foreach_safe(elem,temp,list)                                    \
+     for (elem = (__typeof__(elem)) (list),                                         \
+          temp = ((__typeof__(temp)) direct_list_get_next( (DirectLink*) (elem) )); \
+          direct_list_check_link( (DirectLink*) (elem) );                           \
+          elem = (__typeof__(elem)) (temp),                                         \
+          temp = ((__typeof__(temp)) direct_list_get_next( (DirectLink*) (elem) )))
 
 #endif

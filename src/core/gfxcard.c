@@ -3935,7 +3935,7 @@ dfb_gfxcard_unmap_mmio( volatile void      *addr,
      dfb_system_unmap_mmio( addr, length );
 }
 
-int
+unsigned int
 dfb_gfxcard_get_accelerator()
 {
      return dfb_system_get_accelerator();

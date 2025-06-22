@@ -485,7 +485,7 @@ volatile void *dfb_gfxcard_map_mmio              ( unsigned int                 
 void           dfb_gfxcard_unmap_mmio            ( volatile void                 *addr,
                                                    int                            length );
 
-int            dfb_gfxcard_get_accelerator       ( void );
+unsigned int   dfb_gfxcard_get_accelerator       ( void );
 
 void           dfb_gfxcard_calc_buffer_size      ( CoreSurfaceBuffer             *buffer,
                                                    int                           *ret_pitch,

@@ -314,7 +314,7 @@ dfb_system_unmap_mmio( volatile void *addr,
      system_funcs->UnmapMMIO( addr, length );
 }
 
-int
+unsigned int
 dfb_system_get_accelerator()
 {
      D_ASSERT( system_funcs != NULL );

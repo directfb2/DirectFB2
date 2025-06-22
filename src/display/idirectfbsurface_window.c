@@ -218,7 +218,7 @@ IDirectFBSurface_Window_Flipping( DirectThread *thread,
      while (data->base.surface && data->window->surface) {
           direct_thread_testcancel( thread );
 
-          thiz->Flip( thiz, NULL, 0 );
+          thiz->Flip( thiz, NULL, DSFLIP_NONE );
 
           direct_thread_sleep( 40000 );
      }

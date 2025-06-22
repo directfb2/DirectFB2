@@ -225,6 +225,10 @@ direct_thread_self()
      return thread;
 }
 
+#if defined(__GNUC__) && __GNUC__ >= 10
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wanalyzer-malloc-leak"
+#endif
 __attribute__((no_instrument_function))
 const char *
 direct_thread_self_name()
@@ -272,6 +276,9 @@ direct_thread_set_name( const char *name )
      /* Keep the copy. */
      thread->name = copy;
 }
+#if defined(__GNUC__) && __GNUC__ >= 10
+#pragma GCC diagnostic pop
+#endif
 
 void
 direct_thread_cancel( DirectThread *thread )
