@@ -114,7 +114,7 @@ typedef struct {
      void           (*UnmapMMIO)          ( volatile void    *addr,
                                             int               length );
 
-     int            (*GetAccelerator)     ( void );
+     unsigned int   (*GetAccelerator)     ( void );
 
      unsigned long  (*VideoMemoryPhysical)( unsigned int      offset );
 
@@ -153,7 +153,7 @@ volatile void          *dfb_system_map_mmio             ( unsigned int     offse
 void                    dfb_system_unmap_mmio           ( volatile void   *addr,
                                                           int              length );
 
-int                     dfb_system_get_accelerator      ( void );
+unsigned int            dfb_system_get_accelerator      ( void );
 
 unsigned long           dfb_system_video_memory_physical( unsigned int     offset );
 

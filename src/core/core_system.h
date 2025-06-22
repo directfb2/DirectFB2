@@ -54,7 +54,7 @@ static volatile void *system_map_mmio             ( unsigned int      offset,
 static void           system_unmap_mmio           ( volatile void    *addr,
                                                     int               length );
 
-static int            system_get_accelerator      ( void );
+static unsigned int   system_get_accelerator      ( void );
 
 static unsigned long  system_video_memory_physical( unsigned int      offset );
 

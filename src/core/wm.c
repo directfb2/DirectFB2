@@ -1253,6 +1253,9 @@ apply_geometry( const DFBWindowGeometry *geometry,
      DFB_REGION_ASSERT( clip );
      D_ASSERT( ret_rect != NULL );
 
+     if (!geometry)
+          return;
+
      width  = clip->x2 - clip->x1 + 1;
      height = clip->y2 - clip->y1 + 1;
 

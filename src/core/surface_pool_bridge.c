@@ -407,7 +407,15 @@ dfb_surface_pool_bridges_transfer( CoreSurfaceBuffer     *buffer,
 
      D_DEBUG_AT( Core_SurfPoolBridge, "  -> start...\n" );
 
+     #if defined(__GNUC__) && __GNUC__ >= 10
+     #pragma GCC diagnostic push
+     #pragma GCC diagnostic ignored "-Wanalyzer-null-dereference"
+     #endif
      ret = funcs->StartTransfer( bridge, bridge->data, get_local(bridge), transfer, transfer->data );
+     #if defined __GNUC__ && __GNUC__ >= 10
+     #pragma GCC diagnostic pop
+     #endif
+
      if (ret) {
           D_DERROR( ret, "Core/SurfacePoolBridge: Starting transfer via '%s' failed!\n", bridge->desc.name );
      }

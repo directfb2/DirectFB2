@@ -1868,6 +1868,9 @@ get_keymap_entry( CoreInputDevice *device,
      map = &shared->keymap;
 
      /* Safety check. */
+     if (!device->driver_data)
+          return NULL;
+
      if (code < map->min_keycode || code > map->max_keycode)
           return NULL;
 

@@ -669,26 +669,26 @@ dfb_config_set( const char *name,
           DFBConfigLayer *conf = dfb_config->config_layer;
 
           if (value) {
-               if (strcmp( value, "auto" ) == 0) {
+               if (!strcmp( value, "auto" )) {
                     conf->config.flags      &= ~DLCONF_BUFFERMODE;
-               }
-               else if (strcmp( value, "triple" ) == 0) {
+               } else
+               if (!strcmp( value, "triple" )) {
                     conf->config.buffermode  = DLBM_TRIPLE;
                     conf->config.flags      |= DLCONF_BUFFERMODE;
-               }
-               else if (strcmp( value, "backvideo" ) == 0) {
+               } else
+               if (!strcmp( value, "backvideo" )) {
                     conf->config.buffermode  = DLBM_BACKVIDEO;
                     conf->config.flags      |= DLCONF_BUFFERMODE;
-               }
-               else if (strcmp( value, "backsystem" ) == 0) {
+               } else
+               if (!strcmp( value, "backsystem" )) {
                     conf->config.buffermode  = DLBM_BACKSYSTEM;
                     conf->config.flags      |= DLCONF_BUFFERMODE;
-               }
-               else if (strcmp( value, "frontonly" ) == 0) {
+               } else
+               if (!strcmp( value, "frontonly" )) {
                     conf->config.buffermode  = DLBM_FRONTONLY;
                     conf->config.flags      |= DLCONF_BUFFERMODE;
-               }
-               else if (strcmp( value, "windows" ) == 0) {
+               } else
+               if (!strcmp( value, "windows" )) {
                     conf->config.buffermode  = DLBM_WINDOWS;
                     conf->config.flags      |= DLCONF_BUFFERMODE;
                }
@@ -840,12 +840,9 @@ dfb_config_set( const char *name,
                while ((r = direct_strtok_r( s, ",", &p ))) {
                     direct_trim( &r );
 
-                    if (!strcmp( r, "lower" ))
-                         conf->stacking |= (1 << DWSC_LOWER);
-                    else if (!strcmp( r, "middle" ))
-                         conf->stacking |= (1 << DWSC_MIDDLE);
-                    else if (!strcmp( r, "upper" ))
-                         conf->stacking |= (1 << DWSC_UPPER);
+                    if (!strcmp( r, "lower" ))  conf->stacking |= (1 << DWSC_LOWER);  else
+                    if (!strcmp( r, "middle" )) conf->stacking |= (1 << DWSC_MIDDLE); else
+                    if (!strcmp( r, "upper" ))  conf->stacking |= (1 << DWSC_UPPER);
                     else {
                          D_ERROR( "DirectFB/Config: '%s': Unknown stacking class '%s'!\n", name, r );
                          D_FREE( stackings );
@@ -1071,11 +1068,11 @@ dfb_config_set( const char *name,
                          sscanf( opt, "%dx%d",
                                  &dfb_config->warn.create_surface.min_size.w,
                                  &dfb_config->warn.create_surface.min_size.h );
-               }
-               else if (!strncmp( value, "create-window", 13 )) {
+               } else
+               if (!strncmp( value, "create-window", 13 )) {
                     flags = DCWF_CREATE_WINDOW;
-               }
-               else if (!strncmp( value, "allocate-buffer", 15 )) {
+               } else
+               if (!strncmp( value, "allocate-buffer", 15 )) {
                     flags = DCWF_ALLOCATE_BUFFER;
 
                     if (opt)
@@ -1195,21 +1192,11 @@ dfb_config_set( const char *name,
      } else
      if (strcmp( name, "window-surface-policy" ) == 0) {
           if (value) {
-               if (strcmp( value, "auto" ) == 0) {
-                    dfb_config->window_policy = -1;
-               }
-               else if (strcmp( value, "videohigh" ) == 0) {
-                    dfb_config->window_policy = DWSP_VIDEOHIGH;
-               }
-               else if (strcmp( value, "videolow" ) == 0) {
-                    dfb_config->window_policy = DWSP_VIDEOLOW;
-               }
-               else if (strcmp( value, "systemonly" ) == 0) {
-                    dfb_config->window_policy = DWSP_SYSTEMONLY;
-               }
-               else if (strcmp( value, "videoonly" ) == 0) {
-                    dfb_config->window_policy = DWSP_VIDEOONLY;
-               }
+               if (!strcmp( value, "auto" ))       dfb_config->window_policy = -1;              else
+               if (!strcmp( value, "videohigh" ))  dfb_config->window_policy = DWSP_VIDEOHIGH;  else
+               if (!strcmp( value, "videolow" ))   dfb_config->window_policy = DWSP_VIDEOLOW;   else
+               if (!strcmp( value, "systemonly" )) dfb_config->window_policy = DWSP_SYSTEMONLY; else
+               if (!strcmp( value, "videoonly" ))  dfb_config->window_policy = DWSP_VIDEOONLY; 
                else {
                     D_ERROR( "DirectFB/Config: '%s': Unknown window surface policy '%s'!\n", name, value );
                     return DFB_INVARG;
