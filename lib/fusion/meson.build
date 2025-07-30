@@ -92,7 +92,7 @@ endif
 libfusion = library('fusion-@0@.@1@'.format(directfb_major_version, directfb_minor_version),
                     fusion_sources, shm_sources,
                     include_directories: [config_inc, lib_inc],
-                    build_rpath: get_option('prefix') / get_option('libdir'),
+                    install_rpath: get_option('prefix') / get_option('libdir'),
                     dependencies: direct_dep,
                     version: '0.@0@.0'.format(directfb_micro_version),
                     install: true)

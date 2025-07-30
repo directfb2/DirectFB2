@@ -21,7 +21,7 @@ endif
 
 library('directfb_linux_input',
         'linux_input.c',
-        build_rpath: get_option('prefix') / get_option('libdir'),
+        install_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: directfb_dep,
         install: true,
         install_dir: moduledir / 'inputdrivers')

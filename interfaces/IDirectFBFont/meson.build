@@ -16,7 +16,7 @@
 
 library('idirectfbfont_dgiff',
         'idirectfbfont_dgiff.c',
-        build_rpath: get_option('prefix') / get_option('libdir'),
+        install_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: directfb_dep,
         install: true,
         install_dir: moduledir / 'interfaces/IDirectFBFont')
