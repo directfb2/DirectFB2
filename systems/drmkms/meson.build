@@ -32,7 +32,7 @@ drmkms_sources = [
 
 library('directfb_drmkms',
         drmkms_sources,
-        build_rpath: get_option('prefix') / get_option('libdir'),
+        install_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: [directfb_dep, drmkms_dep],
         install: true,
         install_dir: moduledir / 'systems')
