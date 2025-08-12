@@ -19,7 +19,8 @@ library('idirectfbwindows_default',
         build_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: directfb_dep,
         install: true,
-        install_dir: moduledir / 'interfaces/IDirectFBWindows')
+        install_dir: moduledir / 'interfaces/IDirectFBWindows',
+        install_rpath: get_option('prefix') / get_option('libdir'))
 
 if get_option('default_library') == 'static'
   pkgconfig.generate(filebase: 'directfb-interface-windows_default',

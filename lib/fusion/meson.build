@@ -95,7 +95,8 @@ libfusion = library('fusion-@0@.@1@'.format(directfb_major_version, directfb_min
                     build_rpath: get_option('prefix') / get_option('libdir'),
                     dependencies: direct_dep,
                     version: '0.@0@.0'.format(directfb_micro_version),
-                    install: true)
+                    install: true,
+                    install_rpath: get_option('prefix') / get_option('libdir'))
 
 install_symlink('libfusion' + libsuffix,
                 pointing_to: 'libfusion-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,

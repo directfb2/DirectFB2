@@ -23,7 +23,8 @@ library('directfb_dummy',
         build_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: directfb_dep,
         install: true,
-        install_dir: moduledir / 'systems')
+        install_dir: moduledir / 'systems',
+        install_rpath: get_option('prefix') / get_option('libdir'))
 
 if get_option('default_library') == 'static'
   pkgconfig.generate(filebase: 'directfb-system-dummy',
