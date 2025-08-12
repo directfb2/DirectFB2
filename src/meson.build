@@ -190,10 +190,11 @@ libdirectfb = library('directfb-@0@.@1@'.format(directfb_major_version, directfb
                       c_args: ['-DBUILDTIME="'  + run_command('date', '-u', '+%Y-%m-%d %H:%M',
                                                               check: true).stdout().strip()                  + '"',
                                '-DSYSCONFDIR="' + get_option('prefix') / get_option('sysconfdir') + '"'],
-                      install_rpath: get_option('prefix') / get_option('libdir'),
+                      build_rpath: get_option('prefix') / get_option('libdir'),
                       dependencies: [direct_dep, fusion_dep],
                       version: '0.@0@.0'.format(directfb_micro_version),
-                      install: true)
+                      install: true,
+                      install_rpath: get_option('prefix') / get_option('libdir'))
 
 install_symlink('libdirectfb' + libsuffix,
                 pointing_to: 'libdirectfb-@0@.@1@'.format(directfb_major_version, directfb_minor_version) + libsuffix,

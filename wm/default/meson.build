@@ -17,10 +17,11 @@
 library('directfbwm_default',
         'default.c',
         include_directories: config_inc,
-        install_rpath: get_option('prefix') / get_option('libdir'),
+        build_rpath: get_option('prefix') / get_option('libdir'),
         dependencies: directfb_dep,
         install: true,
-        install_dir: moduledir / 'wm')
+        install_dir: moduledir / 'wm',
+        install_rpath: get_option('prefix') / get_option('libdir'))
 
 if get_option('default_library') == 'static'
   pkgconfig.generate(filebase: 'directfb-wm-default',
